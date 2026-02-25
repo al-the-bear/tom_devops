@@ -876,7 +876,7 @@ packages:
   tom_build_base:
     dependency: "direct overridden"
     description:
-      path: "../tom_build_base"
+      path: "../../basics/tom_build_base"
       relative: true
     source: path
     version: "2.5.2"

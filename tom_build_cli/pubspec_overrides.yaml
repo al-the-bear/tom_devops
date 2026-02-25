@@ -4,7 +4,7 @@ dependency_overrides:
   tom_d4rt_generator:
     path: ../../d4rt/tom_d4rt_generator
   tom_build_base:
-    path: ../tom_build_base
+    path: ../../basics/tom_build_base
   dart_console: ^4.1.2
   runtime_native_semaphores:
     git:
