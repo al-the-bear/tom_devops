@@ -3,12 +3,10 @@
 /// Tests cover:
 /// 1. Command registry and validation
 /// 2. :generate-bridges command (delegates to tom_d4rt_generator)
-/// 3. :md2pdf command
-/// 4. :md2latex command
-/// 5. :version-bump command
-/// 6. :reset-action-counter command
-/// 7. :pipeline command
-/// 8. Version reading
+/// 3. :version-bump command
+/// 4. :reset-action-counter command
+/// 5. :pipeline command
+/// 6. Version reading
 
 import 'dart:io';
 
@@ -25,8 +23,6 @@ void main() {
       expect(InternalCommands.isInternalCommand('pipeline'), isTrue);
       expect(InternalCommands.isInternalCommand('generate-reflection'), isTrue);
       expect(InternalCommands.isInternalCommand('generate-bridges'), isTrue);
-      expect(InternalCommands.isInternalCommand('md2pdf'), isTrue);
-      expect(InternalCommands.isInternalCommand('md2latex'), isTrue);
       expect(InternalCommands.isInternalCommand('prepper'), isTrue);
       expect(InternalCommands.isInternalCommand('help'), isTrue);
       expect(InternalCommands.isInternalCommand('version'), isTrue);
@@ -42,8 +38,6 @@ void main() {
       expect(InternalCommands.getPrefix('analyze'), equals('wa'));
       expect(InternalCommands.getPrefix('generate-reflection'), equals('gr'));
       expect(InternalCommands.getPrefix('generate-bridges'), equals('gb'));
-      expect(InternalCommands.getPrefix('md2pdf'), equals('mp'));
-      expect(InternalCommands.getPrefix('md2latex'), equals('ml'));
       expect(InternalCommands.getPrefix('version-bump'), equals('vb'));
       expect(InternalCommands.getPrefix('prepper'), equals('wp'));
     });
@@ -52,8 +46,6 @@ void main() {
       expect(InternalCommands.getCommandForPrefix('wa'), equals('analyze'));
       expect(InternalCommands.getCommandForPrefix('gr'), equals('generate-reflection'));
       expect(InternalCommands.getCommandForPrefix('gb'), equals('generate-bridges'));
-      expect(InternalCommands.getCommandForPrefix('mp'), equals('md2pdf'));
-      expect(InternalCommands.getCommandForPrefix('ml'), equals('md2latex'));
     });
 
     test('command info has correct workspace requirements', () {
@@ -65,8 +57,6 @@ void main() {
       
       // Commands not requiring workspace
       expect(InternalCommands.getCommand('generate-bridges')?.requiresWorkspace, isFalse);
-      expect(InternalCommands.getCommand('md2pdf')?.requiresWorkspace, isFalse);
-      expect(InternalCommands.getCommand('md2latex')?.requiresWorkspace, isFalse);
       expect(InternalCommands.getCommand('help')?.requiresWorkspace, isFalse);
       expect(InternalCommands.getCommand('version')?.requiresWorkspace, isFalse);
     });
@@ -114,7 +104,6 @@ void main() {
         final result = await executor.execute(commandName: 'help');
         expect(result.message, contains(':analyze'));
         expect(result.message, contains(':generate-bridges'));
-        expect(result.message, contains(':md2pdf'));
       });
     });
 
@@ -170,88 +159,6 @@ void main() {
         );
         expect(result.success, isTrue);
         expect(result.message, contains('Pattern: Tom*'));
-      });
-    });
-
-    group('md2pdf command', () {
-      test('fails without input file', () async {
-        final result = await executor.execute(
-          commandName: 'md2pdf',
-          parameters: {},
-        );
-        expect(result.success, isFalse);
-        expect(result.error, contains('Input file required'));
-      });
-
-      test('fails with non-existent input file', () async {
-        // Need non-dry-run config for this test
-        final nonDryConfig = InternalCommandConfig(
-          workspacePath: tempDir.path,
-          dryRun: false,
-          verbose: false,
-        );
-        final nonDryExecutor = InternalCommandExecutor(config: nonDryConfig);
-        
-        final result = await nonDryExecutor.execute(
-          commandName: 'md2pdf',
-          parameters: {'input': 'nonexistent.md'},
-        );
-        expect(result.success, isFalse);
-        expect(result.error, contains('Input file not found'));
-      });
-
-      test('dry-run shows conversion info', () async {
-        // Create a test markdown file
-        final mdFile = File(path.join(tempDir.path, 'test.md'));
-        await mdFile.writeAsString('# Test\n\nContent');
-        
-        final result = await executor.execute(
-          commandName: 'md2pdf',
-          parameters: {'input': mdFile.path},
-        );
-        expect(result.success, isTrue);
-        expect(result.message, contains('[dry-run]'));
-        expect(result.message, contains('Input:'));
-        expect(result.message, contains('Output:'));
-      });
-
-      test('dry-run shows toc option', () async {
-        final mdFile = File(path.join(tempDir.path, 'test.md'));
-        await mdFile.writeAsString('# Test');
-        
-        final result = await executor.execute(
-          commandName: 'md2pdf',
-          parameters: {
-            'input': mdFile.path,
-            'toc': 'true',
-          },
-        );
-        expect(result.success, isTrue);
-        expect(result.message, contains('TOC: true'));
-      });
-    });
-
-    group('md2latex command', () {
-      test('fails without input file', () async {
-        final result = await executor.execute(
-          commandName: 'md2latex',
-          parameters: {},
-        );
-        expect(result.success, isFalse);
-        expect(result.error, contains('Input file required'));
-      });
-
-      test('dry-run shows conversion info', () async {
-        final mdFile = File(path.join(tempDir.path, 'test.md'));
-        await mdFile.writeAsString('# Test');
-        
-        final result = await executor.execute(
-          commandName: 'md2latex',
-          parameters: {'input': mdFile.path},
-        );
-        expect(result.success, isTrue);
-        expect(result.message, contains('[dry-run]'));
-        expect(result.message, contains('Standalone: true'));
       });
     });
 

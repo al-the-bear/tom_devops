@@ -336,18 +336,6 @@ void main() {
         expect(result.globalParameters['gr-path'], equals('.'));
       });
 
-      test('parses mp- prefix for md2pdf', () {
-        final result = parser.parse(['-mp-output=./docs', ':md2pdf']);
-
-        expect(result.globalParameters['mp-output'], equals('./docs'));
-      });
-
-      test('parses ml- prefix for md2latex', () {
-        final result = parser.parse(['-ml-template=article', ':md2latex']);
-
-        expect(result.globalParameters['ml-template'], equals('article'));
-      });
-
       test('parses vb- prefix for version-bump', () {
         final result = parser.parse(['-vb-dry-run=true', ':version-bump']);
 

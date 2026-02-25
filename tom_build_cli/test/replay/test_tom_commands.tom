@@ -20,24 +20,22 @@ verifyContains(versionInfo, '1.0.0', 'Version string should contain version numb
 # =============================================================================
 
 # Verify help text content by checking known command names
-var helpKeywords = ['analyze', 'version-bump', 'generate-bridges', 'md2pdf', 'help', 'version'];
-verifyEquals(helpKeywords.length, 6, 'Should have 6 help keywords');
+var helpKeywords = ['analyze', 'version-bump', 'generate-bridges', 'help', 'version'];
+verifyEquals(helpKeywords.length, 5, 'Should have 5 help keywords');
 verify(helpKeywords.contains('analyze'), 'Help should include analyze command');
-verify(helpKeywords.contains('md2pdf'), 'Help should include md2pdf command');
 
 # =============================================================================
 # Test: Internal Command Registry
 # =============================================================================
 
 # Test that internal command names are correct format
-var commands = ['analyze', 'version-bump', 'generate-bridges', 'md2pdf', 'prepper'];
+var commands = ['analyze', 'version-bump', 'generate-bridges', 'prepper'];
 var sum = commands.fold<int>(0, (acc, cmd) => acc + cmd.length);
-verify(sum > 30, 'Total command name length should be > 30');
+verify(sum > 25, 'Total command name length should be > 25');
 
 # Verify command prefixes
-var prefixes = {'analyze': 'wa', 'generate-bridges': 'gb', 'md2pdf': 'mp', 'version-bump': 'vb'};
+var prefixes = {'analyze': 'wa', 'generate-bridges': 'gb', 'version-bump': 'vb'};
 verifyEquals(prefixes['analyze'], 'wa', 'Analyze prefix should be wa');
-verifyEquals(prefixes['md2pdf'], 'mp', 'md2pdf prefix should be mp');
 
 # =============================================================================
 # Test: Tom Bridges (TomCliApiBridges)

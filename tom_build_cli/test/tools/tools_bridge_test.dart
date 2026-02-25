@@ -13,7 +13,6 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
-import 'package:tom_dartscript_bridges/tom_dartscript_bridges.dart';
 import 'package:tom_build/tom_build.dart';
 import 'package:tom_build_cli/tom_build_cli.dart';
 
@@ -621,22 +620,16 @@ import 'package:tom_build_cli/tom_build_cli.dart';
 
 String? wsPrepper;
 String? workspaceAnalyzer;
-String? mdLatexConverter;
-String? mdPdfConverter;
 String? reflectionGenerator;
 
 void main() {
   wsPrepper = ToolPrefix.wsPrepper;
   workspaceAnalyzer = ToolPrefix.workspaceAnalyzer;
-  mdLatexConverter = ToolPrefix.mdLatexConverter;
-  mdPdfConverter = ToolPrefix.mdPdfConverter;
   reflectionGenerator = ToolPrefix.reflectionGenerator;
 }
 ''');
         expect(await d4rt.evaluate('wsPrepper'), equals('wp-'));
         expect(await d4rt.evaluate('workspaceAnalyzer'), equals('wa-'));
-        expect(await d4rt.evaluate('mdLatexConverter'), equals('mlc-'));
-        expect(await d4rt.evaluate('mdPdfConverter'), equals('mpc-'));
         expect(await d4rt.evaluate('reflectionGenerator'), equals('rc-'));
       });
     });

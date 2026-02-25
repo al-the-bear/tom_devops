@@ -55,7 +55,7 @@ import 'package:tom_d4rt/src/bridge/bridged_types.dart' as $tom_d4rt_1;
 import 'package:tom_d4rt/src/d4rt_base.dart' as $tom_d4rt_2;
 import 'package:tom_d4rt_dcli/src/cli/repl_state.dart' as $tom_d4rt_dcli_1;
 import 'package:yaml/src/yaml_node.dart' as $yaml_1;
-import 'package:tom_dartscript_bridges/src/cli/d4rt_repl.dart' as $aux_tom_dartscript_bridges;
+import 'package:tom_d4rt_dcli/src/cli/repl_base.dart' as $aux_tom_d4rt_dcli;
 
 /// Bridge class for tom_build_cli module.
 class TomBuildCliBridge {
@@ -531,16 +531,6 @@ class TomBuildCliBridge {
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseWorkspaceAnalyzerArgs');
         return $tom_build_cli_30.parseWorkspaceAnalyzerArgs(args);
       },
-      'parseMdLatexConverterArgs': (visitor, positional, named, typeArgs) {
-        D4.requireMinArgs(positional, 1, 'parseMdLatexConverterArgs');
-        final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseMdLatexConverterArgs');
-        return $tom_build_cli_30.parseMdLatexConverterArgs(args);
-      },
-      'parseMdPdfConverterArgs': (visitor, positional, named, typeArgs) {
-        D4.requireMinArgs(positional, 1, 'parseMdPdfConverterArgs');
-        final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseMdPdfConverterArgs');
-        return $tom_build_cli_30.parseMdPdfConverterArgs(args);
-      },
       'parseReflectionGeneratorArgs': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'parseReflectionGeneratorArgs');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseReflectionGeneratorArgs');
@@ -600,8 +590,6 @@ class TomBuildCliBridge {
       'splitShellArgs': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
       'parseWsPrepperArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
       'parseWorkspaceAnalyzerArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
-      'parseMdLatexConverterArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
-      'parseMdPdfConverterArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
       'parseReflectionGeneratorArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
       'loadEnvironmentWithDotEnv': 'package:tom_build_cli/src/tools/placeholder_resolver.dart',
       'parseTomCommand': 'package:tom_build_cli/src/tools/tom_command_parser.dart',
@@ -631,8 +619,6 @@ class TomBuildCliBridge {
       'splitShellArgs': 'List<String> splitShellArgs(String command)',
       'parseWsPrepperArgs': 'CliArgs parseWsPrepperArgs(List<String> args)',
       'parseWorkspaceAnalyzerArgs': 'CliArgs parseWorkspaceAnalyzerArgs(List<String> args)',
-      'parseMdLatexConverterArgs': 'CliArgs parseMdLatexConverterArgs(List<String> args)',
-      'parseMdPdfConverterArgs': 'CliArgs parseMdPdfConverterArgs(List<String> args)',
       'parseReflectionGeneratorArgs': 'CliArgs parseReflectionGeneratorArgs(List<String> args)',
       'loadEnvironmentWithDotEnv': 'Map<String, String> loadEnvironmentWithDotEnv([String? dotEnvPath])',
       'parseTomCommand': 'ParsedTomCommand parseTomCommand(List<String> args, {Set<String>? additionalCommands})',
@@ -4439,8 +4425,6 @@ BridgedClass _createToolPrefixBridge() {
     staticGetters: {
       'wsPrepper': (visitor) => $tom_build_cli_30.ToolPrefix.wsPrepper,
       'workspaceAnalyzer': (visitor) => $tom_build_cli_30.ToolPrefix.workspaceAnalyzer,
-      'mdLatexConverter': (visitor) => $tom_build_cli_30.ToolPrefix.mdLatexConverter,
-      'mdPdfConverter': (visitor) => $tom_build_cli_30.ToolPrefix.mdPdfConverter,
       'reflectionGenerator': (visitor) => $tom_build_cli_30.ToolPrefix.reflectionGenerator,
     },
     constructorSignatures: {
@@ -4449,8 +4433,6 @@ BridgedClass _createToolPrefixBridge() {
     staticGetterSignatures: {
       'wsPrepper': 'dynamic get wsPrepper',
       'workspaceAnalyzer': 'dynamic get workspaceAnalyzer',
-      'mdLatexConverter': 'dynamic get mdLatexConverter',
-      'mdPdfConverter': 'dynamic get mdPdfConverter',
       'reflectionGenerator': 'dynamic get reflectionGenerator',
     },
   );

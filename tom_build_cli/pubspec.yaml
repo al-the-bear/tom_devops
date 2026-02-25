@@ -21,15 +21,15 @@ dependencies:
   tom_core_server:
     path: ../../core/tom_core_server
   tom_dist_ledger:
-    path: ../../xternal/tom_module_distributed/tom_dist_ledger
+    path: ../../distributed/tom_dist_ledger
   tom_process_monitor:
-    path: ../../xternal/tom_module_distributed/tom_process_monitor
+    path: ../../distributed/tom_process_monitor
   
-  # Bridge package (for D4rt bridges)
-  tom_dartscript_bridges:
-    path: ../../dartscript/tom_dartscript_bridges
+  # D4rt CLI base (build CLI extends D4rt CLI)
+  tom_d4rt_dcli:
+  tom_vscode_scripting_api:
   tom_reflection_generator:
-    path: ../../xternal/tom_module_reflection/tom_reflection_generator
+    path: ../../reflection/tom_reflection_generator
 
 dev_dependencies:
   build_runner: ^2.4.6
@@ -37,5 +37,5 @@ dev_dependencies:
   test: ^1.25.6
   tom_d4rt_generator:
   tom_build_kit:
-    path: ../../xternal/tom_module_basics/tom_build_kit
+    path: ../tom_build_kit
 

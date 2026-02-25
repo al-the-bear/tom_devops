@@ -32,7 +32,7 @@
 /// - VS Code APIs (use `vscode:` commands to execute in VS Code bridge)
 library;
 
-import 'package:tom_dartscript_bridges/dartscript.b.dart' as dartscript_bridges;
+import '../tom_d4rt/dartscript.b.dart' as dartscript_bridges;
 
 /// Global variable assignments for D4rt scripts in Tom CLI.
 ///
@@ -92,7 +92,7 @@ const String cliGlobalVariables = '''
 ///
 /// Collects import blocks from all bridge packages.
 String _getCliImports() {
-  return dartscript_bridges.TomDartscriptBridges.getImportBlock();
+  return dartscript_bridges.TomBuildCliBridges.getImportBlock();
 }
 
 /// Gets the complete initialization script for Tom CLI D4rt execution.
@@ -138,7 +138,7 @@ String getCliGlobalVariablesOnly() => cliGlobalVariables;
 /// Executed before pre/post-action commands to ensure tom.project is null.
 String getProjectClearScript() {
   return '''
-${dartscript_bridges.TomDartscriptBridges.getImportBlock()}
+${dartscript_bridges.TomBuildCliBridges.getImportBlock()}
 
 void main() {
   // Project context is managed by initializeTomContext/resetTomContext
@@ -153,7 +153,7 @@ void main() {
 /// before this script runs. This just ensures imports are available.
 String getProjectPrepareScript() {
   return '''
-${dartscript_bridges.TomDartscriptBridges.getImportBlock()}
+${dartscript_bridges.TomBuildCliBridges.getImportBlock()}
 
 void main() {
   // Project context is set via initializeTomContext before this runs

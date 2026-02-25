@@ -1,13 +1,14 @@
 /// TomD4rt REPL with integrated Tom CLI functionality.
 ///
-/// This REPL extends D4rtRepl to add Tom workspace command support,
+/// This REPL extends DcliRepl to add Tom workspace command support,
 /// allowing users to execute :build, :analyze, and other Tom commands
 /// directly from the REPL prompt.
 library;
 
 import 'dart:io';
 
-import 'package:tom_dartscript_bridges/tom_dartscript_bridges.dart';
+import 'package:tom_d4rt/d4rt.dart';
+import 'package:tom_d4rt_dcli/tom_d4rt_dcli.dart';
 
 import '../tom/cli/tom_cli.dart';
 import 'dartscript.b.dart';
@@ -15,11 +16,11 @@ import 'version.versioner.dart';
 
 /// TomD4rt REPL with integrated Tom CLI functionality.
 /// 
-/// Extends D4rtRepl to add:
+/// Extends DcliRepl to add:
 /// - Tom command support (: and ! prefixes)
 /// - Tom-specific bridges
 /// - Workspace context integration
-class TomD4rtRepl extends D4rtRepl {
+class TomD4rtRepl extends DcliRepl {
   /// Tom CLI for executing workspace commands
   TomCli? _tomCli;
   
@@ -174,7 +175,7 @@ class TomD4rtRepl extends D4rtRepl {
   
   @override
   ReplState createReplState() {
-    // Call super to initialize the VS Code adapter (side effect)
+    // Let DcliRepl initialize VS Code integration
     super.createReplState();
     // Return state with tom prompt name but keep the data directory
     return ReplState(

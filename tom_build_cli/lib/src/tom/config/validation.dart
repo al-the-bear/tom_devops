@@ -34,7 +34,7 @@ class ValidationResult {
 
 /// A single configuration validation error.
 ///
-/// Note: This is different from `ConfigValidationError` in doc_specs/validation/,
+/// Note: This is different from `ConfigValidationError` in tom_doc_specs/validation/,
 /// which is for document schema validation.
 class ConfigValidationError {
   /// Creates a new ConfigValidationError.

@@ -59,7 +59,7 @@ import 'dart:io';
 import 'package:yaml/yaml.dart';
 
 import 'package:tom_build/tom_build.dart';
-import 'package:tom_dartscript_bridges/tom_dartscript_bridges.dart' show VSCodeBridgeClient, VSCodeBridgeResult;
+import 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart' show VSCodeBridgeClient, VSCodeBridgeResult;
 import '../../dartscript/d4rt_instance.dart';
 import '../template/tomplate_parser.dart';
 import '../template/tomplate_processor.dart';

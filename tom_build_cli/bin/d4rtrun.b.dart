@@ -15,7 +15,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:tom_d4rt/d4rt.dart';
-import 'package:tom_dartscript_bridges/dartscript.b.dart' as imported_0;
+import 'package:tom_d4rt_dcli/dartscript.b.dart' as imported_0;
 import 'package:tom_build_cli/src/tom_d4rt/tom_build_cli_bridges.b.dart' as tom_build_cli_bridges;
 
 /// Init script source that imports all bridged modules.
@@ -27,7 +27,7 @@ void main() {}
 
 /// Registers all bridges with the given D4rt interpreter.
 void _registerBridges(D4rt d4rt) {
-  imported_0.TomDartscriptBridges.register(d4rt);
+  imported_0.TomD4rtDcliBridge.register(d4rt);
   tom_build_cli_bridges.TomBuildCliBridge.registerBridges(
     d4rt,
     'package:tom_build_cli/tom_build_cli.dart',

@@ -390,8 +390,6 @@ name: test_no_modes
     test('has correct prefixes for all tools', () {
       expect(ToolPrefix.wsPrepper, equals('wp-'));
       expect(ToolPrefix.workspaceAnalyzer, equals('wa-'));
-      expect(ToolPrefix.mdLatexConverter, equals('mlc-'));
-      expect(ToolPrefix.mdPdfConverter, equals('mpc-'));
       expect(ToolPrefix.reflectionGenerator, equals('rc-'));
     });
   });

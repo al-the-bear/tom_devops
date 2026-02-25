@@ -1,8 +1,8 @@
 name: tom_build_base
 description: Shared utilities for Tom build tools — configuration loading from buildkit.yaml, project scanning, path validation, and build.yaml utilities.
 version: 2.5.2
-repository: https://github.com/al-the-bear/tom_module_basics
-homepage: https://github.com/al-the-bear/tom_module_basics/tree/main/tom_build_base
+repository: https://github.com/al-the-bear/tom_devops
+homepage: https://github.com/al-the-bear/tom_devops/tree/main/tom_build_base
 topics:
   - build-tools
   - cli

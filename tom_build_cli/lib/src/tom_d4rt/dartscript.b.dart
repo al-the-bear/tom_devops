@@ -6,7 +6,7 @@
 library;
 
 import 'package:tom_d4rt/d4rt.dart';
-import 'package:tom_dartscript_bridges/dartscript.b.dart' as imported_0;
+import 'package:tom_d4rt_dcli/dartscript.b.dart' as imported_0;
 import 'tom_build_cli_bridges.b.dart' as tom_build_cli_bridges;
 
 /// Combined bridge registration for tom_build_cli.
@@ -15,8 +15,8 @@ class TomBuildCliBridges {
   static void register([D4rt? interpreter]) {
     final d4rt = interpreter ?? D4rt();
 
-    // Register imported bridges
-    imported_0.TomDartscriptBridges.register(d4rt);
+    // Register imported bridges from tom_d4rt_dcli
+    imported_0.TomD4rtDcliBridge.register(d4rt);
 
     // Register local bridges
     tom_build_cli_bridges.TomBuildCliBridge.registerBridges(
@@ -32,7 +32,7 @@ class TomBuildCliBridges {
   /// Get import block for all modules.
   static String getImportBlock() {
     final buffer = StringBuffer();
-    buffer.writeln(imported_0.TomDartscriptBridges.getImportBlock());
+    buffer.writeln(imported_0.TomD4rtDcliBridge.getImportBlock());
     buffer.writeln(tom_build_cli_bridges.TomBuildCliBridge.getImportBlock());
     return buffer.toString();
   }

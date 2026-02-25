@@ -10,9 +10,11 @@ library;
 
 import 'dart:async';
 
-import 'package:tom_dartscript_bridges/tom_dartscript_bridges.dart';
+import 'package:tom_d4rt/d4rt.dart';
+import 'package:tom_build/tom_build.dart';
 
 import '../tom/cli/workspace_context.dart';
+import '../tom_d4rt/dartscript.b.dart';
 import 'd4rt_context_provider.dart';
 import 'd4rt_cli_initialization.dart';
 
@@ -131,8 +133,8 @@ class D4rtInstance {
     // Grant filesystem permissions for scripts
     interpreter.grant(FilesystemPermission.any);
 
-    // Register all standard bridges with this interpreter from tom_dartscript_bridges
-    TomDartscriptBridges.register(interpreter);
+    // Register all standard bridges with this interpreter via tom_build_cli chain
+    TomBuildCliBridges.register(interpreter);
 
     // Apply additional bridge configuration
     bridgeConfiguration?.apply(interpreter);

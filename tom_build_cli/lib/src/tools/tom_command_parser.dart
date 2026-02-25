@@ -22,9 +22,6 @@ const Set<String> knownCommands = {
   'ws_publisher',
   // Generators
   'reflection_generator',
-  // Converters
-  'md_latex_converter',
-  'md_pdf_converter',
   // Pipeline commands
   'pipeline',
   'run',

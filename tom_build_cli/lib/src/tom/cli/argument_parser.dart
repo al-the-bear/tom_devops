@@ -109,8 +109,6 @@ class ArgumentParser {
   static const Set<String> internalCommands = {
     'analyze',
     'generate-reflection',
-    'md2pdf',
-    'md2latex',
     'version-bump',
     'prepper',
     'reset-action-counter',
@@ -125,8 +123,6 @@ class ArgumentParser {
   static const Map<String, String> argumentPrefixes = {
     'wa-': 'analyze',
     'gr-': 'generate-reflection',
-    'mp-': 'md2pdf',
-    'ml-': 'md2latex',
     'vb-': 'version-bump',
     'wp-': 'prepper',
   };

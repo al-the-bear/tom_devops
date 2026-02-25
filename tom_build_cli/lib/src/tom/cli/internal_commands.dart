@@ -7,8 +7,6 @@
 // - :pipeline - Execute named pipeline
 // - :generate-reflection - Run reflection generator
 // - :generate-bridges - Generate D4rt BridgedClass implementations
-// - :md2pdf - Convert markdown to PDF
-// - :md2latex - Convert markdown to LaTeX
 // - :prepper - Run mode processing
 // - :vscode - Execute Dart via VS Code VS Code Bridge
 // - :dartscript - Execute Dart locally via D4rt (default command)
@@ -23,12 +21,11 @@ import 'version_bumper.dart';
 import 'workspace_context.dart';
 import '../execution/action_executor.dart';
 import 'package:tom_build/tom_build.dart';
-import 'package:tom_build/src/md_pdf_converter/md_pdf_converter.dart' show MdPdfConverterOptions;
 import '../mode/mode_resolver.dart';
 import '../template/tomplate_parser.dart';
 import '../template/tomplate_processor.dart';
 import '../execution/d4rt_runner.dart';
-import 'package:tom_dartscript_bridges/tom_dartscript_bridges.dart' show VSCodeBridgeClient, VSCodeBridgeResult, defaultVSCodeBridgePort;
+import 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart' show VSCodeBridgeClient, VSCodeBridgeResult, defaultVSCodeBridgePort;
 
 // =============================================================================
 // INTERNAL COMMAND REGISTRY
@@ -58,18 +55,6 @@ class InternalCommands {
       name: 'generate-bridges',
       prefix: 'gb',
       description: 'Generate D4rt BridgedClass implementations from Dart classes',
-      requiresWorkspace: false,
-    ),
-    'md2pdf': InternalCommandInfo(
-      name: 'md2pdf',
-      prefix: 'mp',
-      description: 'Convert markdown to PDF',
-      requiresWorkspace: false,
-    ),
-    'md2latex': InternalCommandInfo(
-      name: 'md2latex',
-      prefix: 'ml',
-      description: 'Convert markdown to LaTeX',
       requiresWorkspace: false,
     ),
     'version-bump': InternalCommandInfo(
@@ -373,10 +358,6 @@ class InternalCommandExecutor {
         return _executeGenerateReflection(parameters);
       case 'generate-bridges':
         return _executeGenerateBridges(parameters);
-      case 'md2pdf':
-        return _executeMd2Pdf(parameters);
-      case 'md2latex':
-        return _executeMd2Latex(parameters);
       case 'prepper':
         return _executePrepper(parameters);
       case 'help':
@@ -1001,209 +982,6 @@ class InternalCommandExecutor {
             '  Error: $e\n'
             '  Stack: $stack\n'
             '  Resolution: Ensure tom_d4rt_generator is available',
-        duration: stopwatch.elapsed,
-      );
-    }
-  }
-
-  /// Executes :md2pdf command.
-  ///
-  /// Converts a markdown file to PDF using pandoc.
-  ///
-  /// Parameters:
-  /// - `mp-input` or `mp-file`: Input markdown file path
-  /// - `mp-output`: Output PDF file path (optional, defaults to input.pdf)
-  /// - `mp-template`: LaTeX template to use (optional)
-  /// - `mp-toc`: Include table of contents (default: false)
-  /// - `mp-highlight`: Syntax highlighting style (default: tango)
-  Future<InternalCommandResult> _executeMd2Pdf(
-    Map<String, String> parameters,
-  ) async {
-    final stopwatch = Stopwatch()..start();
-    final inputFile = parameters['input'] ?? parameters['file'];
-    final outputFile = parameters['output'];
-    final title = parameters['title'];
-    final author = parameters['author'];
-
-    if (inputFile == null || inputFile.isEmpty) {
-      return InternalCommandResult.failure(
-        command: 'md2pdf',
-        error: 'Input file required\n'
-            '  Usage: :md2pdf -mp-input=<path/to/file.md>\n'
-            '  Resolution: Provide a markdown file path',
-        duration: Duration.zero,
-      );
-    }
-
-    // Resolve input path
-    final absoluteInput = inputFile.startsWith('/') 
-        ? inputFile 
-        : '${config.workspacePath}/$inputFile';
-    final file = File(absoluteInput);
-    
-    if (!file.existsSync()) {
-      stopwatch.stop();
-      return InternalCommandResult.failure(
-        command: 'md2pdf',
-        error: 'Input file not found\n'
-            '  File: [$absoluteInput]\n'
-            '  Resolution: Check the file path',
-        duration: stopwatch.elapsed,
-      );
-    }
-
-    // Determine output directory
-    final outputDir = outputFile != null
-        ? p.dirname(outputFile.startsWith('/') ? outputFile : '${config.workspacePath}/$outputFile')
-        : p.dirname(absoluteInput);
-
-    if (config.dryRun) {
-      final expectedOutput = outputFile ?? absoluteInput.replaceAll('.md', '.pdf');
-      return InternalCommandResult.success(
-        command: 'md2pdf',
-        message: '[dry-run] Would convert:\n'
-            '  Input: $absoluteInput\n'
-            '  Output: $expectedOutput',
-        duration: Duration.zero,
-      );
-    }
-
-    try {
-      // Use MdPdfConverter for conversion
-      final converter = MdPdfConverter(
-        absoluteInput,
-        options: MdPdfConverterOptions(
-          title: title,
-          author: author,
-        ),
-      );
-
-      if (config.verbose) {
-        print('  Converting: $absoluteInput');
-        print('  Output dir: $outputDir');
-      }
-
-      final result = await converter.convertFile(file, outputDir: outputDir);
-
-      stopwatch.stop();
-
-      return InternalCommandResult.success(
-        command: 'md2pdf',
-        message: 'PDF generated successfully\n'
-            '  Input: ${result.sourcePath}\n'
-            '  Output: ${result.outputPath}',
-        duration: stopwatch.elapsed,
-      );
-    } catch (e, stack) {
-      stopwatch.stop();
-      return InternalCommandResult.failure(
-        command: 'md2pdf',
-        error: 'PDF conversion failed\n'
-            '  Error: $e\n'
-            '  Stack: $stack',
-        duration: stopwatch.elapsed,
-      );
-    }
-  }
-
-  /// Executes :md2latex command.
-  ///
-  /// Converts a markdown file to LaTeX using MdLatexConverter.
-  ///
-  /// Parameters:
-  /// - `ml-input` or `ml-file`: Input markdown file path
-  /// - `ml-output`: Output LaTeX file path (optional, defaults to input.tex)
-  /// - `ml-standalone`: Generate standalone document with preamble (default: true)
-  /// - `ml-toc`: Generate table of contents (default: true)
-  /// - `ml-author`: Author for document metadata
-  Future<InternalCommandResult> _executeMd2Latex(
-    Map<String, String> parameters,
-  ) async {
-    final stopwatch = Stopwatch()..start();
-    final inputFile = parameters['input'] ?? parameters['file'];
-    final outputFile = parameters['output'];
-    final standalone = parameters['standalone']?.toLowerCase() != 'false';
-    final generateToc = parameters['toc']?.toLowerCase() != 'false';
-    final author = parameters['author'];
-
-    if (inputFile == null || inputFile.isEmpty) {
-      return InternalCommandResult.failure(
-        command: 'md2latex',
-        error: 'Input file required\n'
-            '  Usage: :md2latex -ml-input=<path/to/file.md>\n'
-            '  Resolution: Provide a markdown file path',
-        duration: Duration.zero,
-      );
-    }
-
-    // Resolve input path
-    final absoluteInput = inputFile.startsWith('/') 
-        ? inputFile 
-        : '${config.workspacePath}/$inputFile';
-    final file = File(absoluteInput);
-    
-    if (!file.existsSync()) {
-      stopwatch.stop();
-      return InternalCommandResult.failure(
-        command: 'md2latex',
-        error: 'Input file not found\n'
-            '  File: [$absoluteInput]\n'
-            '  Resolution: Check the file path',
-        duration: stopwatch.elapsed,
-      );
-    }
-
-    // Determine output directory
-    final outputDir = outputFile != null
-        ? p.dirname(outputFile.startsWith('/') ? outputFile : '${config.workspacePath}/$outputFile')
-        : p.dirname(absoluteInput);
-
-    if (config.dryRun) {
-      final expectedOutput = outputFile ?? absoluteInput.replaceAll('.md', '.tex');
-      return InternalCommandResult.success(
-        command: 'md2latex',
-        message: '[dry-run] Would convert:\n'
-            '  Input: $absoluteInput\n'
-            '  Output: $expectedOutput\n'
-            '  Standalone: $standalone',
-        duration: Duration.zero,
-      );
-    }
-
-    try {
-      // Use MdLatexConverter for conversion
-      final converter = MdLatexConverter(
-        absoluteInput,
-        options: MdLatexConverterOptions(
-          generatePreamble: standalone,
-          generateToc: generateToc,
-          author: author,
-        ),
-      );
-
-      if (config.verbose) {
-        print('  Converting: $absoluteInput');
-        print('  Output dir: $outputDir');
-      }
-
-      final result = await converter.convertFile(file, outputDir: outputDir);
-
-      stopwatch.stop();
-
-      return InternalCommandResult.success(
-        command: 'md2latex',
-        message: 'LaTeX generated successfully\n'
-            '  Input: ${result.sourcePath}\n'
-            '  Output: ${result.outputPath}',
-        duration: stopwatch.elapsed,
-      );
-    } catch (e, stack) {
-      stopwatch.stop();
-      return InternalCommandResult.failure(
-        command: 'md2latex',
-        error: 'LaTeX conversion failed\n'
-            '  Error: $e\n'
-            '  Stack: $stack',
         duration: stopwatch.elapsed,
       );
     }

@@ -90,24 +90,8 @@ if [[ "$GENERATE" == "true" ]]; then
         dart run tool/generate_bridge.dart --module=scripting ${VERBOSE:+--verbose}
         echo ""
         
-        echo "=== Generating DocScanner bridges ==="
-        dart run tool/generate_bridge.dart --module=doc_scanner ${VERBOSE:+--verbose}
-        echo ""
-        
-        echo "=== Generating DocSpecs bridges ==="
-        dart run tool/generate_bridge.dart --module=doc_specs ${VERBOSE:+--verbose}
-        echo ""
-        
         echo "=== Generating ReflectionGenerator bridges ==="
         dart run tool/generate_bridge.dart --module=reflection_generator ${VERBOSE:+--verbose}
-        echo ""
-        
-        echo "=== Generating MdLatexConverter bridges ==="
-        dart run tool/generate_bridge.dart --module=md_latex_converter ${VERBOSE:+--verbose}
-        echo ""
-        
-        echo "=== Generating MdPdfConverter bridges ==="
-        dart run tool/generate_bridge.dart --module=md_pdf_converter ${VERBOSE:+--verbose}
         echo ""
         
         echo "=== Generating WsPrepper bridges ==="

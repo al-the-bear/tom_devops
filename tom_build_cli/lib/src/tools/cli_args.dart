@@ -15,12 +15,6 @@ class ToolPrefix {
   /// Workspace analyzer prefix.
   static const workspaceAnalyzer = 'wa-';
 
-  /// Markdown to LaTeX converter prefix.
-  static const mdLatexConverter = 'mlc-';
-
-  /// Markdown to PDF converter prefix.
-  static const mdPdfConverter = 'mpc-';
-
   /// Reflection generator prefix.
   static const reflectionGenerator = 'rc-';
 }
@@ -169,12 +163,6 @@ CliArgs parseWsPrepperArgs(List<String> args) => CliArgs(ToolPrefix.wsPrepper, a
 
 /// Parses arguments with the workspace analyzer prefix.
 CliArgs parseWorkspaceAnalyzerArgs(List<String> args) => CliArgs(ToolPrefix.workspaceAnalyzer, args);
-
-/// Parses arguments with the md_latex_converter prefix.
-CliArgs parseMdLatexConverterArgs(List<String> args) => CliArgs(ToolPrefix.mdLatexConverter, args);
-
-/// Parses arguments with the md_pdf_converter prefix.
-CliArgs parseMdPdfConverterArgs(List<String> args) => CliArgs(ToolPrefix.mdPdfConverter, args);
 
 /// Parses arguments with the reflection generator prefix.
 CliArgs parseReflectionGeneratorArgs(List<String> args) => CliArgs(ToolPrefix.reflectionGenerator, args);

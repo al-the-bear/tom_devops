@@ -23,8 +23,6 @@ void main() {
       test('contains all internal commands', () {
         expect(InternalCommands.commands, contains('analyze'));
         expect(InternalCommands.commands, contains('generate-reflection'));
-        expect(InternalCommands.commands, contains('md2pdf'));
-        expect(InternalCommands.commands, contains('md2latex'));
         expect(InternalCommands.commands, contains('version-bump'));
         expect(InternalCommands.commands, contains('prepper'));
         expect(InternalCommands.commands, contains('reset-action-counter'));
@@ -62,8 +60,6 @@ void main() {
       test('getPrefix returns correct prefixes', () {
         expect(InternalCommands.getPrefix('analyze'), equals('wa'));
         expect(InternalCommands.getPrefix('generate-reflection'), equals('gr'));
-        expect(InternalCommands.getPrefix('md2pdf'), equals('mp'));
-        expect(InternalCommands.getPrefix('md2latex'), equals('ml'));
         expect(InternalCommands.getPrefix('version-bump'), equals('vb'));
         expect(InternalCommands.getPrefix('prepper'), equals('wp'));
       });
@@ -78,8 +74,6 @@ void main() {
       test('getCommandForPrefix returns correct commands', () {
         expect(InternalCommands.getCommandForPrefix('wa'), equals('analyze'));
         expect(InternalCommands.getCommandForPrefix('gr'), equals('generate-reflection'));
-        expect(InternalCommands.getCommandForPrefix('mp'), equals('md2pdf'));
-        expect(InternalCommands.getCommandForPrefix('ml'), equals('md2latex'));
         expect(InternalCommands.getCommandForPrefix('vb'), equals('version-bump'));
         expect(InternalCommands.getCommandForPrefix('wp'), equals('prepper'));
       });
@@ -108,11 +102,6 @@ void main() {
         expect(info.prefix, equals('vb'));
         expect(info.description, contains('version'));
         expect(info.requiresWorkspace, isTrue);
-      });
-
-      test('md2pdf command does not require workspace', () {
-        final info = InternalCommands.getCommand('md2pdf')!;
-        expect(info.requiresWorkspace, isFalse);
       });
 
       test('help command does not require workspace', () {

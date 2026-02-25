@@ -19,8 +19,6 @@ dart pub get
 
 # List of tools to compile
 TOOLS=(
-    "md_latex_converter"
-    "md_pdf_converter"
     "mode_switcher"
     "reflection_generator"
     "tom_build_tools"
