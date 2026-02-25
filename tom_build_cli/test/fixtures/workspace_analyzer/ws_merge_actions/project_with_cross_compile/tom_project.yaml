@@ -1,0 +1,8 @@
+# Project with custom cross-compilation (build-on target override, custom fields)
+cross-compilation:
+  build-on:
+    darwin-arm64:
+      targets: [darwin-arm64]
+      custom-flag: --optimize
+  targets: [darwin-arm64, linux-x64]
+  output-dir: "bin/${target}/"

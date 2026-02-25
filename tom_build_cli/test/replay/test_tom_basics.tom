@@ -1,0 +1,139 @@
+# Tom CLI Basic Tests - Tests for tom REPL basic functionality
+# Run with: tom -run-replay test_tom_basics.tom -test
+# Tests all functionality inherited from D4rt and DCli
+
+import 'dart:io';
+import 'dart:convert';
+
+# =============================================================================
+# Test: Basic Types
+# =============================================================================
+
+var intValue = 42;
+verifyEquals(intValue, 42, 'Integer assignment should work');
+
+var doubleValue = 3.14;
+verify(doubleValue > 3.0 && doubleValue < 4.0, 'Double should be in expected range');
+
+var stringValue = 'Hello Tom CLI';
+verifyEquals(stringValue.length, 13, 'String length should be correct');
+verifyContains(stringValue, 'Tom', 'String should contain Tom');
+
+var boolValue = true;
+verify(boolValue, 'Boolean true should be truthy');
+
+# =============================================================================
+# Test: Collections
+# =============================================================================
+
+var list = [1, 2, 3, 4, 5];
+verifyEquals(list.length, 5, 'List should have 5 elements');
+verifyEquals(list[2], 3, 'List indexing should work');
+
+var map = {'name': 'Tom CLI', 'version': '1.0.0', 'active': true};
+verifyEquals(map['name'], 'Tom CLI', 'Map string access should work');
+verifyEquals(map['active'], true, 'Map boolean access should work');
+
+var set = {1, 2, 3, 2, 1};
+verifyEquals(set.length, 3, 'Set should contain unique elements');
+
+# =============================================================================
+# Test: String Operations
+# =============================================================================
+
+var text = '  Tom CLI Test  ';
+verifyEquals(text.trim(), 'Tom CLI Test', 'Trim should work');
+verifyEquals(text.trim().toUpperCase(), 'TOM CLI TEST', 'toUpperCase should work');
+verifyEquals('tom,cli,test'.split(',').length, 3, 'Split should produce 3 parts');
+
+# =============================================================================
+# Test: Arithmetic
+# =============================================================================
+
+verifyEquals(10 + 5, 15, 'Addition should work');
+verifyEquals(10 - 5, 5, 'Subtraction should work');
+verifyEquals(10 * 5, 50, 'Multiplication should work');
+verifyEquals(10 ~/ 3, 3, 'Integer division should work');
+verifyEquals(10 % 3, 1, 'Modulo should work');
+
+# =============================================================================
+# Test: List Operations
+# =============================================================================
+
+var numbers = [5, 2, 8, 1, 9, 3];
+var sortedNumbers = [...numbers]..sort();
+verifyEquals(sortedNumbers[0], 1, 'Sorted first element should be 1');
+verifyEquals(sortedNumbers.last, 9, 'Sorted last element should be 9');
+
+var doubled = numbers.map((n) => n * 2).toList();
+verifyEquals(doubled[0], 10, 'Map operation should double values');
+
+var filtered = numbers.where((n) => n > 4).toList();
+verifyEquals(filtered.length, 3, 'Filter should return elements > 4');
+
+# =============================================================================
+# Test: JSON Operations
+# =============================================================================
+
+var data = {'name': 'test', 'value': 42, 'active': true};
+var jsonStr = jsonEncode(data);
+verifyContains(jsonStr, 'test', 'JSON should contain name');
+verifyContains(jsonStr, '42', 'JSON should contain value');
+
+var decoded = jsonDecode(jsonStr);
+verifyEquals(decoded['name'], 'test', 'Decoded name should match');
+verifyEquals(decoded['value'], 42, 'Decoded value should match');
+
+# =============================================================================
+# Test: File System
+# =============================================================================
+
+var cwd = Directory.current.path;
+verifyNotNull(cwd, 'Current directory should not be null');
+verify(cwd.isNotEmpty, 'Current directory path should not be empty');
+
+var tempDir = Directory.systemTemp;
+verify(tempDir.existsSync(), 'System temp directory should exist');
+
+# =============================================================================
+# Test: DateTime and Duration
+# =============================================================================
+
+var now = DateTime.now();
+verifyNotNull(now, 'DateTime.now should not be null');
+verify(now.year >= 2026, 'Year should be 2026 or later');
+
+var duration = Duration(seconds: 90);
+verifyEquals(duration.inSeconds, 90, 'Duration should be 90 seconds');
+verifyEquals(duration.inMinutes, 1, 'Duration should be 1 minute');
+
+# =============================================================================
+# Test: Platform Info
+# =============================================================================
+
+var pathSep = Platform.pathSeparator;
+verifyNotNull(pathSep, 'Path separator should not be null');
+verify(pathSep == '/' || pathSep == '\\', 'Path separator should be / or \\');
+
+var os = Platform.operatingSystem;
+verifyNotNull(os, 'Operating system should not be null');
+
+# =============================================================================
+# Test: Multiline Define
+# =============================================================================
+
+.start-define
+int factorial(int n) {
+  if (n <= 1) return 1;
+  return n * factorial(n - 1);
+}
+.end
+
+verifyEquals(factorial(5), 120, 'Factorial of 5 should be 120');
+verifyEquals(factorial(0), 1, 'Factorial of 0 should be 1');
+
+# =============================================================================
+# Summary
+# =============================================================================
+
+testSummary();

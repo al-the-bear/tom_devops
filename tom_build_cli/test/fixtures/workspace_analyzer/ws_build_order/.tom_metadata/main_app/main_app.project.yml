@@ -1,0 +1,7 @@
+# Project: Main App
+name: main_app
+displayName: Main App
+type: dart_console
+parts:
+  - bin
+  - lib

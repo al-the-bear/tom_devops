@@ -1,0 +1,244 @@
+# tom_workspace.yaml
+
+imports:
+  - tom_workspace_local.yaml
+
+# Project type definitions (required for all project types in workspace)
+project-types:
+  dart-package:
+    name: Dart Package
+    description: A publishable Dart library
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+      build-yaml: build.yaml
+  
+  dart-console:
+    name: Dart Console App
+    description: A Dart command-line application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+  
+  flutter-app:
+    name: Flutter Application
+    description: A Flutter mobile/web application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+  
+  vscode-extension:
+    name: VS Code Extension
+    description: A Visual Studio Code extension
+    metadata-files:
+      package-json: package.json
+      tsconfig-json: tsconfig.json
+
+workspace-modes:
+  mode-types: [environment, execution, cloud-provider, deployment, publishing]
+  
+  supported:
+    - name: development
+      description: Development mode
+      implies: [relative_build]
+    - name: production
+      description: Production mode
+  
+  environment-modes:
+    default: local
+    local:
+      description: Local development
+      modes: [development]
+    prod:
+      description: Production
+      modes: [production]
+  
+  execution-modes:
+    default: local
+    local:
+      description: Run directly
+    docker:
+      description: Run in container
+  
+  cloud-provider-modes:
+    default: aws
+    aws:
+      description: Amazon Web Services
+    gcp:
+      description: Google Cloud Platform
+  
+  deployment-modes:
+    default: none
+    none:
+      description: No deployment
+    docker-compose:
+      description: Docker Compose
+    kubernetes:
+      description: Kubernetes
+  
+  publishing-modes:
+    default: development
+    development:
+      description: Development builds
+    release:
+      description: Production releases
+  
+  action-mode-configuration:
+    default:
+      environment: local
+      execution: local
+      cloud-provider: aws
+      deployment: none
+      publishing: development
+    build:
+      description: Build for local
+      environment: local
+      execution: local
+    build_prod:
+      description: Build for production
+      environment: prod
+      execution: docker
+      publishing: release
+    deploy_prod:
+      description: Deploy to production
+      environment: prod
+      execution: cloud
+      deployment: kubernetes
+
+binaries: bin/
+
+cross-compilation:
+  all-targets: [linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64]
+  build-on:
+    darwin-arm64:
+      targets: [darwin-arm64]
+    linux-x64:
+      targets: [linux-x64, linux-arm64]
+
+actions:
+  build:
+    default:
+      pre-commands:
+        - echo "Starting build..."
+      commands:
+        - dart analyze lib test
+        - dart test
+      post-commands:
+        - echo "Build complete"
+    dart_console:
+      commands:
+        - dart analyze lib bin test
+        - dart test
+        - dart compile exe bin/main.dart
+  deploy:
+    skip-types: [dart_package]
+    default:
+      pre-commands:
+        - echo "Preparing deployment..."
+      commands:
+        - docker-compose up -d
+      post-commands:
+        - echo "Deployment complete"
+
+groups:
+  uam:
+    description: UAM application suite
+    projects: [tom_uam_client, tom_uam_server, tom_uam_shared]
+    project-info-overrides:
+      cloud-provider: aws
+      deployment: kubernetes
+
+# Mode type definitions (outside workspace-modes)
+environment-mode-definitions:
+  default:
+    description: Default environment
+  local:
+    description: Local development
+    working-dir: .
+    variables:
+      DEBUG: "true"
+  prod:
+    description: Production environment
+    variables:
+      DEBUG: "false"
+
+execution-mode-definitions:
+  default:
+    working-dir: .
+  local:
+    description: Run directly on host
+  docker:
+    description: Run in container
+    image: dart:stable
+  cloud:
+    description: Run on cloud platform
+    provider: aws
+
+deployment-mode-definitions:
+  default:
+    strategy: rolling
+  none:
+    description: No deployment
+  docker-compose:
+    description: Docker Compose deployment
+    compose-file: docker-compose.yml
+  kubernetes:
+    description: Kubernetes deployment
+    namespace: default
+
+cloud-provider-mode-definitions:
+  default:
+    region: us-east-1
+  aws:
+    name: Amazon Web Services
+    region: "[[AWS_REGION]]"
+    account-id: "[[AWS_ACCOUNT_ID]]"
+  gcp:
+    name: Google Cloud Platform
+    project-id: "[[GCP_PROJECT_ID]]"
+
+publishing-mode-definitions:
+  default:
+    changelog: CHANGELOG.md
+  development:
+    description: Development builds
+    publish: false
+  release:
+    description: Production release
+    publish: true
+    tag-prefix: v
+
+project-info:
+  tom_build:
+    cross-compilation:
+      all-targets: [darwin-x64, darwin-arm64, linux-x64, win32-x64]
+  tom_uam_server:
+    action-mode-definitions:
+      build:
+        execution: docker
+      deploy:
+        deployment: kubernetes
+        cloud-provider: aws
+
+deps:
+  sdk: ^3.10.4
+  path: ^1.9.0
+  yaml: ^3.1.2
+
+deps-dev:
+  test: ^1.28.0
+  lints: ^6.0.0
+
+version-settings:
+  prerelease-tag: dev
+  auto-increment: true
+  min-dev-build: 1
+  action-counter: 0
+
+pipelines:
+  ci:
+    global-parameters: [--verbose]
+    projects:
+      - name: tom_build
+      - name: tom_tools
+    actions:
+      - action: analyze
+      - action: test
+      - action: build

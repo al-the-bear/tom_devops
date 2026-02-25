@@ -1,0 +1,8 @@
+name: lib_b
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: ^3.0.0
+dependencies:
+  lib_a:
+    path: ../lib_a

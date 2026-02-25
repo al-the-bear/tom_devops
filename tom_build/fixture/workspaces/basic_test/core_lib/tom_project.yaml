@@ -1,0 +1,8 @@
+name: core_lib
+type: dart_package
+description: Core library with data structures and utilities
+build-after: []
+features:
+  publishable: true
+  has-tests: true
+  has-examples: true

@@ -1,0 +1,48 @@
+# Tests list operations: $append, $prepend, $replace, $remove
+# Tests: Section 3.2.3 - YAML List Operations
+
+imports:
+  - base.yaml
+
+actions:
+  build:
+    # $append operation
+    skip-types:
+      $append:
+        - flutter_app
+        - typescript_node
+
+  deploy:
+    # $replace operation
+    skip-types:
+      $replace:
+        - dart_cli
+
+  test:
+    default:
+      commands:
+        - dart test
+    # $prepend operation
+    skip-types:
+      $prepend:
+        - vscode_extension
+
+  publish:
+    default:
+      commands:
+        - dart pub publish
+    # $remove operation
+    skip-types:
+      $remove:
+        - flutter_app
+
+# Extra test: nested list operations
+groups:
+  core:
+    projects:
+      - project_a
+      - project_b
+  extended:
+    projects:
+      $append:
+        - project_c

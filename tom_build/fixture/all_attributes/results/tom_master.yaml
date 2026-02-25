@@ -1,0 +1,169 @@
+scan-timestamp: "2026-01-13T18:00:00Z"
+name: test_master
+binaries: bin/
+operating-systems:
+  - linux
+  - darwin
+mobile-platforms:
+  - android
+imports:
+  - base.yaml
+project-types:
+  dart-package:
+    name: Dart Package
+    description: A Dart library
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+    project-info-overrides:
+      publishable: true
+workspace-modes:
+  mode-types:
+    - environment
+  supported:
+    -
+      name: dev
+      description: Development
+      implies:
+        - debug
+  environment-modes:
+    default: local
+    local:
+      description: Local env
+      modes:
+        - dev
+cross-compilation:
+  all-targets:
+    - linux-x64
+  build-on:
+    linux-x64:
+      targets:
+        - linux-x64
+actions:
+  build:
+    name: build
+    description: Build action
+    default:
+      pre-commands:
+        - echo pre
+      commands:
+        - dart build
+      post-commands:
+        - echo post
+groups:
+  all:
+    name: all
+    description: All projects
+    projects:
+      - project_a
+      - project_b
+    project-info-overrides:
+      tier: primary
+environment-mode-definitions:
+  local:
+    description: Local mode
+    debug: true
+pipelines:
+  main:
+    global-parameters:
+      - --ci
+    projects:
+      -
+        name: project_a
+    actions:
+      -
+        action: build
+project-info:
+  project_a:
+    custom: value
+deps:
+  yaml: ^3.0.0
+deps-dev:
+  test: ^1.0.0
+version-settings:
+  prerelease-tag: alpha
+  auto-increment: false
+  min-dev-build: 0
+  action-counter: 10
+master-custom-tag: master-value
+build-order:
+  - project_a
+  - project_b
+action-order:
+  build:
+    - project_a
+    - project_b
+  deploy:
+    - project_a
+projects:
+  project_a:
+    name: project_a
+    type: dart-package
+    description: First project
+    build-after:
+      - base
+    action-order:
+      build:
+        - base
+    features:
+      publishable: true
+      has-tests: true
+    environment-mode-definitions:
+      local:
+        description: Local
+        debug: true
+    execution-mode-definitions:
+      native:
+        description: Native
+        runtime: dart
+    actions:
+      build:
+        name: build
+        default:
+          commands:
+            - dart analyze
+    package-module:
+      name: project_a
+      library-file: lib/project_a.dart
+      source-folders:
+        - lib/src
+    parts:
+      core:
+        name: core
+        library-file: lib/src/core/core.dart
+        modules:
+          data:
+            name: data
+            library-file: lib/src/core/data.dart
+    tests:
+      - test/
+    examples:
+      - example/
+    docs:
+      - doc/
+    copilot-guidelines:
+      - guidelines/
+    binaries: bin/
+    binary-files:
+      - bin/tool
+    pubspec-yaml:
+      name: project_a
+      version: 1.0.0
+    executables:
+      -
+        source: bin/main.dart
+        output: main
+    action-mode-definitions:
+      build:
+        environment: local
+    custom-tag: custom-value
+  project_b:
+    name: project_b
+    type: dart-package
+    description: Second project
+    build-after:
+      - project_a
+    features:
+      publishable: false
+    pubspec-yaml:
+      name: project_b
+      version: 2.0.0

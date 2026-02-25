@@ -1,0 +1,9 @@
+# Action without default definition
+# Tests: Section 9.2 - Action requires default
+
+actions:
+  build:
+    dart_package:
+      commands:
+        - dart compile exe
+    # Missing default: block

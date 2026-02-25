@@ -1,0 +1,7 @@
+# Project: Project With Local Index
+name: project_with_local_index
+displayName: Project With Local Index
+type: dart_console
+parts:
+  - bin
+  - lib

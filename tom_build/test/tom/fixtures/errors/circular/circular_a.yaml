@@ -1,0 +1,11 @@
+# Circular import dependencies
+# Tests: Section 9.3 - Circular dependencies
+
+imports:
+  - circular_b.yaml
+
+actions:
+  build:
+    default:
+      commands:
+        - echo a

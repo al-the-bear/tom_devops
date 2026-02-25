@@ -1,0 +1,12 @@
+name: project_with_assets
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: ^3.0.0
+dependencies:
+  flutter:
+    sdk: flutter
+
+flutter:
+  assets:
+    - assets/

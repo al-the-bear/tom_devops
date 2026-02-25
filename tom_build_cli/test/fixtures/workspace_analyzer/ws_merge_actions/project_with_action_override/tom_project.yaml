@@ -1,0 +1,7 @@
+# Project with custom build action (should replace workspace build, but inherit others)
+actions:
+  build:
+    default:
+      commands:
+        - custom-build-step-1
+        - custom-build-step-2

@@ -1,0 +1,4 @@
+# Configuration for dart test
+# The test/fixture directory is excluded by its own dart_test.yaml
+
+filename: "*_test.dart"

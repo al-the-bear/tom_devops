@@ -1,0 +1,6 @@
+# Project: Project With Folders
+name: project_with_folders
+displayName: Project With Folders
+type: dart_package
+parts:
+  - src

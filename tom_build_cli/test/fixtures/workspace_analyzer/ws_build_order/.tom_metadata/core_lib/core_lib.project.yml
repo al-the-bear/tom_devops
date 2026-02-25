@@ -1,0 +1,6 @@
+# Project: Core Lib
+name: core_lib
+displayName: Core Lib
+type: dart_package
+parts:
+  - src

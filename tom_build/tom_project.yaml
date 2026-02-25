@@ -1,0 +1,8 @@
+project_id: TB
+name: tom-build
+description: >-
+  Workspace build tool
+
+executables:
+  - name: tom
+    path: bin/tom.dart

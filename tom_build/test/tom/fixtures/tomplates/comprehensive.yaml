@@ -1,0 +1,36 @@
+# Tomplate combining all placeholder types
+# Tests: Comprehensive placeholder integration
+
+name: ${project.name}
+version: ${project.version:-1.0.0}
+
+environment:
+  sdk: ${deps.sdk}
+  host: localhost
+  port: 8080
+  
+runtime:
+  platform: {{Platform.operatingSystem}}
+  now: {{DateTime.now().toIso8601String()}}
+  
+config:
+@@@mode development
+  debug: true
+  log_level: debug
+  api_url: http://localhost:8080/api
+@@@mode production
+  debug: false
+  log_level: warn
+  api_url: https://[[API_HOST]]/api
+@@@mode default
+  debug: false
+  log_level: info
+  api_url: http://localhost:8080/api
+@@@endmode
+
+projects: "{{projects.*.name;,}}"
+dart_packages: "{{projects.[type=dart_package].name;,}}"
+
+# Escaped for later processing
+deferred: \${later.value}
+shell_env: \[[SHELL_VAR]]

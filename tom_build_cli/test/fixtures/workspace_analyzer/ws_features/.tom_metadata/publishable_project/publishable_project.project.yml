@@ -1,0 +1,7 @@
+# Project: Publishable Project
+name: publishable_project
+displayName: Publishable Project
+type: dart_package
+description: "A publishable project"
+parts:
+  - src

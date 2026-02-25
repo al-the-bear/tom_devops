@@ -1,0 +1,13 @@
+name: my_cli
+type: dart_cli
+description: Command-line tool
+build-after:
+  - core_lib
+  - utils_lib
+features:
+  publishable: false
+  has-tests: true
+  cross-compile: true
+executables:
+  - source: bin/my_cli.dart
+    output: my_cli

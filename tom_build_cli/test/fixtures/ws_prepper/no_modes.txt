@@ -1,0 +1,4 @@
+This is a simple text file with no mode blocks.
+It should be copied as-is without any changes.
+Line 3.
+Line 4.

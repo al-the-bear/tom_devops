@@ -1,0 +1,2 @@
+# Exclude all tests in this directory - these are fixtures, not actual tests
+skip: true

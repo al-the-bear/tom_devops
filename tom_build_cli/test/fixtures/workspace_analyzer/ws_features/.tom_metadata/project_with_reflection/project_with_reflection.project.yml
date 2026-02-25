@@ -1,0 +1,6 @@
+# Project: Project With Reflection
+name: project_with_reflection
+displayName: Project With Reflection
+type: dart_package
+parts:
+  - src

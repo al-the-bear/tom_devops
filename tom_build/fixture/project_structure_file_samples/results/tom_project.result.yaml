@@ -1,0 +1,75 @@
+name: test_project
+build-after:
+  - tom_uam_shared
+  - tom_core_kernel
+action-order:
+  deploy-after:
+    - tom_uam_shared
+features:
+  publishable: false
+  has-docker: true
+execution-mode-definitions:
+  docker:
+    image: tom-uam-server
+    dockerfile: Dockerfile
+    compose-file: docker-compose.yml
+deployment-mode-definitions:
+  kubernetes:
+    dockerfile: Dockerfile
+    target-platforms:
+      - linux/amd64
+      - linux/arm64
+cross-compilation:
+  all-targets:
+    - linux-x64
+    - linux-arm64
+  build-on:
+    linux-x64:
+      targets:
+        - linux-x64
+        - linux-arm64
+actions:
+  build:
+    name: build
+    default:
+      pre-commands:
+        - echo "Building server..."
+      commands:
+        - dart analyze lib bin test
+        - dart test
+        - dart compile exe bin/server.dart -o bin/server
+      post-commands:
+        - echo "Server build complete"
+  deploy:
+    name: deploy
+    default:
+      pre-commands:
+        - echo "Deploying server..."
+      commands:
+        - docker-compose up -d
+      post-commands:
+        - echo "Server deployed"
+binaries: bin/
+pubspec-yaml:
+  name: tom_uam_server
+  version: 1.0.0
+  homepage: "https://github.com/example/tom_uam_server"
+executables:
+  -
+    source: bin/server.dart
+    output: server
+action-mode-definitions:
+  build:
+    environment: local
+    execution: docker
+    deployment: none
+    publishing: development
+  deploy:
+    environment: prod
+    execution: cloud
+    cloud-provider: aws
+    deployment: kubernetes
+    publishing: release
+server-config:
+  port: 8080
+  max-connections: 100

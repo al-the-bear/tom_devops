@@ -1,0 +1,3 @@
+# Root import (referenced with ~/)
+deps:
+  root_dep: ^3.0.0

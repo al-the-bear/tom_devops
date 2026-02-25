@@ -1,0 +1,16 @@
+# Build configuration for tom_build_cli
+#
+# Reflection generator for runtime reflection in tests.
+# Version and D4rt bridge configuration is in tom_build.yaml.
+
+targets:
+  $default:
+    builders:
+      # Reflection generator for test files
+      tom_reflection_generator:reflection_generator:
+        generate_for:
+          - test/tools/tools_bridge_test.dart
+          - test/ws_prepper/ws_prepper_bridge_test.dart
+
+        options:
+          formatted: true

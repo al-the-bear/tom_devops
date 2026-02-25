@@ -1,0 +1,36 @@
+# Tom Test Kit configuration
+
+versioner:
+  variable-prefix: TestKit
+
+# Compiler tool configuration
+compiler:
+  compiles:
+    # macOS ARM64 - compile for self + all Linux targets
+    - commandline:
+        - mkdir -p $TOM_BINARY_PATH/${target-platform-vs}
+        - dart compile exe ${file} --target-os=${target-os} -o $TOM_BINARY_PATH/${target-platform-vs}/testkit
+      files: bin/testkit.dart
+      targets: [darwin-arm64, linux-x64, linux-arm64, linux-armhf]
+      platforms: [darwin-arm64]
+    
+    # Other platforms - compile for self only
+    - commandline:
+        - mkdir -p $TOM_BINARY_PATH/${target-platform-vs}
+        - dart compile exe ${file} -o $TOM_BINARY_PATH/${target-platform-vs}/testkit
+      files: bin/testkit.dart
+      platforms: [darwin-x64, linux-*, win32-*]
+
+  postcompile:
+    # Make binaries executable on Unix-like systems
+    - commandline:
+        - chmod -R +x $TOM_BINARY_PATH/${current-platform-vs}/
+      platforms: [macos, linux]
+    
+    # Create tk symlink for testkit
+    - commandline:
+        - ln -sf $TOM_BINARY_PATH/${current-platform-vs}/testkit $TOM_BINARY_PATH/${current-platform-vs}/tk
+      platforms: [macos, linux]
+    - commandline:
+        - cmd /c mklink $HOME\.tom\bin\${current-platform-vs}\tk.exe $HOME\.tom\bin\${current-platform-vs}\testkit.exe
+      platforms: [win32-*]

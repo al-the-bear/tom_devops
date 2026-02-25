@@ -1,0 +1,65 @@
+name: basic_test
+binaries: bin/
+operating-systems:
+  - linux
+  - darwin
+  - windows
+project-types:
+  dart_package:
+    name: Dart Package
+    description: A Dart library package
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+  dart_cli:
+    name: Dart CLI
+    description: A Dart command-line application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+  dart_server:
+    name: Dart Server
+    description: A Dart server application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+workspace-modes:
+  mode-types:
+    - environment
+  supported:
+    - name: development
+      description: Development mode
+  environment-modes:
+    default: local
+    local:
+      description: Local development
+actions:
+  build:
+    name: build
+    default:
+      commands:
+        - dart analyze
+        - dart test
+  test:
+    name: test
+    default:
+      commands:
+        - dart test
+groups:
+  core:
+    name: core
+    description: Core packages
+    projects:
+      - core_lib
+      - utils_lib
+  apps:
+    name: apps
+    description: Applications
+    projects:
+      - my_cli
+      - my_server
+deps:
+  path: ^1.9.0
+  yaml: ^3.1.2
+deps-dev:
+  test: ^1.28.0
+version-settings:
+  prerelease-tag: dev
+  auto-increment: true

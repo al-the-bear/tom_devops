@@ -1,0 +1,61 @@
+# Tom Build Configuration for tom_build_cli
+
+versioner:
+  output: lib/src/tom_d4rt/version.versioner.dart
+
+cleanup:
+  - 'lib/src/tom_d4rt/version.versioner.dart'
+  - 'lib/src/tom_d4rt/bridges_trigger.g.dart'
+  - 'lib/src/tom_d4rt/d4rt_bridges.b.dart'
+  - 'lib/src/tom_d4rt/dartscript.b.dart'
+  - 'lib/src/tom_d4rt/tom_cli_api_bridges.b.dart'
+  - 'lib/src/tom_d4rt/tom_build_cli_bridges.b.dart'
+  - 'bin/d4rtrun.b.dart'
+
+d4rtgen:
+  name: tom_build_cli
+  helpersImport: package:tom_d4rt/tom_d4rt.dart
+  generateBarrel: true
+  barrelPath: lib/src/tom_d4rt/d4rt_bridges.b.dart
+  generateDartscript: true
+  dartscriptPath: lib/src/tom_d4rt/dartscript.b.dart
+  generateTestRunner: true
+  testRunnerPath: bin/d4rtrun.b.dart
+  registrationClass: TomBuildCliBridges
+  importedBridges:
+    - import: package:tom_dartscript_bridges/dartscript.b.dart
+      class: TomDartscriptBridges
+  modules:
+    - name: tom_build_cli
+      barrelFiles:
+        - package:tom_build_cli/tom_build_cli.dart
+      barrelImport: package:tom_build_cli/tom_build_cli.dart
+      outputPath: lib/src/tom_d4rt/tom_build_cli_bridges.b.dart
+      followAllReExports: false
+      excludePatterns:
+        - "**/*_bridge.dart"
+        - "**/*_generated.dart"
+        - "**/*.b.dart"
+        - "**/*.g.dart"
+compiler:
+  compiles:
+    # macOS ARM64 - compile for self + all Linux targets
+    - commandline:
+        - mkdir -p $HOME/.tom/bin/${target-platform-vs}
+        - dart compile exe ${file} --target-os=${target-os} -o $HOME/.tom/bin/${target-platform-vs}/${file.name}
+      files: bin/tom.dart
+      targets: [darwin-arm64, linux-x64, linux-arm64, linux-armhf]
+      platforms: [darwin-arm64]
+    
+    # Other platforms - compile for self only
+    - commandline:
+        - mkdir -p $HOME/.tom/bin/${target-platform-vs}
+        - dart compile exe ${file} -o $HOME/.tom/bin/${target-platform-vs}/${file.name}
+      files: bin/tom.dart
+      platforms: [darwin-x64, linux-*, win32-*]
+
+  postcompile:
+    # Make binaries executable on Unix-like systems
+    - commandline:
+        - chmod -R +x $HOME/.tom/bin/${current-platform-vs}/
+      platforms: [macos, linux]

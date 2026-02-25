@@ -1,0 +1,9 @@
+name: core_lib
+version: 1.0.0
+description: Core library with data structures and utilities
+environment:
+  sdk: ^3.0.0
+dependencies:
+  path: ^1.9.0
+dev_dependencies:
+  test: ^1.28.0

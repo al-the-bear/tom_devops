@@ -1,0 +1,26 @@
+# Tomplate with escaped placeholders
+# Tests: Section 5.5.5 - Escaping
+
+# Escaped value references - preserved in output
+deferred_name: \${project.name}
+deferred_version: \${version:-1.0.0}
+
+# Escaped environment variables
+shell_var: \[[MY_VAR]]
+delayed_env: \[[ENV_VAR:-default]]
+
+# Escaped D4rt expressions
+later_eval: \{{expression()}}
+script_block: \{{(){return value;}()}}
+
+# Escaped mode blocks
+# Note: double backslash to prevent mode processing
+literal_mode: \\@@@mode development
+
+# Mixed escaped and unescaped
+mixed_line: ${resolved} but \${not_resolved}
+
+# Normal placeholders for comparison
+normal_name: ${project.name}
+normal_env: [[HOST:-localhost]]
+normal_expr: {{getValue()}}

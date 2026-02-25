@@ -1,0 +1,32 @@
+name: test_package
+version: 1.0.0
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  meta: ^1.9.0
+  
+@@@mode dev
+  tom_core:
+    path: ../tom_core
+  tom_shared:
+    path: ../tom_shared
+@@@mode release
+  tom_core: ^1.0.0
+  tom_shared: ^1.0.0
+@@@mode staging
+  tom_core:
+    git:
+      url: https://github.com/org/tom.git
+      path: tom_core
+      ref: staging
+  tom_shared:
+    git:
+      url: https://github.com/org/tom.git
+      path: tom_shared
+      ref: staging
+@@@endmode
+
+dev_dependencies:
+  test: ^1.24.0

@@ -1,0 +1,6 @@
+# Project: Project With Tests
+name: project_with_tests
+displayName: Project With Tests
+type: dart_package
+parts:
+  - src

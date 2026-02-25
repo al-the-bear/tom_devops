@@ -1,0 +1,12 @@
+# Configuration with list operations for testing deep merge
+# Tests: Section 3.2.3 - YAML Deep Merge Semantics
+
+actions:
+  build:
+    skip-types:
+      - dart_package
+
+  deploy:
+    skip-types:
+      $append:
+        - node_cli

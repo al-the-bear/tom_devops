@@ -1,0 +1,356 @@
+# Complete workspace configuration for comprehensive testing
+# Tests: Section 3.2 - All fields in tom_workspace.yaml Schema
+
+imports:
+  - shared/base.yaml
+  - shared/modes.yaml
+
+name: complete_workspace
+binaries: bin/
+
+# Section 3.2.1a - project-types Structure
+project-types:
+  dart_package:
+    name: Dart Package
+    description: A publishable Dart library
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+      build-yaml: build.yaml
+    project-info-overrides:
+      features:
+        publishable: true
+
+  dart_cli:
+    name: Dart CLI
+    description: A Dart command-line application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+
+  flutter_app:
+    name: Flutter Application
+    description: A Flutter mobile/web application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+      analysis-options: analysis_options.yaml
+    project-info-overrides:
+      features:
+        has-assets: true
+
+  vscode_extension:
+    name: VS Code Extension
+    description: A Visual Studio Code extension
+    metadata-files:
+      package-json: package.json
+      tsconfig-json: tsconfig.json
+
+# Section 3.2.4 - workspace-modes Structure
+workspace-modes:
+  mode-types: [environment, execution, cloud-provider, deployment, publishing]
+  
+  supported:
+    - name: development
+      description: Development mode
+      implies: [relative_build, debug, verbose]
+    - name: production
+      description: Production mode
+      implies: [optimized]
+  
+  environment-modes:
+    default: local
+    local:
+      description: Local development
+      modes: [development]
+    int:
+      description: Integration environment
+      modes: [development]
+    prod:
+      description: Production
+      modes: [production]
+  
+  execution-modes:
+    default: local
+    local:
+      description: Run directly on host
+    docker:
+      description: Run in container
+      modes: [containerized]
+    cloud:
+      description: Run on cloud platform
+      modes: [cloud_native]
+  
+  cloud-provider-modes:
+    default: aws
+    aws:
+      description: Amazon Web Services
+    gcp:
+      description: Google Cloud Platform
+    azure:
+      description: Microsoft Azure
+  
+  deployment-modes:
+    default: none
+    none:
+      description: No deployment
+    docker-compose:
+      description: Docker Compose
+    kubernetes:
+      description: Kubernetes
+  
+  publishing-modes:
+    default: development
+    development:
+      description: Development builds
+    release:
+      description: Production releases
+  
+  action-mode-configuration:
+    default:
+      environment: local
+      execution: local
+      cloud-provider: aws
+      deployment: none
+      publishing: development
+    build:
+      description: Build for local
+      environment: local
+      execution: local
+    build_prod:
+      description: Build for production
+      environment: prod
+      execution: docker
+      publishing: release
+    test:
+      description: Test locally
+      environment: local
+      execution: local
+    deploy_staging:
+      description: Deploy to staging
+      environment: int
+      execution: cloud
+      deployment: kubernetes
+    deploy_prod:
+      description: Deploy to production
+      environment: prod
+      execution: cloud
+      cloud-provider: aws
+      deployment: kubernetes
+      publishing: release
+
+# Section 3.2.7 - Mode Type Definitions
+environment-mode-definitions:
+  default:
+    description: Default environment
+    working-dir: .
+  local:
+    description: Local development environment
+    variables:
+      DEBUG: "true"
+      LOG_LEVEL: debug
+  int:
+    description: Integration environment
+    variables:
+      DEBUG: "true"
+      LOG_LEVEL: info
+  prod:
+    description: Production environment
+    variables:
+      DEBUG: "false"
+      LOG_LEVEL: warn
+
+execution-mode-definitions:
+  default:
+    working-dir: .
+  local:
+    description: Run directly on host
+  docker:
+    description: Run in container
+    image: dart:stable
+    volumes: []
+    ports: []
+  cloud:
+    description: Run on cloud platform
+    provider: aws
+
+deployment-mode-definitions:
+  default:
+    strategy: rolling
+  none:
+    description: No deployment
+  docker-compose:
+    description: Docker Compose deployment
+    compose-file: docker-compose.yml
+  kubernetes:
+    description: Kubernetes deployment
+    namespace: default
+    replicas: 1
+
+cloud-provider-mode-definitions:
+  default:
+    region: us-east-1
+  aws:
+    name: Amazon Web Services
+    region: "[[AWS_REGION:-us-east-1]]"
+    account-id: "[[AWS_ACCOUNT_ID]]"
+  gcp:
+    name: Google Cloud Platform
+    project-id: "[[GCP_PROJECT_ID]]"
+  azure:
+    name: Microsoft Azure
+    subscription-id: "[[AZURE_SUBSCRIPTION_ID]]"
+
+publishing-mode-definitions:
+  default:
+    changelog: CHANGELOG.md
+  development:
+    description: Development builds
+    publish: false
+  release:
+    description: Production release
+    publish: true
+    tag-prefix: v
+
+# Section 3.2.5 - actions Structure  
+actions:
+  build:
+    skip-types: []
+    pre-build:
+      - echo "Pre-build hook"
+    post-build:
+      - echo "Post-build hook"
+    default:
+      commands:
+        - dart analyze lib test
+        - dart test
+    dart_cli:
+      commands:
+        - dart analyze lib bin test
+        - dart test
+        - dart compile exe bin/main.dart
+    flutter_app:
+      commands:
+        - flutter analyze
+        - flutter test
+        - flutter build
+
+  test:
+    default:
+      commands:
+        - dart test
+    flutter_app:
+      commands:
+        - flutter test
+
+  deploy:
+    skip-types: [dart_package]
+    applies-to-types: []
+    default:
+      pre-commands:
+        - echo "Preparing deployment..."
+      commands:
+        - docker-compose up -d
+      post-commands:
+        - echo "Deployment complete"
+
+  publish:
+    applies-to-types: [dart_package]
+    default:
+      commands:
+        - dart pub publish --force
+
+# Cross-compilation settings
+cross-compilation:
+  all-targets: [linux-x64, linux-arm64, darwin-x64, darwin-arm64, win32-x64]
+  build-on:
+    darwin-arm64:
+      targets: [darwin-arm64]
+    darwin-x64:
+      targets: [darwin-x64]
+    linux-x64:
+      targets: [linux-x64, linux-arm64]
+    win32-x64:
+      targets: [win32-x64]
+
+# Section 3.2.6 - groups Structure
+groups:
+  core:
+    description: Core framework libraries
+    projects: [tom_core, tom_core_kernel]
+    project-info-overrides:
+      features:
+        publishable: true
+  
+  uam:
+    description: UAM application suite
+    projects: [tom_uam_client, tom_uam_server, tom_uam_shared]
+    project-info-overrides:
+      cloud-provider: aws
+      deployment: kubernetes
+  
+  tools:
+    description: Build and development tools
+    projects: [tom_build, tom_tools]
+
+# Per-project default settings
+project-info:
+  tom_core:
+    description: Core library
+    features:
+      has-reflection: true
+  tom_build:
+    cross-compilation:
+      all-targets: [darwin-x64, darwin-arm64, linux-x64, win32-x64]
+  tom_uam_server:
+    action-mode-definitions:
+      build:
+        execution: docker
+      deploy:
+        deployment: kubernetes
+        cloud-provider: aws
+
+# Dependency versions
+deps:
+  sdk: ">=3.0.0 <4.0.0"
+  path: ^1.9.0
+  yaml: ^3.1.2
+  http: ^1.0.0
+  args: ^2.5.0
+
+deps-dev:
+  test: ^1.28.0
+  lints: ^6.0.0
+  build_runner: ^2.4.0
+
+# Version settings
+version-settings:
+  prerelease-tag: dev
+  auto-increment: true
+  min-dev-build: 1
+  action-counter: 0
+
+# Pipelines
+pipelines:
+  ci:
+    global-parameters: [--verbose]
+    projects:
+      - name: tom_build
+      - name: tom_tools
+    actions:
+      - action: analyze
+      - action: test
+      - action: build
+
+  release:
+    global-parameters: []
+    projects:
+      - name: tom_core
+      - name: tom_build
+    actions:
+      - action: build
+      - action: test
+      - action: publish
+
+# Custom tags (passthrough)
+custom-setting: custom-value
+my-config:
+  nested: true
+  list: [a, b, c]

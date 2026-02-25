@@ -1,0 +1,6 @@
+# Project: Lib B
+name: lib_b
+displayName: Lib B
+type: dart_package
+parts:
+  - src

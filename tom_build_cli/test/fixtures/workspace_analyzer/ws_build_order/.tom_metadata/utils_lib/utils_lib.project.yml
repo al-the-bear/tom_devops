@@ -1,0 +1,6 @@
+# Project: Utils Lib
+name: utils_lib
+displayName: Utils Lib
+type: dart_package
+parts:
+  - src

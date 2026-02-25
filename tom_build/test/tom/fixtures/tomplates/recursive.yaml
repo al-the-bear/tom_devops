@@ -1,0 +1,15 @@
+# Tomplate with recursive placeholders
+# Tests: Section 5.5.4 - Recursive Resolution
+
+# Simple recursion - value references other value
+base_path: ${paths.base}
+full_path: ${paths.base}/${paths.sub}
+deeply_nested: ${paths.base}/${paths.sub}/${paths.file}
+
+# Chain of references
+step1: ${refs.a}
+step2: ${refs.b}
+step3: ${refs.c}
+
+# Self-reference guard (should error after 10 levels)
+# recursive: ${recursive}

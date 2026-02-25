@@ -1,0 +1,20 @@
+# Tomplate with D4rt expression placeholders
+# Tests: Section 5.5.2 - D4rt Expression Placeholders
+
+computed:
+  timestamp: {{DateTime.now().toIso8601String()}}
+  random_id: {{generateId():-default-id}}
+  
+platform:
+  is_macos: {{Platform.isMacOS}}
+  os_version: {{Platform.operatingSystemVersion:-unknown}}
+  
+calculations:
+  total: {{calculateTotal(items)}}
+  average: {{items.map((e) => e.value).average():-0}}
+  
+# Method call syntax
+complex: {{(){
+  final result = processData();
+  return result.formatted;
+}():-fallback}}

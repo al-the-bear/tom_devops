@@ -1,0 +1,123 @@
+name: test_project
+type: dart-cli
+description: A test CLI project
+build-after:
+  - pkg_a
+  - pkg_b
+action-order:
+  build:
+    - pkg_a
+    - pkg_b
+  deploy:
+    - pkg_a
+features:
+  publishable: false
+  has-tests: true
+  cross-compile: true
+environment-mode-definitions:
+  local:
+    description: Project local mode
+    debug: true
+  staging:
+    description: Staging mode
+    debug: false
+execution-mode-definitions:
+  native:
+    description: Project native execution
+    runtime: dart
+  container:
+    description: Container execution
+    image: "custom:latest"
+cross-compilation:
+  all-targets:
+    - linux-x64
+    - darwin-arm64
+  build-on:
+    linux-x64:
+      targets:
+        - linux-x64
+        - linux-arm64
+actions:
+  build:
+    name: build
+    description: Project build override
+    skip-types:
+      - skip-me
+    applies-to-types:
+      - dart-cli
+    default:
+      pre-commands:
+        - echo project-pre
+      commands:
+        - dart compile exe bin/main.dart
+      post-commands:
+        - echo project-post
+      extra-flag: true
+    custom-type:
+      commands:
+        - custom-build.sh
+package-module:
+  name: test_project
+  library-file: lib/test_project.dart
+  source-folders:
+    - lib/src
+    - lib/generated
+parts:
+  core:
+    name: core
+    library-file: lib/src/core/core.dart
+    modules:
+      data:
+        name: data
+        library-file: lib/src/core/data/data.dart
+      utils:
+        name: utils
+        library-file: lib/src/core/utils/utils.dart
+  ui:
+    name: ui
+    library-file: lib/src/ui/ui.dart
+    modules:
+      widgets:
+        name: widgets
+        library-file: lib/src/ui/widgets/widgets.dart
+tests:
+  - test/unit/
+  - test/integration/
+examples:
+  - example/basic/
+  - example/advanced/
+docs:
+  - doc/api/
+  - doc/guide/
+copilot-guidelines:
+  - copilot_guidelines/coding.md
+  - copilot_guidelines/testing.md
+binaries: bin/
+binary-files:
+  - bin/tool.exe
+  - bin/helper.exe
+pubspec-yaml:
+  name: test_project
+  version: 1.0.0
+  environment:
+    sdk: ^3.0.0
+package-json:
+  name: test-project-js
+  version: 1.0.0
+executables:
+  -
+    source: bin/main.dart
+    output: main
+  -
+    source: bin/helper.dart
+    output: helper
+action-mode-definitions:
+  build:
+    environment: local
+    execution: native
+  deploy:
+    environment: staging
+    execution: container
+custom-project-tag: project-value
+nested-custom:
+  key: value

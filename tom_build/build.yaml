@@ -1,0 +1,27 @@
+targets:
+  $default:
+    builders:
+      # Reflection generator for test files
+      tom_reflection_generator:reflection_generator:
+        generate_for:
+          - test/tom/workspace_parser_test.dart
+          - test/scripting/maps_test.dart
+          - test/scripting/shell_test.dart
+          - test/scripting/zone_test.dart
+          - test/scripting/env_test.dart
+          - test/scripting/fs_test.dart
+          - test/scripting/yaml_test.dart
+          - test/scripting/workspace_test.dart
+          - test/scripting/text_test.dart
+          - test/file_structure/all_attributes_test.dart
+          - test/file_structure/file_structure_model_test.dart
+          - test/doc_scanner/document_folder_test.dart
+          - test/doc_scanner/doc_scanner_test.dart
+          - test/doc_scanner/markdown_parser_test.dart
+          - test/doc_scanner/section_test.dart
+          - test/doc_scanner/document_test.dart
+          - test/doc_scanner/doc_scanner_factory_test.dart
+        options:
+          formatted: true
+
+

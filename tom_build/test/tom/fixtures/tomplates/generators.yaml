@@ -1,0 +1,34 @@
+# Tomplate with generator placeholders
+# Tests: Section 5.5.3 - Generator Placeholders
+
+# Basic generators
+all_projects: "{{projects.*.name;,}}"
+project_list: "{{projects.*.name;-}}"
+project_versions: "{{projects.*.version; }}"
+
+# Filtered generators - single attribute
+dart_packages: "{{projects.[type=dart_package].name;,}}"
+flutter_apps: "{{projects.[type=flutter_app].name;,}}"
+cli_tools: "{{projects.[type=dart_cli].name; }}"
+
+# Filtered generators - regex pattern
+tom_projects: "{{projects.[name=^tom_.*$].name;-}}"
+versioned: "{{projects.[version=^1\\..*$].name;,}}"
+
+# Filtered generators - multiple conditions (AND)
+publishable_dart: "{{projects.[type=dart_package,publishable=true].name;,}}"
+core_packages: "{{projects.[type=dart_package,name=^tom_core.*$].name;-}}"
+
+# Filtered generators - boolean attributes
+with_tests: "{{projects.[has-tests=true].name;,}}"
+without_docker: "{{projects.[has-docker=false].name;,}}"
+
+# Nested path in generator
+project_descriptions: "{{projects.*.description;|}}"
+
+# Different separators
+comma_sep: "{{projects.*.name;,}}"
+space_sep: "{{projects.*.name; }}"
+newline_sep: "{{projects.*.name;\n}}"
+tab_sep: "{{projects.*.name;\t}}"
+pipe_sep: "{{projects.*.name;|}}"

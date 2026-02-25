@@ -1,0 +1,17 @@
+name: my_server
+description: HTTP server application
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  shelf: ^1.4.0
+  shelf_router: ^1.1.0
+  core_lib:
+    path: ../core_lib
+
+dev_dependencies:
+  test: ^1.24.0
+  http: ^1.1.0

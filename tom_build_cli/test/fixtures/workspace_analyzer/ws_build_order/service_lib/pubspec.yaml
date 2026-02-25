@@ -1,0 +1,10 @@
+name: service_lib
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: ^3.0.0
+dependencies:
+  core_lib:
+    path: ../core_lib
+  utils_lib:
+    path: ../utils_lib

@@ -1,0 +1,16 @@
+# Workspace to test import path resolution
+# Tests: Section 3.2.2 - Import Path Resolution
+
+imports:
+  # Relative to containing file (same directory)
+  - local_import.yaml
+  # Relative path from containing file (subdirectory)
+  - subdir/nested_import.yaml
+  # Workspace root relative (~/...)
+  - ~/root_import.yaml
+
+actions:
+  build:
+    default:
+      commands:
+        - echo "main"

@@ -1,0 +1,12 @@
+name: my_server
+type: dart_server
+description: HTTP server application
+build-after:
+  - core_lib
+features:
+  publishable: false
+  has-tests: true
+  has-docker: true
+executables:
+  - source: bin/server.dart
+    output: server

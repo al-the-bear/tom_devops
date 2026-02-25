@@ -1,0 +1,8 @@
+# Shared modes configuration
+# Tests: Section 3.2.2 - Import Path Resolution
+
+# Additional mode definitions that merge with workspace
+execution-mode-definitions:
+  remote:
+    description: Run on remote server
+    ssh-host: "[[SSH_HOST]]"

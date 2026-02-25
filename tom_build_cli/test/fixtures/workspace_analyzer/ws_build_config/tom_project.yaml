@@ -1,0 +1,43 @@
+# Workspace index.yaml for testing build configuration defaults
+binaries: bin/
+operating-systems:
+  - macos
+  - linux
+  - windows
+mobile-platforms:
+  - android
+  - ios
+
+# Custom build defaults (override analyzer defaults)
+build:
+  dart_package:
+    commands:
+      analyze:
+        - dart analyze lib test --fatal-infos
+      test:
+        - dart test --reporter=expanded
+      custom-step:
+        - echo "Custom step"
+    pre-build:
+      - build-runner
+    output: custom_build/
+
+# Custom run defaults
+run:
+  dart_console:
+    commands:
+      - dart run --enable-asserts
+
+# Custom deploy defaults
+deploy:
+  dart_console:
+    type: kubernetes
+    manifest: k8s/deployment.yaml
+
+groups:
+  core:
+    description: Core libraries
+    projects: [lib_a, lib_b]
+  apps:
+    description: Applications
+    projects: [app_c]

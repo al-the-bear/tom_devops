@@ -1,0 +1,5 @@
+# Tomplate testing file naming patterns
+# Tests: Section 3.5.1 - Naming Patterns
+
+name: ${name}
+version: ${version}

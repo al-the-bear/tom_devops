@@ -1,0 +1,16 @@
+{
+  "appName": "MyApp",
+@@@mode dev
+  "apiUrl": "http://localhost:8080",
+  "debug": true,
+  "logLevel": "verbose"
+@@@mode release
+  "apiUrl": "https://api.production.com",
+  "debug": false,
+  "logLevel": "error"
+@@@mode staging
+  "apiUrl": "https://api.staging.com",
+  "debug": true,
+  "logLevel": "info"
+@@@endmode
+}

@@ -1,0 +1,8 @@
+# Minimal workspace configuration for testing
+# Tests: Section 3.2 - tom_workspace.yaml Schema
+
+actions:
+  build:
+    default:
+      commands:
+        - dart compile exe

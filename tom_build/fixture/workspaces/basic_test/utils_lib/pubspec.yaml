@@ -1,0 +1,11 @@
+name: utils_lib
+version: 1.0.0
+description: Utility functions and helpers
+publish_to: none
+environment:
+  sdk: ^3.0.0
+dependencies:
+  core_lib:
+    path: ../core_lib
+dev_dependencies:
+  test: ^1.28.0

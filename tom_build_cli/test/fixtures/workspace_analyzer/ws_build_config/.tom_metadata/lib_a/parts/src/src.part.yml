@@ -1,0 +1,4 @@
+# Part: Src
+name: src
+displayName: Src
+sources: [lib_a.dart]

@@ -1,0 +1,10 @@
+# Action with both skip and applies-to (mutually exclusive)
+# Tests: Section 9.2 - Skip/Applies-to conflict
+
+actions:
+  build:
+    skip-types: [dart_package]
+    applies-to-types: [dart_cli]
+    default:
+      commands:
+        - dart compile exe

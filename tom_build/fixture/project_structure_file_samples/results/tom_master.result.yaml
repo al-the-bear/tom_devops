@@ -1,0 +1,433 @@
+scan-timestamp: "2026-01-13T17:00:00Z"
+name: tom
+binaries: bin/
+operating-systems:
+  - macos
+  - linux
+  - windows
+mobile-platforms:
+  - android
+  - ios
+project-types:
+  dart-package:
+    name: Dart Package
+    description: A publishable Dart library
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+      build-yaml: build.yaml
+  dart-console:
+    name: Dart Console App
+    description: A Dart command-line application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+  flutter-app:
+    name: Flutter Application
+    description: A Flutter mobile/web application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+  vscode-extension:
+    name: VS Code Extension
+    description: A Visual Studio Code extension
+    metadata-files:
+      package-json: package.json
+workspace-modes:
+  mode-types:
+    - environment
+    - execution
+    - cloud-provider
+    - deployment
+    - publishing
+  supported:
+    -
+      name: development
+      description: Development mode
+      implies:
+        - relative_build
+    -
+      name: production
+      description: Production mode
+  environment-modes:
+    default: local
+    local:
+      description: Local development
+      modes:
+        - development
+    prod:
+      description: Production
+      modes:
+        - production
+  execution-modes:
+    default: local
+    local:
+      description: Run directly
+    docker:
+      description: Run in container
+  cloud-provider-modes:
+    default: aws
+    aws:
+      description: Amazon Web Services
+    gcp:
+      description: Google Cloud Platform
+  deployment-modes:
+    default: none
+    none:
+      description: No deployment
+    docker-compose:
+      description: Docker Compose
+    kubernetes:
+      description: Kubernetes
+  publishing-modes:
+    default: development
+    development:
+      description: Development builds
+    release:
+      description: Production releases
+  action-mode-configuration:
+    default:
+      environment: local
+      execution: local
+      cloud-provider: aws
+      deployment: none
+      publishing: development
+    build:
+      description: Build for local
+      environment: local
+      execution: local
+    build_prod:
+      description: Build for production
+      environment: prod
+      execution: docker
+      publishing: release
+    deploy_prod:
+      description: Deploy to production
+      environment: prod
+      execution: cloud
+      deployment: kubernetes
+cross-compilation:
+  all-targets:
+    - linux-x64
+    - linux-arm64
+    - darwin-x64
+    - darwin-arm64
+    - win32-x64
+  build-on:
+    darwin-arm64:
+      targets:
+        - darwin-arm64
+    linux-x64:
+      targets:
+        - linux-x64
+        - linux-arm64
+actions:
+  build:
+    name: build
+    description: Build the project
+    default:
+      pre-commands:
+        - echo "Starting build..."
+      commands:
+        - dart analyze lib test
+        - dart test
+      post-commands:
+        - echo "Build complete"
+    dart-console:
+      commands:
+        - dart analyze lib bin test
+        - dart test
+        - dart compile exe bin/main.dart
+  deploy:
+    name: deploy
+    description: Deploy the project
+    skip-types:
+      - dart_package
+    default:
+      pre-commands:
+        - echo "Preparing deployment..."
+      commands:
+        - docker-compose up -d
+      post-commands:
+        - echo "Deployment complete"
+groups:
+  uam:
+    name: uam
+    description: UAM application suite
+    projects:
+      - tom_uam_client
+      - tom_uam_server
+      - tom_uam_shared
+    project-info-overrides:
+      cloud-provider: aws
+      deployment: kubernetes
+environment-mode-definitions:
+  default:
+    description: Default environment
+  local:
+    description: Local development
+    working-dir: .
+    variables:
+      DEBUG: true
+  prod:
+    description: Production environment
+    variables:
+      DEBUG: false
+execution-mode-definitions:
+  default:
+    working-dir: .
+  local:
+    description: Run directly on host
+  docker:
+    description: Run in container
+    image: "dart:stable"
+  cloud:
+    description: Run on cloud platform
+    provider: aws
+deployment-mode-definitions:
+  default:
+    strategy: rolling
+  none:
+    description: No deployment
+  docker-compose:
+    description: Docker Compose deployment
+    compose-file: docker-compose.yml
+  kubernetes:
+    description: Kubernetes deployment
+    namespace: default
+cloud-provider-mode-definitions:
+  default:
+    region: us-east-1
+  aws:
+    name: Amazon Web Services
+    region: "[[AWS_REGION]]"
+    account-id: "[[AWS_ACCOUNT_ID]]"
+  gcp:
+    name: Google Cloud Platform
+    project-id: "[[GCP_PROJECT_ID]]"
+publishing-mode-definitions:
+  default:
+    changelog: CHANGELOG.md
+  development:
+    description: Development builds
+    publish: false
+  release:
+    description: Production release
+    publish: true
+    tag-prefix: v
+pipelines:
+  ci:
+    global-parameters:
+      - --verbose
+    projects:
+      -
+        name: tom_build
+      -
+        name: tom_tools
+    actions:
+      -
+        action: analyze
+      -
+        action: test
+      -
+        action: build
+project-info:
+  tom_build:
+    cross-compilation:
+      all-targets:
+        - darwin-x64
+        - darwin-arm64
+        - linux-x64
+        - win32-x64
+  tom_uam_server:
+    action-mode-definitions:
+      build:
+        execution: docker
+      deploy:
+        deployment: kubernetes
+        cloud-provider: aws
+deps:
+  sdk: ^3.10.4
+  path: ^1.9.0
+  yaml: ^3.1.2
+deps-dev:
+  test: ^1.28.0
+  lints: ^6.0.0
+version-settings:
+  prerelease-tag: dev
+  auto-increment: true
+  min-dev-build: 1
+  action-counter: 42
+my-custom-setting: value
+another-setting:
+  nested: true
+build-order:
+  - tom_core_kernel
+  - tom_build
+  - tom_ai
+  - tom_uam_shared
+  - tom_uam_client
+  - tom_uam_server
+action-order:
+  build:
+    - tom_core_kernel
+    - tom_build
+    - tom_ai
+    - tom_uam_shared
+    - tom_uam_client
+    - tom_uam_server
+  deploy:
+    - tom_uam_shared
+    - tom_uam_server
+projects:
+  tom_core_kernel:
+    name: tom_core_kernel
+    type: dart-package
+    description: Core kernel library
+    features:
+      publishable: true
+      has-tests: true
+      has-examples: true
+      has-build-runner: false
+    environment-mode-definitions:
+      local:
+        description: Local development
+        working-dir: .
+        variables:
+          DEBUG: true
+      prod:
+        description: Production environment
+        variables:
+          DEBUG: false
+    execution-mode-definitions:
+      local:
+        description: Run directly on host
+      docker:
+        description: Run in container
+        image: "dart:stable"
+    actions:
+      build:
+        name: build
+        default:
+          pre-commands:
+            - echo "Starting build..."
+          commands:
+            - dart analyze lib test
+            - dart test
+          post-commands:
+            - echo "Build complete"
+    package-module:
+      name: tom_core_kernel
+      library-file: lib/tom_core_kernel.dart
+      source-folders:
+        - lib/src
+    parts:
+      core:
+        name: core
+        library-file: lib/src/core/core.dart
+        modules:
+          base:
+            name: base
+            library-file: lib/src/core/base/base.dart
+    tests:
+      - test/
+    examples:
+      - example/
+    docs:
+      - doc/
+    binaries: bin/
+    pubspec-yaml:
+      name: tom_core_kernel
+      version: 1.0.0
+      description: Core kernel library
+      environment:
+        sdk: ^3.10.4
+      dependencies:
+        path: ^1.9.0
+      dev_dependencies:
+        test: ^1.28.0
+  tom_uam_server:
+    name: tom_uam_server
+    type: dart-console
+    description: UAM Server application
+    build-after:
+      - tom_uam_shared
+      - tom_core_kernel
+    action-order:
+      deploy-after:
+        - tom_uam_shared
+    features:
+      publishable: false
+      has-tests: true
+      has-examples: false
+      has-docker: true
+    environment-mode-definitions:
+      local:
+        description: Local development
+        working-dir: .
+        variables:
+          DEBUG: true
+      prod:
+        description: Production environment
+        variables:
+          DEBUG: false
+    execution-mode-definitions:
+      local:
+        description: Run directly on host
+      docker:
+        description: Docker container for server
+        image: tom-uam-server
+        dockerfile: Dockerfile
+        compose-file: docker-compose.yml
+    deployment-mode-definitions:
+      kubernetes:
+        dockerfile: Dockerfile
+        target-platforms:
+          - linux/amd64
+          - linux/arm64
+    cross-compilation:
+      all-targets:
+        - linux-x64
+        - linux-arm64
+      build-on:
+        linux-x64:
+          targets:
+            - linux-x64
+            - linux-arm64
+    actions:
+      build:
+        name: build
+        default:
+          pre-commands:
+            - echo "Building server..."
+          commands:
+            - dart analyze lib bin test
+            - dart test
+            - dart compile exe bin/server.dart -o bin/server
+          post-commands:
+            - echo "Server build complete"
+      deploy:
+        name: deploy
+        default:
+          pre-commands:
+            - echo "Preparing server deployment..."
+          commands:
+            - docker-compose up -d
+          post-commands:
+            - echo "Server deployed"
+    package-module:
+      name: tom_uam_server
+      library-file: lib/tom_uam_server.dart
+      source-folders:
+        - lib/src
+    tests:
+      - test/
+    binaries: bin/
+    pubspec-yaml:
+      name: tom_uam_server
+      version: 1.0.0
+      description: UAM Server application
+    executables:
+      -
+        source: bin/server.dart
+        output: server
+    server-config:
+      port: 8080
+      max-connections: 100

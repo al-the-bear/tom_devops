@@ -1,0 +1,3 @@
+# Local import (same directory)
+deps:
+  local_dep: ^1.0.0

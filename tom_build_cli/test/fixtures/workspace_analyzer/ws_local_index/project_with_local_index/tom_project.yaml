@@ -1,0 +1,31 @@
+# Local project index.yaml with custom settings
+build-after:
+  - external_lib
+  - another_lib
+
+features:
+  publishable: false
+  has-docker: true
+
+build:
+  commands:
+    compile:
+      - ./scripts/build_step1.sh
+      - ./scripts/build_step2.sh
+  output: dist/
+
+run:
+  commands:
+    - dart run bin/server.dart --port=8080
+  docker:
+    compose-file: docker-compose.dev.yml
+    service: backend
+
+deploy:
+  type: ecs
+  task-definition: ecs/task.json
+  cluster: production
+
+binaries:
+  - my_tool.dart
+  - other_tool.dart

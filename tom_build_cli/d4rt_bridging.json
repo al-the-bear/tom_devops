@@ -1,0 +1,33 @@
+{
+  "name": "tom_build_cli",
+  "helpersImport": "package:tom_d4rt/tom_d4rt.dart",
+  "generateBarrel": false,
+  "generateDartscript": true,
+  "dartscriptPath": "lib/src/tom_d4rt/dartscript.b.dart",
+  "registrationClass": "TomBuildCliBridges",
+  "generateTestRunner": true,
+  "testRunnerPath": "bin/d4rtrun.b.dart",
+  "importedBridges": [
+    {
+      "import": "package:tom_dartscript_bridges/dartscript.b.dart",
+      "class": "TomDartscriptBridges"
+    }
+  ],
+  "modules": [
+    {
+      "name": "tom_cli_api",
+      "barrelFiles": ["package:tom_build_cli/tom_cli_api.dart"],
+      "barrelImport": "package:tom_build_cli/tom_cli_api.dart",
+      "outputPath": "lib/src/tom_d4rt/tom_cli_api_bridges.b.dart",
+      "followAllReExports": false,
+      "excludePatterns": ["**/*_bridge.dart", "**/*_generated.dart"],
+      "excludeClasses": [
+        "TomCli", "ActionExecutor", "ActionExecutorConfig",
+        "ActionCounterManager", "InternalCommandExecutor",
+        "InternalCommandInfo", "InternalCommandConfig",
+        "InternalCommands", "CommandRunner"
+      ],
+      "excludeFunctions": ["runTomCli"]
+    }
+  ]
+}

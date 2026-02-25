@@ -1,0 +1,16 @@
+# Missing actions block entirely
+# Tests: Section 9.2 - Missing required block
+
+workspace-modes:
+  mode-types: [environment]
+  
+  environment-modes:
+    default: local
+    local:
+      description: Local
+
+environment-mode-definitions:
+  local:
+    description: Local env
+
+# Missing actions: block entirely!

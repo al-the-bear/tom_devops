@@ -1,0 +1,14 @@
+name: my_cli
+version: 1.0.0
+description: Command-line tool
+publish_to: none
+environment:
+  sdk: ^3.0.0
+dependencies:
+  core_lib:
+    path: ../core_lib
+  utils_lib:
+    path: ../utils_lib
+  args: ^2.4.0
+dev_dependencies:
+  test: ^1.28.0

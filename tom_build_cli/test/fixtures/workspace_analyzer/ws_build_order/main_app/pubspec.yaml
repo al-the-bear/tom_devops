@@ -1,0 +1,8 @@
+name: main_app
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: ^3.0.0
+dependencies:
+  service_lib:
+    path: ../service_lib

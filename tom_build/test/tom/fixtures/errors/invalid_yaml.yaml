@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=none
+# Invalid YAML syntax for error testing
+# Tests: Section 9.2 - Validation Errors
+
+actions:
+  build:
+    - invalid: [syntax
+      missing: bracket

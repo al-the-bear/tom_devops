@@ -1,0 +1,179 @@
+name: test_workspace
+binaries: bin/
+operating-systems:
+  - linux
+  - darwin
+  - windows
+mobile-platforms:
+  - android
+  - ios
+imports:
+  - local.yaml
+  - shared.yaml
+project-types:
+  dart-package:
+    name: Dart Package
+    description: A Dart library
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+    project-info-overrides:
+      publishable: true
+  dart-cli:
+    name: Dart CLI
+    description: A CLI application
+    metadata-files:
+      pubspec-yaml: pubspec.yaml
+    project-info-overrides:
+      publishable: false
+workspace-modes:
+  mode-types:
+    - environment
+    - execution
+  supported:
+    - name: development
+      description: Development mode
+      implies:
+        - debug
+        - verbose
+    - name: production
+      description: Production mode
+      implies:
+        - release
+  environment-modes:
+    default: local
+    local:
+      description: Local environment
+      modes:
+        - development
+      working-dir: .
+    prod:
+      description: Production environment
+      modes:
+        - production
+  execution-modes:
+    default: native
+    native:
+      description: Native execution
+    docker:
+      description: Docker execution
+      image: dart:stable
+  action-mode-configuration:
+    build:
+      description: Build action modes
+      environment: local
+      execution: native
+    deploy:
+      description: Deploy action modes
+      environment: prod
+      execution: docker
+cross-compilation:
+  all-targets:
+    - linux-x64
+    - darwin-arm64
+    - win32-x64
+  build-on:
+    linux-x64:
+      targets:
+        - linux-x64
+        - linux-arm64
+    darwin-arm64:
+      targets:
+        - darwin-arm64
+        - darwin-x64
+actions:
+  build:
+    name: build
+    description: Build the project
+    skip-types:
+      - test-only
+    applies-to-types:
+      - dart-package
+      - dart-cli
+    default:
+      pre-commands:
+        - echo pre-build
+      commands:
+        - dart analyze
+        - dart test
+      post-commands:
+        - echo post-build
+      timeout: 300
+    dart-cli:
+      pre-commands:
+        - echo pre-cli-build
+      commands:
+        - dart compile exe
+      post-commands:
+        - echo post-cli-build
+  deploy:
+    name: deploy
+    description: Deploy the project
+    default:
+      commands:
+        - deploy.sh
+groups:
+  core:
+    name: core
+    description: Core packages
+    projects:
+      - pkg_a
+      - pkg_b
+    project-info-overrides:
+      priority: high
+  tools:
+    name: tools
+    description: Tool packages
+    projects:
+      - tool_a
+environment-mode-definitions:
+  local:
+    description: Local mode definition
+    debug: true
+  prod:
+    description: Production mode definition
+    debug: false
+execution-mode-definitions:
+  native:
+    description: Native execution definition
+    runtime: dart
+  docker:
+    description: Docker execution definition
+    image: dart:stable
+pipelines:
+  ci:
+    global-parameters:
+      - --verbose
+    projects:
+      - name: pkg_a
+      - name: pkg_b
+    actions:
+      - action: build
+      - action: test
+  release:
+    global-parameters:
+      - --release
+    projects:
+      - name: pkg_a
+    actions:
+      - action: build
+      - action: deploy
+project-info:
+  pkg_a:
+    version: 1.0.0
+    priority: high
+  pkg_b:
+    version: 2.0.0
+deps:
+  path: ^1.9.0
+  yaml: ^3.1.2
+deps-dev:
+  test: ^1.28.0
+  lints: ^5.0.0
+version-settings:
+  prerelease-tag: dev
+  auto-increment: true
+  min-dev-build: 1
+  action-counter: 42
+custom-tag-one: value1
+custom-tag-two:
+  nested: value2

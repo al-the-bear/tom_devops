@@ -1,0 +1,9 @@
+# Project with custom mode definition (should replace that mode, inherit others)
+deployment-mode-definitions:
+  kubernetes:
+    description: Custom K8s config for this project
+    namespace: my-app
+    replicas: 3
+    resources:
+      cpu: 500m
+      memory: 512Mi

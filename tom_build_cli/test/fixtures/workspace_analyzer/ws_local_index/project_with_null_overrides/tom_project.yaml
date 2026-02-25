@@ -1,0 +1,6 @@
+# Project that disables deployment with null
+deploy: null
+run: null
+
+features:
+  has-docker: false

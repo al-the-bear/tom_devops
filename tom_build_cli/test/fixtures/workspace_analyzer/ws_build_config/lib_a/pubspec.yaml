@@ -1,0 +1,4 @@
+name: lib_a
+version: 1.0.0
+environment:
+  sdk: ^3.0.0

@@ -1,0 +1,16 @@
+# Project with null values (unsetting/removing fields)
+# Tests: Section 3.3.3 - Special Values
+
+type: dart_cli
+
+# Unset features that would be inherited
+features:
+  publishable: false
+  has-tests: null
+
+# Unset mode definition
+execution-mode-definitions:
+  docker: null
+
+# Null removes/unsets the field
+binaries: null

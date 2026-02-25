@@ -1,0 +1,26 @@
+# Action in action-mode-configuration without actions entry
+# Tests: Section 9.2 - Missing action entry
+
+workspace-modes:
+  mode-types: [environment]
+  
+  environment-modes:
+    default: local
+    local:
+      description: Local dev
+  
+  action-mode-configuration:
+    default:
+      environment: local
+    build:
+      environment: local
+    # deploy action doesn't exist in actions section
+    deploy:
+      environment: prod
+
+actions:
+  build:
+    default:
+      commands:
+        - dart compile exe
+  # Missing deploy action!

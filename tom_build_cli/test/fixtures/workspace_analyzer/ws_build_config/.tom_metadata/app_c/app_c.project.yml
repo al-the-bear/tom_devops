@@ -1,0 +1,7 @@
+# Project: App C
+name: app_c
+displayName: App C
+type: dart_console
+parts:
+  - bin
+  - lib

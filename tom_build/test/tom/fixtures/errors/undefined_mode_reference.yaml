@@ -1,0 +1,34 @@
+# Reference to undefined mode
+# Tests: Section 9.2 - Undefined mode reference
+
+workspace-modes:
+  mode-types: [environment]
+  
+  environment-modes:
+    default: local
+    local:
+      description: Local
+    # References 'production' mode but it's not defined in mode-definitions
+    production:
+      description: Production
+  
+  action-mode-configuration:
+    default:
+      environment: local
+    deploy:
+      environment: production
+
+environment-mode-definitions:
+  local:
+    description: Local environment
+  # Missing production definition!
+
+actions:
+  build:
+    default:
+      commands:
+        - echo build
+  deploy:
+    default:
+      commands:
+        - echo deploy

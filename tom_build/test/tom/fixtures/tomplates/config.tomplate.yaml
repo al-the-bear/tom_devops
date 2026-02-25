@@ -1,0 +1,5 @@
+# Alternative naming pattern: file.tomplate.ext
+# Tests: Section 3.5.1 - Naming Patterns
+
+name: ${name}
+version: ${version}

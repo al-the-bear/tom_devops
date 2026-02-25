@@ -1,0 +1,4 @@
+name: project_with_action_override
+version: 1.0.0
+environment:
+  sdk: ^3.0.0

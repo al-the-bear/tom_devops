@@ -1,0 +1,7 @@
+Test Mode: /Users/alexiskyaw/Desktop/Code/tom2/devops/tom_build_cli/test/replay/test_tom_commands.tom
+Started: 2026-02-02T16:53:24.403775
+
+Lines executed: 159
+
+Result: PASSED
+Completed: 2026-02-02T16:53:24.424232

@@ -1,0 +1,40 @@
+# Mode type without definitions
+# Tests: Section 9.2 - Missing mode definitions
+
+workspace-modes:
+  mode-types: [environment, execution, deployment]
+  
+  environment-modes:
+    default: local
+    local:
+      description: Local
+  
+  # Missing execution-modes block!
+  
+  deployment-modes:
+    default: none
+    none:
+      description: No deploy
+  
+  action-mode-configuration:
+    default:
+      environment: local
+      execution: local
+      deployment: none
+
+# Only environment defined, execution missing
+environment-mode-definitions:
+  local:
+    description: Local env
+
+deployment-mode-definitions:
+  none:
+    description: No deployment
+
+# Missing execution-mode-definitions!
+
+actions:
+  build:
+    default:
+      commands:
+        - dart compile exe

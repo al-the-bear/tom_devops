@@ -1,0 +1,6 @@
+# Project: Project With Build Runner
+name: project_with_build_runner
+displayName: Project With Build Runner
+type: dart_package
+parts:
+  - src

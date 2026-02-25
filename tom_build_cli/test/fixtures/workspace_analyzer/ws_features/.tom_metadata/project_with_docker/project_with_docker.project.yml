@@ -1,0 +1,6 @@
+# Project: Project With Docker
+name: project_with_docker
+displayName: Project With Docker
+type: dart_package
+parts:
+  - src

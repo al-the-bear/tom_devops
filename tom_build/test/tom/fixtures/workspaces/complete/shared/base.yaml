@@ -1,0 +1,14 @@
+# Base configuration imported by tom_workspace.yaml
+# Tests: Section 3.2.2 - Import Path Resolution
+
+# Base actions that will be merged
+actions:
+  lint:
+    default:
+      commands:
+        - dart analyze
+
+# Base dependencies
+deps:
+  collection: ^1.18.0
+  meta: ^1.12.0

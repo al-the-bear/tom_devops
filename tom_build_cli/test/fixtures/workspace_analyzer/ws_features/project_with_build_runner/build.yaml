@@ -1,0 +1,5 @@
+targets:
+  $default:
+    builders:
+      some_builder:
+        enabled: true

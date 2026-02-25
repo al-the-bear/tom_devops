@@ -1,0 +1,7 @@
+# Project: Project With Assets
+name: project_with_assets
+displayName: Project With Assets
+type: flutter_app
+appModule:
+  displayName: Project With Assets
+  sources: [main.dart]

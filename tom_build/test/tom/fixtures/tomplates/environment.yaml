@@ -1,0 +1,18 @@
+# Tomplate with environment placeholders
+# Tests: Section 5.5.2 - Environment Placeholders
+
+server:
+  host: localhost
+  port: 8080
+  
+database:
+  url: postgres://localhost:5432/dev
+  user: [[DB_USER]]
+  password: [[DB_PASSWORD]]
+  
+aws:
+  region: us-east-1
+  account: [[AWS_ACCOUNT_ID]]
+  
+# Multiple on same line
+connection: admin@localhost:5432

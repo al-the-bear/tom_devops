@@ -1,0 +1,106 @@
+# Tomplate with mode blocks - all variants
+# Tests: Section 4.2 - Mode Block Syntax
+
+# Section 4.2.1 - Variant 1: Global Mode Matching
+dependencies:
+@@@mode development
+  tom_core:
+    path: ../tom_core
+  build_runner: any
+@@@mode production
+  tom_core: ^1.0.0
+  build_runner: ^2.10.4
+@@@mode default
+  tom_core: ^1.0.0
+  build_runner: ^2.10.4
+@@@endmode
+
+# Section 4.2.2 - Variant 2: Mode Type with Mode List
+build_config:
+@@@mode.execution relative_build
+  output_dir: ../build/output
+  use_local_deps: true
+@@@mode.execution containerized
+  output_dir: /app/build
+  use_local_deps: false
+@@@mode default
+  output_dir: ./build
+  use_local_deps: false
+@@@endmode
+
+# Section 4.2.3 - Variant 3: Direct Mode Type Matching
+server_config:
+@@@execution: local
+  host: localhost
+  port: 8080
+@@@execution: docker
+  host: 0.0.0.0
+  port: 8080
+@@@execution: cloud
+  host: 0.0.0.0
+  port: 80
+@@@mode default
+  host: localhost
+  port: 8080
+@@@endmode
+
+# Comma-separated OR conditions
+logging:
+@@@mode development,staging
+  level: debug
+  verbose: true
+@@@mode production
+  level: warn
+  verbose: false
+@@@mode default
+  level: info
+  verbose: false
+@@@endmode
+
+# Multiple mode blocks
+api_settings:
+@@@mode development
+  base_url: http://localhost:3000
+  timeout: 30000
+@@@mode production
+  base_url: https://api.example.com
+  timeout: 10000
+@@@endmode
+
+cache_settings:
+@@@mode development
+  enabled: false
+  ttl: 0
+@@@mode production
+  enabled: true
+  ttl: 3600
+@@@mode default
+  enabled: true
+  ttl: 300
+@@@endmode
+
+# Nested YAML in mode blocks
+database:
+@@@mode development
+  primary:
+    host: localhost
+    port: 5432
+    name: dev_db
+  replicas: []
+@@@mode production
+  primary:
+    host: "[[DB_PRIMARY_HOST]]"
+    port: 5432
+    name: prod_db
+  replicas:
+    - host: "[[DB_REPLICA_1]]"
+      port: 5432
+    - host: "[[DB_REPLICA_2]]"
+      port: 5432
+@@@mode default
+  primary:
+    host: localhost
+    port: 5432
+    name: default_db
+  replicas: []
+@@@endmode

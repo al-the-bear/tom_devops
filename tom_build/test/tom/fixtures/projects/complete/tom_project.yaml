@@ -1,0 +1,121 @@
+# Complete project configuration for testing
+# Tests: Section 3.3 - tom_project.yaml Schema
+
+type: dart_package
+description: Complete test project
+
+# Section 3.3.1 - Build ordering
+build-after:
+  - tom_core
+  - tom_core_kernel
+
+# Section 3.3.4 - action-order Semantics
+action-order:
+  deploy-after:
+    - tom_shared
+  test-after:
+    - tom_core
+
+# Section 3.3.1 - Features override
+features:
+  has-reflection: true
+  has-build-runner: true
+  has-tests: true
+  has-examples: true
+  publishable: true
+  has-docker: false
+  has-ci: true
+
+# Section 3.3.1 - Actions override
+actions:
+  build:
+    default:
+      pre-commands:
+        - echo "Project pre-build"
+      commands:
+        - dart analyze
+        - dart test
+      post-commands:
+        - echo "Project post-build"
+  custom-action:
+    default:
+      commands:
+        - echo "Custom action"
+
+# Binary output folder
+binaries: build/bin/
+
+# Section 3.3.1a - executables Structure
+executables:
+  - source: bin/main.dart
+    output: my_cli
+  - source: bin/server.dart
+    output: server
+
+# Section 3.3.2 - action-mode-definitions Structure
+action-mode-definitions:
+  default:
+    environment: local
+    execution: local
+    cloud-provider: aws
+    deployment: none
+    publishing: development
+  build:
+    environment: local
+    execution: docker
+  deploy:
+    environment: prod
+    execution: cloud
+    cloud-provider: gcp
+    deployment: kubernetes
+    publishing: release
+
+# Mode type definition overrides
+environment-mode-definitions:
+  local:
+    working-dir: ./project
+    variables:
+      PROJECT_DEBUG: "true"
+  prod:
+    variables:
+      PROJECT_DEBUG: "false"
+
+execution-mode-definitions:
+  docker:
+    image: my-project:latest
+    dockerfile: Dockerfile
+    compose-file: docker-compose.yml
+    volumes:
+      - ./data:/app/data
+
+deployment-mode-definitions:
+  kubernetes:
+    namespace: my-project
+    replicas: 3
+    resources:
+      cpu: 500m
+      memory: 512Mi
+
+cloud-provider-mode-definitions:
+  gcp:
+    project-id: my-gcp-project
+    region: us-central1
+
+publishing-mode-definitions:
+  release:
+    tag-prefix: release-v
+
+# Cross-compilation override
+cross-compilation:
+  all-targets: [linux-x64, darwin-arm64]
+  build-on:
+    linux-x64:
+      targets: [linux-x64]
+    darwin-arm64:
+      targets: [darwin-arm64]
+
+# Custom tags
+custom-project-setting: project-value
+my-project-config:
+  nested: true
+  count: 42

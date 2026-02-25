@@ -1,0 +1,3 @@
+# Nested import (subdirectory)
+deps:
+  nested_dep: ^2.0.0

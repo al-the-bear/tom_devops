@@ -1,0 +1,6 @@
+# Project: Service Lib
+name: service_lib
+displayName: Service Lib
+type: dart_package
+parts:
+  - src

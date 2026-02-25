@@ -1,0 +1,7 @@
+# Project: Project With Null Overrides
+name: project_with_null_overrides
+displayName: Project With Null Overrides
+type: dart_console
+parts:
+  - bin
+  - lib

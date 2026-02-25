@@ -1,0 +1,8 @@
+name: utils_lib
+type: dart_package
+description: Utility functions and helpers
+build-after:
+  - core_lib
+features:
+  publishable: true
+  has-tests: true

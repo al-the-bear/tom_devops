@@ -1,0 +1,6 @@
+# Circular import - part B
+imports:
+  - circular_c.yaml
+
+deps:
+  b_dep: ^1.0.0
