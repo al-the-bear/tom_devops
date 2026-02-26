@@ -12,6 +12,7 @@ compiler:
         - dart compile exe %{file} --target-os=%{target-os} -o $TOM_BINARY_PATH/%{target-platform-vs}/%{file.name}
       files:
         - bin/buildkit.dart
+        - bin/findproject.dart
       targets: [darwin-arm64, linux-x64, linux-arm64, linux-armhf]
       platforms: [darwin-arm64]
     
@@ -21,6 +22,7 @@ compiler:
         - dart compile exe %{file} -o $TOM_BINARY_PATH/%{target-platform-vs}/%{file.name}
       files:
         - bin/buildkit.dart
+        - bin/findproject.dart
       platforms: [darwin-x64, linux-*, win32-*]
 
   postcompile:
