@@ -402,7 +402,49 @@ environment:
   });
 
   // ==========================================================================
-  // Group 5: %{} placeholder syntax (regression test)
+  // Group 5: -c short flag condition filtering
+  // ==========================================================================
+  group(':execute -c short flag', () {
+    test(
+        'BK-EXEC-14: -c dart.exists filters non-Dart projects [2026-07-01]',
+        () async {
+      final result = await runBuildkit([
+        '-R',
+        fixtureRoot,
+        '-s',
+        fixtureRoot,
+        '-r',
+        ':execute',
+        '-c',
+        'dart.exists',
+        r'echo %{folder.name}',
+      ]);
+
+      final stdout = result.stdout as String;
+      final stderr = result.stderr as String;
+      print('stdout:\n$stdout');
+      if (stderr.isNotEmpty) print('stderr:\n$stderr');
+
+      expect(result.exitCode, equals(0),
+          reason: 'Exit code should be 0. stderr: $stderr');
+
+      // Dart projects should be included
+      expect(stdout, contains('app_one'),
+          reason: 'Dart project app_one should be included');
+      expect(stdout, contains('pkg_two'),
+          reason: 'Dart project pkg_two should be included');
+      expect(stdout, contains('pkg_three'),
+          reason: 'Dart project pkg_three should be included');
+
+      // TypeScript project must NOT appear in echo output lines
+      expect(stdout, isNot(contains('ts_proj: echo')),
+          reason:
+              '-c dart.exists should filter out non-Dart project ts_proj');
+    });
+  });
+
+  // ==========================================================================
+  // Group 6: %{} placeholder syntax (regression test)
   // ==========================================================================
   group(':execute %{} syntax', () {
     test(
