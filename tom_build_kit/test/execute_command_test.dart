@@ -114,7 +114,7 @@ environment:
         fixtureRoot,
         '-r',
         ':execute',
-        'echo \${folder.name}',
+        r'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -143,7 +143,7 @@ environment:
         fixtureRoot,
         '-r',
         ':execute',
-        'echo \${folder.relative}',
+        r'echo %{folder.relative}',
       ]);
 
       final stdout = result.stdout as String;
@@ -163,7 +163,7 @@ environment:
         fixtureRoot,
         '-r',
         ':execute',
-        'echo \${folder.name}',
+        r'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -181,7 +181,7 @@ environment:
         '-r',
         '-n',
         ':execute',
-        'echo \${folder.name}',
+        r'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -208,7 +208,7 @@ environment:
         '-r',
         '-n',
         ':execute',
-        'echo \${dart.exists?(DART):(NOT-DART)}',
+        r'echo %{dart.exists?(DART):(NOT-DART)}',
       ]);
 
       final stdout = result.stdout as String;
@@ -236,7 +236,7 @@ environment:
         'app_one',
         '-n',
         ':execute',
-        'echo \${root}',
+        r'echo %{root}',
       ]);
 
       final stdout = result.stdout as String;
@@ -245,7 +245,7 @@ environment:
       expect(result.exitCode, equals(0));
       // Root should contain the fixture path
       expect(stdout, contains(fixtureRoot),
-          reason: '\${root} should resolve to the workspace root');
+          reason: r'%{root} should resolve to the workspace root');
     });
 
     test('BK-EXEC-7: folder placeholder resolves to absolute path [2026-06-30]',
@@ -260,7 +260,7 @@ environment:
         'app_one',
         '-n',
         ':execute',
-        'echo \${folder}',
+        r'echo %{folder}',
       ]);
 
       final stdout = result.stdout as String;
@@ -268,7 +268,7 @@ environment:
 
       expect(result.exitCode, equals(0));
       expect(stdout, contains(p.join(fixtureRoot, 'app_one')),
-          reason: '\${folder} should resolve to absolute folder path');
+          reason: r'%{folder} should resolve to absolute folder path');
     });
   });
 
@@ -287,7 +287,7 @@ environment:
         '-p',
         'app_one',
         ':execute',
-        'echo \${folder.name}',
+        r'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -313,7 +313,7 @@ environment:
         '-x',
         '*xternal*',
         ':execute',
-        'echo \${folder.name}',
+        r'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -333,7 +333,7 @@ environment:
         fixtureRoot,
         '-i',
         ':execute',
-        'echo \${folder.name}',
+        r'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -362,7 +362,7 @@ environment:
         ':execute',
         '--condition',
         'dart.exists',
-        'echo \${folder.name}',
+        r'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -389,7 +389,7 @@ environment:
         ':execute',
         '--condition',
         'flutter.exists',
-        'echo \${folder.name}',
+        'echo %{folder.name}',
       ]);
 
       final stdout = result.stdout as String;
@@ -398,6 +398,42 @@ environment:
       // app_one is NOT a Flutter project, so condition should skip it
       expect(result.exitCode, equals(0));
       // Should either show SKIP or not execute the command
+    });
+  });
+
+  // ==========================================================================
+  // Group 5: %{} placeholder syntax (regression test)
+  // ==========================================================================
+  group(':execute %{} syntax', () {
+    test(
+        'BK-EXEC-13: %{folder.name} resolves correctly (not passed through literally) [2026-07-01]',
+        () async {
+      final result = await runBuildkit([
+        '-R',
+        fixtureRoot,
+        '-s',
+        fixtureRoot,
+        '-r',
+        '-p',
+        'app_one',
+        ':execute',
+        r'echo %{folder.name}',
+      ]);
+
+      final stdout = result.stdout as String;
+      final stderr = result.stderr as String;
+      print('stdout:\n$stdout');
+      if (stderr.isNotEmpty) print('stderr:\n$stderr');
+
+      expect(result.exitCode, equals(0),
+          reason: 'Exit code should be 0. stderr: $stderr');
+
+      // The placeholder MUST be resolved — not passed through literally
+      expect(stdout, isNot(contains('%{folder.name}')),
+          reason:
+              '%{folder.name} should be resolved, not passed through literally');
+      expect(stdout, contains('app_one'),
+          reason: '%{folder.name} should resolve to app_one');
     });
   });
 }
