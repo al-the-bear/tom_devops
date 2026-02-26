@@ -213,7 +213,7 @@ buildkit --project tom_build_* :execute echo "Found"
 buildkit -s . -r --exclude-projects "zom_*" :execute ls -la
 
 # Test modules filter
-buildkit -m tom_module_basics :execute echo "In basics"
+buildkit -m basics :execute echo "In basics"
 ```
 
 ### Key Points

@@ -122,8 +122,8 @@ The `--exclude-projects` option supports two kinds of glob patterns, auto-detect
 
 **Path patterns** (contain `/` or `**`):
 - Matched against the workspace-relative path of the project
-- Example: `--exclude-projects 'xternal/tom_module_basics/*'` excludes all projects under that specific submodule
-- Example: `--exclude-projects '**/tom_module_basics/*'` matches regardless of leading path segments
+- Example: `--exclude-projects 'basics/*'` excludes all projects under the basics sub-repo
+- Example: `--exclude-projects '**/basics/*'` matches regardless of leading path segments
 
 **Auto-detection rule:** If the pattern contains `/` or `**`, it is treated as a path pattern. Otherwise it is treated as a basename pattern. Both types can be combined in a single invocation by passing `--exclude-projects` multiple times.
 
@@ -164,7 +164,7 @@ See [doc/test_coverage.md](../doc/test_coverage.md) for the complete feature cov
 ## Running Tests
 
 ```bash
-cd xternal/tom_module_basics/tom_build_kit
+cd devops/tom_build_kit
 dart test
 ```
 

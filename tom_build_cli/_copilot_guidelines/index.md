@@ -39,5 +39,5 @@
 
 ## Related Packages
 
-- [tom_build_kit](../../xternal/tom_module_basics/tom_build_kit/) — Build tools (versioner, cleanup, compiler, etc.)
-- [tom_build_base](../../xternal/tom_module_basics/tom_build_base/) — Shared CLI infrastructure
+- [tom_build_kit](../tom_build_kit/) — Build tools (versioner, cleanup, compiler, etc.)
+- [tom_build_base](../../basics/tom_build_base/) — Shared CLI infrastructure
