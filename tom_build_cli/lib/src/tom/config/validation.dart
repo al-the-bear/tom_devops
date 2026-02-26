@@ -13,9 +13,7 @@ import 'package:tom_build/tom_build.dart';
 /// Result of a validation operation.
 class ValidationResult {
   /// Creates a successful validation result.
-  ValidationResult.success()
-      : isValid = true,
-        errors = const [];
+  ValidationResult.success() : isValid = true, errors = const [];
 
   /// Creates a failed validation result.
   ValidationResult.failure(this.errors) : isValid = false;
@@ -94,22 +92,25 @@ class ConfigValidator {
 
     // Check actions section is present
     if (workspace.actions.isEmpty) {
-      errors.add(ConfigValidationError(
-        message: 'Missing required block [actions:]',
-        filePath: filePath,
-        resolution: 'Add an actions: section with action definitions',
-      ));
+      errors.add(
+        ConfigValidationError(
+          message: 'Missing required block [actions:]',
+          filePath: filePath,
+          resolution: 'Add an actions: section with action definitions',
+        ),
+      );
     }
 
     // Check each action has a default configuration
     for (final action in workspace.actions.entries) {
       if (action.value.defaultConfig == null) {
-        errors.add(ConfigValidationError(
-          message: 'Action [${action.key}] requires [default:] definition',
-          filePath: filePath,
-          resolution:
-              'Add a default: block inside actions.${action.key}:',
-        ));
+        errors.add(
+          ConfigValidationError(
+            message: 'Action [${action.key}] requires [default:] definition',
+            filePath: filePath,
+            resolution: 'Add a default: block inside actions.${action.key}:',
+          ),
+        );
       }
     }
 
@@ -117,24 +118,23 @@ class ConfigValidator {
     final amc = workspace.workspaceModes?.actionModeConfiguration;
     if (amc != null) {
       for (final entry in amc.entries.entries) {
-        if (entry.key != 'default' && !workspace.actions.containsKey(entry.key)) {
-          errors.add(ConfigValidationError(
-            message:
-                'Action [${entry.key}] in action-mode-configuration not found in [actions:]',
-            filePath: filePath,
-            resolution:
-                'Add actions.${entry.key}: or remove from action-mode-configuration',
-          ));
+        if (entry.key != 'default' &&
+            !workspace.actions.containsKey(entry.key)) {
+          errors.add(
+            ConfigValidationError(
+              message:
+                  'Action [${entry.key}] in action-mode-configuration not found in [actions:]',
+              filePath: filePath,
+              resolution:
+                  'Add actions.${entry.key}: or remove from action-mode-configuration',
+            ),
+          );
         }
       }
     }
 
     // Validate cross-compilation build-on references
-    _validateCrossCompilation(
-      workspace.crossCompilation,
-      filePath,
-      errors,
-    );
+    _validateCrossCompilation(workspace.crossCompilation, filePath, errors);
 
     return errors.isEmpty
         ? ValidationResult.success()
@@ -146,11 +146,7 @@ class ConfigValidator {
     final errors = <ConfigValidationError>[];
 
     // Validate cross-compilation if present
-    _validateCrossCompilation(
-      project.crossCompilation,
-      filePath,
-      errors,
-    );
+    _validateCrossCompilation(project.crossCompilation, filePath, errors);
 
     // Note: Action order references can't be validated here because we need
     // the full workspace context. This is checked in validateMaster().
@@ -175,11 +171,14 @@ class ConfigValidator {
     for (final project in master.projects.values) {
       for (final dep in project.buildAfter) {
         if (!projectNames.contains(dep)) {
-          errors.add(ConfigValidationError(
-            message: 'Project [${project.name}] references unknown project [$dep] in build-after',
-            filePath: filePath,
-            resolution: 'Ensure [$dep] exists or remove from build-after',
-          ));
+          errors.add(
+            ConfigValidationError(
+              message:
+                  'Project [${project.name}] references unknown project [$dep] in build-after',
+              filePath: filePath,
+              resolution: 'Ensure [$dep] exists or remove from build-after',
+            ),
+          );
         }
       }
 
@@ -187,11 +186,14 @@ class ConfigValidator {
       for (final entry in project.actionOrder.entries) {
         for (final dep in entry.value) {
           if (!projectNames.contains(dep)) {
-            errors.add(ConfigValidationError(
-              message: 'Project [${project.name}] references unknown project [$dep] in ${entry.key}',
-              filePath: filePath,
-              resolution: 'Ensure [$dep] exists or remove from ${entry.key}',
-            ));
+            errors.add(
+              ConfigValidationError(
+                message:
+                    'Project [${project.name}] references unknown project [$dep] in ${entry.key}',
+                filePath: filePath,
+                resolution: 'Ensure [$dep] exists or remove from ${entry.key}',
+              ),
+            );
           }
         }
       }
@@ -200,11 +202,13 @@ class ConfigValidator {
     // Check for circular dependencies
     final cycleError = _detectCycles(master.projects);
     if (cycleError != null) {
-      errors.add(ConfigValidationError(
-        message: 'Circular dependency detected',
-        filePath: filePath,
-        resolution: cycleError,
-      ));
+      errors.add(
+        ConfigValidationError(
+          message: 'Circular dependency detected',
+          filePath: filePath,
+          resolution: cycleError,
+        ),
+      );
     }
 
     return errors.isEmpty
@@ -228,22 +232,26 @@ class ConfigValidator {
     for (final entry in crossCompilation.buildOn.entries) {
       // Check that the host target exists
       if (!allTargets.contains(entry.key)) {
-        errors.add(ConfigValidationError(
-          message: 'build-on key [${entry.key}] not found in all-targets',
-          filePath: filePath,
-          resolution: 'Add [${entry.key}] to all-targets or use valid target',
-        ));
+        errors.add(
+          ConfigValidationError(
+            message: 'build-on key [${entry.key}] not found in all-targets',
+            filePath: filePath,
+            resolution: 'Add [${entry.key}] to all-targets or use valid target',
+          ),
+        );
       }
 
       // Check that all referenced targets exist
       for (final target in entry.value.targets) {
         if (!allTargets.contains(target)) {
-          errors.add(ConfigValidationError(
-            message:
-                'build-on[${entry.key}] references unknown target [$target]',
-            filePath: filePath,
-            resolution: 'Add [$target] to all-targets or use valid target',
-          ));
+          errors.add(
+            ConfigValidationError(
+              message:
+                  'build-on[${entry.key}] references unknown target [$target]',
+              filePath: filePath,
+              resolution: 'Add [$target] to all-targets or use valid target',
+            ),
+          );
         }
       }
     }

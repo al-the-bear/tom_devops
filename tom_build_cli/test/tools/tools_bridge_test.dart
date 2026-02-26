@@ -21,7 +21,7 @@ import 'tools_bridge_test.reflection.dart' as reflection;
 void main() {
   // Initialize reflection for TomCoreKernelBridge global variables
   reflection.initializeReflection();
-  
+
   group('Tools Bridge Tests', () {
     late D4rtInstance d4rt;
     late String workspacePath;
@@ -451,7 +451,7 @@ void main() {
         final result = await d4rt.evaluate('globalResults');
         expect(result, isA<TomRunResults>());
         final results = result as TomRunResults;
-        expect(results.success, isFalse);  // Should be false because one failed
+        expect(results.success, isFalse); // Should be false because one failed
         expect(results.results.length, equals(2));
       });
     });
@@ -775,7 +775,7 @@ void main() {
       test('ToolContext.isInitialized works (via D4rt)', () async {
         // Clear context first
         ToolContext.clear();
-        
+
         // Test before load via D4rt
         await d4rt.executeScript('''
 import 'package:tom_build/tom_build.dart';
@@ -788,10 +788,10 @@ void main() {
 }
 ''');
         expect(await d4rt.evaluate('beforeLoad'), isFalse);
-        
+
         // Load via native, then test via D4rt
         await ToolContext.load(workspacePath: workspacePath);
-        
+
         await d4rt.executeScript('''
 import 'package:tom_build/tom_build.dart';
 import 'package:tom_build_cli/tom_build_cli.dart';
@@ -947,7 +947,7 @@ void main() {
 
     test('bridge class names match expected list', () {
       final instance = D4rtInstance.create();
-      
+
       // Core tools classes that must be present (from tom_build_bridges)
       final expectedCoreClasses = [
         'WorkspaceInfo',
@@ -961,12 +961,12 @@ void main() {
           .expand((i) => i.classes)
           .map((c) => c.name)
           .toList();
-      
+
       // Verify core classes are present
       for (final expected in expectedCoreClasses) {
         expect(actualClasses, contains(expected));
       }
-      
+
       instance.dispose();
     });
   });

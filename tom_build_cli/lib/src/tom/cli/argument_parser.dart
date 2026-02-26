@@ -175,12 +175,14 @@ class ArgumentParser {
     // Helper to finalize current action
     void finalizeAction() {
       if (currentAction != null) {
-        actions.add(ActionInvocation(
-          name: currentAction!,
-          parameters: Map.from(currentActionParams),
-          isInternalCommand: currentActionIsInternal,
-          bypassWorkspaceAction: currentActionBypass,
-        ));
+        actions.add(
+          ActionInvocation(
+            name: currentAction!,
+            parameters: Map.from(currentActionParams),
+            isInternalCommand: currentActionIsInternal,
+            bypassWorkspaceAction: currentActionBypass,
+          ),
+        );
         currentAction = null;
         currentActionParams = {};
         currentActionIsInternal = false;
@@ -310,7 +312,8 @@ class ArgumentParser {
             if (param != null) {
               currentActionParams[param.key] = param.value;
             }
-          } else if (currentAction == 'vscode' && !currentActionParams.containsKey('hostport')) {
+          } else if (currentAction == 'vscode' &&
+              !currentActionParams.containsKey('hostport')) {
             // Positional host/port parameter for :vscode
             currentActionParams['hostport'] = arg;
           }
@@ -506,12 +509,7 @@ class ArgumentParser {
 // =============================================================================
 
 /// Parse states for the argument parser.
-enum _ParseState {
-  global,
-  projects,
-  groups,
-  actionParams,
-}
+enum _ParseState { global, projects, groups, actionParams }
 
 /// A parsed parameter key-value pair.
 class _ParsedParameter {

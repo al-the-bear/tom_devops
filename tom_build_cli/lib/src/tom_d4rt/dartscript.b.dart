@@ -24,7 +24,8 @@ class TomBuildCliBridges {
       'package:tom_build_cli/tom_build_cli.dart',
     );
     // Register under sub-package barrels for direct imports
-    for (final barrel in tom_build_cli_bridges.TomBuildCliBridge.subPackageBarrels()) {
+    for (final barrel
+        in tom_build_cli_bridges.TomBuildCliBridge.subPackageBarrels()) {
       tom_build_cli_bridges.TomBuildCliBridge.registerBridges(d4rt, barrel);
     }
   }

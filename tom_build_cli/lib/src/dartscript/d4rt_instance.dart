@@ -100,7 +100,7 @@ class D4rtInstance {
     if (existing != null && !existing.isDisposed) {
       return existing;
     }
-    
+
     return D4rtInstance.create(
       bridgeConfiguration: bridgeConfiguration,
       workspace: workspace,
@@ -200,12 +200,15 @@ class D4rtInstance {
     final instance = D4rtInstance.create(
       bridgeConfiguration: provider.getBridgeConfiguration(),
       workspace: provider.initializeTomContext ? provider.workspace : null,
-      workspaceContext:
-          provider.initializeTomContext ? provider.workspaceContext : null,
-      currentProject:
-          provider.initializeTomContext ? provider.currentProject : null,
-      workspacePath:
-          provider.initializeTomContext ? provider.workspacePath : null,
+      workspaceContext: provider.initializeTomContext
+          ? provider.workspaceContext
+          : null,
+      currentProject: provider.initializeTomContext
+          ? provider.currentProject
+          : null,
+      workspacePath: provider.initializeTomContext
+          ? provider.workspacePath
+          : null,
     );
 
     // Inject context from provider
@@ -253,13 +256,15 @@ class D4rtInstance {
     _checkDisposed();
 
     // Execute with imports to make them available for eval()
-    interpreter.execute(source: '''
+    interpreter.execute(
+      source: '''
 import 'package:tom_build/tom.dart';
 
 void main() {
   // Imports are now available for subsequent eval() calls
 }
-''');
+''',
+    );
   }
 
   /// Evaluates a D4rt expression and returns the result.
@@ -279,10 +284,7 @@ void main() {
       // Place this instance in the zone so nested scripts can access it
       return runZoned(
         () => interpreter.eval(expression),
-        zoneValues: {
-          'context': _context,
-          d4rtInstanceZoneKey: this,
-        },
+        zoneValues: {'context': _context, d4rtInstanceZoneKey: this},
       );
     } catch (e) {
       rethrow;
@@ -301,10 +303,7 @@ void main() {
       // Execute in a zone with context variables and this instance available
       return runZoned(
         () => interpreter.execute(source: scriptContent),
-        zoneValues: {
-          'context': _context,
-          d4rtInstanceZoneKey: this,
-        },
+        zoneValues: {'context': _context, d4rtInstanceZoneKey: this},
       );
     } catch (e) {
       rethrow;
@@ -498,10 +497,8 @@ D4rtEvaluatorFunction createD4rtEvaluatorFromContext(
 }
 
 /// Function type for D4rt evaluation.
-typedef D4rtEvaluatorFunction = Future<dynamic> Function(
-  String code,
-  Map<String, dynamic> context,
-);
+typedef D4rtEvaluatorFunction =
+    Future<dynamic> Function(String code, Map<String, dynamic> context);
 
 // =============================================================================
 // GLOBAL VARIABLE REGISTRATION
@@ -515,6 +512,4 @@ typedef D4rtEvaluatorFunction = Future<dynamic> Function(
 ///
 /// These variables are registered once at interpreter creation time and
 /// are available for both `execute()` and `eval()` calls.
-void _registerGlobalVariables(D4rt interpreter) {
-
-}
+void _registerGlobalVariables(D4rt interpreter) {}

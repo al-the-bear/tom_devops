@@ -34,7 +34,10 @@ void main() {
       test('isInternalCommand returns true for known commands', () {
         expect(InternalCommands.isInternalCommand('analyze'), isTrue);
         expect(InternalCommands.isInternalCommand('version-bump'), isTrue);
-        expect(InternalCommands.isInternalCommand('reset-action-counter'), isTrue);
+        expect(
+          InternalCommands.isInternalCommand('reset-action-counter'),
+          isTrue,
+        );
         expect(InternalCommands.isInternalCommand('pipeline'), isTrue);
       });
 
@@ -73,8 +76,14 @@ void main() {
 
       test('getCommandForPrefix returns correct commands', () {
         expect(InternalCommands.getCommandForPrefix('wa'), equals('analyze'));
-        expect(InternalCommands.getCommandForPrefix('gr'), equals('generate-reflection'));
-        expect(InternalCommands.getCommandForPrefix('vb'), equals('version-bump'));
+        expect(
+          InternalCommands.getCommandForPrefix('gr'),
+          equals('generate-reflection'),
+        );
+        expect(
+          InternalCommands.getCommandForPrefix('vb'),
+          equals('version-bump'),
+        );
         expect(InternalCommands.getCommandForPrefix('wp'), equals('prepper'));
       });
 
@@ -115,13 +124,14 @@ void main() {
     // =========================================================================
     group('InternalCommandConfig', () {
       test('creates config with required parameters', () {
-        final config = InternalCommandConfig(
-          workspacePath: '/workspace',
-        );
+        final config = InternalCommandConfig(workspacePath: '/workspace');
 
         expect(config.workspacePath, equals('/workspace'));
         expect(config.metadataDir, equals('/workspace/.tom_metadata'));
-        expect(config.stateFilePath, equals('/workspace/.tom_metadata/workspace_state.yaml'));
+        expect(
+          config.stateFilePath,
+          equals('/workspace/.tom_metadata/workspace_state.yaml'),
+        );
         expect(config.verbose, isFalse);
         expect(config.dryRun, isFalse);
         expect(config.projects, isEmpty);
@@ -135,7 +145,10 @@ void main() {
         );
 
         expect(config.metadataDir, equals('/custom/metadata'));
-        expect(config.stateFilePath, equals('/custom/metadata/workspace_state.yaml'));
+        expect(
+          config.stateFilePath,
+          equals('/custom/metadata/workspace_state.yaml'),
+        );
       });
 
       test('accepts all optional parameters', () {
@@ -238,7 +251,9 @@ name: test-workspace
           counterManager: counterManager,
         );
 
-        final result = await executor.execute(commandName: 'reset-action-counter');
+        final result = await executor.execute(
+          commandName: 'reset-action-counter',
+        );
 
         expect(result.success, isTrue);
         expect(result.message, contains('reset'));
@@ -258,7 +273,9 @@ name: test-workspace
         );
         final executor = InternalCommandExecutor(config: config);
 
-        final result = await executor.execute(commandName: 'reset-action-counter');
+        final result = await executor.execute(
+          commandName: 'reset-action-counter',
+        );
 
         expect(result.success, isTrue);
         expect(File('$metadataPath/workspace_state.yaml').existsSync(), isTrue);

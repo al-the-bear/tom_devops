@@ -40,7 +40,12 @@ export 'src/tom/execution/d4rt_runner.dart';
 export 'src/tom/execution/output_formatter.dart';
 
 // VS Code Bridge Client
-export 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart' show VSCodeBridgeClient, VSCodeBridgeResult, VSCodeBridgeAdapter, defaultVSCodeBridgePort;
+export 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart'
+    show
+        VSCodeBridgeClient,
+        VSCodeBridgeResult,
+        VSCodeBridgeAdapter,
+        defaultVSCodeBridgePort;
 
 // Generation
 export 'src/tom/generation/build_order.dart';

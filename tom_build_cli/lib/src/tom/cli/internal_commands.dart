@@ -25,7 +25,8 @@ import '../mode/mode_resolver.dart';
 import '../template/tomplate_parser.dart';
 import '../template/tomplate_processor.dart';
 import '../execution/d4rt_runner.dart';
-import 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart' show VSCodeBridgeClient, VSCodeBridgeResult, defaultVSCodeBridgePort;
+import 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart'
+    show VSCodeBridgeClient, VSCodeBridgeResult, defaultVSCodeBridgePort;
 
 // =============================================================================
 // INTERNAL COMMAND REGISTRY
@@ -42,7 +43,8 @@ class InternalCommands {
     'analyze': InternalCommandInfo(
       name: 'analyze',
       prefix: 'wa',
-      description: 'Run workspace analyzer, generate all tom_master*.yaml files',
+      description:
+          'Run workspace analyzer, generate all tom_master*.yaml files',
       requiresWorkspace: true,
     ),
     'generate-reflection': InternalCommandInfo(
@@ -54,7 +56,8 @@ class InternalCommands {
     'generate-bridges': InternalCommandInfo(
       name: 'generate-bridges',
       prefix: 'gb',
-      description: 'Generate D4rt BridgedClass implementations from Dart classes',
+      description:
+          'Generate D4rt BridgedClass implementations from Dart classes',
       requiresWorkspace: false,
     ),
     'version-bump': InternalCommandInfo(
@@ -259,8 +262,9 @@ class InternalCommandExecutor {
   InternalCommandExecutor({
     required this.config,
     ActionCounterManager? counterManager,
-  }) : _counterManager = counterManager ??
-            ActionCounterManager(stateFilePath: config.stateFilePath);
+  }) : _counterManager =
+           counterManager ??
+           ActionCounterManager(stateFilePath: config.stateFilePath);
 
   /// Configuration for execution.
   final InternalCommandConfig config;
@@ -283,10 +287,13 @@ class InternalCommandExecutor {
     final commandInfo = InternalCommands.getCommand(commandName);
     if (commandInfo == null) {
       stopwatch.stop();
-      final availableCommands = InternalCommands.commands.keys.map((c) => ':$c').join(', ');
+      final availableCommands = InternalCommands.commands.keys
+          .map((c) => ':$c')
+          .join(', ');
       return InternalCommandResult.failure(
         command: commandName,
-        error: 'Unknown internal command: [:$commandName]\n'
+        error:
+            'Unknown internal command: [:$commandName]\n'
             '  Available commands: $availableCommands\n'
             '  Resolution: Use :help to see all available commands',
         duration: stopwatch.elapsed,
@@ -300,7 +307,8 @@ class InternalCommandExecutor {
         stopwatch.stop();
         return InternalCommandResult.failure(
           command: commandName,
-          error: 'Command [:$commandName] requires a Tom workspace\n'
+          error:
+              'Command [:$commandName] requires a Tom workspace\n'
               '  Searched: [${workspaceFile.path}]\n'
               '  Resolution: Navigate to a directory containing tom_workspace.yaml '
               'or create one with tom :init',
@@ -434,7 +442,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'analyze',
-        error: 'Unexpected error during workspace analysis\n'
+        error:
+            'Unexpected error during workspace analysis\n'
             '  Error: $e\n'
             '  Stack: $stack',
         duration: stopwatch.elapsed,
@@ -452,7 +461,8 @@ class InternalCommandExecutor {
     if (config.dryRun) {
       return InternalCommandResult.success(
         command: 'version-bump',
-        message: '[dry-run] Would bump versions\n'
+        message:
+            '[dry-run] Would bump versions\n'
             '  Bump type: ${bumpType.name}',
         duration: Duration.zero,
       );
@@ -468,7 +478,8 @@ class InternalCommandExecutor {
         stopwatch.stop();
         return InternalCommandResult.failure(
           command: 'version-bump',
-          error: 'Workspace is not a git repository\n'
+          error:
+              'Workspace is not a git repository\n'
               '  Resolution: Initialize git with `git init`',
           duration: stopwatch.elapsed,
         );
@@ -482,7 +493,8 @@ class InternalCommandExecutor {
             projectEntry?.settings['publishable'] as bool? ?? false;
         if (isPublishable) {
           // Get path from project-info settings or use project name
-          final projectPath = (projectEntry?.settings['path'] as String?) ?? entry.key;
+          final projectPath =
+              (projectEntry?.settings['path'] as String?) ?? entry.key;
           publishableProjects[entry.key] = projectPath;
         }
       }
@@ -559,7 +571,8 @@ class InternalCommandExecutor {
         stopwatch.stop();
         return InternalCommandResult.failure(
           command: 'version-bump',
-          error: 'Some version bumps failed:\n'
+          error:
+              'Some version bumps failed:\n'
               '${failures.map((f) => "  ${f.projectPath}: ${f.error}").join("\n")}',
           duration: stopwatch.elapsed,
         );
@@ -574,7 +587,8 @@ class InternalCommandExecutor {
         stopwatch.stop();
         return InternalCommandResult.failure(
           command: 'version-bump',
-          error: 'Failed to commit version changes\n'
+          error:
+              'Failed to commit version changes\n'
               '  Resolution: Check git status and resolve any issues',
           duration: stopwatch.elapsed,
         );
@@ -584,7 +598,8 @@ class InternalCommandExecutor {
       final summary = StringBuffer()..writeln('Version bump complete:');
       for (final result in bumpResults) {
         summary.writeln(
-            '  ${result.projectPath}: ${result.oldVersion} → ${result.newVersion}');
+          '  ${result.projectPath}: ${result.oldVersion} → ${result.newVersion}',
+        );
       }
       summary.writeln('  Committed: $commitMessage');
 
@@ -605,7 +620,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'version-bump',
-        error: 'Unexpected error during version bump\n'
+        error:
+            'Unexpected error during version bump\n'
             '  Error: $e\n'
             '  Stack: $stack',
         duration: stopwatch.elapsed,
@@ -623,7 +639,8 @@ class InternalCommandExecutor {
     if (pipelineName == null || pipelineName.isEmpty) {
       return InternalCommandResult.failure(
         command: 'pipeline',
-        error: 'Pipeline name required\n'
+        error:
+            'Pipeline name required\n'
             '  Usage: :pipeline -name=<pipeline-name>\n'
             '  Resolution: Provide a valid pipeline name defined in tom_workspace.yaml',
         duration: Duration.zero,
@@ -640,7 +657,8 @@ class InternalCommandExecutor {
         stopwatch.stop();
         return InternalCommandResult.failure(
           command: 'pipeline',
-          error: 'Pipeline "$pipelineName" not found\n'
+          error:
+              'Pipeline "$pipelineName" not found\n'
               '  Available pipelines: ${availablePipelines.isEmpty ? "(none defined)" : availablePipelines.join(", ")}\n'
               '  Resolution: Check pipeline name in tom_workspace.yaml',
           duration: stopwatch.elapsed,
@@ -664,7 +682,9 @@ class InternalCommandExecutor {
       if (config.dryRun) {
         final summary = StringBuffer()
           ..writeln('[dry-run] Would execute pipeline "$pipelineName":')
-          ..writeln('  Projects: ${projectNames.isEmpty ? "(all)" : projectNames.join(", ")}')
+          ..writeln(
+            '  Projects: ${projectNames.isEmpty ? "(all)" : projectNames.join(", ")}',
+          )
           ..writeln('  Actions: ${actionsToRun.join(", ")}');
         stopwatch.stop();
         return InternalCommandResult.success(
@@ -700,7 +720,8 @@ class InternalCommandExecutor {
             stopwatch.stop();
             return InternalCommandResult.failure(
               command: 'pipeline',
-              error: 'Master file not found for action "$actionName"\n'
+              error:
+                  'Master file not found for action "$actionName"\n'
                   '  Resolution: Run :analyze first',
               duration: stopwatch.elapsed,
             );
@@ -718,7 +739,8 @@ class InternalCommandExecutor {
           stopwatch.stop();
           return InternalCommandResult.failure(
             command: 'pipeline',
-            error: 'Pipeline "$pipelineName" failed on action "$actionName"\n'
+            error:
+                'Pipeline "$pipelineName" failed on action "$actionName"\n'
                 '  ${failures.map((f) => "${f.projectName}: ${f.error}").join("\n  ")}',
             duration: stopwatch.elapsed,
           );
@@ -729,7 +751,9 @@ class InternalCommandExecutor {
       final summary = StringBuffer()
         ..writeln('Pipeline "$pipelineName" completed successfully:')
         ..writeln('  Actions executed: ${actionsToRun.join(", ")}')
-        ..writeln('  Projects: ${results.map((r) => r.projectName).toSet().join(", ")}');
+        ..writeln(
+          '  Projects: ${results.map((r) => r.projectName).toSet().join(", ")}',
+        );
 
       stopwatch.stop();
       return InternalCommandResult.success(
@@ -748,7 +772,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'pipeline',
-        error: 'Unexpected error executing pipeline\n'
+        error:
+            'Unexpected error executing pipeline\n'
             '  Error: $e\n'
             '  Stack: $stack',
         duration: stopwatch.elapsed,
@@ -776,7 +801,8 @@ class InternalCommandExecutor {
     final mode = parameters['mode'] ?? 'build';
     final target = parameters['target'];
     final allMode = parameters['all']?.toLowerCase() == 'true';
-    final verbose = parameters['verbose']?.toLowerCase() == 'true' || config.verbose;
+    final verbose =
+        parameters['verbose']?.toLowerCase() == 'true' || config.verbose;
     final packageName = parameters['package'] ?? 'tom_reflection';
     final extension = parameters['extension'] ?? '.reflection.dart';
 
@@ -786,7 +812,8 @@ class InternalCommandExecutor {
           : config.projects;
       return InternalCommandResult.success(
         command: 'generate-reflection',
-        message: '[dry-run] Would run reflection generator\n'
+        message:
+            '[dry-run] Would run reflection generator\n'
             '  Mode: $mode\n'
             '  Projects: ${targetProjects.join(", ")}',
         duration: Duration.zero,
@@ -865,7 +892,8 @@ class InternalCommandExecutor {
       if (hasErrors) {
         return InternalCommandResult.failure(
           command: 'generate-reflection',
-          error: 'Reflection generation completed with errors\n'
+          error:
+              'Reflection generation completed with errors\n'
               '$resultMessages',
           duration: stopwatch.elapsed,
         );
@@ -873,7 +901,8 @@ class InternalCommandExecutor {
 
       return InternalCommandResult.success(
         command: 'generate-reflection',
-        message: 'Reflection generation completed\n'
+        message:
+            'Reflection generation completed\n'
             '$resultMessages',
         duration: stopwatch.elapsed,
       );
@@ -881,7 +910,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'generate-reflection',
-        error: 'Unexpected error during reflection generation\n'
+        error:
+            'Unexpected error during reflection generation\n'
             '  Error: $e\n'
             '  Stack: $stack',
         duration: stopwatch.elapsed,
@@ -908,12 +938,14 @@ class InternalCommandExecutor {
     // Parse parameters
     final projectPath = parameters['project'] ?? config.workspacePath;
     final configPath = parameters['config'];
-    final verbose = parameters['verbose']?.toLowerCase() == 'true' || config.verbose;
+    final verbose =
+        parameters['verbose']?.toLowerCase() == 'true' || config.verbose;
 
     if (config.dryRun) {
       return InternalCommandResult.success(
         command: 'generate-bridges',
-        message: '[dry-run] Would run d4rt_generator:\n'
+        message:
+            '[dry-run] Would run d4rt_generator:\n'
             '  Project: $projectPath\n'
             '  Config: ${configPath ?? "(from build.yaml or d4rt_bridging.json)"}\n'
             '  Verbose: $verbose',
@@ -924,13 +956,13 @@ class InternalCommandExecutor {
     try {
       // Build command arguments
       final args = <String>[];
-      
+
       if (configPath != null) {
         args.addAll(['--config', configPath]);
       } else {
         args.addAll(['--project', projectPath]);
       }
-      
+
       if (verbose) {
         args.add('--verbose');
       }
@@ -938,23 +970,26 @@ class InternalCommandExecutor {
       // Try to run the d4rt_generator CLI
       // First try as a dart run command (for development)
       ProcessResult result;
-      
+
       // Check if we're in a workspace with tom_d4rt_generator
-      final generatorPath = p.join(p.dirname(config.workspacePath), 'tom_d4rt_generator');
+      final generatorPath = p.join(
+        p.dirname(config.workspacePath),
+        'tom_d4rt_generator',
+      );
       if (Directory(generatorPath).existsSync()) {
         // Run from local package
-        result = await Process.run(
-          'dart',
-          ['run', 'bin/d4rt_generator.dart', ...args],
-          workingDirectory: generatorPath,
-        );
+        result = await Process.run('dart', [
+          'run',
+          'bin/d4rt_generator.dart',
+          ...args,
+        ], workingDirectory: generatorPath);
       } else {
         // Try to run as global/activated package
-        result = await Process.run(
-          'dart',
-          ['run', 'tom_d4rt_generator:d4rt_generator', ...args],
-          workingDirectory: projectPath,
-        );
+        result = await Process.run('dart', [
+          'run',
+          'tom_d4rt_generator:d4rt_generator',
+          ...args,
+        ], workingDirectory: projectPath);
       }
 
       stopwatch.stop();
@@ -962,7 +997,8 @@ class InternalCommandExecutor {
       if (result.exitCode != 0) {
         return InternalCommandResult.failure(
           command: 'generate-bridges',
-          error: 'Bridge generation failed\n'
+          error:
+              'Bridge generation failed\n'
               '  Exit code: ${result.exitCode}\n'
               '  Stderr: ${result.stderr}',
           duration: stopwatch.elapsed,
@@ -978,7 +1014,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'generate-bridges',
-        error: 'Failed to run d4rt_generator\n'
+        error:
+            'Failed to run d4rt_generator\n'
             '  Error: $e\n'
             '  Stack: $stack\n'
             '  Resolution: Ensure tom_d4rt_generator is available',
@@ -1001,7 +1038,8 @@ class InternalCommandExecutor {
   ) async {
     final stopwatch = Stopwatch()..start();
     final recursive = parameters['recursive']?.toLowerCase() != 'false';
-    final verbose = parameters['verbose']?.toLowerCase() == 'true' || config.verbose;
+    final verbose =
+        parameters['verbose']?.toLowerCase() == 'true' || config.verbose;
 
     // Extract mode overrides from parameters (pp-mode-{type}=value)
     final modeOverrides = <String, String>{};
@@ -1015,7 +1053,8 @@ class InternalCommandExecutor {
     if (config.dryRun) {
       return InternalCommandResult.success(
         command: 'prepper',
-        message: '[dry-run] Would run mode processing on .tomplate files\n'
+        message:
+            '[dry-run] Would run mode processing on .tomplate files\n'
             '  Mode overrides: ${modeOverrides.isEmpty ? "(none)" : modeOverrides}',
         duration: Duration.zero,
       );
@@ -1088,7 +1127,9 @@ class InternalCommandExecutor {
       final errors = <String>[];
 
       for (final file in tomplateFiles) {
-        final relativePath = file.path.substring(config.workspacePath.length + 1);
+        final relativePath = file.path.substring(
+          config.workspacePath.length + 1,
+        );
 
         try {
           // Parse the template file
@@ -1114,8 +1155,9 @@ class InternalCommandExecutor {
 
           processedCount++;
           if (verbose) {
-            final targetRelative =
-                processed.targetPath.substring(config.workspacePath.length + 1);
+            final targetRelative = processed.targetPath.substring(
+              config.workspacePath.length + 1,
+            );
             print('  ✓ $relativePath → $targetRelative');
           }
         } catch (e) {
@@ -1130,10 +1172,14 @@ class InternalCommandExecutor {
       stopwatch.stop();
 
       final summary = StringBuffer()
-        ..writeln('Processed $processedCount files${errorCount > 0 ? ', $errorCount errors' : ''}');
+        ..writeln(
+          'Processed $processedCount files${errorCount > 0 ? ', $errorCount errors' : ''}',
+        );
 
       if (verbose && resolvedModes.activeModes.isNotEmpty) {
-        summary.writeln('  Active modes: ${resolvedModes.activeModes.join(', ')}');
+        summary.writeln(
+          '  Active modes: ${resolvedModes.activeModes.join(', ')}',
+        );
       }
 
       if (errors.isNotEmpty) {
@@ -1170,7 +1216,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'prepper',
-        error: 'Unexpected error during prepper execution\n'
+        error:
+            'Unexpected error during prepper execution\n'
             '  Error: $e\n'
             '  Stack: $stack',
         duration: stopwatch.elapsed,
@@ -1187,7 +1234,9 @@ class InternalCommandExecutor {
     buffer.writeln();
     buffer.writeln('Internal Commands:');
     for (final entry in InternalCommands.commands.entries) {
-      final prefix = entry.value.prefix != null ? ' (${entry.value.prefix}-)' : '';
+      final prefix = entry.value.prefix != null
+          ? ' (${entry.value.prefix}-)'
+          : '';
       buffer.writeln('  :${entry.key}$prefix');
       buffer.writeln('      ${entry.value.description}');
     }
@@ -1306,7 +1355,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'vscode',
-        error: 'Either file or code parameter is required\n'
+        error:
+            'Either file or code parameter is required\n'
             '  Usage: tom :vscode [host|port|host:port] -file=script.dart\n'
             '         tom :vscode [host|port|host:port] -code="print(\'hello\')"\n'
             '         tom :vscode 19900 -file=script.dart -mode=expression',
@@ -1318,7 +1368,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.success(
         command: 'vscode',
-        message: '[dry-run] Would execute via VS Code bridge:\n'
+        message:
+            '[dry-run] Would execute via VS Code bridge:\n'
             '  File: ${file ?? "(inline code)"}\n'
             '  Mode: $mode\n'
             '  Host: $host\n'
@@ -1334,7 +1385,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'vscode',
-        error: 'Failed to connect to VS Code VS Code Bridge on port '
+        error:
+            'Failed to connect to VS Code VS Code Bridge on port '
             '${client.port} (host: $host).\n'
             '  Ensure the CLI integration server is running in VS Code\n'
             '  (use Command Palette: "DS: Start Tom CLI Integration Server").',
@@ -1378,7 +1430,9 @@ class InternalCommandExecutor {
       if (result.success) {
         return InternalCommandResult.success(
           command: 'vscode',
-          message: result.output.isNotEmpty ? result.output : 'Executed successfully',
+          message: result.output.isNotEmpty
+              ? result.output
+              : 'Executed successfully',
           duration: stopwatch.elapsed,
         );
       } else {
@@ -1421,7 +1475,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.failure(
         command: 'dartscript',
-        error: 'Either file or code parameter is required\n'
+        error:
+            'Either file or code parameter is required\n'
             '  Usage: tom :dartscript -file=script.dart\n'
             '         tom :dartscript -code="print(\'hello\')"\n'
             '         tom :dartscript -file=script.dart -mode=expression\n'
@@ -1436,7 +1491,8 @@ class InternalCommandExecutor {
       stopwatch.stop();
       return InternalCommandResult.success(
         command: 'dartscript',
-        message: '[dry-run] Would execute locally via D4rt:\n'
+        message:
+            '[dry-run] Would execute locally via D4rt:\n'
             '  File: ${file ?? "(inline code)"}\n'
             '  Mode: $mode',
         duration: stopwatch.elapsed,
@@ -1448,7 +1504,8 @@ class InternalCommandExecutor {
       // This provides access to tom.workspace, tom.projectInfo, etc.
       WorkspaceContext? context;
       try {
-        context = WorkspaceContext.current ??
+        context =
+            WorkspaceContext.current ??
             await WorkspaceContext.load(config.workspacePath);
         // Ensure master files are generated so tom_master.yaml is up to date
         await context.ensureMasterFilesGenerated();
@@ -1500,7 +1557,9 @@ class InternalCommandExecutor {
       if (result.success) {
         return InternalCommandResult.success(
           command: 'dartscript',
-          message: result.output.isNotEmpty ? result.output : 'Executed successfully',
+          message: result.output.isNotEmpty
+              ? result.output
+              : 'Executed successfully',
           duration: stopwatch.elapsed,
         );
       } else {
@@ -1593,9 +1652,7 @@ class InternalCommandExecutor {
 /// - Can be reset with :reset-action-counter
 /// - Can be used in version placeholders for dev builds
 class ActionCounterManager {
-  ActionCounterManager({
-    required this.stateFilePath,
-  });
+  ActionCounterManager({required this.stateFilePath});
 
   /// Path to the workspace state file.
   final String stateFilePath;

@@ -25,7 +25,9 @@ Future<void> main(List<String> arguments) async {
   }
 
   // Parse arguments
-  final positionalArgs = arguments.where((arg) => !arg.startsWith('-')).toList();
+  final positionalArgs = arguments
+      .where((arg) => !arg.startsWith('-'))
+      .toList();
   final flags = arguments.where((arg) => arg.startsWith('-')).toList();
 
   if (positionalArgs.isEmpty) {
@@ -97,9 +99,7 @@ Future<void> main(List<String> arguments) async {
     exit(1);
   }
 
-  final parserOptions = MarkdownParserOptions(
-    detectAsciiDiagrams: detectAscii,
-  );
+  final parserOptions = MarkdownParserOptions(detectAsciiDiagrams: detectAscii);
 
   final options = MdLatexConverterOptions(
     generatePreamble: generatePreamble,
@@ -147,14 +147,15 @@ Future<void> main(List<String> arguments) async {
       // Run xelatex twice for proper cross-references
       for (var pass = 1; pass <= 2; pass++) {
         print('  XeLaTeX pass $pass for $texName...');
-        final xelatexResult = await Process.run(
-          'xelatex',
-          ['-interaction=nonstopmode', texPath],
-          workingDirectory: texDir,
-        );
+        final xelatexResult = await Process.run('xelatex', [
+          '-interaction=nonstopmode',
+          texPath,
+        ], workingDirectory: texDir);
 
         if (xelatexResult.exitCode != 0 && pass == 2) {
-          print('  Warning: XeLaTeX returned exit code ${xelatexResult.exitCode}');
+          print(
+            '  Warning: XeLaTeX returned exit code ${xelatexResult.exitCode}',
+          );
           // Don't fail - PDF may still be usable
         }
       }
@@ -169,7 +170,7 @@ Future<void> main(List<String> arguments) async {
           if (texFile.existsSync()) {
             await texFile.delete();
           }
-          
+
           // Also clean up auxiliary files when deleting .tex
           final auxExtensions = ['.aux', '.log', '.out', '.toc'];
           for (final ext in auxExtensions) {

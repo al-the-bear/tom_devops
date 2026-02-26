@@ -15,7 +15,7 @@ import 'dartscript.b.dart';
 import 'version.versioner.dart';
 
 /// TomD4rt REPL with integrated Tom CLI functionality.
-/// 
+///
 /// Extends DcliRepl to add:
 /// - Tom command support (: and ! prefixes)
 /// - Tom-specific bridges
@@ -23,33 +23,38 @@ import 'version.versioner.dart';
 class TomD4rtRepl extends DcliRepl {
   /// Tom CLI for executing workspace commands
   TomCli? _tomCli;
-  
+
   /// Get or create the Tom CLI instance.
   TomCli get tomCli => _tomCli ??= TomCli();
-  
+
   @override
   String get toolName => 'Tom';
-  
+
   @override
   String get toolVersion => TomVersionInfo.versionLong;
-  
+
   @override
   String get dataDirectory => '${Platform.environment['HOME']}/.tom/tom';
-  
+
   @override
-  List<String> get replayFilePatterns => ['.replay.txt', '.tom', '.d4rt', '.dcli'];
-  
+  List<String> get replayFilePatterns => [
+    '.replay.txt',
+    '.tom',
+    '.d4rt',
+    '.dcli',
+  ];
+
   @override
   void registerBridges(D4rt d4rt) {
     // Register all Tom Framework bridges via generated registration class
     TomBuildCliBridges.register(d4rt);
   }
-  
+
   @override
   String getImportBlock() {
     return getStdlibImports() + TomBuildCliBridges.getImportBlock();
   }
-  
+
   @override
   Future<bool> handleAdditionalCommands(
     D4rt d4rt,
@@ -63,11 +68,11 @@ class TomD4rtRepl extends DcliRepl {
       await _executeTomCommand(d4rt, state, line, silent: silent);
       return true;
     }
-    
+
     // Fall through to parent handling (VS Code commands, etc.)
     return super.handleAdditionalCommands(d4rt, state, line, silent: silent);
   }
-  
+
   /// Execute a Tom CLI command from the REPL.
   Future<void> _executeTomCommand(
     D4rt d4rt,
@@ -77,16 +82,14 @@ class TomD4rtRepl extends DcliRepl {
   }) async {
     // Parse the command line
     final args = _parseCommandLine(line);
-    
+
     try {
       // Execute via TomCli with current working directory
       final cli = TomCli(
-        config: TomCliConfig(
-          workspacePath: state.currentDirectory,
-        ),
+        config: TomCliConfig(workspacePath: state.currentDirectory),
       );
       final result = await cli.run(args);
-      
+
       // Display results
       if (!silent) {
         if (result.message != null && result.message!.isNotEmpty) {
@@ -100,7 +103,9 @@ class TomD4rtRepl extends DcliRepl {
       // Handle missing workspace or file access errors
       if (!silent) {
         state.writeError('Workspace error: ${e.message}');
-        state.writeMuted('Ensure you are in a Tom workspace (directory with tom_workspace.yaml)');
+        state.writeMuted(
+          'Ensure you are in a Tom workspace (directory with tom_workspace.yaml)',
+        );
       }
     } catch (e) {
       // Handle unexpected errors gracefully
@@ -109,17 +114,17 @@ class TomD4rtRepl extends DcliRepl {
       }
     }
   }
-  
+
   /// Parse a command line string into arguments.
   List<String> _parseCommandLine(String line) {
     final args = <String>[];
     final buffer = StringBuffer();
     var inQuote = false;
     var quoteChar = '';
-    
+
     for (var i = 0; i < line.length; i++) {
       final c = line[i];
-      
+
       if (inQuote) {
         if (c == quoteChar) {
           inQuote = false;
@@ -140,22 +145,19 @@ class TomD4rtRepl extends DcliRepl {
         buffer.write(c);
       }
     }
-    
+
     if (buffer.isNotEmpty) {
       args.add(buffer.toString());
     }
-    
+
     return args;
   }
-  
+
   @override
   List<String> getAdditionalHelpSections() {
-    return [
-      ...super.getAdditionalHelpSections(),
-      _getTomCommandsHelp(),
-    ];
+    return [...super.getAdditionalHelpSections(), _getTomCommandsHelp()];
   }
-  
+
   /// Returns the Tom workspace commands help section.
   String _getTomCommandsHelp() {
     return '''
@@ -172,15 +174,12 @@ class TomD4rtRepl extends DcliRepl {
   
   *Use* **:**<action> *for any workspace action defined in tom_master*.yaml*''';
   }
-  
+
   @override
   ReplState createReplState() {
     // Let DcliRepl initialize VS Code integration
     super.createReplState();
     // Return state with tom prompt name but keep the data directory
-    return ReplState(
-      promptName: 'tom',
-      dataDir: dataDirectory,
-    );
+    return ReplState(promptName: 'tom', dataDir: dataDirectory);
   }
 }

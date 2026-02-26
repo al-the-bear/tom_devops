@@ -59,7 +59,8 @@ import 'dart:io';
 import 'package:yaml/yaml.dart';
 
 import 'package:tom_build/tom_build.dart';
-import 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart' show VSCodeBridgeClient, VSCodeBridgeResult;
+import 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart'
+    show VSCodeBridgeClient, VSCodeBridgeResult;
 import '../../dartscript/d4rt_instance.dart';
 import '../template/tomplate_parser.dart';
 import '../template/tomplate_processor.dart';
@@ -189,8 +190,8 @@ class ActionExecutor {
     required this.config,
     CommandRunner? commandRunner,
     TomplateProcessor? tomplateProcessor,
-  })  : _commandRunner = commandRunner ?? CommandRunner(),
-        _tomplateProcessor = tomplateProcessor ?? TomplateProcessor();
+  }) : _commandRunner = commandRunner ?? CommandRunner(),
+       _tomplateProcessor = tomplateProcessor ?? TomplateProcessor();
 
   /// Executor configuration.
   final ActionExecutorConfig config;
@@ -245,7 +246,8 @@ class ActionExecutor {
         return ActionExecutionResult.failure(
           projectName: projectName,
           actionName: actionName,
-          error: 'Project [$projectName] not found in master file for action [$actionName]\n'
+          error:
+              'Project [$projectName] not found in master file for action [$actionName]\n'
               '  Resolution: Run :analyze to regenerate master files, or check project name spelling',
         );
       }
@@ -256,7 +258,8 @@ class ActionExecutor {
         return ActionExecutionResult.failure(
           projectName: projectName,
           actionName: actionName,
-          error: 'Action [$actionName] not defined for project [$projectName]\n'
+          error:
+              'Action [$actionName] not defined for project [$projectName]\n'
               '  Resolution: Add action definition in tom_project.yaml or workspace actions:',
         );
       }
@@ -415,8 +418,9 @@ class ActionExecutor {
     final actionOrder = master.actionOrder[actionName] ?? master.buildOrder;
 
     // Filter to only the requested projects, maintaining order
-    final orderedProjects =
-        actionOrder.where((p) => projectNames.contains(p)).toList();
+    final orderedProjects = actionOrder
+        .where((p) => projectNames.contains(p))
+        .toList();
 
     // Add any requested projects not in the order (alphabetically)
     final unorderedProjects =
@@ -716,17 +720,23 @@ class ActionExecutor {
     if (commandType == null) {
       return CommandResult.failure(
         command: command.toString(),
-        stderr: 'Invalid command: Map must have one of: shell, dartscript, vscode, tom',
+        stderr:
+            'Invalid command: Map must have one of: shell, dartscript, vscode, tom',
         exitCode: 1,
         duration: Duration.zero,
       );
     }
 
     final commandBody = command[commandType]?.toString() ?? '';
-    final resolvedBody = _resolveEnvironmentPlaceholders(commandBody, environment);
+    final resolvedBody = _resolveEnvironmentPlaceholders(
+      commandBody,
+      environment,
+    );
 
     if (config.verbose) {
-      _log('Executing [$commandType]: ${resolvedBody.length > 80 ? '${resolvedBody.substring(0, 80)}...' : resolvedBody}');
+      _log(
+        'Executing [$commandType]: ${resolvedBody.length > 80 ? '${resolvedBody.substring(0, 80)}...' : resolvedBody}',
+      );
     }
 
     switch (commandType) {
@@ -817,7 +827,8 @@ class ActionExecutor {
       stopwatch.stop();
       return CommandResult.failure(
         command: command,
-        stderr: 'tom: command requires an internal command\n'
+        stderr:
+            'tom: command requires an internal command\n'
             '  Usage: tom: :command [args...]\n'
             '  Example: tom: :analyze\n'
             '  Available: :analyze, :vscode, :dartscript, :help, etc.',
@@ -831,7 +842,8 @@ class ActionExecutor {
       stopwatch.stop();
       return CommandResult.failure(
         command: command,
-        stderr: 'tom: only allows internal commands (starting with :)\n'
+        stderr:
+            'tom: only allows internal commands (starting with :)\n'
             '  Got: $firstArg\n'
             '  Usage: tom: :command [args...]\n'
             '  Example: tom: :analyze\n'
@@ -991,7 +1003,8 @@ class ActionExecutor {
       stopwatch.stop();
       return CommandResult.failure(
         command: command,
-        stderr: 'Failed to connect to VS Code VS Code Bridge on port '
+        stderr:
+            'Failed to connect to VS Code VS Code Bridge on port '
             '${client.port}. Ensure the CLI integration server is running '
             '(use Command Palette: "DS: Start Tom CLI Integration Server").',
         exitCode: 1,
@@ -1094,7 +1107,8 @@ class ActionExecutor {
       stopwatch.stop();
       return CommandResult.failure(
         command: command,
-        stderr: 'Failed to connect to VS Code VS Code Bridge on port '
+        stderr:
+            'Failed to connect to VS Code VS Code Bridge on port '
             '${client.port}. Ensure the CLI integration server is running '
             '(use Command Palette: "DS: Start Tom CLI Integration Server").',
         exitCode: 1,
@@ -1209,7 +1223,7 @@ class ActionExecutor {
         dynamic evalResult;
         var success = true;
         String? error;
-        
+
         try {
           evalResult = await runZoned(
             () => d4rtContext.instance.evaluate(body),
@@ -1226,22 +1240,22 @@ class ActionExecutor {
         }
 
         if (success) {
-           final resultStr = evalResult?.toString() ?? '';
-           if (resultStr.isNotEmpty && resultStr != 'null') {
-             capturedOutput.writeln(resultStr);
-           }
-           
-           result = D4rtResult.success(
-             code: body,
-             value: evalResult,
-             output: capturedOutput.toString().trim(),
-           );
+          final resultStr = evalResult?.toString() ?? '';
+          if (resultStr.isNotEmpty && resultStr != 'null') {
+            capturedOutput.writeln(resultStr);
+          }
+
+          result = D4rtResult.success(
+            code: body,
+            value: evalResult,
+            output: capturedOutput.toString().trim(),
+          );
         } else {
-           result = D4rtResult.failure(
-             code: body,
-             error: error ?? 'Unknown error',
-             output: capturedOutput.toString().trim(),
-           );
+          result = D4rtResult.failure(
+            code: body,
+            error: error ?? 'Unknown error',
+            output: capturedOutput.toString().trim(),
+          );
         }
       }
 

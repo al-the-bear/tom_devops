@@ -37,7 +37,8 @@ class CliArgs {
   final List<String> positionalArgs = [];
 
   /// Creates a CLI args parser for the given prefix.
-  CliArgs(this.prefix, List<String> arguments) : rawArgs = List.unmodifiable(arguments) {
+  CliArgs(this.prefix, List<String> arguments)
+    : rawArgs = List.unmodifiable(arguments) {
     _parse(arguments);
   }
 
@@ -86,7 +87,8 @@ class CliArgs {
   String? operator [](String key) => _namedParams[key];
 
   /// Gets a named parameter value with a default.
-  String get(String key, [String defaultValue = '']) => _namedParams[key] ?? defaultValue;
+  String get(String key, [String defaultValue = '']) =>
+      _namedParams[key] ?? defaultValue;
 
   /// Gets a named parameter as an integer.
   int? getInt(String key) {
@@ -159,10 +161,13 @@ class CliArgs {
 }
 
 /// Parses arguments with the workspace preparer prefix.
-CliArgs parseWsPrepperArgs(List<String> args) => CliArgs(ToolPrefix.wsPrepper, args);
+CliArgs parseWsPrepperArgs(List<String> args) =>
+    CliArgs(ToolPrefix.wsPrepper, args);
 
 /// Parses arguments with the workspace analyzer prefix.
-CliArgs parseWorkspaceAnalyzerArgs(List<String> args) => CliArgs(ToolPrefix.workspaceAnalyzer, args);
+CliArgs parseWorkspaceAnalyzerArgs(List<String> args) =>
+    CliArgs(ToolPrefix.workspaceAnalyzer, args);
 
 /// Parses arguments with the reflection generator prefix.
-CliArgs parseReflectionGeneratorArgs(List<String> args) => CliArgs(ToolPrefix.reflectionGenerator, args);
+CliArgs parseReflectionGeneratorArgs(List<String> args) =>
+    CliArgs(ToolPrefix.reflectionGenerator, args);

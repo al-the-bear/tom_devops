@@ -31,15 +31,14 @@ void main() {
 
       expect(args.hasFlag('dry-run'), isTrue);
       expect(args.hasFlag('verbose'), isTrue);
-      expect(args.positionalArgs, equals(['development', '/path/to/workspace']));
+      expect(
+        args.positionalArgs,
+        equals(['development', '/path/to/workspace']),
+      );
     });
 
     test('parses mixed prefixed and legacy args', () {
-      final args = parseWsPrepperArgs([
-        'wp-mode=dev',
-        '--dry-run',
-        '/path',
-      ]);
+      final args = parseWsPrepperArgs(['wp-mode=dev', '--dry-run', '/path']);
 
       expect(args['mode'], equals('dev'));
       expect(args.hasFlag('dry-run'), isTrue);
@@ -47,10 +46,7 @@ void main() {
     });
 
     test('parses --option=value style', () {
-      final args = parseWsPrepperArgs([
-        '--output=/tmp/out',
-        '--format=json',
-      ]);
+      final args = parseWsPrepperArgs(['--output=/tmp/out', '--format=json']);
 
       expect(args['output'], equals('/tmp/out'));
       expect(args['format'], equals('json'));
@@ -104,7 +100,10 @@ void main() {
       final cwd = Directory.current.path;
 
       expect(args.resolvePath('/absolute/path'), equals('/absolute/path'));
-      expect(args.resolvePath('relative/path'), equals(p.join(cwd, 'relative/path')));
+      expect(
+        args.resolvePath('relative/path'),
+        equals(p.join(cwd, 'relative/path')),
+      );
     });
   });
 
@@ -127,8 +126,9 @@ workspace-modes:
       expect(info.workspaceModes!.supportedModes.length, equals(3));
       expect(info.workspaceModes!.defaultMode, equals('default'));
 
-      final devMode = info.workspaceModes!.supportedModes
-          .firstWhere((m) => m.name == 'development');
+      final devMode = info.workspaceModes!.supportedModes.firstWhere(
+        (m) => m.name == 'development',
+      );
       expect(devMode.implies, equals(['relative_build']));
       expect(devMode.description, equals('Dev mode'));
     });
@@ -227,7 +227,10 @@ supported:
 ''');
       final modes = WorkspaceModes.fromYaml(yaml);
 
-      expect(modes.supportedModes[0].implies, equals(['relative_build', 'debug']));
+      expect(
+        modes.supportedModes[0].implies,
+        equals(['relative_build', 'debug']),
+      );
     });
 
     test('parses mode with single implies value', () {
@@ -276,7 +279,7 @@ workspace-modes:
 ''');
 
       final context = await ToolContext.load(workspacePath: tempDir.path);
-      
+
       expect(context.workspaceInfo.name, equals('test_workspace'));
       expect(context.workspaceInfo.workspaceModes, isNotNull);
       expect(ToolContext.isInitialized, isTrue);
@@ -348,7 +351,10 @@ workspace-modes:
       final result = context.validateModes(['development', 'production']);
 
       expect(result.isValid, isTrue);
-      expect(result.resolvedModes, containsAll(['debug', 'development', 'optimized', 'production']));
+      expect(
+        result.resolvedModes,
+        containsAll(['debug', 'development', 'optimized', 'production']),
+      );
     });
 
     test('reload clears and reloads context', () async {

@@ -19,7 +19,10 @@ void main() {
     test('all standard commands are registered', () {
       expect(InternalCommands.isInternalCommand('analyze'), isTrue);
       expect(InternalCommands.isInternalCommand('version-bump'), isTrue);
-      expect(InternalCommands.isInternalCommand('reset-action-counter'), isTrue);
+      expect(
+        InternalCommands.isInternalCommand('reset-action-counter'),
+        isTrue,
+      );
       expect(InternalCommands.isInternalCommand('pipeline'), isTrue);
       expect(InternalCommands.isInternalCommand('generate-reflection'), isTrue);
       expect(InternalCommands.isInternalCommand('generate-bridges'), isTrue);
@@ -44,21 +47,39 @@ void main() {
 
     test('getCommandForPrefix returns correct command', () {
       expect(InternalCommands.getCommandForPrefix('wa'), equals('analyze'));
-      expect(InternalCommands.getCommandForPrefix('gr'), equals('generate-reflection'));
-      expect(InternalCommands.getCommandForPrefix('gb'), equals('generate-bridges'));
+      expect(
+        InternalCommands.getCommandForPrefix('gr'),
+        equals('generate-reflection'),
+      );
+      expect(
+        InternalCommands.getCommandForPrefix('gb'),
+        equals('generate-bridges'),
+      );
     });
 
     test('command info has correct workspace requirements', () {
       // Commands requiring workspace
       expect(InternalCommands.getCommand('analyze')?.requiresWorkspace, isTrue);
-      expect(InternalCommands.getCommand('version-bump')?.requiresWorkspace, isTrue);
-      expect(InternalCommands.getCommand('pipeline')?.requiresWorkspace, isTrue);
+      expect(
+        InternalCommands.getCommand('version-bump')?.requiresWorkspace,
+        isTrue,
+      );
+      expect(
+        InternalCommands.getCommand('pipeline')?.requiresWorkspace,
+        isTrue,
+      );
       expect(InternalCommands.getCommand('prepper')?.requiresWorkspace, isTrue);
-      
+
       // Commands not requiring workspace
-      expect(InternalCommands.getCommand('generate-bridges')?.requiresWorkspace, isFalse);
+      expect(
+        InternalCommands.getCommand('generate-bridges')?.requiresWorkspace,
+        isFalse,
+      );
       expect(InternalCommands.getCommand('help')?.requiresWorkspace, isFalse);
-      expect(InternalCommands.getCommand('version')?.requiresWorkspace, isFalse);
+      expect(
+        InternalCommands.getCommand('version')?.requiresWorkspace,
+        isFalse,
+      );
     });
   });
 
@@ -68,7 +89,9 @@ void main() {
     late InternalCommandExecutor executor;
 
     setUp(() async {
-      tempDir = await Directory.systemTemp.createTemp('test_internal_commands_');
+      tempDir = await Directory.systemTemp.createTemp(
+        'test_internal_commands_',
+      );
       config = InternalCommandConfig(
         workspacePath: tempDir.path,
         dryRun: true,
@@ -87,11 +110,14 @@ void main() {
       expect(result.error, contains('Unknown internal command'));
     });
 
-    test('command requiring workspace fails without tom_workspace.yaml', () async {
-      final result = await executor.execute(commandName: 'analyze');
-      expect(result.success, isFalse);
-      expect(result.error, contains('requires a Tom workspace'));
-    });
+    test(
+      'command requiring workspace fails without tom_workspace.yaml',
+      () async {
+        final result = await executor.execute(commandName: 'analyze');
+        expect(result.success, isFalse);
+        expect(result.error, contains('requires a Tom workspace'));
+      },
+    );
 
     group('help command', () {
       test('returns success', () async {
@@ -167,12 +193,14 @@ void main() {
         // Create metadata directory and workspace file
         final metadataDir = Directory(path.join(tempDir.path, '.tom_metadata'));
         await metadataDir.create();
-        
+
         // Create tom_workspace.yaml since reset-action-counter requires workspace
         final wsFile = File(path.join(tempDir.path, 'tom_workspace.yaml'));
         await wsFile.writeAsString('name: test-workspace\n');
-        
-        final result = await executor.execute(commandName: 'reset-action-counter');
+
+        final result = await executor.execute(
+          commandName: 'reset-action-counter',
+        );
         expect(result.success, isTrue);
         expect(result.message, contains('reset'));
       });

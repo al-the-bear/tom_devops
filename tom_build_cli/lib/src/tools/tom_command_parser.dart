@@ -61,7 +61,8 @@ class ParsedCommand {
   bool get help => flags.contains('help') || flags.contains('h');
 
   /// Gets a parameter value with optional default.
-  String get(String key, [String defaultValue = '']) => params[key] ?? defaultValue;
+  String get(String key, [String defaultValue = '']) =>
+      params[key] ?? defaultValue;
 
   /// Gets a parameter as an integer.
   int? getInt(String key) {
@@ -109,7 +110,8 @@ class ParsedTomCommand {
   });
 
   /// Whether verbose mode is globally enabled.
-  bool get verbose => globalFlags.contains('verbose') || globalFlags.contains('v');
+  bool get verbose =>
+      globalFlags.contains('verbose') || globalFlags.contains('v');
 
   /// Whether dry run mode is globally enabled.
   bool get dryRun => globalFlags.contains('dry-run');
@@ -121,7 +123,8 @@ class ParsedTomCommand {
   bool get hasCommands => commands.isNotEmpty;
 
   /// Gets a global parameter value with optional default.
-  String get(String key, [String defaultValue = '']) => globalParams[key] ?? defaultValue;
+  String get(String key, [String defaultValue = '']) =>
+      globalParams[key] ?? defaultValue;
 
   @override
   String toString() {
@@ -163,7 +166,7 @@ class TomCommandParser {
     // Parse global parameters and flags until we hit a command
     while (i < args.length && !_isCommand(args[i])) {
       final arg = args[i];
-      
+
       if (_isNamedParam(arg)) {
         final (key, value) = _parseNamedParam(arg);
         globalParams[key] = value;
@@ -171,7 +174,7 @@ class TomCommandParser {
         globalFlags.addAll(_parseFlags(arg));
       }
       // Ignore other arguments in global section
-      
+
       i++;
     }
 
@@ -193,7 +196,7 @@ class TomCommandParser {
       // Collect arguments until next command
       while (i < args.length && !_isCommand(args[i])) {
         final arg = args[i];
-        
+
         if (_isNamedParam(arg)) {
           final (key, value) = _parseNamedParam(arg);
           cmdParams[key] = value;
@@ -202,16 +205,18 @@ class TomCommandParser {
         } else if (!arg.startsWith('-')) {
           cmdPositional.add(arg);
         }
-        
+
         i++;
       }
 
-      commands.add(ParsedCommand(
-        name: commandName,
-        params: Map.unmodifiable(cmdParams),
-        flags: Set.unmodifiable(cmdFlags),
-        positionalArgs: List.unmodifiable(cmdPositional),
-      ));
+      commands.add(
+        ParsedCommand(
+          name: commandName,
+          params: Map.unmodifiable(cmdParams),
+          flags: Set.unmodifiable(cmdFlags),
+          positionalArgs: List.unmodifiable(cmdPositional),
+        ),
+      );
     }
 
     return ParsedTomCommand(
@@ -282,7 +287,12 @@ class TomCommandParser {
 }
 
 /// Convenience function to parse tom CLI arguments.
-ParsedTomCommand parseTomCommand(List<String> args, {Set<String>? additionalCommands}) {
-  final parser = TomCommandParser(additionalCommands: additionalCommands ?? const {});
+ParsedTomCommand parseTomCommand(
+  List<String> args, {
+  Set<String>? additionalCommands,
+}) {
+  final parser = TomCommandParser(
+    additionalCommands: additionalCommands ?? const {},
+  );
   return parser.parse(args);
 }

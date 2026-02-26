@@ -16,7 +16,8 @@ import 'dart:io';
 
 import 'package:tom_d4rt/d4rt.dart';
 import 'package:tom_d4rt_dcli/dartscript.b.dart' as imported_0;
-import 'package:tom_build_cli/src/tom_d4rt/tom_build_cli_bridges.b.dart' as tom_build_cli_bridges;
+import 'package:tom_build_cli/src/tom_d4rt/tom_build_cli_bridges.b.dart'
+    as tom_build_cli_bridges;
 
 /// Init script source that imports all bridged modules.
 const String _initSource = '''
@@ -35,13 +36,16 @@ void _registerBridges(D4rt d4rt) {
 }
 
 /// Logs D4 invocations to a debug file.
-const String _d4InvocationsLogPath = '/Users/alexiskyaw/Desktop/Code/tom2/d4_invocations.log';
+const String _d4InvocationsLogPath =
+    '/Users/alexiskyaw/Desktop/Code/tom2/d4_invocations.log';
 
 void _logD4Invocation(String mode, String input) {
   final timestamp = DateTime.now().toIso8601String();
   final logLine = '$timestamp | $mode | $input\n';
   try {
-    File(_d4InvocationsLogPath).writeAsStringSync(logLine, mode: FileMode.append);
+    File(
+      _d4InvocationsLogPath,
+    ).writeAsStringSync(logLine, mode: FileMode.append);
   } catch (_) {
     // Ignore logging failures
   }
@@ -50,12 +54,24 @@ void _logD4Invocation(String mode, String input) {
 Future<void> main(List<String> args) async {
   if (args.isEmpty) {
     stderr.writeln('Usage:');
-    stderr.writeln('  dart run bin/d4rtrun.b.dart <script.dart|.d4rt>  Run a D4rt script file');
-    stderr.writeln('  dart run bin/d4rtrun.b.dart "<expression>"      Evaluate an expression');
-    stderr.writeln('  dart run bin/d4rtrun.b.dart --eval-file <file>  Evaluate file content with eval()');
-    stderr.writeln('  dart run bin/d4rtrun.b.dart --init-eval         Validate bridge registrations');
-    stderr.writeln('  dart run bin/d4rtrun.b.dart --test <file>       Test script (structured JSON output)');
-    stderr.writeln('  dart run bin/d4rtrun.b.dart --test-eval <init> <expr>  Test eval (structured JSON)');
+    stderr.writeln(
+      '  dart run bin/d4rtrun.b.dart <script.dart|.d4rt>  Run a D4rt script file',
+    );
+    stderr.writeln(
+      '  dart run bin/d4rtrun.b.dart "<expression>"      Evaluate an expression',
+    );
+    stderr.writeln(
+      '  dart run bin/d4rtrun.b.dart --eval-file <file>  Evaluate file content with eval()',
+    );
+    stderr.writeln(
+      '  dart run bin/d4rtrun.b.dart --init-eval         Validate bridge registrations',
+    );
+    stderr.writeln(
+      '  dart run bin/d4rtrun.b.dart --test <file>       Test script (structured JSON output)',
+    );
+    stderr.writeln(
+      '  dart run bin/d4rtrun.b.dart --test-eval <init> <expr>  Test eval (structured JSON)',
+    );
     exit(1);
   }
 
@@ -70,7 +86,9 @@ Future<void> main(List<String> args) async {
 
   if (args.first == '--test-eval') {
     if (args.length < 3) {
-      stderr.writeln('Error: --test-eval requires <init-file> and <expression-file> arguments.');
+      stderr.writeln(
+        'Error: --test-eval requires <init-file> and <expression-file> arguments.',
+      );
       exit(1);
     }
     await _runTestEval(args[1], args[2]);
@@ -92,7 +110,9 @@ Future<void> main(List<String> args) async {
   }
 
   final input = args.first;
-  if (input.endsWith('.dart') || input.endsWith('.d4rt') || File(input).existsSync()) {
+  if (input.endsWith('.dart') ||
+      input.endsWith('.d4rt') ||
+      File(input).existsSync()) {
     _runFile(input);
   } else {
     _runExpression(input);
@@ -219,7 +239,9 @@ void _runInitEval() {
       stderr.writeln('  ${i + 1}. ${errors[i]}');
     }
     stderr.writeln('');
-    stderr.writeln('Fix these issues by using import show/hide clauses in your');
+    stderr.writeln(
+      'Fix these issues by using import show/hide clauses in your',
+    );
     stderr.writeln('module configuration or by removing duplicate exports.');
     exit(2);
   }
@@ -354,9 +376,6 @@ Future<void> _runTestEval(String initFilePath, String evalFilePath) async {
 /// Emit structured test result as JSON for D4rtTester to parse.
 /// Uses stdout.writeln directly to bypass any zone print overrides.
 void _emitTestResult(String output, List<String> exceptions) {
-  final result = jsonEncode({
-    'output': output,
-    'exceptions': exceptions,
-  });
+  final result = jsonEncode({'output': output, 'exceptions': exceptions});
   stdout.writeln('###D4RT_TEST_RESULT###$result');
 }

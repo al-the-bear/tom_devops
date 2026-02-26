@@ -90,7 +90,11 @@ void main() {
       });
 
       test('parses action with parameters', () {
-        final result = parser.parse([':build', '-verbose=true', '-output=./dist']);
+        final result = parser.parse([
+          ':build',
+          '-verbose=true',
+          '-output=./dist',
+        ]);
 
         expect(result.actions.length, equals(1));
         expect(result.actions[0].parameters['verbose'], equals('true'));
@@ -198,10 +202,7 @@ void main() {
         ]);
 
         expect(result.groups, equals(['uam']));
-        expect(
-          result.groupParameters['uam']?['cloud-provider'],
-          equals('aws'),
-        );
+        expect(result.groupParameters['uam']?['cloud-provider'], equals('aws'));
       });
 
       test('throws when both :projects and :groups used', () {
@@ -237,10 +238,7 @@ void main() {
       });
 
       test('throws on unexpected argument in global position', () {
-        expect(
-          () => parser.parse(['unexpected_arg']),
-          throwsArgumentError,
-        );
+        expect(() => parser.parse(['unexpected_arg']), throwsArgumentError);
       });
     });
 
@@ -272,8 +270,11 @@ void main() {
       test('all internal commands are recognized', () {
         for (final cmd in ArgumentParser.internalCommands) {
           final result = parser.parse([':$cmd']);
-          expect(result.actions[0].isInternalCommand, isTrue,
-              reason: '$cmd should be internal');
+          expect(
+            result.actions[0].isInternalCommand,
+            isTrue,
+            reason: '$cmd should be internal',
+          );
         }
       });
     });
