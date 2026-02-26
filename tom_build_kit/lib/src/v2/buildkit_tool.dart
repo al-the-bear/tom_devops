@@ -460,6 +460,11 @@ const executeOptions = <OptionDefinition>[
         'Boolean placeholder condition to filter folders (e.g., dart.exists)',
     valueName: 'placeholder',
   ),
+  OptionDefinition.flag(
+    name: 'summary',
+    abbr: 'S',
+    description: 'Print a summary of executed commands with project names',
+  ),
 ];
 
 /// Options for dcli command.

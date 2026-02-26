@@ -558,15 +558,19 @@ Future<bool> _executeCommand(
   // Run via ToolRunner
   final result = await runner.run(cmdArgs);
 
-  // Print item results summary
+  // Print item results summary (only when --summary is requested)
+  final showSummary = step.args.contains('--summary') ||
+      step.args.contains('-S');
   for (final item in result.itemResults) {
     if (item.success) {
-      if (item.message != null &&
+      if (showSummary &&
+          item.message != null &&
           item.message!.isNotEmpty &&
           !item.message!.startsWith('skipped')) {
         // Capitalize first letter for display
-        final msg = item.message![0].toUpperCase() + item.message!.substring(1);
-        print(msg);
+        final msg =
+            item.message![0].toUpperCase() + item.message!.substring(1);
+        print('${item.name}: $msg');
       }
     } else if (item.error != null) {
       print('Error [${item.name}]: ${item.error}');

@@ -89,8 +89,8 @@ class Md2Pdf {
 
     final converter = MdPdfConverter(inputPath, options: options);
 
-    final outPath = outputPath ??
-        inputPath.replaceAll(RegExp(r'\.md$'), '.pdf');
+    final outPath =
+        outputPath ?? inputPath.replaceAll(RegExp(r'\.md$'), '.pdf');
     final outDir = File(outPath).parent.path;
 
     return converter.convertFile(file, outputDir: outDir);

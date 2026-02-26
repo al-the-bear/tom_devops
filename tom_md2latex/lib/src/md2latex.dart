@@ -85,8 +85,8 @@ class Md2Latex {
       ),
     );
 
-    final outPath = outputPath ??
-        inputPath.replaceAll(RegExp(r'\.md$'), '.tex');
+    final outPath =
+        outputPath ?? inputPath.replaceAll(RegExp(r'\.md$'), '.tex');
 
     final outDir = File(outPath).parent.path;
     return converter.convertFile(file, outputDir: outDir);
