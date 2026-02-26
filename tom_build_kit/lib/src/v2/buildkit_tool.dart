@@ -699,10 +699,10 @@ const executeCommand = CommandDefinition(
   requiresTraversal: true,
   canRunStandalone: false,
   examples: [
-    'buildkit :execute "echo \${folder.name}"',
-    'buildkit :execute --condition dart.exists "dart pub get"',
-    'buildkit :execute --condition dart.exists "echo \${dart.publishable?(Publishable):(Not publishable)}"',
-    'buildkit -g :execute --condition git.exists "git status"',
+    'buildkit :execute echo #{folder.name}',
+    'buildkit :execute --condition dart.exists dart pub get',
+    'buildkit :execute --condition dart.exists echo #{dart.publishable?(Publishable):(Not publishable)}',
+    'buildkit -g :execute --condition git.exists git status',
   ],
 );
 

@@ -8,67 +8,31 @@ compiler:
   compiles:
     # macOS ARM64 - compile for self + all Linux targets
     - commandline:
-        - mkdir -p $TOM_BINARY_PATH/${target-platform-vs}
-        - dart compile exe ${file} --target-os=${target-os} -o $TOM_BINARY_PATH/${target-platform-vs}/${file.name}
+        - mkdir -p $TOM_BINARY_PATH/#{target-platform-vs}
+        - dart compile exe #{file} --target-os=#{target-os} -o $TOM_BINARY_PATH/#{target-platform-vs}/#{file.name}
       files:
         - bin/buildkit.dart
-        - bin/buildsorter.dart
-        - bin/cleanup.dart
-        - bin/compiler.dart
-        - bin/dependencies.dart
-        - bin/runner.dart
-        - bin/bumpversion.dart
-        - bin/versioner.dart
-        - bin/publisher.dart
-        - bin/gitstatus.dart
-        - bin/gitcommit.dart
-        - bin/gitpull.dart
-        - bin/gitbranch.dart
-        - bin/gittag.dart
-        - bin/gitclean.dart
-        - bin/gitcheckout.dart
-        - bin/gitreset.dart
-        - bin/gitsync.dart
-        - bin/goto.dart
       targets: [darwin-arm64, linux-x64, linux-arm64, linux-armhf]
       platforms: [darwin-arm64]
     
     # Other platforms - compile for self only
     - commandline:
-        - mkdir -p $TOM_BINARY_PATH/${target-platform-vs}
-        - dart compile exe ${file} -o $TOM_BINARY_PATH/${target-platform-vs}/${file.name}
+        - mkdir -p $TOM_BINARY_PATH/#{target-platform-vs}
+        - dart compile exe #{file} -o $TOM_BINARY_PATH/#{target-platform-vs}/#{file.name}
       files:
         - bin/buildkit.dart
-        - bin/buildsorter.dart
-        - bin/cleanup.dart
-        - bin/compiler.dart
-        - bin/dependencies.dart
-        - bin/runner.dart
-        - bin/bumpversion.dart
-        - bin/versioner.dart
-        - bin/publisher.dart
-        - bin/gitstatus.dart
-        - bin/gitcommit.dart
-        - bin/gitpull.dart
-        - bin/gitbranch.dart
-        - bin/gittag.dart
-        - bin/gitclean.dart
-        - bin/gitcheckout.dart
-        - bin/gitreset.dart
-        - bin/gitsync.dart
-        - bin/goto.dart
       platforms: [darwin-x64, linux-*, win32-*]
 
   postcompile:
     # Make binaries executable on Unix-like systems
     - commandline:
-        - chmod -R +x $TOM_BINARY_PATH/${current-platform-vs}/
+        - chmod -R +x $TOM_BINARY_PATH/#{current-platform-vs}/
       platforms: [macos, linux]
     
     # Create bk symlink for buildkit
     - commandline:
-        - ln -sf $TOM_BINARY_PATH/${current-platform-vs}/buildkit $TOM_BINARY_PATH/${current-platform-vs}/bk
+        - ln -sf $TOM_BINARY_PATH/#{current-platform-vs}/buildkit $TOM_BINARY_PATH/#{current-platform-vs}/bk
       platforms: [macos, linux]
     - commandline:
-        - cmd /c mklink $HOME\.tom\bin\${current-platform-vs}\bk.exe $HOME\.tom\bin\${current-platform-vs}\buildkit.exe
+        - cmd /c mklink $HOME\.tom\bin\#{current-platform-vs}\bk.exe $HOME\.tom\bin\#{current-platform-vs}\buildkit.exe
       platforms: [win32-*]

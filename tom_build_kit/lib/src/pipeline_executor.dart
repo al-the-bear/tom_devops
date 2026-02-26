@@ -278,12 +278,12 @@ class PipelineExecutor {
     var result = command;
 
     // Platform variables
-    result = result.replaceAll(r'${current-platform-vs}', _getCurrentPlatformVs());
-    result = result.replaceAll(r'${current-os}', Platform.operatingSystem);
+    result = result.replaceAll(r'#{current-platform-vs}', _getCurrentPlatformVs());
+    result = result.replaceAll(r'#{current-os}', Platform.operatingSystem);
 
     // Path variables
-    result = result.replaceAll(r'${project}', projectPath);
-    result = result.replaceAll(r'${root}', rootPath);
+    result = result.replaceAll(r'#{project}', projectPath);
+    result = result.replaceAll(r'#{root}', rootPath);
 
     return result;
   }

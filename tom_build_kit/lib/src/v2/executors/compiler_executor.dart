@@ -438,18 +438,18 @@ class CompilerExecutor extends CommandExecutor {
       );
       command = command
           .replaceAll(
-            r'${current-os}',
+            r'#{current-os}',
             PlatformUtils.getTargetOS(currentPlatform),
           )
           .replaceAll(
-            r'${current-arch}',
+            r'#{current-arch}',
             PlatformUtils.getTargetArch(currentPlatform),
           )
           .replaceAll(
-            r'${current-platform}',
+            r'#{current-platform}',
             PlatformUtils.vsCodeToDartTarget(currentPlatform),
           )
-          .replaceAll(r'${current-platform-vs}', currentPlatform);
+          .replaceAll(r'#{current-platform-vs}', currentPlatform);
 
       if (script_utils.isStdinCommand(command)) {
         final parsed = script_utils.parseStdinCommand(command);
@@ -678,20 +678,20 @@ class CompilerExecutor extends CommandExecutor {
     required String currentPlatform,
   }) {
     return template
-        .replaceAll(r'${file}', filePath)
-        .replaceAll(r'${file.path}', filePath)
-        .replaceAll(r'${file.name}', fileName)
-        .replaceAll(r'${file.basename}', fileBasename)
-        .replaceAll(r'${file.extension}', fileExtension)
-        .replaceAll(r'${file.dir}', fileDir)
-        .replaceAll(r'${target-os}', targetOS)
-        .replaceAll(r'${target-arch}', targetArch)
-        .replaceAll(r'${target-platform}', targetDart)
-        .replaceAll(r'${target-platform-vs}', targetPlatform)
-        .replaceAll(r'${current-os}', currentOS)
-        .replaceAll(r'${current-arch}', currentArch)
-        .replaceAll(r'${current-platform}', currentPlatform)
-        .replaceAll(r'${current-platform-vs}', currentPlatform)
+        .replaceAll(r'#{file}', filePath)
+        .replaceAll(r'#{file.path}', filePath)
+        .replaceAll(r'#{file.name}', fileName)
+        .replaceAll(r'#{file.basename}', fileBasename)
+        .replaceAll(r'#{file.extension}', fileExtension)
+        .replaceAll(r'#{file.dir}', fileDir)
+        .replaceAll(r'#{target-os}', targetOS)
+        .replaceAll(r'#{target-arch}', targetArch)
+        .replaceAll(r'#{target-platform}', targetDart)
+        .replaceAll(r'#{target-platform-vs}', targetPlatform)
+        .replaceAll(r'#{current-os}', currentOS)
+        .replaceAll(r'#{current-arch}', currentArch)
+        .replaceAll(r'#{current-platform}', currentPlatform)
+        .replaceAll(r'#{current-platform-vs}', currentPlatform)
         .replaceAll('[file]', filePath)
         .replaceAll('[file.name]', fileName)
         .replaceAll('[target-os]', targetOS)
