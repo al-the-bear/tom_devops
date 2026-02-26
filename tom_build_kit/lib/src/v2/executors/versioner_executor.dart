@@ -120,11 +120,11 @@ class VersionerExecutor extends CommandExecutor {
     _wsConfig ??=
         VersionerConfig.loadFromMasterYaml(_wsRoot!) ?? const VersionerConfig();
 
-    // Only process projects with versioner config in buildkit.yaml
-    // or workspace-level versioner config in buildkit_master.yaml
+    // Only process projects that have a versioner: entry in their own
+    // buildkit.yaml. Workspace-level config (buildkit_master.yaml) provides
+    // defaults but does not cause every Dart project to get a version file.
     final hasLocalConfig = hasTomBuildConfig(projectPath, 'versioner');
-    final hasWsConfig = _wsConfig != const VersionerConfig();
-    if (!hasLocalConfig && !hasWsConfig) {
+    if (!hasLocalConfig) {
       return ItemResult.success(
         path: projectPath,
         name: projectName,

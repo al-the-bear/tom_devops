@@ -210,6 +210,7 @@ Future<void> main(List<String> args) async {
   );
 
   // Execute each step
+  var anyFailed = false;
   for (final step in steps) {
     if (_verbose && steps.length > 1) {
       print('');
@@ -234,13 +235,23 @@ Future<void> main(List<String> args) async {
     }
 
     if (!success) {
-      exit(1);
+      anyFailed = true;
+      if (steps.length > 1) {
+        print('\n⚠ ${step.displayName} failed, continuing...');
+      } else {
+        exit(1);
+      }
     }
   }
 
   // Print overall success summary
   if (steps.length > 1 || steps.any((s) => !s.isCommand)) {
-    print('Pipeline completed: SUCCESS');
+    if (anyFailed) {
+      print('Pipeline completed: FAILED');
+      exit(1);
+    } else {
+      print('Pipeline completed: SUCCESS');
+    }
   }
 }
 
