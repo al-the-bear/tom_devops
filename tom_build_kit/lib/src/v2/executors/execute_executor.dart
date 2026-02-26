@@ -21,10 +21,10 @@ import 'package:tom_build_base/tom_build_base_v2.dart';
 /// argument which is the shell command to execute.
 ///
 /// Supports:
-/// - Path placeholders: `#{root}`, `#{folder}`, `#{folder.name}`, `#{folder.relative}`
-/// - Nature existence: `#{dart.exists}`, `#{flutter.exists}`, etc.
-/// - Nature attributes: `#{dart.name}`, `#{git.branch}`, etc.
-/// - Ternary expressions: `#{condition?(true):(false)}`
+/// - Path placeholders: `%{root}`, `%{folder}`, `%{folder.name}`, `%{folder.relative}`
+/// - Nature existence: `%{dart.exists}`, `%{flutter.exists}`, etc.
+/// - Nature attributes: `%{dart.name}`, `%{git.branch}`, etc.
+/// - Ternary expressions: `%{condition?(true):(false)}`
 /// - `--condition` filter to skip folders not matching a boolean placeholder
 class ExecuteExecutor extends CommandExecutor {
   @override
