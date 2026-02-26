@@ -1,0 +1,2 @@
+# Skip test fixtures from buildkit recursive scans.
+# These are workspace analyzer test projects, not real build targets.
