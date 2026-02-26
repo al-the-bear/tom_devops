@@ -23,8 +23,8 @@ d4rtgen:
   testRunnerPath: bin/d4rtrun.b.dart
   registrationClass: TomBuildCliBridges
   importedBridges:
-    - import: package:tom_dartscript_bridges/dartscript.b.dart
-      class: TomDartscriptBridges
+    - import: package:tom_d4rt_dcli/dartscript.b.dart
+      class: TomD4rtDcliBridge
   modules:
     - name: tom_build_cli
       barrelFiles:
