@@ -570,8 +570,8 @@ Future<bool> _executeCommand(
   final result = await runner.run(cmdArgs);
 
   // Print item results summary (only when --summary is requested)
-  final showSummary = step.args.contains('--summary') ||
-      step.args.contains('-S');
+  final showSummary =
+      step.args.contains('--summary') || step.args.contains('-S');
   for (final item in result.itemResults) {
     if (item.success) {
       if (showSummary &&
@@ -579,8 +579,7 @@ Future<bool> _executeCommand(
           item.message!.isNotEmpty &&
           !item.message!.startsWith('skipped')) {
         // Capitalize first letter for display
-        final msg =
-            item.message![0].toUpperCase() + item.message!.substring(1);
+        final msg = item.message![0].toUpperCase() + item.message!.substring(1);
         print('${item.name}: $msg');
       }
     } else if (item.error != null) {

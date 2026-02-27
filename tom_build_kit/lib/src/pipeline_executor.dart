@@ -40,18 +40,21 @@ class PipelineExecutor {
   }
 
   /// Execute a pipeline by name.
-  /// 
+  ///
   /// Returns true if successful, false otherwise.
   Future<bool> execute(String pipelineName) async {
     // Check if already executed
     if (_executedPipelines.contains(pipelineName)) {
-      if (verbose) print('Pipeline "$pipelineName" already executed, skipping.');
+      if (verbose)
+        print('Pipeline "$pipelineName" already executed, skipping.');
       return true;
     }
 
     // Check for circular dependency
     if (_executionStack.contains(pipelineName)) {
-      print('Error: Circular dependency detected: ${_executionStack.join(' -> ')} -> $pipelineName');
+      print(
+        'Error: Circular dependency detected: ${_executionStack.join(' -> ')} -> $pipelineName',
+      );
       return false;
     }
 
@@ -65,7 +68,9 @@ class PipelineExecutor {
 
     // Check if executable (for top-level calls)
     if (_executionStack.isEmpty && !pipeline.executable) {
-      print('Error: Pipeline "$pipelineName" is not executable from command line.');
+      print(
+        'Error: Pipeline "$pipelineName" is not executable from command line.',
+      );
       return false;
     }
 
@@ -225,10 +230,14 @@ class PipelineExecutor {
 
     // Unknown command - NOT allowed
     print('  Error: Unknown command "$trimmed".');
-    print('  Only built-in commands, configured pipelines, and allowed '
-        'binaries can be executed.');
-    print('  To run arbitrary shell commands, use the "shell " prefix in '
-        'pipeline configuration.');
+    print(
+      '  Only built-in commands, configured pipelines, and allowed '
+      'binaries can be executed.',
+    );
+    print(
+      '  To run arbitrary shell commands, use the "shell " prefix in '
+      'pipeline configuration.',
+    );
     if (config.allowedBinaries.isNotEmpty) {
       print('  Allowed binaries: ${config.allowedBinaries.join(', ')}');
     }
@@ -278,7 +287,10 @@ class PipelineExecutor {
     var result = command;
 
     // Platform variables
-    result = result.replaceAll(r'%{current-platform-vs}', _getCurrentPlatformVs());
+    result = result.replaceAll(
+      r'%{current-platform-vs}',
+      _getCurrentPlatformVs(),
+    );
     result = result.replaceAll(r'%{current-os}', Platform.operatingSystem);
 
     // Path variables
