@@ -224,7 +224,7 @@ BuildKit supports two types of execution steps that can be freely combined.
 
 ### Pipelines
 
-Pipelines are named sequences of commands defined in `buildkit.yaml` or `buildkit_master.yaml`. They are invoked by name:
+Pipelines are named sequences of commands defined in `buildkit_master.yaml`. Pipeline execution is owned by `tom_build_base`. They are invoked by name:
 
 ```bash
 buildkit build          # Run the "build" pipeline
@@ -277,7 +277,7 @@ ________ Running :versioner
 
 ## Pipeline Configuration
 
-Pipelines are defined in `buildkit_master.yaml` (workspace level) or `buildkit.yaml` (project level) under the `buildkit:` key:
+Pipelines are defined in `buildkit_master.yaml` (workspace level) under the `buildkit:` key. Pipeline loading and execution is owned by `tom_build_base`:
 
 ```yaml
 buildkit:
@@ -1116,7 +1116,7 @@ Configuration is loaded in priority order:
 BuildKit enforces strict command security:
 
 1. **Built-in commands** — Always allowed (`versioner`, `compiler`, etc.)
-2. **Configured pipelines** — Pipeline names from `buildkit.yaml` / `buildkit_master.yaml`
+2. **Configured pipelines** — Pipeline names from `buildkit_master.yaml`
 3. **Allowed binaries** — Explicitly listed in `buildkit.allowed-binaries`
 4. **Shell commands** — Only via `shell` prefix in pipeline configuration
 5. **Everything else** — **Rejected** with an "Unknown command" error

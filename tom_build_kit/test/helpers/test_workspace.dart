@@ -98,9 +98,7 @@ class TestLogger {
     final logDir = p.join(_ws.buildkitRoot, '.test-log');
     Directory(logDir).createSync(recursive: true);
     final safeName = _testId.replaceAll(RegExp(r'[^\w]'), '_');
-    final logFile = File(
-      p.join(logDir, '$safeName${suffix}_log.txt'),
-    );
+    final logFile = File(p.join(logDir, '$safeName${suffix}_log.txt'));
     logFile.writeAsStringSync('${_entries.join('\n')}\n', mode: FileMode.write);
   }
 }
