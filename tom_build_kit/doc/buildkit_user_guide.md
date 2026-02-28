@@ -37,10 +37,14 @@ This package extends the shared infrastructure from **tom_build_base**:
   - [Execute Command](#execute-command)
   - [Status Command](#status-command)
 - [Command Prefix Matching](#command-prefix-matching)
-- [Macros](#macros)
-  - [Defining Macros](#defining-macros)
-  - [Using Macros](#using-macros)
-  - [Managing Macros](#managing-macros)
+- [Runtime Macros](#runtime-macros)
+  - [Defining Runtime Macros](#defining-runtime-macros)
+  - [Invoking Runtime Macros](#invoking-runtime-macros)
+  - [Managing Runtime Macros](#managing-runtime-macros)
+- [Persistent Defines](#persistent-defines)
+  - [Adding Persistent Defines](#adding-persistent-defines)
+  - [Using Persistent Defines in Configuration](#using-persistent-defines-in-configuration)
+  - [Managing Persistent Defines](#managing-persistent-defines)
 - [Allowed Binaries](#allowed-binaries)
 - [Git Operations](#git-operations)
 - [Shell Commands](#shell-commands)
@@ -607,81 +611,151 @@ Git Status
 
 ---
 
-## Macros
+## Runtime Macros
 
-Macros are reusable command sequences that can be defined, expanded, and managed. They are stored in `buildkit_master.yaml` in the workspace root.
+Runtime macros are reusable command sequences that are active only for the current tool-run session. They are defined, invoked, and removed within a single invocation sequence and are **not persisted** between runs.
 
-### Defining Macros
+> **Eligibility:** Runtime macros are only available when `buildkit_master.yaml` is present in the workspace root and BuildKit is running in multi-command mode.
 
-Use the `define` command to create a macro:
+### Defining Runtime Macros
+
+Use `:macro` to define a runtime macro:
 
 ```bash
-bk define cv=:versioner :compiler
-bk define cvc=:cleanup :versioner :compiler
-bk define test=:runner --command build
+buildkit :macro cv=:versioner :compiler
+buildkit :macro cvc=:cleanup :versioner :compiler
+buildkit :macro run=:runner --command $$
 ```
 
-Macros support argument placeholders:
+Runtime macros support argument placeholders:
 
 | Placeholder | Description |
 |-------------|-------------|
 | `$1` - `$9` | Positional arguments |
-| `$$` | All arguments |
+| `$$` | All remaining arguments |
 
 Example with placeholders:
 
 ```bash
-bk define run=:runner --command $$
-bk @run build          # Expands to: :runner --command build
-bk @run clean build    # Expands to: :runner --command clean build
+buildkit :macro run=:runner --command $$
+buildkit @run build          # Expands to: :runner --command build
+buildkit @run clean build    # Expands to: :runner --command clean build
 ```
 
-### Using Macros
+### Invoking Runtime Macros
 
-Invoke a macro with the `@` prefix:
+Invoke a defined macro using the `@name` syntax on the command line:
 
 ```bash
-bk @cv                 # Expands to: :versioner :compiler
-bk @cvc                # Expands to: :cleanup :versioner :compiler
-bk @test               # Expands to: :runner --command build
+buildkit @cv                 # Expands to: :versioner :compiler
+buildkit @cvc                # Expands to: :cleanup :versioner :compiler
 ```
 
-Macros can be combined with other commands:
+Macros can be combined with regular commands:
 
 ```bash
-bk :cleanup @cv        # Run cleanup, then expand cv macro
-bk @cv :compiler       # Expand macro, then run compiler again
+buildkit :cleanup @cv        # Run cleanup first, then expand cv macro
+buildkit @cv :compiler       # Expand macro, then run compiler again
 ```
 
-### Managing Macros
+### Managing Runtime Macros
 
-**List all macros:**
+**List active runtime macros:**
 
 ```bash
-bk defines
+buildkit :macros
+```
+
+**Remove a runtime macro:**
+
+```bash
+buildkit :unmacro cv
+```
+
+**Get help for a macro command:**
+
+```bash
+buildkit help :macro
+buildkit help :unmacro
+buildkit help :macros
+```
+
+---
+
+## Persistent Defines
+
+Persistent defines are key-value pairs stored in `buildkit_master.yaml` under the `defines:` section. Unlike runtime macros, defines survive across tool invocations and are used as configuration-time substitutions inside YAML files.
+
+> **Eligibility:** Persistent defines are only available when `buildkit_master.yaml` is present in the workspace root and BuildKit is running in multi-command mode.
+
+### Adding Persistent Defines
+
+Use `:define` to add or update a persisted define:
+
+```bash
+buildkit :define env=production
+buildkit :define output_dir=build/release
+buildkit :define flutter_channel=stable
+```
+
+Defines are written to `buildkit_master.yaml` in alphabetical key order:
+
+```yaml
+defines:
+  env: production
+  flutter_channel: stable
+  output_dir: build/release
+```
+
+### Using Persistent Defines in Configuration
+
+Refer to a persistent define in your YAML configuration with the `@[name]` syntax:
+
+```yaml
+buildkit:
+  pipelines:
+    build:
+      core:
+        - commands:
+            - shell dart run build_runner build --output @[output_dir]
+```
+
+Defines are substituted at configuration-load time before pipeline execution begins.
+
+### Managing Persistent Defines
+
+**List all persisted defines:**
+
+```bash
+buildkit :defines
 ```
 
 Output:
 
 ```text
-Defined macros:
-  cv=:versioner :compiler
-  cvc=:cleanup :versioner :compiler
-  test=:runner --command build
+env=production
+flutter_channel=stable
+output_dir=build/release
 ```
 
-**Remove a macro:**
+**Remove a persisted define:**
 
 ```bash
-bk undefine cv
+buildkit :undefine env
 ```
 
-**Get help:**
+Output:
+
+```text
+Removed define: env : production
+```
+
+**Get help for a define command:**
 
 ```bash
-bk help :define
-bk help :undefine
-bk help :defines
+buildkit help :define
+buildkit help :undefine
+buildkit help :defines
 ```
 
 ---
@@ -1097,7 +1171,7 @@ Projects with `buildkit_skip.yaml` are automatically skipped. Master YAML `navig
 
 ## Configuration Hierarchy
 
-Configuration is loaded in priority order:
+BuildKit's pipeline execution is implemented by the shared base engine (`tom_build_base`). The base engine loads configuration from two sources:
 
 | Priority | Source | Merge Behavior |
 |----------|--------|----------------|
@@ -1108,6 +1182,22 @@ Configuration is loaded in priority order:
 **Important:** Project-level pipeline definitions **completely replace** workspace-level definitions for the same pipeline name — there is no merging of pipeline steps across levels.
 
 **Allowed binaries** are **additive** across internal defaults, workspace config, and project config.
+
+**Pipeline option precedence** (command > invocation > pipeline-level):
+
+| Priority | Source | Description |
+|----------|--------|-------------|
+| 1 (highest) | **Step command-level options** | Options embedded inside a pipeline step's command entry; always win |
+| 2 | **Invocation options** | Options passed directly on the command line (e.g. `buildkit --verbose build`) |
+| 3 (lowest) | **Pipeline global-options** | Default options specified under `pipelines.<name>.global-options` |
+
+`--verbose` and `--dry-run` always propagate to sub-workspace invocations and are never treated as disqualifying options.
+
+**Multi-workspace traversal** is only active for pipeline execution. Direct commands always run in the current workspace only. If disqualifying global options (e.g. `--root`, `--filter`, `--depth`, `--workspace`) are present at invocation time, sub-workspace traversal is skipped with a message:
+
+```text
+Skipped workspace: <directory>, global traversal option specified.
+```
 
 ---
 
