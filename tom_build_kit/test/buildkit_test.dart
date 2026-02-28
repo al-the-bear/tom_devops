@@ -63,15 +63,23 @@ void main() {
       log.capture('buildkit --list', result);
 
       // --list exits non-zero (1 = error/no direct result)
-      expect(result.exitCode, isNot(equals(0)),
-          reason: '--list exits with non-zero exit code');
+      expect(
+        result.exitCode,
+        isNot(equals(0)),
+        reason: '--list exits with non-zero exit code',
+      );
 
       // Output should show usage or available commands/pipelines
       final combined = '${result.stdout}\n${result.stderr}';
-      final hasUsageInfo = combined.contains('buildkit') ||
+      final hasUsageInfo =
+          combined.contains('buildkit') ||
           combined.contains('Usage') ||
           combined.contains('pipeline');
-      expect(hasUsageInfo, isTrue, reason: '--list should show some usage info');
+      expect(
+        hasUsageInfo,
+        isTrue,
+        reason: '--list should show some usage info',
+      );
 
       log.expectation('non-zero exit', result.exitCode != 0);
       log.expectation('has usage info', hasUsageInfo);
@@ -85,19 +93,30 @@ void main() {
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
       // Help should show usage text
-      expect(stdout, contains('Usage'),
-          reason: 'Help should show Usage section');
-      expect(stdout, contains('pipeline'),
-          reason: 'Help should mention pipelines');
+      expect(
+        stdout,
+        contains('Usage'),
+        reason: 'Help should show Usage section',
+      );
+      expect(
+        stdout,
+        contains('pipeline'),
+        reason: 'Help should mention pipelines',
+      );
       log.expectation('shows usage', stdout.contains('Usage'));
     });
 
     test('direct command execution (:versioner)', () async {
       log.start('BKT_CMD01', 'direct command :versioner');
       final result = await ws.runPipeline(
-          ':versioner', [],
-          globalArgs: ['--project', 'devops/tom_build_kit', '--dry-run']);
-      log.capture('buildkit --project devops/tom_build_kit --dry-run :versioner', result);
+        ':versioner',
+        [],
+        globalArgs: ['--project', 'devops/tom_build_kit', '--dry-run'],
+      );
+      log.capture(
+        'buildkit --project devops/tom_build_kit --dry-run :versioner',
+        result,
+      );
 
       // Versioner in dry-run: exits 0 (no files changed or no output in dry mode)
       expect(result.exitCode, equals(0));
@@ -107,110 +126,160 @@ void main() {
     test('pipeline execution runs all steps', () async {
       log.start('BKT_PIP01', 'pipeline execution');
       // test-simple has two shell echo steps — both should execute
-      final result =
-          await ws.runPipeline('test-simple', [],
-              globalArgs: ['--project', 'devops/tom_build_kit']);
-      log.capture('buildkit --project devops/tom_build_kit test-simple', result);
+      final result = await ws.runPipeline(
+        'test-simple',
+        [],
+        globalArgs: ['--project', 'devops/tom_build_kit'],
+      );
+      log.capture(
+        'buildkit --project devops/tom_build_kit test-simple',
+        result,
+      );
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
 
       // Both echo steps should produce output
-      expect(stdout, contains('step-1-hello'),
-          reason: 'First pipeline step should execute');
-      expect(stdout, contains('step-2-world'),
-          reason: 'Second pipeline step should execute');
+      expect(
+        stdout,
+        contains('step-1-hello'),
+        reason: 'First pipeline step should execute',
+      );
+      expect(
+        stdout,
+        contains('step-2-world'),
+        reason: 'Second pipeline step should execute',
+      );
 
       log.expectation('step 1 executed', stdout.contains('step-1-hello'));
       log.expectation('step 2 executed', stdout.contains('step-2-world'));
     });
 
-    test('--dry-run after pipeline name prevents execution (bug #15)',
-        () async {
-      log.start('BKT_DRY01', '--dry-run after pipeline prevents execution');
-      // Command: buildkit test-simple --project _build --dry-run
-      // Bug #15: ArgParser(allowTrailingOptions: false) silently drops
-      // --dry-run when placed after the pipeline name.
-      final result = await ws.runPipeline(
-          'test-simple', ['--project', '_build', '--dry-run']);
-      log.capture(
-          'buildkit test-simple --project _build --dry-run', result);
+    test(
+      '--dry-run after pipeline name prevents execution (bug #15)',
+      () async {
+        log.start('BKT_DRY01', '--dry-run after pipeline prevents execution');
+        // Command: buildkit test-simple --project _build --dry-run
+        // Bug #15: ArgParser(allowTrailingOptions: false) silently drops
+        // --dry-run when placed after the pipeline name.
+        final result = await ws.runPipeline('test-simple', [
+          '--project',
+          '_build',
+          '--dry-run',
+        ]);
+        log.capture('buildkit test-simple --project _build --dry-run', result);
 
-      final stdout = (result.stdout as String);
-      expect(result.exitCode, equals(0));
+        final stdout = (result.stdout as String);
+        expect(result.exitCode, equals(0));
 
-      // INTENDED behavior: dry-run should show [DRY RUN] markers
-      expect(stdout, contains('[DRY RUN]'),
-          reason: 'Dry-run should print [DRY RUN] markers for shell cmds');
+        // INTENDED behavior: dry-run should show [DRY RUN] markers
+        expect(
+          stdout,
+          contains('[DRY RUN]'),
+          reason: 'Dry-run should print [DRY RUN] markers for shell cmds',
+        );
 
-      // INTENDED behavior: step commands should appear in [DRY RUN] context
-      // only — not as actual echo output on their own lines
-      final lines = stdout.split('\n');
-      final stepLines = lines.where((l) =>
-          l.contains('step-1-hello') || l.contains('step-2-world'));
-      for (final line in stepLines) {
-        expect(line, contains('[DRY RUN]'),
-            reason: 'Step commands should only appear in [DRY RUN] context, '
-                'not as actual echo output. Line: $line');
-      }
+        // INTENDED behavior: step commands should appear in [DRY RUN] context
+        // only — not as actual echo output on their own lines
+        final lines = stdout.split('\n');
+        final stepLines = lines.where(
+          (l) => l.contains('step-1-hello') || l.contains('step-2-world'),
+        );
+        for (final line in stepLines) {
+          expect(
+            line,
+            contains('[DRY RUN]'),
+            reason:
+                'Step commands should only appear in [DRY RUN] context, '
+                'not as actual echo output. Line: $line',
+          );
+        }
 
-      log.expectation(
-          'has [DRY RUN] markers', stdout.contains('[DRY RUN]'));
-      log.expectation('no bare echo output',
-          !lines.any((l) => l.trim() == 'step-1-hello'));
-    },
-        skip: 'Bug #15: --dry-run after pipeline name is passed to '
-            'pipeline_executor as rest arg. Fix adds a CLI warning but '
-            'does not change parsing behavior (by design).');
+        log.expectation('has [DRY RUN] markers', stdout.contains('[DRY RUN]'));
+        log.expectation(
+          'no bare echo output',
+          !lines.any((l) => l.trim() == 'step-1-hello'),
+        );
+      },
+      skip:
+          'Bug #15: --dry-run after pipeline name is passed to '
+          'pipeline_executor as rest arg. Fix adds a CLI warning but '
+          'does not change parsing behavior (by design).',
+    );
 
     test('--dry-run before pipeline name works correctly', () async {
       log.start('BKT_DRY02', '--dry-run before pipeline (workaround)');
       // Workaround for bug #15: place global flags BEFORE the pipeline name.
       // Command: buildkit --dry-run --project _build test-simple
       // Use runPipeline with --dry-run as "pipeline" arg for correct ordering.
-      final result = await ws.runPipeline(
-          '--dry-run', ['--project', 'devops/tom_build_kit', 'test-simple']);
+      final result = await ws.runPipeline('--dry-run', [
+        '--project',
+        'devops/tom_build_kit',
+        'test-simple',
+      ]);
       log.capture(
-          'buildkit --dry-run --project devops/tom_build_kit test-simple', result);
+        'buildkit --dry-run --project devops/tom_build_kit test-simple',
+        result,
+      );
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
 
       // With flags before pipeline name, --dry-run IS parsed correctly.
       // New format: shell commands shown as [PIPELINE:shell] <command>
-      expect(stdout, contains('[PIPELINE:shell]'),
-          reason:
-              'Dry-run markers ([PIPELINE:shell]) should appear when flag is before pipeline');
+      expect(
+        stdout,
+        contains('[PIPELINE:shell]'),
+        reason:
+            'Dry-run markers ([PIPELINE:shell]) should appear when flag is before pipeline',
+      );
 
       // Step commands should appear with [PIPELINE:shell] prefix
       final lines = stdout.split('\n');
       final pipelineLines = lines.where((l) => l.contains('[PIPELINE:shell]'));
-      expect(pipelineLines, isNotEmpty,
-          reason: 'Should have [PIPELINE:shell] lines for each step');
+      expect(
+        pipelineLines,
+        isNotEmpty,
+        reason: 'Should have [PIPELINE:shell] lines for each step',
+      );
 
       // No bare echo output (commands not actually executed in dry-run)
-      expect(lines.any((l) => l.trim() == 'step-1-hello'), isFalse,
-          reason: 'Dry-run should prevent shell commands from executing');
+      expect(
+        lines.any((l) => l.trim() == 'step-1-hello'),
+        isFalse,
+        reason: 'Dry-run should prevent shell commands from executing',
+      );
 
       log.expectation(
-          'has [PIPELINE:shell] markers', stdout.contains('[PIPELINE:shell]'));
-      log.expectation('no bare echo output',
-          !lines.any((l) => l.trim() == 'step-1-hello'));
+        'has [PIPELINE:shell] markers',
+        stdout.contains('[PIPELINE:shell]'),
+      );
+      log.expectation(
+        'no bare echo output',
+        !lines.any((l) => l.trim() == 'step-1-hello'),
+      );
     });
 
     test('per-step option suppression (-s-)', () async {
       log.start('BKT_OPT01', 'per-step option suppression');
       // Run with scan and suppress scan for the direct command
       // The -s- flag should suppress the global --scan for just that step
-      final result = await ws.runPipeline(':versioner',
-          ['-s-'],
-          globalArgs: ['--project', 'devops/tom_build_kit', '--dry-run']);
-      log.capture('buildkit --project devops/tom_build_kit --dry-run :versioner -s-',
-          result);
+      final result = await ws.runPipeline(
+        ':versioner',
+        ['-s-'],
+        globalArgs: ['--project', 'devops/tom_build_kit', '--dry-run'],
+      );
+      log.capture(
+        'buildkit --project devops/tom_build_kit --dry-run :versioner -s-',
+        result,
+      );
 
       // Should complete without error (syntax accepted)
-      expect(result.exitCode, equals(0),
-          reason: 'Option suppression syntax should be accepted');
+      expect(
+        result.exitCode,
+        equals(0),
+        reason: 'Option suppression syntax should be accepted',
+      );
       log.expectation('exit code 0', result.exitCode == 0);
     });
 
@@ -218,31 +287,45 @@ void main() {
       log.start('BKT_SHL01', 'shell command in pipeline');
       // test-shell pipeline has: shell echo "hello from test pipeline"
       final result = await ws.runPipeline(
-          'test-shell', [],
-          globalArgs: ['--project', 'devops/tom_build_kit']);
+        'test-shell',
+        [],
+        globalArgs: ['--project', 'devops/tom_build_kit'],
+      );
       log.capture('buildkit --project devops/tom_build_kit test-shell', result);
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
       // The echo command should produce output
-      expect(stdout, contains('hello from test pipeline'),
-          reason: 'Shell echo command should produce output');
+      expect(
+        stdout,
+        contains('hello from test pipeline'),
+        reason: 'Shell echo command should produce output',
+      );
       log.expectation(
-          'echo output present', stdout.contains('hello from test pipeline'));
+        'echo output present',
+        stdout.contains('hello from test pipeline'),
+      );
     });
 
     test('--exclude-projects filters pipeline targets', () async {
       log.start('BKT_XPJ01', '--exclude-projects in pipeline');
-      final result = await ws.runPipeline('test-simple', [],
-          globalArgs: [
-            '--scan', '.',
-            '--recursive',
-            '--exclude-projects', '_build',
-            '--dry-run',
-            '--verbose',
-          ]);
-      log.capture('buildkit --scan . --recursive --exclude-projects _build --dry-run test-simple',
-          result);
+      final result = await ws.runPipeline(
+        'test-simple',
+        [],
+        globalArgs: [
+          '--scan',
+          '.',
+          '--recursive',
+          '--exclude-projects',
+          '_build',
+          '--dry-run',
+          '--verbose',
+        ],
+      );
+      log.capture(
+        'buildkit --scan . --recursive --exclude-projects _build --dry-run test-simple',
+        result,
+      );
 
       expect(result.exitCode, equals(0));
 
@@ -252,17 +335,25 @@ void main() {
 
     test('--exclude and --exclude-projects combined', () async {
       log.start('BKT_XPJ02', '--exclude + --exclude-projects');
-      final result = await ws.runPipeline('test-simple', [],
-          globalArgs: [
-            '--scan', '.',
-            '--recursive',
-            '--exclude', 'core/*',
-            '--exclude-projects', '_build',
-            '--dry-run',
-            '--verbose',
-          ]);
-      log.capture('buildkit --scan . --recursive --exclude core/* --exclude-projects _build test-simple',
-          result);
+      final result = await ws.runPipeline(
+        'test-simple',
+        [],
+        globalArgs: [
+          '--scan',
+          '.',
+          '--recursive',
+          '--exclude',
+          'core/*',
+          '--exclude-projects',
+          '_build',
+          '--dry-run',
+          '--verbose',
+        ],
+      );
+      log.capture(
+        'buildkit --scan . --recursive --exclude core/* --exclude-projects _build test-simple',
+        result,
+      );
 
       expect(result.exitCode, equals(0));
 
@@ -274,25 +365,34 @@ void main() {
       log.start('BKT_ERR01', 'unknown pipeline error handling');
       // Use flags-before-pipeline workaround for bug #15.
       // Command: buildkit --project _build nonexistent-pipeline-xyz
-      final result = await ws.runPipeline(
-          '--project', ['_build', 'nonexistent-pipeline-xyz']);
-      log.capture(
-          'buildkit --project _build nonexistent-pipeline-xyz', result);
+      final result = await ws.runPipeline('--project', [
+        '_build',
+        'nonexistent-pipeline-xyz',
+      ]);
+      log.capture('buildkit --project _build nonexistent-pipeline-xyz', result);
 
       // Unknown pipeline should produce an error (non-zero exit)
-      expect(result.exitCode, isNot(equals(0)),
-          reason: 'Unknown pipeline name should fail with non-zero exit');
+      expect(
+        result.exitCode,
+        isNot(equals(0)),
+        reason: 'Unknown pipeline name should fail with non-zero exit',
+      );
 
       final combined = '${result.stdout}\n${result.stderr}';
-      final hasError = combined.toLowerCase().contains('not found') ||
+      final hasError =
+          combined.toLowerCase().contains('not found') ||
           combined.toLowerCase().contains('unknown') ||
           combined.toLowerCase().contains('error') ||
           combined.toLowerCase().contains('pipeline') ||
           combined.toLowerCase().contains('command') ||
           combined.toLowerCase().contains('no command');
-      expect(hasError, isTrue,
-          reason: 'Should show clear error for unknown pipeline name. '
-              'Output: ${combined.substring(0, combined.length.clamp(0, 300))}');
+      expect(
+        hasError,
+        isTrue,
+        reason:
+            'Should show clear error for unknown pipeline name. '
+            'Output: ${combined.substring(0, combined.length.clamp(0, 300))}',
+      );
 
       log.expectation('non-zero exit', result.exitCode != 0);
       log.expectation('has error message', hasError);
@@ -301,10 +401,14 @@ void main() {
     test('--project with non-existent path gives clear error', () async {
       log.start('BKT_ERR02', 'non-existent --project error');
       // Command: buildkit --project _build/nonexistent test-simple
-      final result = await ws.runPipeline(
-          '--project', ['_build/nonexistent_dir', 'test-simple']);
+      final result = await ws.runPipeline('--project', [
+        '_build/nonexistent_dir',
+        'test-simple',
+      ]);
       log.capture(
-          'buildkit --project _build/nonexistent_dir test-simple', result);
+        'buildkit --project _build/nonexistent_dir test-simple',
+        result,
+      );
 
       // Non-existent --project filter: pipeline still runs in workspace root
       // (project filter is a traversal filter, not a hard path check).
@@ -320,19 +424,36 @@ void main() {
       log.capture('buildkit help pipelines', result);
 
       final stdout = (result.stdout as String);
-      expect(result.exitCode, equals(0),
-          reason: 'help pipelines should exit 0');
-      expect(stdout, contains('Pipeline Configuration'),
-          reason: 'Should show pipeline configuration header');
-      expect(stdout, contains('stdin'),
-          reason: 'Should document stdin command prefix');
-      expect(stdout, contains('shell'),
-          reason: 'Should document shell command prefix');
-      expect(stdout, contains('precore'),
-          reason: 'Should document pipeline structure phases');
+      expect(
+        result.exitCode,
+        equals(0),
+        reason: 'help pipelines should exit 0',
+      );
+      expect(
+        stdout,
+        contains('Pipeline Configuration'),
+        reason: 'Should show pipeline configuration header',
+      );
+      expect(
+        stdout,
+        contains('stdin'),
+        reason: 'Should document stdin command prefix',
+      );
+      expect(
+        stdout,
+        contains('shell'),
+        reason: 'Should document shell command prefix',
+      );
+      expect(
+        stdout,
+        contains('precore'),
+        reason: 'Should document pipeline structure phases',
+      );
       log.expectation('exits 0', result.exitCode == 0);
       log.expectation(
-          'shows pipeline config', stdout.contains('Pipeline Configuration'));
+        'shows pipeline config',
+        stdout.contains('Pipeline Configuration'),
+      );
     });
   });
 
@@ -347,18 +468,31 @@ void main() {
       log.capture('buildkit --dry-run test-stdin', result);
 
       final stdout = (result.stdout as String);
-      expect(result.exitCode, equals(0),
-          reason: 'dry-run stdin pipeline should exit 0');
-      expect(stdout, contains('[PIPELINE:stdin]'),
-          reason: 'Should show [PIPELINE:stdin] prefix');
-      expect(stdout, contains('cat'),
-          reason: 'Should show the piped command');
-      expect(stdout, contains('Hello stdin world'),
-          reason: 'Should show stdin lines with | prefix');
+      expect(
+        result.exitCode,
+        equals(0),
+        reason: 'dry-run stdin pipeline should exit 0',
+      );
+      expect(
+        stdout,
+        contains('[PIPELINE:stdin]'),
+        reason: 'Should show [PIPELINE:stdin] prefix',
+      );
+      expect(stdout, contains('cat'), reason: 'Should show the piped command');
+      expect(
+        stdout,
+        contains('Hello stdin world'),
+        reason: 'Should show stdin lines with | prefix',
+      );
       log.expectation('exits 0', result.exitCode == 0);
-      log.expectation('shows stdin prefix', stdout.contains('[PIPELINE:stdin]'));
       log.expectation(
-          'shows stdin lines', stdout.contains('Hello stdin world'));
+        'shows stdin prefix',
+        stdout.contains('[PIPELINE:stdin]'),
+      );
+      log.expectation(
+        'shows stdin lines',
+        stdout.contains('Hello stdin world'),
+      );
     });
 
     test('stdin pipeline executes command with piped input', () async {
@@ -371,14 +505,22 @@ void main() {
       log.capture('buildkit --project devops/tom_build_kit test-stdin', result);
 
       final combined = '${result.stdout}\n${result.stderr}';
-      expect(result.exitCode, equals(0),
-          reason: 'stdin pipeline should exit 0. Output: $combined');
+      expect(
+        result.exitCode,
+        equals(0),
+        reason: 'stdin pipeline should exit 0. Output: $combined',
+      );
       // cat echoes the stdin content back to stdout
-      expect((result.stdout as String), contains('Hello stdin world'),
-          reason: 'cat should echo stdin content to stdout');
+      expect(
+        (result.stdout as String),
+        contains('Hello stdin world'),
+        reason: 'cat should echo stdin content to stdout',
+      );
       log.expectation('exits 0', result.exitCode == 0);
       log.expectation(
-          'echoes stdin', (result.stdout as String).contains('Hello stdin world'));
+        'echoes stdin',
+        (result.stdout as String).contains('Hello stdin world'),
+      );
     });
   });
 
@@ -390,8 +532,11 @@ void main() {
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
-      expect(stdout, contains('No defines found'),
-          reason: 'Should show "No defines found" message');
+      expect(
+        stdout,
+        contains('No defines found'),
+        reason: 'Should show "No defines found" message',
+      );
       log.expectation('shows no defines', stdout.contains('No defines found'));
     });
 
@@ -402,18 +547,19 @@ void main() {
       var result = await ws.runPipeline(':define', ['test=:versioner --list']);
       log.capture('buildkit :define test=:versioner --list', result);
       expect(result.exitCode, equals(0));
-      expect((result.stdout as String), contains('Added define: test'),
-          reason: 'Should confirm define was added');
+      expect(
+        (result.stdout as String),
+        contains('Added define: test'),
+        reason: 'Should confirm define was added',
+      );
 
       // List defines
       result = await ws.runPipeline(':defines', []);
       log.capture('buildkit :defines', result);
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
-      expect(stdout, contains('test'),
-          reason: 'Should list the test macro');
-      expect(stdout, contains(':versioner'),
-          reason: 'Should show macro value');
+      expect(stdout, contains('test'), reason: 'Should list the test macro');
+      expect(stdout, contains(':versioner'), reason: 'Should show macro value');
       log.expectation('define listed', stdout.contains('test'));
     });
 
@@ -429,15 +575,21 @@ void main() {
       result = await ws.runPipeline(':undefine', ['removeme']);
       log.capture('buildkit :undefine removeme', result);
       expect(result.exitCode, equals(0));
-      expect((result.stdout as String), contains('Removed define: removeme'),
-          reason: 'Should confirm define was removed');
+      expect(
+        (result.stdout as String),
+        contains('Removed define: removeme'),
+        reason: 'Should confirm define was removed',
+      );
 
       // Verify it's gone
       result = await ws.runPipeline(':defines', []);
       log.capture('buildkit :defines', result);
       final stdout = (result.stdout as String);
-      expect(stdout, isNot(contains('removeme')),
-          reason: 'Macro should be removed from list');
+      expect(
+        stdout,
+        isNot(contains('removeme')),
+        reason: 'Macro should be removed from list',
+      );
       log.expectation('define removed', !stdout.contains('removeme'));
     });
   });
