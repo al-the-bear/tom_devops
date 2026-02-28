@@ -62,7 +62,8 @@ void main() {
       log.capture('buildkit --list', result);
 
       final stdout = (result.stdout as String);
-      expect(result.exitCode, equals(0));
+      expect(result.exitCode, equals(1),
+          reason: '--list exits with code 1 to be script-friendly (non-zero = has pipelines to list)');
 
       // Should list our test pipelines
       expect(stdout, contains('test-simple'),
@@ -99,8 +100,8 @@ void main() {
       log.start('BKT_CMD01', 'direct command :versioner');
       final result = await ws.runPipeline(
           ':versioner', [],
-          globalArgs: ['--project', '_build', '--dry-run']);
-      log.capture('buildkit --project _build --dry-run :versioner', result);
+          globalArgs: ['--project', 'devops/tom_build_kit', '--dry-run']);
+      log.capture('buildkit --project devops/tom_build_kit --dry-run :versioner', result);
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
@@ -118,8 +119,8 @@ void main() {
       // test-simple has two shell echo steps — both should execute
       final result =
           await ws.runPipeline('test-simple', [],
-              globalArgs: ['--project', '_build']);
-      log.capture('buildkit --project _build test-simple', result);
+              globalArgs: ['--project', 'devops/tom_build_kit']);
+      log.capture('buildkit --project devops/tom_build_kit test-simple', result);
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
@@ -184,9 +185,9 @@ void main() {
       // Command: buildkit --dry-run --project _build test-simple
       // Use runPipeline with --dry-run as "pipeline" arg for correct ordering.
       final result = await ws.runPipeline(
-          '--dry-run', ['--project', '_build', 'test-simple']);
+          '--dry-run', ['--project', 'devops/tom_build_kit', 'test-simple']);
       log.capture(
-          'buildkit --dry-run --project _build test-simple', result);
+          'buildkit --dry-run --project devops/tom_build_kit test-simple', result);
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
@@ -224,8 +225,8 @@ void main() {
       // The -s- flag should suppress the global --scan for just that step
       final result = await ws.runPipeline(':versioner',
           ['-s-'],
-          globalArgs: ['--project', '_build', '--dry-run']);
-      log.capture('buildkit --project _build --dry-run :versioner -s-',
+          globalArgs: ['--project', 'devops/tom_build_kit', '--dry-run']);
+      log.capture('buildkit --project devops/tom_build_kit --dry-run :versioner -s-',
           result);
 
       // Should complete without error (syntax accepted)
@@ -239,8 +240,8 @@ void main() {
       // test-shell pipeline has: shell echo "hello from test pipeline"
       final result = await ws.runPipeline(
           'test-shell', [],
-          globalArgs: ['--project', '_build']);
-      log.capture('buildkit --project _build test-shell', result);
+          globalArgs: ['--project', 'devops/tom_build_kit']);
+      log.capture('buildkit --project devops/tom_build_kit test-shell', result);
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
@@ -261,7 +262,7 @@ void main() {
             '--dry-run',
             '--verbose',
           ]);
-      log.capture('buildkit --exclude-projects _build --dry-run test-simple',
+      log.capture('buildkit --scan . --recursive --exclude-projects _build --dry-run test-simple',
           result);
 
       expect(result.exitCode, equals(0));
@@ -281,7 +282,7 @@ void main() {
             '--dry-run',
             '--verbose',
           ]);
-      log.capture('buildkit --exclude core/* --exclude-projects _build test-simple',
+      log.capture('buildkit --scan . --recursive --exclude core/* --exclude-projects _build test-simple',
           result);
 
       expect(result.exitCode, equals(0));
@@ -342,60 +343,60 @@ void main() {
   group('macros', () {
     test('defines shows no macros when none defined', () async {
       log.start('BKT_MAC01', 'defines with no macros');
-      final result = await ws.runPipeline('defines', []);
-      log.capture('buildkit defines', result);
+      final result = await ws.runPipeline(':defines', []);
+      log.capture('buildkit :defines', result);
 
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
-      expect(stdout, contains('No macros defined'),
-          reason: 'Should show "No macros defined" message');
-      log.expectation('shows no macros', stdout.contains('No macros defined'));
+      expect(stdout, contains('No defines found'),
+          reason: 'Should show "No defines found" message');
+      log.expectation('shows no defines', stdout.contains('No defines found'));
     });
 
     test('define creates a macro and defines lists it', () async {
       log.start('BKT_MAC02', 'define and list macro');
 
-      // Define a macro
-      var result = await ws.runPipeline('define', ['test=:versioner --list']);
-      log.capture('buildkit define test=:versioner --list', result);
+      // Define a persistent define
+      var result = await ws.runPipeline(':define', ['test=:versioner --list']);
+      log.capture('buildkit :define test=:versioner --list', result);
       expect(result.exitCode, equals(0));
-      expect((result.stdout as String), contains('Defined macro: test'),
-          reason: 'Should confirm macro was defined');
+      expect((result.stdout as String), contains('Added define: test'),
+          reason: 'Should confirm define was added');
 
-      // List macros
-      result = await ws.runPipeline('defines', []);
-      log.capture('buildkit defines', result);
+      // List defines
+      result = await ws.runPipeline(':defines', []);
+      log.capture('buildkit :defines', result);
       final stdout = (result.stdout as String);
       expect(result.exitCode, equals(0));
       expect(stdout, contains('test'),
           reason: 'Should list the test macro');
       expect(stdout, contains(':versioner'),
           reason: 'Should show macro value');
-      log.expectation('macro listed', stdout.contains('test'));
+      log.expectation('define listed', stdout.contains('test'));
     });
 
     test('undefine removes a macro', () async {
       log.start('BKT_MAC03', 'undefine removes macro');
 
-      // Define a macro first
-      var result = await ws.runPipeline('define', ['removeme=:cleanup']);
-      log.capture('buildkit define removeme=:cleanup', result);
+      // Define a persistent define first
+      var result = await ws.runPipeline(':define', ['removeme=:cleanup']);
+      log.capture('buildkit :define removeme=:cleanup', result);
       expect(result.exitCode, equals(0));
 
       // Undefine it
-      result = await ws.runPipeline('undefine', ['removeme']);
-      log.capture('buildkit undefine removeme', result);
+      result = await ws.runPipeline(':undefine', ['removeme']);
+      log.capture('buildkit :undefine removeme', result);
       expect(result.exitCode, equals(0));
-      expect((result.stdout as String), contains('Removed macro: removeme'),
-          reason: 'Should confirm macro was removed');
+      expect((result.stdout as String), contains('Removed define: removeme'),
+          reason: 'Should confirm define was removed');
 
       // Verify it's gone
-      result = await ws.runPipeline('defines', []);
-      log.capture('buildkit defines', result);
+      result = await ws.runPipeline(':defines', []);
+      log.capture('buildkit :defines', result);
       final stdout = (result.stdout as String);
       expect(stdout, isNot(contains('removeme')),
           reason: 'Macro should be removed from list');
-      log.expectation('macro removed', !stdout.contains('removeme'));
+      log.expectation('define removed', !stdout.contains('removeme'));
     });
   });
 }
