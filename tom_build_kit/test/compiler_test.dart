@@ -208,6 +208,17 @@ void main() {
           isNot(contains('\${target-platform-vs}')),
           reason: 'Placeholder \${target-platform-vs} should be resolved',
         );
+        expect(
+          line,
+          isNot(contains('%{dart-target-os}')),
+          reason: 'Placeholder %{dart-target-os} should be resolved in: $line',
+        );
+        expect(
+          line,
+          isNot(contains('%{dart-target-arch}')),
+          reason:
+              'Placeholder %{dart-target-arch} should be resolved in: $line',
+        );
 
         if (line.contains('dart compile exe') &&
             (line.contains('--target-os=') ||

@@ -554,12 +554,6 @@ class CompilerExecutor extends CommandExecutor {
         currentArch: currentArch,
         currentPlatform: currentPlatform,
       );
-      command = _ensureDartCompileTargetFlags(
-        command,
-        targetOS: targetOS,
-        targetArch: targetArch,
-      );
-
       if (script_utils.isStdinCommand(command)) {
         final parsed = script_utils.parseStdinCommand(command);
         if (parsed != null) {
@@ -573,11 +567,7 @@ class CompilerExecutor extends CommandExecutor {
           if (args.verbose) {
             print('    Command (stdin): ${parsed.command}');
           }
-          final stdinCommand = _ensureDartCompileTargetFlags(
-            _replaceEnvVars(parsed.command),
-            targetOS: targetOS,
-            targetArch: targetArch,
-          );
+          final stdinCommand = _replaceEnvVars(parsed.command);
           final result = await script_utils.executeWithStdin(
             command: stdinCommand,
             stdinContent: parsed.stdinContent,
@@ -597,11 +587,6 @@ class CompilerExecutor extends CommandExecutor {
       }
 
       command = _replaceEnvVars(command);
-      command = _ensureDartCompileTargetFlags(
-        command,
-        targetOS: targetOS,
-        targetArch: targetArch,
-      );
 
       if (args.dryRun) {
         print('  [DRY RUN] compile ($targetPlatform): $command');
@@ -724,6 +709,8 @@ class CompilerExecutor extends CommandExecutor {
         .replaceAll(r'%{file.dir}', fileDir)
         .replaceAll(r'%{target-os}', targetOS)
         .replaceAll(r'%{target-arch}', targetArch)
+        .replaceAll(r'%{dart-target-os}', targetOS)
+        .replaceAll(r'%{dart-target-arch}', targetArch)
         .replaceAll(r'%{target-platform}', targetDart)
         .replaceAll(r'%{target-platform-vs}', targetPlatform)
         .replaceAll(r'%{current-os}', currentOS)
@@ -758,33 +745,5 @@ class CompilerExecutor extends CommandExecutor {
       return Platform.environment[varName] ?? '';
     });
     return result;
-  }
-
-  String _ensureDartCompileTargetFlags(
-    String command, {
-    required String targetOS,
-    required String targetArch,
-  }) {
-    if (!command.contains('dart compile exe')) {
-      return command;
-    }
-
-    final hasExplicitTarget = RegExp(r'--target(?:\s+|=)').hasMatch(command);
-    if (hasExplicitTarget) {
-      return command;
-    }
-
-    var updated = command;
-    final hasTargetOS = RegExp(r'--target-os(?:\s+|=)').hasMatch(updated);
-    if (!hasTargetOS) {
-      updated = '$updated --target-os=$targetOS';
-    }
-
-    final hasTargetArch = RegExp(r'--target-arch(?:\s+|=)').hasMatch(updated);
-    if (!hasTargetArch) {
-      updated = '$updated --target-arch=$targetArch';
-    }
-
-    return updated;
   }
 }

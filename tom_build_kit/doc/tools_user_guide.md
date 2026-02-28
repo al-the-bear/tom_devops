@@ -616,16 +616,24 @@ Each section also supports `command:` (built-in tool reference) as an alternativ
 | `${file.basename}` | File name with extension | `my_tool.dart` |
 | `${file.extension}` | File extension | `.dart` |
 | `${file.dir}` | File directory | `bin` |
-| `${target-os}` | Target OS | `macos`, `linux`, `windows` |
-| `${target-arch}` | Target architecture | `x64`, `arm64` |
-| `${target-platform}` | Dart target format | `macos-arm64` |
-| `${target-platform-vs}` | VS Code format | `darwin-arm64` |
-| `${current-os}` | Current OS | `macos` |
-| `${current-arch}` | Current architecture | `arm64` |
-| `${current-platform}` | Current platform (Dart format) | `macos-arm64` |
-| `${current-platform-vs}` | Current platform (VS Code format) | `darwin-arm64` |
+| `%{target-os}` | Target OS | `macos`, `linux`, `windows` |
+| `%{target-arch}` | Target architecture | `x64`, `arm64` |
+| `%{dart-target-os}` | Target OS for `dart compile --target-os` | `macos`, `linux`, `windows` |
+| `%{dart-target-arch}` | Target arch for `dart compile --target-arch` | `x64`, `arm64`, `arm` |
+| `%{target-platform}` | Dart target format | `macos-arm64` |
+| `%{target-platform-vs}` | VS Code format | `darwin-arm64` |
+| `%{current-os}` | Current OS | `macos` |
+| `%{current-arch}` | Current architecture | `arm64` |
+| `%{current-platform}` | Current platform (Dart format) | `macos-arm64` |
+| `%{current-platform-vs}` | Current platform (VS Code format) | `darwin-arm64` |
 
 Bracket format is also supported: `[file]`, `[target-os]`, `[target-platform-vs]`, etc.
+
+> **`dart compile exe` cross-compilation:** Use `%{dart-target-os}` and `%{dart-target-arch}` for the `--target-os` and `--target-arch` flags. These are explicit placeholders — no flags are injected automatically. Example:
+> ```yaml
+> commandline:
+>   - dart compile exe %{file} --target-os=%{dart-target-os} --target-arch=%{dart-target-arch} -o $TOM_BINARY_PATH/%{target-platform-vs}/%{file.name}
+> ```
 
 Environment variables are resolved using `$VAR` or `[VAR]` syntax: `$HOME`, `$USER`, `$PATH`, etc.
 
