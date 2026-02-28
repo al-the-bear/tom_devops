@@ -363,8 +363,12 @@ void main() {
 
     test('stdin pipeline executes command with piped input', () async {
       log.start('BKT_STD02', 'stdin pipeline actual execution');
-      final result = await ws.runPipeline('test-stdin', []);
-      log.capture('buildkit test-stdin', result);
+      final result = await ws.runPipeline(
+        'test-stdin',
+        [],
+        globalArgs: ['--project', 'devops/tom_build_kit'],
+      );
+      log.capture('buildkit --project devops/tom_build_kit test-stdin', result);
 
       final combined = '${result.stdout}\n${result.stderr}';
       expect(result.exitCode, equals(0),
