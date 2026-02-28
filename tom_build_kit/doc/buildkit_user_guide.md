@@ -627,6 +627,8 @@ buildkit :macro cvc=:cleanup :versioner :compiler
 buildkit :macro run=:runner --command $$
 ```
 
+> **Note:** All tokens after the `name=value` assignment — including other `:command` references — are captured as part of the macro value and will **not** be executed immediately. They are only expanded when the macro is invoked with `@name`.
+
 Runtime macros support argument placeholders:
 
 | Placeholder | Description |
@@ -641,6 +643,14 @@ buildkit :macro run=:runner --command $$
 buildkit @run build          # Expands to: :runner --command build
 buildkit @run clean build    # Expands to: :runner --command clean build
 ```
+
+> **Shell quoting tip:** When defining macros at an interactive shell prompt, `$` placeholders are expanded by the shell before buildkit sees them. Escape them with a backslash or use single quotes:
+>
+> ```bash
+> # These are equivalent — both pass literal $1 and $2 to buildkit:
+> buildkit :macro vc=:versioner --project \$1 :compiler \$2
+> buildkit ':macro' 'vc=:versioner --project $1 :compiler $2'
+> ```
 
 ### Invoking Runtime Macros
 
