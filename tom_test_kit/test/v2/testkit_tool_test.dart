@@ -24,8 +24,7 @@ void main() {
   });
 
   group('TK-CLI-2: Feature Gating [2026-01-01]', () {
-    test(
-        'TK-CLI-NEG01: Tool definition does not register macro/define '
+    test('TK-CLI-NEG01: Tool definition does not register macro/define '
         'commands in static commands list', () {
       // :macro, :macros, :unmacro, :define, :defines, :undefine are built-in
       // commands handled exclusively by ToolRunner built-ins and gated behind
