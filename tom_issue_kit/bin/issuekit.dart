@@ -14,14 +14,19 @@ import 'package:tom_issue_kit/src/v2/issuekit_executors.dart';
 import 'package:tom_issue_kit/src/v2/issuekit_tool.dart';
 
 void main(List<String> args) async {
-  final normalizedArgs = _normalizeHelpArgs(args);
+  // Normalize non-standard -help flag to --help.
+  // Bare `help` positional is intentionally left as-is; ToolRunner's positional
+  // help dispatcher handles it (e.g. `issuekit help`, `issuekit help pipelines`).
+  final normalizedArgs = _normalizeLegacyHelpFlag(args);
 
   final preParser = CliArgParser(toolDefinition: issuekitTool);
   final preArgs = preParser.parse(normalizedArgs);
-  final hasHelpFlag = normalizedArgs.contains('--help') ||
-      normalizedArgs.contains('-h') ||
-      normalizedArgs.contains('-help');
-  if (preArgs.help || preArgs.version || hasHelpFlag) {
+
+  // Early exit for help/version and bare 'help' positional — must run before
+  // loading GitHub config to avoid a token-not-configured error on help requests.
+  final isBareHelp =
+      normalizedArgs.isNotEmpty && normalizedArgs.first.trim() == 'help';
+  if (preArgs.help || preArgs.version || isBareHelp) {
     final preRunner = ToolRunner(
       tool: issuekitTool,
       executors: const <String, CommandExecutor>{},
@@ -84,16 +89,16 @@ void main(List<String> args) async {
   }
 }
 
-List<String> _normalizeHelpArgs(List<String> args) {
+/// Normalize the non-standard `-help` flag to `--help`.
+///
+/// All other args, including bare `help`, are passed through as-is so that
+/// [ToolRunner]'s positional help dispatcher handles them (e.g. `issuekit help`,
+/// `issuekit help pipelines`).
+List<String> _normalizeLegacyHelpFlag(List<String> args) {
   if (args.isEmpty) return args;
-
   final first = args.first.trim();
-  if (first == 'help' || first == '-help') {
-    final rest = args.skip(1).toList();
-    if (!rest.contains('--help') && !rest.contains('-h')) {
-      return ['--help', ...rest];
-    }
+  if (first == '-help') {
+    return ['--help', ...args.skip(1)];
   }
-
   return args;
 }

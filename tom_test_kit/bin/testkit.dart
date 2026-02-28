@@ -15,7 +15,10 @@ import 'package:tom_test_kit/src/tui/commands/baseline_tui_command.dart';
 import 'package:tom_test_kit/src/tui/commands/test_tui_command.dart';
 
 void main(List<String> args) async {
-  final normalizedArgs = _normalizeHelpArgs(args);
+  // Normalize non-standard -help flag to --help.
+  // Bare `help` positional is passed as-is; ToolRunner's positional dispatcher
+  // handles it (e.g. `testkit help`, `testkit help pipelines`).
+  final normalizedArgs = _normalizeLegacyHelpFlag(args);
 
   // Parse args to check for TUI mode first
   final parser = CliArgParser(toolDefinition: testkitTool);
@@ -42,17 +45,16 @@ void main(List<String> args) async {
   }
 }
 
-List<String> _normalizeHelpArgs(List<String> args) {
+/// Normalize the non-standard `-help` flag to `--help`.
+///
+/// All other args, including bare `help`, are passed through so that
+/// [ToolRunner]'s positional help dispatcher handles them.
+List<String> _normalizeLegacyHelpFlag(List<String> args) {
   if (args.isEmpty) return args;
-
   final first = args.first.trim();
-  if (first == 'help' || first == '-help') {
-    final rest = args.skip(1).toList();
-    if (!rest.contains('--help') && !rest.contains('-h')) {
-      return ['--help', ...rest];
-    }
+  if (first == '-help') {
+    return ['--help', ...args.skip(1)];
   }
-
   return args;
 }
 
