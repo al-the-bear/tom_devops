@@ -90,8 +90,10 @@ See the following documentation in `tom_build_base`:
 |------|---------|
 | `lib/src/workspace_mode.dart` | Navigation args, execution modes, CLI helpers |
 | `lib/src/project_discovery.dart` | Project scanning and pattern matching |
-| `lib/src/build_config.dart` | TomBuildConfig loading |
-
+| `lib/src/build_config.dart` | TomBuildConfig loading || `lib/src/v2/core/tool_runner.dart` | Central command routing and runtime behaviors |
+| `lib/src/v2/core/pipeline_config.dart` | Pipeline model, loader, prefix parser |
+| `lib/src/v2/core/pipeline_executor.dart` | Pipeline execution engine (serial fail-fast) |
+| `lib/src/v2/core/macro_expansion.dart` | Runtime macro expansion |
 ## Adding a New Tool
 
 When creating a new tool:
@@ -138,6 +140,11 @@ class MyTool extends ToolBase {
 ## Version History
 
 - **2026-02**: Added standardized CLI help/version support via tom_build_base
+- **2026-02**: Pipeline execution engine migrated to `tom_build_base` (base-owned)
+- **2026-02**: Macro/define command split: runtime macros (`:macro/:macros/:unmacro`) + persistent defines (`:define/:defines/:undefine`)
+- **2026-02**: Entrypoint (`bin/buildkit.dart`) replaced with `ToolRunner` v2
+- **2026-02**: Removed local pipeline files (`pipeline_config.dart`, `pipeline_executor.dart`, `pipeline_step.dart`)
+- **2026-02**: `:execute` executor confirmed fully base-backed (extends `CommandExecutor`, uses base placeholder APIs)
 ## Debugging Traversal with :execute
 
 The `:execute` command is a powerful tool for testing and debugging navigation options before running actual commands. It executes arbitrary shell commands in each discovered project, showing you exactly which projects are selected and in what order.
@@ -241,83 +248,30 @@ buildkit -m basics :execute echo "In basics"
 - Use `--dry-run` with other commands first, then `:execute` to verify traversal
 - Combine with `echo` for quick visibility checks
 
-## Architecture Issue: Option Duplication
+## Architecture Note: ToolRunner v2 Entrypoint (2026-02)
 
-### Current Problem
+`bin/buildkit.dart` now uses `ToolRunner` from `tom_build_base` as the sole entrypoint.
+All navigation options, help output, env checks, pipeline dispatch, and macro/define
+commands are handled by the base runtime. The old `ArgParser`-based local option
+duplication described in earlier documentation is no longer relevant.
 
-`buildkit.dart` duplicates navigation options instead of using `addNavigationOptions()` from tom_build_base:
-
-**buildkit.dart:**
+**Current entrypoint (`bin/buildkit.dart`):**
 ```dart
-ArgParser _createGlobalParser() {
-  return ArgParser(allowTrailingOptions: false)
-    ..addFlag('inner-first-git', abbr: 'i', ...)  // Duplicated!
-    ..addFlag('outer-first-git', abbr: 'o', ...)  // Duplicated!
-    ..addFlag('top-repo', abbr: 'T', ...)         // Duplicated!
-    // ... all manually defined
-}
+final runner = ToolRunner(
+  tool: buildkitTool,
+  executors: createBuildkitExecutors(),
+  verbose: true,
+);
+final result = await runner.run(args);
 ```
 
-**Standalone tools (via ToolBase):**
-```dart
-ArgParser createParser() {
-  final parser = ArgParser(allowTrailingOptions: false);
-  addNavigationOptions(parser);  // Uses tom_build_base
-  // ...
-}
-```
+**Pipeline execution** is now base-owned (`ToolPipelineExecutor`):  
+- Pipeline config loaded from `buildkit_master.yaml` via `ToolPipelineConfigLoader`
+- Strict command prefixes: `buildkit`, `shell`, `shell-scan`
+- Option precedence: command > invocation > pipeline `global-options`
+- Multi-workspace traversal with disqualifying-option gating
 
-### Missing Options in buildkit.dart
-
-When tom_build_base adds new options, buildkit.dart must be manually updated in THREE places:
-1. `_createGlobalParser()` — Parse the option
-2. `_executeCommand()` — Pass option to underlying commands
-3. `_generateCommandHelp()` — Document the option
-
-Currently missing from buildkit.dart:
-- `--recursion-exclude` — Exclude patterns during recursive scan
-- `--modes` — Active modes for config processing
-
-### Proposed Solution
-
-Refactor buildkit.dart to use tom_build_base's `addNavigationOptions()`:
-
-```dart
-ArgParser _createGlobalParser() {
-  final parser = ArgParser(allowTrailingOptions: false)
-    ..addFlag('help', abbr: 'h', negatable: false, help: 'Show this help')
-    ..addFlag('version', abbr: 'V', negatable: false, help: 'Show version')
-    ..addFlag('verbose', abbr: 'v', negatable: false, help: 'Verbose output')
-    ..addFlag('dry-run', abbr: 'n', negatable: false, help: 'Show what would be executed')
-    ..addFlag('list', abbr: 'l', negatable: false, help: 'List available pipelines');
-  
-  // Delegate navigation options to tom_build_base
-  addNavigationOptions(parser);
-  
-  return parser;
-}
-```
-
-Then use `WorkspaceNavigationArgs` for passing options:
-
-```dart
-Future<bool> _executeCommand(...) async {
-  // Parse navigation args once, pass them directly
-  final navArgs = parseNavigationArgs(globalResults, bareRoot: bareRootFlag);
-  final execArgs = navArgs.toArgs();  // Convert back to arg list
-  // ...
-}
-```
-
-### Benefits of Unified Architecture
-
-1. **Single source of truth** — Options defined only in tom_build_base
-2. **Automatic updates** — New options automatically available in buildkit
-3. **Consistent behavior** — Same parsing logic in kit-mode and standalone-mode
-4. **Reduced maintenance** — No more manual option synchronization
-
-### Implementation Priority
-
-- **High**: Add missing `--recursion-exclude` and `--modes` options to buildkit.dart
-- **Medium**: Refactor to use `addNavigationOptions()`
-- **Long-term**: Add `WorkspaceNavigationArgs.toArgs()` helper to tom_build_base
+**Removed local modules** (superseded by base):  
+- `lib/src/pipeline_config.dart` → `tom_build_base` `ToolPipelineConfig`  
+- `lib/src/pipeline_executor.dart` → `tom_build_base` `ToolPipelineExecutor`  
+- `lib/src/pipeline_step.dart` → `tom_build_base` `PipelineStepConfig`

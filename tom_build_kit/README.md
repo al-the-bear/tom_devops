@@ -4,7 +4,7 @@ Pipeline-based build orchestration for the Tom workspace. Run build pipelines an
 
 ## Features
 
-- **Pipeline execution** - Define and run named build pipelines from `buildkit.yaml`
+- **Pipeline execution** - Define and run named build pipelines from `buildkit_master.yaml` (base-owned)
 - **Direct commands** - Run build tools directly with `:command` syntax
 - **Sequential execution** - Mix pipelines and commands in a single invocation
 - **Project scanning** - Run pipelines across multiple projects
@@ -145,7 +145,7 @@ bk :git -i -- log --oneline -5
 
 ## Pipeline Configuration
 
-Define pipelines in `buildkit.yaml`:
+Define pipelines in `buildkit_master.yaml` (workspace root):
 
 ```yaml
 buildkit:
@@ -153,10 +153,13 @@ buildkit:
     build:
       core:
         - commands:
-            - versioner
-            - runner
-            - compiler
+            - buildkit :versioner
+            - buildkit :runner
+            - buildkit :compiler
 ```
+
+Pipeline command prefixes: `buildkit` (delegate to tool), `shell` (run in workspace), `shell-scan` (run per-project).
+Pipeline execution, option precedence, and multi-workspace traversal are handled by `tom_build_base`.
 
 ## Documentation
 
