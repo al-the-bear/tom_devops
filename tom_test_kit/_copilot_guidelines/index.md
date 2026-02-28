@@ -51,6 +51,7 @@ final output = 'ls -la'.toList();
 
 | File | Description |
 |------|-------------|
+| [implementation_guidelines.md](implementation_guidelines.md) | Development workflow and strict tom_build_base-first integration rule |
 | [testing.md](testing.md) | Test strategy, naming conventions, categories, and running tests |
 
 ## Quick Reference

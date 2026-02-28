@@ -9,7 +9,7 @@ compiler:
     # macOS ARM64 - compile for self + all Linux targets
     - commandline:
         - mkdir -p $TOM_BINARY_PATH/%{target-platform-vs}
-        - dart compile exe %{file} --target-os=%{target-os} -o $TOM_BINARY_PATH/%{target-platform-vs}/issuekit
+        - dart compile exe %{file} --target=%{target-platform} -o $TOM_BINARY_PATH/%{target-platform-vs}/issuekit
       files: bin/issuekit.dart
       targets: [darwin-arm64, linux-x64, linux-arm64, linux-armhf]
       platforms: [darwin-arm64]
@@ -17,7 +17,7 @@ compiler:
     # Other platforms - compile for self only
     - commandline:
         - mkdir -p $TOM_BINARY_PATH/%{target-platform-vs}
-        - dart compile exe %{file} -o $TOM_BINARY_PATH/%{target-platform-vs}/issuekit
+        - dart compile exe %{file} --target=%{target-platform} -o $TOM_BINARY_PATH/%{target-platform-vs}/issuekit
       files: bin/issuekit.dart
       platforms: [darwin-x64, linux-*, win32-*]
 
@@ -32,5 +32,5 @@ compiler:
         - ln -sf $TOM_BINARY_PATH/%{current-platform-vs}/issuekit $TOM_BINARY_PATH/%{current-platform-vs}/ik
       platforms: [macos, linux]
     - commandline:
-        - cmd /c mklink $HOME\.tom\bin\%{current-platform-vs}\ik.exe $HOME\.tom\bin\%{current-platform-vs}\issuekit.exe
+        - cmd /c mklink $TOM_BINARY_PATH\%{current-platform-vs}\ik.exe $TOM_BINARY_PATH\%{current-platform-vs}\issuekit.exe
       platforms: [win32-*]

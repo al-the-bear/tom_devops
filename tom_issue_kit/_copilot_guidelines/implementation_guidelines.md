@@ -26,6 +26,24 @@ Always write tests from the specification. If a test fails, the implementation i
 4. Verification     → Run tests, fix any failures
 ```
 
+## Critical Rule: tom_build_base Owns Shared CLI Functionality
+
+If functionality logically belongs to `tom_build_base`, it must be implemented and released there first.
+
+Mandatory workflow:
+
+1. Modify `tom_build_base`.
+2. Test it with a test tool created inside `tom_build_base` (or an existing one there).
+3. Republish `tom_build_base`.
+4. Update the `tom_build_base` version in all tools based on `tom_build_base`.
+5. Run tests in all tools based on `tom_build_base`.
+
+Hard constraints:
+
+- Never add temporary downstream code in `tom_issue_kit` for functionality that belongs to `tom_build_base`.
+- Never implement stopgap copies in tool packages when the owning library is `tom_build_base`.
+- If integration cannot be completed in one pass, explicitly tell the user and make an integration plan first.
+
 ### 1. Specification First
 
 Before writing any code, understand **what** the code should do:

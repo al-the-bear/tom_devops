@@ -51,7 +51,7 @@ final output = 'ls -la'.toList();
 
 | Document | Purpose |
 |----------|---------|
-| [implementation_guidelines.md](implementation_guidelines.md) | Development workflow, TDD, test naming conventions |
+| [implementation_guidelines.md](implementation_guidelines.md) | Development workflow, TDD, test naming conventions, strict tom_build_base-first integration rule |
 | [testing.md](testing.md) | Unit and integration testing strategy |
 
 ## Key Documents
