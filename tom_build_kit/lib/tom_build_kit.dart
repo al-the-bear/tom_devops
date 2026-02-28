@@ -13,11 +13,6 @@ export 'src/compiler_config.dart';
 export 'src/platform_utils.dart';
 export 'src/script_utils.dart';
 
-// Pipeline infrastructure
-export 'src/pipeline_config.dart';
-export 'src/pipeline_executor.dart';
-export 'src/pipeline_step.dart';
-
 // Standalone commands (used by v2 executors)
 export 'src/pubget_command.dart';
 export 'src/pubupdate_command.dart';
