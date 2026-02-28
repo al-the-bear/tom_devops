@@ -6,7 +6,8 @@
 /// Test IDs: BKT_LST01, BKT_HLP01, BKT_HLP02, BKT_CMD01, BKT_PIP01, BKT_DRY01,
 ///           BKT_DRY02, BKT_OPT01, BKT_SHL01, BKT_XPJ01, BKT_XPJ02,
 ///           BKT_ERR01, BKT_ERR02, BKT_MAC01, BKT_MAC02, BKT_MAC03,
-///           BKT_STD01, BKT_STD02
+///           BKT_STD01, BKT_STD02,
+///           BKT_NEG01, BKT_NEG02, BKT_NEG03, BKT_NEG04
 @TestOn('!browser')
 @Timeout(Duration(seconds: 180))
 library;
@@ -591,6 +592,144 @@ void main() {
         reason: 'Macro should be removed from list',
       );
       log.expectation('define removed', !stdout.contains('removeme'));
+    });
+  });
+
+  // ----------- Phase 5: Breaking-change enforcement (negative) ----------- //
+  //
+  // These tests verify that pipeline/macro/define features are correctly gated
+  // behind eligibility checks and do not leak into ineligible contexts.
+  //
+  // "Ineligible context" means: no buildkit_master.yaml present.
+  // The setUp installs the pipeline fixture for each test, so each test
+  // starts by reverting the fixture to create the ineligible state.
+
+  group('negative (ineligible context)', () {
+    test('BKT_NEG01: :define rejected when buildkit_master.yaml absent',
+        () async {
+      log.start('BKT_NEG01', ':define rejected in ineligible context');
+      // Remove the pipeline fixture for this test
+      await ws.revertAll();
+
+      final result = await ws.runPipeline(':define', ['test=value']);
+      log.capture('buildkit :define test=value (no master yaml)', result);
+
+      // Should fail — macro/define commands are gated behind eligibility
+      expect(
+        result.exitCode,
+        isNot(equals(0)),
+        reason: ':define should fail when buildkit_master.yaml is absent',
+      );
+      final combined = '${result.stdout}\n${result.stderr}';
+      final hasRejection =
+          combined.contains('No command specified') ||
+          combined.contains('not available') ||
+          combined.contains('not eligible') ||
+          combined.contains('unknown') ||
+          combined.contains('error') ||
+          combined.contains('command');
+      expect(
+        hasRejection,
+        isTrue,
+        reason:
+            ':define should produce a clear rejection message. Output: $combined',
+      );
+      log.expectation('non-zero exit', result.exitCode != 0);
+      log.expectation('has rejection message', hasRejection);
+    });
+
+    test('BKT_NEG02: :macro rejected when buildkit_master.yaml absent',
+        () async {
+      log.start('BKT_NEG02', ':macro rejected in ineligible context');
+      await ws.revertAll();
+
+      final result = await ws.runPipeline(':macro', ['test=value']);
+      log.capture('buildkit :macro test=value (no master yaml)', result);
+
+      expect(
+        result.exitCode,
+        isNot(equals(0)),
+        reason: ':macro should fail when buildkit_master.yaml is absent',
+      );
+      log.expectation('non-zero exit', result.exitCode != 0);
+    });
+
+    test('BKT_NEG03: pipeline name rejected when buildkit_master.yaml absent',
+        () async {
+      log.start('BKT_NEG03', 'pipeline name rejected in ineligible context');
+      await ws.revertAll();
+
+      // 'test-simple' was defined in the fixture but is now absent
+      final result = await ws.runPipeline('test-simple', []);
+      log.capture('buildkit test-simple (no master yaml)', result);
+
+      expect(
+        result.exitCode,
+        isNot(equals(0)),
+        reason: 'Pipeline name should fail when buildkit_master.yaml is absent',
+      );
+      final combined = '${result.stdout}\n${result.stderr}';
+      // Should say no command specified or unknown command, not crash
+      final hasRejection =
+          combined.contains('No command specified') ||
+          combined.contains('unknown') ||
+          combined.contains('not found') ||
+          combined.contains('error') ||
+          combined.contains('command');
+      expect(
+        hasRejection,
+        isTrue,
+        reason:
+            'Should produce clear rejection, not silent failure. Output: $combined',
+      );
+      log.expectation('non-zero exit', result.exitCode != 0);
+      log.expectation('has rejection message', hasRejection);
+    });
+
+    test(
+        'BKT_NEG04: help output does not expose macro/define/pipeline '
+        'features when buildkit_master.yaml absent', () async {
+      log.start(
+        'BKT_NEG04',
+        'help hides gated features in ineligible context',
+      );
+      await ws.revertAll();
+
+      final result = await ws.runPipeline('--help', []);
+      log.capture('buildkit --help (no master yaml)', result);
+
+      expect(result.exitCode, equals(0));
+      final stdout = result.stdout as String;
+
+      // Runtime macro + persistent define built-in commands are gated by
+      // eligibility (buildkit_master.yaml required). They must not appear in
+      // help when the master yaml is absent.
+      expect(
+        stdout,
+        isNot(contains(':macro')),
+        reason: ':macro should not appear in --help without master yaml',
+      );
+      expect(
+        stdout,
+        isNot(contains(':macros')),
+        reason: ':macros should not appear in --help without master yaml',
+      );
+      expect(
+        stdout,
+        isNot(contains(':define')),
+        reason: ':define should not appear in --help without master yaml',
+      );
+      expect(
+        stdout,
+        isNot(contains(':defines')),
+        reason: ':defines should not appear in --help without master yaml',
+      );
+
+      log.expectation('exits 0', result.exitCode == 0);
+      log.expectation('no :macro in help', !stdout.contains(':macro'));
+      log.expectation('no :macros in help', !stdout.contains(':macros'));
+      log.expectation('no :define in help', !stdout.contains(':define'));
+      log.expectation('no :defines in help', !stdout.contains(':defines'));
     });
   });
 }
