@@ -69,10 +69,7 @@ Future<void> _runTuiMode(CliArgs args) async {
     ..registerCommand(TestTuiCommand());
 
   // Launch TUI
-  final app = TestKitTuiApp(
-    registry: registry,
-    projectPath: projectPath,
-  );
+  final app = TestKitTuiApp(registry: registry, projectPath: projectPath);
   await TuiRunner(app).run();
 
   // Restore terminal line discipline after TUI exits.

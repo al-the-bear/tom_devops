@@ -488,15 +488,6 @@ const dcliOptions = <OptionDefinition>[
 /// Options for findproject command.
 const findProjectOptions = <OptionDefinition>[];
 
-/// Options for define command.
-const defineOptions = <OptionDefinition>[];
-
-/// Options for undefine command.
-const undefineOptions = <OptionDefinition>[];
-
-/// Options for defines listing command.
-const definesOptions = <OptionDefinition>[];
-
 // =============================================================================
 // Command Definitions - Build Tools
 // =============================================================================
@@ -1016,66 +1007,6 @@ const dcliCommand = CommandDefinition(
   ],
 );
 
-const defineCommand = CommandDefinition(
-  name: 'define',
-  description: 'Persist a define in buildkit_master.yaml',
-  aliases: [],
-  options: defineOptions,
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
-  examples: ['buildkit :define APP_NAME=TomBuildKit'],
-);
-
-const undefineCommand = CommandDefinition(
-  name: 'undefine',
-  description: 'Remove a persisted define',
-  aliases: [],
-  options: undefineOptions,
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
-  examples: ['buildkit :undefine APP_NAME'],
-);
-
-const definesCommand = CommandDefinition(
-  name: 'defines',
-  description: 'List persisted defines',
-  aliases: [],
-  options: definesOptions,
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
-  examples: ['buildkit :defines'],
-);
-
-const macroCommand = CommandDefinition(
-  name: 'macro',
-  description: 'Define a runtime macro',
-  aliases: [],
-  options: defineOptions,
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
-  examples: ['buildkit :macro cv=:versioner :compiler'],
-);
-
-const unmacroCommand = CommandDefinition(
-  name: 'unmacro',
-  description: 'Remove a runtime macro',
-  aliases: [],
-  options: undefineOptions,
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
-  examples: ['buildkit :unmacro cv'],
-);
-
-const macrosCommand = CommandDefinition(
-  name: 'macros',
-  description: 'List runtime macros',
-  aliases: [],
-  options: definesOptions,
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
-  examples: ['buildkit :macros'],
-);
-
 // =============================================================================
 // Tool Definition
 // =============================================================================
@@ -1147,12 +1078,6 @@ final buildkitTool = ToolDefinition(
     // Other
     findProjectCommand,
     dcliCommand,
-    macroCommand,
-    macrosCommand,
-    unmacroCommand,
-    defineCommand,
-    undefineCommand,
-    definesCommand,
   ],
   helpFooter: '''
 Execution Modes:
@@ -1162,16 +1087,6 @@ Execution Modes:
 Pipeline Execution:
   Pipelines are defined in buildkit_master.yaml or buildkit.yaml under buildkit.pipelines.
   Run a pipeline by name: buildkit <pipeline-name>
-
-Runtime macros:
-  :macro <name>=<commands>  Define runtime macro
-  :unmacro <name>           Remove runtime macro
-  :macros                   List runtime macros
-
-Persistent defines:
-  :define <name>=<value>    Persist define in buildkit_master.yaml
-  :undefine <name>          Remove persisted define
-  :defines                  List persisted defines
 
 Configuration:
   buildkit_master.yaml — Workspace-level configuration

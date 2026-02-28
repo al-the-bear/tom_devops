@@ -39,23 +39,27 @@ void main(List<String> args) async {
   }
 
   // Load configuration from workspace root (current directory by default)
-  final workspaceRoot = Platform.environment['TOM_WORKSPACE_ROOT'] ??
-      Directory.current.path;
+  final workspaceRoot =
+      Platform.environment['TOM_WORKSPACE_ROOT'] ?? Directory.current.path;
   final config = await IssueKitConfig.load(workspaceRoot);
 
   // Resolve GitHub token
   final token = config.token;
   if (token == null) {
     stderr.writeln('Error: No GitHub token configured.');
-    stderr.writeln('Set GITHUB_TOKEN environment variable or configure '
-        'token_file in tom_workspace.yaml');
+    stderr.writeln(
+      'Set GITHUB_TOKEN environment variable or configure '
+      'token_file in tom_workspace.yaml',
+    );
     exitCode = 1;
     return;
   }
 
   // Verify issue tracking is configured
   if (!config.isValid) {
-    stderr.writeln('Error: issue_tracking not configured in tom_workspace.yaml');
+    stderr.writeln(
+      'Error: issue_tracking not configured in tom_workspace.yaml',
+    );
     exitCode = 1;
     return;
   }
@@ -72,9 +76,7 @@ void main(List<String> args) async {
     // Create runner with all executors
     final runner = ToolRunner(
       tool: issuekitTool,
-      executors: createIssuekitExecutors(
-        service: service,
-      ),
+      executors: createIssuekitExecutors(service: service),
     );
 
     // Run the tool
