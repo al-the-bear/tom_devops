@@ -3,9 +3,10 @@
 /// Uses a dedicated 'pipeline' fixture with test-simple, test-multi,
 /// test-shell, and test-internal pipeline definitions.
 ///
-/// Test IDs: BKT_LST01, BKT_HLP01, BKT_CMD01, BKT_PIP01, BKT_DRY01,
+/// Test IDs: BKT_LST01, BKT_HLP01, BKT_HLP02, BKT_CMD01, BKT_PIP01, BKT_DRY01,
 ///           BKT_DRY02, BKT_OPT01, BKT_SHL01, BKT_XPJ01, BKT_XPJ02,
-///           BKT_ERR01, BKT_ERR02, BKT_MAC01, BKT_MAC02, BKT_MAC03
+///           BKT_ERR01, BKT_ERR02, BKT_MAC01, BKT_MAC02, BKT_MAC03,
+///           BKT_STD01, BKT_STD02
 @TestOn('!browser')
 @Timeout(Duration(seconds: 180))
 library;
@@ -309,6 +310,71 @@ void main() {
       // (project filter is a traversal filter, not a hard path check).
       // Just verify the command completes without crashing.
       log.expectation('completes without crash', true);
+    });
+  });
+
+  group('help', () {
+    test('help pipelines shows pipeline configuration reference', () async {
+      log.start('BKT_HLP02', 'help pipelines shows pipeline config reference');
+      final result = await ws.runPipeline('help', ['pipelines']);
+      log.capture('buildkit help pipelines', result);
+
+      final stdout = (result.stdout as String);
+      expect(result.exitCode, equals(0),
+          reason: 'help pipelines should exit 0');
+      expect(stdout, contains('Pipeline Configuration'),
+          reason: 'Should show pipeline configuration header');
+      expect(stdout, contains('stdin'),
+          reason: 'Should document stdin command prefix');
+      expect(stdout, contains('shell'),
+          reason: 'Should document shell command prefix');
+      expect(stdout, contains('precore'),
+          reason: 'Should document pipeline structure phases');
+      log.expectation('exits 0', result.exitCode == 0);
+      log.expectation(
+          'shows pipeline config', stdout.contains('Pipeline Configuration'));
+    });
+  });
+
+  group('stdin', () {
+    test('stdin pipeline dry-run prints command and stdin lines', () async {
+      log.start('BKT_STD01', 'stdin pipeline dry-run output');
+      final result = await ws.runPipeline(
+        'test-stdin',
+        [],
+        globalArgs: ['--dry-run'],
+      );
+      log.capture('buildkit --dry-run test-stdin', result);
+
+      final stdout = (result.stdout as String);
+      expect(result.exitCode, equals(0),
+          reason: 'dry-run stdin pipeline should exit 0');
+      expect(stdout, contains('[PIPELINE:stdin]'),
+          reason: 'Should show [PIPELINE:stdin] prefix');
+      expect(stdout, contains('cat'),
+          reason: 'Should show the piped command');
+      expect(stdout, contains('Hello stdin world'),
+          reason: 'Should show stdin lines with | prefix');
+      log.expectation('exits 0', result.exitCode == 0);
+      log.expectation('shows stdin prefix', stdout.contains('[PIPELINE:stdin]'));
+      log.expectation(
+          'shows stdin lines', stdout.contains('Hello stdin world'));
+    });
+
+    test('stdin pipeline executes command with piped input', () async {
+      log.start('BKT_STD02', 'stdin pipeline actual execution');
+      final result = await ws.runPipeline('test-stdin', []);
+      log.capture('buildkit test-stdin', result);
+
+      final combined = '${result.stdout}\n${result.stderr}';
+      expect(result.exitCode, equals(0),
+          reason: 'stdin pipeline should exit 0. Output: $combined');
+      // cat echoes the stdin content back to stdout
+      expect((result.stdout as String), contains('Hello stdin world'),
+          reason: 'cat should echo stdin content to stdout');
+      log.expectation('exits 0', result.exitCode == 0);
+      log.expectation(
+          'echoes stdin', (result.stdout as String).contains('Hello stdin world'));
     });
   });
 

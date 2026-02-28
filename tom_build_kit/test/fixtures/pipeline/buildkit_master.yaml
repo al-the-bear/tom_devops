@@ -51,4 +51,11 @@ buildkit:
               echo "multi-line-2"
               echo "multi-line-3"
 
-
+    test-stdin:
+      executable: true
+      core:
+        - commands:
+            - |
+              stdin cat
+              Hello stdin world
+              line two
