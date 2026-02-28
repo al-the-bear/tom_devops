@@ -79,6 +79,11 @@ const bumppubspecOptions = <OptionDefinition>[
 
 /// Options for compiler command.
 const compilerOptions = <OptionDefinition>[
+  OptionDefinition.flag(
+    name: 'all-platforms',
+    description:
+        'Compile all configured targets for the current build platform',
+  ),
   OptionDefinition.multi(
     name: 'targets',
     abbr: 't',
@@ -552,6 +557,7 @@ const compilerCommand = CommandDefinition(
   canRunStandalone: true,
   examples: [
     'buildkit :compiler',
+    'buildkit :compiler --all-platforms',
     'buildkit :compiler --targets=linux-x64,darwin-arm64',
     'buildkit :compiler --executable=buildkit.dart,compiler.dart',
     'buildkit :compiler -e buildkit.dart -t linux-x64',
@@ -1012,32 +1018,62 @@ const dcliCommand = CommandDefinition(
 
 const defineCommand = CommandDefinition(
   name: 'define',
-  description: 'Define a reusable macro',
+  description: 'Persist a define in buildkit_master.yaml',
   aliases: [],
   options: defineOptions,
   requiresTraversal: false,
   supportsProjectTraversal: false,
-  examples: ['buildkit define cv=:versioner :compiler'],
+  examples: ['buildkit :define APP_NAME=TomBuildKit'],
 );
 
 const undefineCommand = CommandDefinition(
   name: 'undefine',
-  description: 'Remove a macro',
+  description: 'Remove a persisted define',
   aliases: [],
   options: undefineOptions,
   requiresTraversal: false,
   supportsProjectTraversal: false,
-  examples: ['buildkit undefine cv'],
+  examples: ['buildkit :undefine APP_NAME'],
 );
 
 const definesCommand = CommandDefinition(
   name: 'defines',
-  description: 'List all defined macros',
+  description: 'List persisted defines',
   aliases: [],
   options: definesOptions,
   requiresTraversal: false,
   supportsProjectTraversal: false,
-  examples: ['buildkit defines'],
+  examples: ['buildkit :defines'],
+);
+
+const macroCommand = CommandDefinition(
+  name: 'macro',
+  description: 'Define a runtime macro',
+  aliases: [],
+  options: defineOptions,
+  requiresTraversal: false,
+  supportsProjectTraversal: false,
+  examples: ['buildkit :macro cv=:versioner :compiler'],
+);
+
+const unmacroCommand = CommandDefinition(
+  name: 'unmacro',
+  description: 'Remove a runtime macro',
+  aliases: [],
+  options: undefineOptions,
+  requiresTraversal: false,
+  supportsProjectTraversal: false,
+  examples: ['buildkit :unmacro cv'],
+);
+
+const macrosCommand = CommandDefinition(
+  name: 'macros',
+  description: 'List runtime macros',
+  aliases: [],
+  options: definesOptions,
+  requiresTraversal: false,
+  supportsProjectTraversal: false,
+  examples: ['buildkit :macros'],
 );
 
 // =============================================================================
@@ -1111,6 +1147,9 @@ final buildkitTool = ToolDefinition(
     // Other
     findProjectCommand,
     dcliCommand,
+    macroCommand,
+    macrosCommand,
+    unmacroCommand,
     defineCommand,
     undefineCommand,
     definesCommand,
@@ -1124,11 +1163,15 @@ Pipeline Execution:
   Pipelines are defined in buildkit_master.yaml or buildkit.yaml under buildkit.pipelines.
   Run a pipeline by name: buildkit <pipeline-name>
 
-Macros:
-  define <name>=<commands>  Define a reusable macro
-  undefine <name>           Remove a macro
-  defines                   List all defined macros
-  @name [args]              Expand macro
+Runtime macros:
+  :macro <name>=<commands>  Define runtime macro
+  :unmacro <name>           Remove runtime macro
+  :macros                   List runtime macros
+
+Persistent defines:
+  :define <name>=<value>    Persist define in buildkit_master.yaml
+  :undefine <name>          Remove persisted define
+  :defines                  List persisted defines
 
 Configuration:
   buildkit_master.yaml — Workspace-level configuration

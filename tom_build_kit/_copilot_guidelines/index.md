@@ -52,7 +52,7 @@ final output = 'ls -la'.toList();
 | File | Description |
 |------|-------------|
 | [build_base_projects.md](build_base_projects.md) | List of all projects depending on tom_build_base |
-| [implementation_hints.md](implementation_hints.md) | tom_build_base integration and CLI infrastructure |
+| [implementation_hints.md](implementation_hints.md) | tom_build_base integration, CLI infrastructure, and strict base-first ownership workflow |
 | [testing.md](testing.md) | Testing guidelines |
 
 ## Quick Reference

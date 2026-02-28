@@ -15,6 +15,24 @@ This document describes the relationship between `tom_build_kit` and the shared 
 
 All tools inherit from `ToolBase` (in `lib/src/commands/tool_base.dart`), which uses the shared infrastructure from `tom_build_base`.
 
+## Critical Rule: tom_build_base Owns Shared CLI Functionality
+
+If functionality logically belongs to `tom_build_base`, it must be implemented and released there first.
+
+Mandatory workflow:
+
+1. Modify `tom_build_base`.
+2. Test it with a test tool created inside `tom_build_base` (or an existing one there).
+3. Republish `tom_build_base`.
+4. Update the `tom_build_base` version in all tools based on `tom_build_base`.
+5. Run tests in all tools based on `tom_build_base`.
+
+Hard constraints:
+
+- Never add temporary downstream code in `tom_build_kit` for functionality that belongs to `tom_build_base`.
+- Never implement stopgap copies in tool packages when the owning library is `tom_build_base`.
+- If integration cannot be completed in one pass, explicitly tell the user and make an integration plan first.
+
 ## Dependencies on tom_build_base
 
 ### Workspace Navigation

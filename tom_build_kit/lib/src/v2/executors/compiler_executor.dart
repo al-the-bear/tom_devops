@@ -173,6 +173,7 @@ class CompilerExecutor extends CommandExecutor {
     }
 
     final cmdOpts = _getCmdOpts(args);
+    final compileAllPlatforms = cmdOpts['all-platforms'] == true;
 
     // Parse target filter from CLI
     final targetFilter = <String>[];
@@ -267,18 +268,40 @@ class CompilerExecutor extends CommandExecutor {
           }
         }
 
-        var targets = section.targets.isNotEmpty
+        final allowedTargets = section.targets.isNotEmpty
             ? _expandTargets(section.targets)
             : [currentPlatform];
 
+        List<String> targets;
         if (config.targetFilter.isNotEmpty) {
-          targets = targets.where((t) {
+          targets = allowedTargets.where((t) {
             return config.targetFilter.any(
               (f) => PlatformUtils.matchesPlatform(f, t),
             );
           }).toList();
           if (targets.isEmpty) {
             if (args.verbose) print('  No targets match filter');
+            continue;
+          }
+        } else if (compileAllPlatforms) {
+          targets = allowedTargets;
+          if (targets.isEmpty) {
+            if (args.verbose) print('  No allowed targets for this section');
+            continue;
+          }
+        } else {
+          if (allowedTargets.any(
+            (t) => PlatformUtils.matchesPlatform(currentPlatform, t),
+          )) {
+            targets = [currentPlatform];
+          } else {
+            if (args.verbose) {
+              print(
+                '  Skipping compile section: current platform '
+                '$currentPlatform not in allowed targets '
+                '(${allowedTargets.join(', ')})',
+              );
+            }
             continue;
           }
         }
@@ -531,6 +554,11 @@ class CompilerExecutor extends CommandExecutor {
         currentArch: currentArch,
         currentPlatform: currentPlatform,
       );
+      command = _ensureDartCompileTargetFlags(
+        command,
+        targetOS: targetOS,
+        targetArch: targetArch,
+      );
 
       if (script_utils.isStdinCommand(command)) {
         final parsed = script_utils.parseStdinCommand(command);
@@ -545,8 +573,13 @@ class CompilerExecutor extends CommandExecutor {
           if (args.verbose) {
             print('    Command (stdin): ${parsed.command}');
           }
+          final stdinCommand = _ensureDartCompileTargetFlags(
+            _replaceEnvVars(parsed.command),
+            targetOS: targetOS,
+            targetArch: targetArch,
+          );
           final result = await script_utils.executeWithStdin(
-            command: _replaceEnvVars(parsed.command),
+            command: stdinCommand,
             stdinContent: parsed.stdinContent,
             workingDirectory: Directory.current.path,
             environment: Platform.environment,
@@ -564,6 +597,11 @@ class CompilerExecutor extends CommandExecutor {
       }
 
       command = _replaceEnvVars(command);
+      command = _ensureDartCompileTargetFlags(
+        command,
+        targetOS: targetOS,
+        targetArch: targetArch,
+      );
 
       if (args.dryRun) {
         print('  [DRY RUN] compile ($targetPlatform): $command');
@@ -720,5 +758,33 @@ class CompilerExecutor extends CommandExecutor {
       return Platform.environment[varName] ?? '';
     });
     return result;
+  }
+
+  String _ensureDartCompileTargetFlags(
+    String command, {
+    required String targetOS,
+    required String targetArch,
+  }) {
+    if (!command.contains('dart compile exe')) {
+      return command;
+    }
+
+    final hasExplicitTarget = RegExp(r'--target(?:\s+|=)').hasMatch(command);
+    if (hasExplicitTarget) {
+      return command;
+    }
+
+    var updated = command;
+    final hasTargetOS = RegExp(r'--target-os(?:\s+|=)').hasMatch(updated);
+    if (!hasTargetOS) {
+      updated = '$updated --target-os=$targetOS';
+    }
+
+    final hasTargetArch = RegExp(r'--target-arch(?:\s+|=)').hasMatch(updated);
+    if (!hasTargetArch) {
+      updated = '$updated --target-arch=$targetArch';
+    }
+
+    return updated;
   }
 }

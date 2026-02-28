@@ -263,128 +263,6 @@ class DcliExecutor extends CommandExecutor {
 }
 
 // =============================================================================
-// Macro Executors (non-traversal)
-// =============================================================================
-
-/// Executor for define command.
-class DefineExecutor extends CommandExecutor {
-  final void Function(String name, String value) onDefine;
-
-  DefineExecutor({required this.onDefine});
-
-  @override
-  Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    return ItemResult.failure(
-      path: context.path,
-      name: context.name,
-      error: 'define is a non-traversal command',
-    );
-  }
-
-  @override
-  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    if (args.positionalArgs.isEmpty) {
-      return const ToolResult.failure('Missing argument: name=value');
-    }
-
-    final def = args.positionalArgs.first;
-    final eqIndex = def.indexOf('=');
-    if (eqIndex <= 0) {
-      return const ToolResult.failure('Invalid format. Use: define name=value');
-    }
-
-    final name = def.substring(0, eqIndex);
-    final value = [
-      def.substring(eqIndex + 1),
-      ...args.positionalArgs.skip(1),
-    ].join(' ').trim();
-
-    if (args.dryRun) {
-      print('[DRY RUN] Would define macro: $name=$value');
-      return const ToolResult.success();
-    }
-
-    onDefine(name, value);
-    print('Defined macro: $name');
-    return const ToolResult.success(processedCount: 1);
-  }
-}
-
-/// Executor for undefine command.
-class UndefineExecutor extends CommandExecutor {
-  final bool Function(String name) onUndefine;
-
-  UndefineExecutor({required this.onUndefine});
-
-  @override
-  Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    return ItemResult.failure(
-      path: context.path,
-      name: context.name,
-      error: 'undefine is a non-traversal command',
-    );
-  }
-
-  @override
-  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    if (args.positionalArgs.isEmpty) {
-      return const ToolResult.failure('Missing argument: macro name');
-    }
-
-    final name = args.positionalArgs.first;
-
-    if (args.dryRun) {
-      print('[DRY RUN] Would undefine macro: $name');
-      return const ToolResult.success();
-    }
-
-    final removed = onUndefine(name);
-
-    if (removed) {
-      print('Removed macro: $name');
-      return const ToolResult.success(processedCount: 1);
-    } else {
-      return ToolResult.failure('Macro not found: $name');
-    }
-  }
-}
-
-/// Executor for defines listing command.
-class DefinesExecutor extends CommandExecutor {
-  final Map<String, String> Function() getMacros;
-
-  DefinesExecutor({required this.getMacros});
-
-  @override
-  Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    return ItemResult.failure(
-      path: context.path,
-      name: context.name,
-      error: 'defines is a non-traversal command',
-    );
-  }
-
-  @override
-  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final macros = getMacros();
-
-    if (macros.isEmpty) {
-      print('No macros defined.');
-    } else {
-      print('Defined macros:');
-      final maxLen = macros.keys
-          .map((k) => k.length)
-          .reduce((a, b) => a > b ? a : b);
-      for (final entry in macros.entries) {
-        print('  @${entry.key.padRight(maxLen)} = ${entry.value}');
-      }
-    }
-
-    return const ToolResult.success();
-  }
-}
-
-// =============================================================================
 // Factory Function
 // =============================================================================
 
@@ -394,12 +272,7 @@ class DefinesExecutor extends CommandExecutor {
 /// in [git_executors.dart]. Project tool executors are in individual files
 /// under `executors/`.
 ///
-/// The macro callbacks are used for define/undefine/defines commands.
-Map<String, CommandExecutor> createBuildkitExecutors({
-  required void Function(String name, String value) onDefine,
-  required bool Function(String name) onUndefine,
-  required Map<String, String> Function() getMacros,
-}) {
+Map<String, CommandExecutor> createBuildkitExecutors() {
   return {
     // Build tools
     'versioner': VersionerExecutor(),
@@ -442,10 +315,5 @@ Map<String, CommandExecutor> createBuildkitExecutors({
     // Other
     'findproject': FindProjectExecutor(),
     'dcli': DcliExecutor(),
-
-    // Macros
-    'define': DefineExecutor(onDefine: onDefine),
-    'undefine': UndefineExecutor(onUndefine: onUndefine),
-    'defines': DefinesExecutor(getMacros: getMacros),
   };
 }

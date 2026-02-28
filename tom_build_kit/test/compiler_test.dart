@@ -208,6 +208,18 @@ void main() {
           isNot(contains('\${target-platform-vs}')),
           reason: 'Placeholder \${target-platform-vs} should be resolved',
         );
+
+        if (line.contains('dart compile exe') &&
+            (line.contains('--target-os=') ||
+                line.contains('--target-platform'))) {
+          expect(
+            line,
+            contains('--target-arch='),
+            reason:
+                'Compiler commands targeting a specific platform must include '
+                '--target-arch to avoid host-arch fallback: $line',
+          );
+        }
       }
       log.expectation('no unresolved placeholders', true);
     });

@@ -45,8 +45,9 @@ class PipelineExecutor {
   Future<bool> execute(String pipelineName) async {
     // Check if already executed
     if (_executedPipelines.contains(pipelineName)) {
-      if (verbose)
+      if (verbose) {
         print('Pipeline "$pipelineName" already executed, skipping.');
+      }
       return true;
     }
 

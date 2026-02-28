@@ -99,8 +99,8 @@ class TestLogger {
     Directory(logDir).createSync(recursive: true);
     final safeName = _testId.replaceAll(RegExp(r'[^\w]'), '_');
     final logFile = File(
-      p.join(logDir, '${safeName}${suffix}_log.txt'),
-    ); // ignore: unnecessary_brace_in_string_interps
+      p.join(logDir, '$safeName${suffix}_log.txt'),
+    );
     logFile.writeAsStringSync('${_entries.join('\n')}\n', mode: FileMode.write);
   }
 }
