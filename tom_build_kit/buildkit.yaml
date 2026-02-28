@@ -9,7 +9,7 @@ compiler:
     # macOS ARM64 - compile for self + all Linux targets
     - commandline:
         - mkdir -p $TOM_BINARY_PATH/%{target-platform-vs}
-        - dart compile exe %{file} --target=%{target-platform} -o $TOM_BINARY_PATH/%{target-platform-vs}/%{file.name}
+        - dart compile exe %{file} -o $TOM_BINARY_PATH/%{target-platform-vs}/%{file.name}
       files:
         - bin/buildkit.dart
         - bin/findproject.dart
@@ -19,7 +19,7 @@ compiler:
     # Other platforms - compile for self only
     - commandline:
         - mkdir -p $TOM_BINARY_PATH/%{target-platform-vs}
-        - dart compile exe %{file} --target=%{target-platform} -o $TOM_BINARY_PATH/%{target-platform-vs}/%{file.name}
+        - dart compile exe %{file} -o $TOM_BINARY_PATH/%{target-platform-vs}/%{file.name}
       files:
         - bin/buildkit.dart
         - bin/findproject.dart
