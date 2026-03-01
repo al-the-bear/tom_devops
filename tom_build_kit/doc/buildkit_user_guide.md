@@ -613,9 +613,11 @@ Git Status
 
 ## Runtime Macros
 
-Runtime macros are reusable command sequences that are active only for the current tool-run session. They are defined, invoked, and removed within a single invocation sequence and are **not persisted** between runs.
+Runtime macros are reusable command sequences. They are persisted to `buildkit_macros.yaml` in the workspace root, so macros defined in one invocation are available in all subsequent ones until explicitly removed.
 
 > **Eligibility:** Runtime macros are only available when `buildkit_master.yaml` is present in the workspace root and BuildKit is running in multi-command mode.
+
+> **Persistence file:** `{workspace_root}/buildkit_macros.yaml` — created automatically when the first macro is added, deleted automatically when the last macro is removed. You can add this file to your `.gitignore` if you do not want to share macros across team members.
 
 ### Defining Runtime Macros
 

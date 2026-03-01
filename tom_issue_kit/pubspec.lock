@@ -597,10 +597,10 @@ packages:
     dependency: "direct main"
     description:
       name: tom_build_base
-      sha256: "1c1259ecbf233e4d167350b389b2068b68560e705749fc608cb4afd69bbf9f1d"
+      sha256: a6b1f645ebdef087219e422bf28b7a9002063b24b433dabf0d54cf4c47625607
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.9"
+    version: "2.5.10"
   tom_github_api:
     dependency: "direct main"
     description:
