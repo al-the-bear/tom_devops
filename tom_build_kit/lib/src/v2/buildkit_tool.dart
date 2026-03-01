@@ -1016,6 +1016,7 @@ final buildkitTool = ToolDefinition(
   name: 'buildkit',
   description: 'Pipeline-based build orchestration tool',
   version: BuildkitVersionInfo.version,
+  versionString: BuildkitVersionInfo.versionLong,
   mode: ToolMode.multiCommand,
   helpTopics: defaultHelpTopics,
   features: const NavigationFeatures(
