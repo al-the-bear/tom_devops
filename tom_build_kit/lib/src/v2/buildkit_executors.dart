@@ -11,7 +11,6 @@ library;
 import 'dart:io';
 
 import 'package:tom_build_base/tom_build_base.dart';
-import 'package:tom_build_base/tom_build_base_v2.dart';
 
 import '../pubget_command.dart';
 import '../pubupdate_command.dart';
