@@ -1,5 +1,9 @@
 # Tom Build Kit — Consolidation Issues
 
+> **Status: All issues resolved.** This document is retained as a historical record of the
+> consolidation from 5 standalone tools into `tom_build_kit`. All 19 issues were fixed
+> during the consolidation process.
+
 Tracked issues from the tool consolidation (5 standalone tools → tom_build_kit).
 
 ## Status Legend

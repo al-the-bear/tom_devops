@@ -8,8 +8,11 @@ For the BuildKit pipeline orchestrator, see [buildkit_user_guide.md](buildkit_us
 
 This package extends the shared infrastructure from **tom_build_base**:
 
-- [CLI Tools Navigation](../../tom_build_base/doc/cli_tools_navigation.md) — Standard CLI commands, execution modes, and navigation options
-- [Build Base User Guide](../../tom_build_base/doc/build_base_user_guide.md) — Configuration loading, project discovery, and workspace mode
+- [CLI Tools Navigation](../../basics/tom_build_base/doc/cli_tools_navigation.md) — Standard CLI commands, execution modes, and navigation options
+- [Build Base User Guide](../../basics/tom_build_base/doc/build_base_user_guide.md) — V2 Tool Framework, configuration loading, project discovery
+- [Modes and Placeholders](../../basics/tom_build_base/doc/modes_and_placeholders.md) — Placeholder types, resolution order, and mode-specific defines
+- [Multi-Workspace Pipelines, Macros, and Defines](../../basics/tom_build_base/doc/multiws_pipelines_macros_defines.md) — Pipeline system, runtime macros, persistent defines
+- [Tool Inheritance and Nesting](../../basics/tom_build_base/doc/tool_inheritance_and_nesting.md) — copyWith patterns and nested tool wiring
 
 ---
 
@@ -130,6 +133,11 @@ All ToolBase-derived tools share these options:
 | `--list` | `-l` | List matching projects without processing them |
 | `--show` | — | Show configuration for matched projects |
 | `--dry-run` | `-n` | Show what would be done without making changes |
+| `--modes <mode>` | — | Active modes for mode-specific defines (e.g., `DEV,CI`) |
+| `--nested` | — | Run in nested mode — skip traversal, single-project execution |
+| `--dump-definitions` | — | Dump complete tool definition as YAML |
+
+All tools also support `help <topic>` to display built-in help topics (defines, macros, pipelines, placeholders, wiring). See the [BuildKit User Guide](buildkit_user_guide.md#help-topics) for details.
 
 ### Version Flag
 

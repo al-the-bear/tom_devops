@@ -26,7 +26,10 @@ For the testing strategy, safety protocol, and test infrastructure, see [_copilo
 | 9 | [Config Merge — Merge Precedence](#9-config-merge--merge-precedence) | 4 | 4✅ | `config_merge_test.dart` | [→](#9-config-merge--merge-precedence) |
 | 10 | [Security — Path & Command Validation](#10-security--path--command-validation) | 4 | 4✅ | `security_test.dart` | [→](#10-security--path--command-validation) |
 | 11 | [Exclusion — Cross-Tool Filtering](#11-exclusion--cross-tool-filtering) | 27 | 27✅ | `exclusion_test.dart` | [→](#11-exclusion--cross-tool-filtering) |
-| — | **Total** | **101** | **101✅** | | |
+| 12 | [Execute Command — Placeholder Resolution](#12-execute-command--placeholder-resolution) | 14 | 14✅ | `execute_command_test.dart` | [→](#12-execute-command--placeholder-resolution) |
+| 13 | [Script Utilities — Multi-Line & Stdin](#13-script-utilities--multi-line--stdin) | 12 | 12✅ | `script_utils_test.dart` | [→](#13-script-utilities--multi-line--stdin) |
+| 14 | [Built-in Commands — Parsing & Resolution](#14-built-in-commands--parsing--resolution) | 19 | 19✅ | `builtin_commands_test.dart` | [→](#14-built-in-commands--parsing--resolution) |
+| — | **Total** | **146** | **146✅** | | |
 
 ---
 
@@ -278,3 +281,122 @@ Comprehensive cross-tool tests for all project exclusion features. Tests every t
 | EXCL_BL01 | Versioner finds _build without filters | ✅ | No exclusions. `_build` in output. |
 | EXCL_BL02 | Dependencies finds core projects | ✅ | No exclusions. `core/` projects in output. |
 | EXCL_BL03 | Runner finds projects | ✅ | No exclusions. Projects with `build.yaml` in output. |
+
+---
+
+## 12. Execute Command — Placeholder Resolution
+
+**Test file:** `test/execute_command_test.dart`
+
+Integration tests that spawn BuildKit as an external process against a temp workspace fixture.
+
+### Basic Execution
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BK_EXEC_01 | Echo with `%{folder.name}` placeholder | ✅ | Run `:execute "echo %{folder.name}"`. Verify folder names in output. |
+| BK_EXEC_02 | `%{folder.relative}` placeholder | ✅ | Run `:execute "echo %{folder.relative}"`. Verify relative paths in output. |
+| BK_EXEC_03 | Skip projects with `buildkit_skip.yaml` | ✅ | Place skip file. Run `:execute`. Verify skipped project not in output. |
+| BK_EXEC_04 | `--dry-run` does not execute commands | ✅ | Run with `--dry-run`. Verify no actual output, only preview. |
+
+### Placeholder Resolution
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BK_EXEC_05 | `%{dart.exists?...}` ternary expression | ✅ | Run `:execute` with Dart ternary. Verify correct branch taken based on project type. |
+| BK_EXEC_06 | `%{root}` resolves to workspace root | ✅ | Run `:execute "echo %{root}"`. Verify absolute workspace root path. |
+| BK_EXEC_07 | `%{folder}` resolves to absolute path | ✅ | Run `:execute "echo %{folder}"`. Verify absolute folder path. |
+
+### Navigation Integration
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BK_EXEC_08 | `-p` project filter limits execution | ✅ | Run with `-p project_a`. Verify only one project processed. |
+| BK_EXEC_09 | `-x` exclude removes matching projects | ✅ | Run with `-x project_b`. Verify excluded project absent. |
+| BK_EXEC_10 | Git inner-first with `:execute` | ✅ | Run with `-i`. Verify git-based traversal ordering. |
+
+### Condition Filtering
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BK_EXEC_11 | `--condition dart.exists` filters non-Dart | ✅ | Run with `--condition dart.exists`. Verify only Dart projects processed. |
+| BK_EXEC_12 | Non-existent condition skips all | ✅ | Run with `--condition nonexistent`. Verify all projects skipped. |
+| BK_EXEC_14 | `-c dart.exists` short flag | ✅ | Run with `-c dart.exists`. Verify same result as `--condition`. |
+
+### Syntax Regression
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BK_EXEC_13 | `%{folder.name}` resolves correctly (not literal) | ✅ | Verify `%{folder.name}` is replaced, not passed through as literal text. |
+
+---
+
+## 13. Script Utilities — Multi-Line & Stdin
+
+**Test file:** `test/script_utils_test.dart`
+
+Unit tests for script parsing and integration tests for multi-line pipeline execution.
+
+### Parsing
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| SCR_PRS01 | `isMultiLineShellScript` detects `shell\n` prefix | ✅ | Pass multi-line string. Verify returns true. |
+| SCR_PRS02 | `isMultiLineShellScript` rejects non-multiline | ✅ | Pass single-line string. Verify returns false. |
+| SCR_PRS03 | `extractScriptBody` extracts content after `shell\n` | ✅ | Extract body. Verify correct content. |
+| SCR_PRS04 | `isStdinCommand` detects `stdin` prefix with newline | ✅ | Pass stdin-format string. Verify detection. |
+| SCR_PRS05 | `isStdinCommand` rejects invalid formats | ✅ | Pass non-stdin string. Verify returns false. |
+| SCR_PRS06 | `parseStdinCommand` extracts command and content | ✅ | Parse stdin string. Verify command and content split. |
+
+### Multi-Line Execution
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| SCR_MLN01 | Multi-line shell script executes all lines | ✅ | Run pipeline with multi-line shell step. Verify all lines execute. |
+| SCR_MLN02 | Multi-line shell in verbose mode | ✅ | Run with `--verbose`. Verify command echoing. |
+| SCR_STD01 | Stdin piping sends content to command | ✅ | Run pipeline with stdin step. Verify content piped correctly. |
+| SCR_STD02 | Stdin piping in verbose mode | ✅ | Run with `--verbose`. Verify stdin preview. |
+| SCR_DRY01 | Multi-line shell dry-run shows preview | ✅ | Run with `--dry-run`. Verify preview without execution. |
+| SCR_DRY02 | Stdin dry-run shows preview | ✅ | Run with `--dry-run`. Verify stdin preview. |
+
+---
+
+## 14. Built-in Commands — Parsing & Resolution
+
+**Test file:** `test/builtin_commands_test.dart`
+
+Unit tests for argument parsing and command shorthand resolution.
+
+### Argument Parsing
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BIC_PAR01 | Simple command with no arguments | ✅ | Parse `:command`. Verify name extracted. |
+| BIC_PAR02 | Command with unquoted arguments | ✅ | Parse `:command arg1 arg2`. Verify args split. |
+| BIC_PAR03 | Double-quoted strings as single argument | ✅ | Parse `"quoted arg"`. Verify kept as one arg. |
+| BIC_PAR04 | Single-quoted strings as single argument | ✅ | Parse `'quoted arg'`. Verify kept as one arg. |
+| BIC_PAR05 | Mixed quoted and unquoted arguments | ✅ | Parse mixed. Verify correct split. |
+| BIC_PAR06 | Multiple spaces between arguments | ✅ | Parse `a   b`. Verify trimmed to two args. |
+| BIC_PAR07 | Empty string handling | ✅ | Parse `""`. Verify empty result. |
+| BIC_PAR08 | Whitespace-only string | ✅ | Parse `"  "`. Verify empty result. |
+| BIC_PAR09 | Backslash escapes in quoted strings | ✅ | Parse escaped content. Verify preserved. |
+
+### Shorthand Resolution
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BIC_SHR01 | Returns exact match for full command name | ✅ | Resolve `versioner`. Verify exact match. |
+| BIC_SHR02 | Case-insensitive matching | ✅ | Resolve `VERSIONER`. Verify case-insensitive match. |
+| BIC_SHR03 | Unique prefix resolves to full command | ✅ | Resolve `vers`. Verify resolves to `versioner`. |
+| BIC_SHR04 | Ambiguous prefix returns null | ✅ | Resolve ambiguous prefix. Verify null. |
+| BIC_SHR05 | No match returns null | ✅ | Resolve unknown. Verify null. |
+| BIC_SHR06 | All full command names resolve | ✅ | Resolve every known command. Verify all match. |
+
+### isBuiltin Checks
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| BIC_ISB01 | Full command names recognized | ✅ | Check `isBuiltin(:versioner)`. Verify true. |
+| BIC_ISB02 | Command with arguments recognized | ✅ | Check `isBuiltin(:versioner --list)`. Verify true. |
+| BIC_ISB03 | Unique shorthand recognized | ✅ | Check `isBuiltin(:vers)`. Verify true. |
+| BIC_ISB04 | Ambiguous/unknown rejected | ✅ | Check `isBuiltin(:xyz)`. Verify false. |

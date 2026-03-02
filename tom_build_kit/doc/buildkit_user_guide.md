@@ -8,8 +8,11 @@ For the individual tool reference, see [tools_user_guide.md](tools_user_guide.md
 
 This package extends the shared infrastructure from **tom_build_base**:
 
-- [CLI Tools Navigation](../../tom_build_base/doc/cli_tools_navigation.md) — Standard CLI commands, execution modes, and navigation options
-- [Build Base User Guide](../../tom_build_base/doc/build_base_user_guide.md) — Configuration loading, project discovery, and workspace mode
+- [CLI Tools Navigation](../../tom_build_base/doc/cli_tools_navigation.md) — Standard CLI commands, execution modes, navigation options, and help topics
+- [Build Base User Guide](../../tom_build_base/doc/build_base_user_guide.md) — V2 tool framework, configuration loading, project discovery, and workspace mode
+- [Modes and Placeholders](../../tom_build_base/doc/modes_and_placeholders.md) — Mode system and all placeholder types (`@[...]`, `@{...}`, `%{...}`, `${...}`, `$VAR`)
+- [Multi-Workspace Pipelines, Macros, and Defines](../../tom_build_base/doc/multiws_pipelines_macros_defines.md) — Detailed pipeline, macro, and define reference
+- [Tool Inheritance and Nesting](../../tom_build_base/doc/tool_inheritance_and_nesting.md) — Tool composition and nested tool wiring
 
 ---
 
@@ -37,6 +40,9 @@ This package extends the shared infrastructure from **tom_build_base**:
   - [Execute Command](#execute-command)
   - [Status Command](#status-command)
 - [Command Prefix Matching](#command-prefix-matching)
+- [Help Topics](#help-topics)
+- [Nested Tool Wiring](#nested-tool-wiring)
+- [Modes](#modes)
 - [Runtime Macros](#runtime-macros)
   - [Defining Runtime Macros](#defining-runtime-macros)
   - [Invoking Runtime Macros](#invoking-runtime-macros)
@@ -88,11 +94,22 @@ buildkit --list
 # Show help for a built-in command
 buildkit help :compiler
 
+# Show help for a topic
+buildkit help defines
+buildkit help macros
+buildkit help pipelines
+buildkit help placeholders
+buildkit help wiring
+
 # Command prefix matching (unambiguous prefixes work)
 buildkit :vers :comp          # Matches :versioner :compiler
 
 # Execute shell command in each folder
 buildkit -i :execute "echo ${folder.name}"
+
+# Use modes for environment-specific configuration
+buildkit --modes=DEV :compiler
+buildkit --modes=CI,RELEASE :compiler :versioner
 ```
 
 ---
@@ -114,6 +131,7 @@ dart compile exe bin/buildkit.dart -o buildkit
 ```text
 Usage: buildkit [options] <pipeline|:command> [args...] [<pipeline|:command> [args...]]...
        buildkit help :<command>      Show help for a built-in command
+       buildkit help <topic>         Show help for a topic (defines, macros, pipelines, placeholders, wiring)
        buildkit --version            Show version information
 ```
 
@@ -137,6 +155,9 @@ Usage: buildkit [options] <pipeline|:command> [args...] [<pipeline|:command> [ar
 | `--top-repo` | `-T` | Find topmost git repo by traversing up from current directory (requires `-i` or `-o`) |
 | `--exclude <pattern>` | `-x` | Exclude patterns — path-based globs (multi-option) |
 | `--exclude-projects <pattern>` | — | Exclude projects by name or path (multi-option) |
+| `--modes <mode>` | — | Active modes for mode-specific defines (e.g., `DEV,CI`) |
+| `--nested` | — | Run in nested mode — skip traversal, single-project execution |
+| `--dump-definitions` | — | Dump complete tool definition as YAML |
 
 > **Important:** Global options must appear **before** the pipeline or command name. Options placed after the pipeline name are silently ignored (BuildKit will print a warning if it detects this).
 
@@ -791,6 +812,116 @@ buildkit :gitst       # Unambiguous prefix: matches gitstatus
 - Exact matches (name or alias) always take priority over prefix matches
 - If a prefix matches multiple commands, BuildKit reports the ambiguity and lists all matching commands
 - Aliases are also checked for prefix matching (e.g., `:ex` matches `:execute` via the `exec` alias)
+
+---
+
+## Help Topics
+
+BuildKit provides built-in help topics that explain key features. Access them with `buildkit help <topic>`:
+
+```bash
+buildkit help defines        # Persistent key=value defines
+buildkit help macros         # Runtime macros with argument substitution
+buildkit help pipelines      # Pipeline system (phases, prefixes, execution)
+buildkit help placeholders   # Placeholder types and resolution order
+buildkit help wiring         # Nested tool wiring via tom_master.yaml
+```
+
+| Topic | Description |
+|-------|-------------|
+| `defines` | Persistent key=value pairs set via `:define` — substituted in YAML values via `@{key}` placeholders |
+| `macros` | Runtime macros set via `:macro` — reusable command sequences with `$1`–`$9` argument substitution |
+| `pipelines` | Pipeline system — precore/core/postcore phases, command type prefixes (`shell:`, `shell-scan:`, `stdin:`, `tool:`), and option precedence |
+| `placeholders` | All placeholder types (`@{...}`, `@[...]`, `${...}`, `$VAR`, `%{...}`) and their resolution order |
+| `wiring` | Nested tool wiring — `nested_tools:` section in `tom_master.yaml` for embedding tools within build steps |
+
+Help topics are automatically injected from `tom_master.yaml` configuration. The `placeholders` topic is always available as a default built-in topic.
+
+> For detailed documentation on these features, see:
+> - [Modes and Placeholders](../../basics/tom_build_base/doc/modes_and_placeholders.md) for placeholder types and resolution
+> - [Multi-Workspace Pipelines, Macros, and Defines](../../basics/tom_build_base/doc/multiws_pipelines_macros_defines.md) for the full pipeline, macro, and define system
+
+---
+
+## Nested Tool Wiring
+
+BuildKit supports embedding other Tom tools as nested steps within pipelines. This is configured in the `nested_tools:` section of `tom_master.yaml`.
+
+### Configuration
+
+```yaml
+# tom_master.yaml
+nested_tools:
+  testkit:
+    tool: tom_test_kit:testkit
+    binary: testkit
+    inherit:
+      options: [verbose, dry-run, exclude]
+      commands: [test, baseline]
+```
+
+### How It Works
+
+1. When BuildKit encounters a `tool:testkit` step in a pipeline, it looks up the wiring configuration
+2. The tool is loaded lazily on first use (no overhead if the step isn't reached)
+3. Options listed in `inherit.options` are passed through from the parent tool
+4. Commands listed in `inherit.commands` are available as `:testkit:test`, `:testkit:baseline`, etc.
+5. If a `binary` is specified, BuildKit prefers the compiled binary over `dart run`
+
+### Usage in Pipelines
+
+```yaml
+pipelines:
+  test:
+    steps:
+      - tool:testkit :test
+      - shell: echo "Tests complete"
+```
+
+Running `buildkit test` will execute testkit's `:test` command as a nested tool, then run the shell echo command.
+
+Options from the parent are forwarded automatically:
+
+```bash
+# --verbose and --dry-run are forwarded to testkit
+buildkit -v -n test
+```
+
+> For complete details on the design and implementation of tool wiring, see
+> [Tool Inheritance and Nesting](../../basics/tom_build_base/doc/tool_inheritance_and_nesting.md).
+
+---
+
+## Modes
+
+BuildKit supports **modes** — named flags that activate mode-specific defines in your configuration. Use the `--modes` option to set active modes:
+
+```bash
+buildkit --modes=DEV build
+buildkit --modes=CI,RELEASE build
+```
+
+Modes affect which persistent defines are applied. In `tom_master.yaml`, defines can be scoped to specific modes:
+
+```yaml
+defines:
+  # Always active
+  APP_NAME: my_app
+
+  # Only active when DEV mode is set
+  DEV:
+    DEBUG: true
+    LOG_LEVEL: verbose
+
+  # Only active when CI mode is set
+  CI:
+    COVERAGE: true
+```
+
+When `--modes=DEV` is specified, both the global defines and the `DEV`-specific defines are active and available via `@{key}` placeholders. Mode names are case-sensitive.
+
+> For complete documentation on modes and defines, see
+> [Modes and Placeholders](../../basics/tom_build_base/doc/modes_and_placeholders.md).
 
 ---
 
