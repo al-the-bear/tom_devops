@@ -33,6 +33,10 @@ import 'executors/versioner_executor.dart';
 // =============================================================================
 
 /// Passthrough executor for :pubget.
+///
+/// Resolves the workspace root and defaults to recursive scanning when no
+/// explicit --no-recursive is provided. This matches the behavior of other
+/// workspace-aware commands.
 class PubGetExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
@@ -45,11 +49,16 @@ class PubGetExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final root = args.scan ?? args.root ?? Directory.current.path;
-    final pubGet = PubGetCommand(rootPath: root, verbose: args.verbose);
+    // Resolve workspace root (like other traversal commands do)
+    final wsRoot = findWorkspaceRoot(
+      args.scan ?? args.root ?? Directory.current.path,
+    );
+    final pubGet = PubGetCommand(rootPath: wsRoot, verbose: args.verbose);
 
-    final cmdArgs = <String>['--scan', root];
-    if (args.effectiveRecursive) cmdArgs.add('--recursive');
+    final cmdArgs = <String>['--scan', wsRoot];
+    // Default to recursive unless explicitly disabled with --no-recursive
+    // This matches workspace scanning behavior
+    if (!args.notRecursive) cmdArgs.add('--recursive');
     if (args.verbose) cmdArgs.add('--verbose');
     if (args.dryRun) cmdArgs.add('--dry-run');
 
@@ -121,6 +130,10 @@ class PubGetAllExecutor extends CommandExecutor {
 }
 
 /// Passthrough executor for :pubupdate.
+///
+/// Resolves the workspace root and defaults to recursive scanning when no
+/// explicit --no-recursive is provided. This matches the behavior of other
+/// workspace-aware commands.
 class PubUpdateExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
@@ -133,11 +146,16 @@ class PubUpdateExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final root = args.scan ?? args.root ?? Directory.current.path;
-    final pubUpdate = PubUpdateCommand(rootPath: root, verbose: args.verbose);
+    // Resolve workspace root (like other traversal commands do)
+    final wsRoot = findWorkspaceRoot(
+      args.scan ?? args.root ?? Directory.current.path,
+    );
+    final pubUpdate = PubUpdateCommand(rootPath: wsRoot, verbose: args.verbose);
 
-    final cmdArgs = <String>['--scan', root];
-    if (args.effectiveRecursive) cmdArgs.add('--recursive');
+    final cmdArgs = <String>['--scan', wsRoot];
+    // Default to recursive unless explicitly disabled with --no-recursive
+    // This matches workspace scanning behavior
+    if (!args.notRecursive) cmdArgs.add('--recursive');
     if (args.verbose) cmdArgs.add('--verbose');
     if (args.dryRun) cmdArgs.add('--dry-run');
 
