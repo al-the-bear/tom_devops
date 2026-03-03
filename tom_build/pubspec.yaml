@@ -14,7 +14,7 @@ dependencies:
   path: ^1.9.0
   pub_semver: ^2.2.0
   tom_d4rt:
-  tom_reflection: ^1.0.0
+  tom_reflection: any
   tom_core_kernel:
     path: ../../core/tom_core_kernel
   tom_core_server:

@@ -12,8 +12,6 @@ import 'dart:io';
 
 import 'package:tom_build_base/tom_build_base.dart';
 
-import '../pubget_command.dart';
-import '../pubupdate_command.dart';
 import 'executors/buildsorter_executor.dart';
 import 'executors/bumppubspec_executor.dart';
 import 'executors/bumpversion_executor.dart';
@@ -32,195 +30,199 @@ import 'executors/versioner_executor.dart';
 // Pub Command Executors
 // =============================================================================
 
-/// Passthrough executor for :pubget.
+/// Executor for :pubget - runs `dart pub get` or `flutter pub get` per project.
 ///
-/// Resolves the workspace root and defaults to recursive scanning when no
-/// explicit --no-recursive is provided. This matches the behavior of other
-/// workspace-aware commands.
+/// Uses framework traversal to work on each project individually.
+/// Detects Flutter projects and uses appropriate command.
 class PubGetExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    return ItemResult.failure(
-      path: context.path,
+    final projectPath = context.path;
+
+    // Detect if this is a Flutter project
+    final isFlutter = context.hasNature<FlutterProjectFolder>();
+    final executable = isFlutter ? 'flutter' : 'dart';
+
+    if (args.dryRun) {
+      print('  [DRY RUN] $executable pub get in ${context.name}');
+      return ItemResult.success(
+        path: projectPath,
+        name: context.name,
+        message: 'dry-run',
+      );
+    }
+
+    if (args.verbose) {
+      print('  Running: $executable pub get');
+      print('  Working directory: ${context.name}');
+    }
+
+    // Use streaming for live output
+    final exitCode = await ProcessRunner.runStreaming(
+      executable,
+      ['pub', 'get'],
+      workingDirectory: projectPath,
+    );
+
+    if (exitCode != 0) {
+      return ItemResult.failure(
+        path: projectPath,
+        name: context.name,
+        error: '$executable pub get failed (exit $exitCode)',
+      );
+    }
+
+    return ItemResult.success(
+      path: projectPath,
       name: context.name,
-      error: 'pubget uses executeWithoutTraversal',
+      message: 'pub get OK',
     );
-  }
-
-  @override
-  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    // Resolve workspace root (like other traversal commands do)
-    final wsRoot = findWorkspaceRoot(
-      args.scan ?? args.root ?? Directory.current.path,
-    );
-    final pubGet = PubGetCommand(rootPath: wsRoot, verbose: args.verbose);
-
-    final cmdArgs = <String>['--scan', wsRoot];
-    // Default to recursive unless explicitly disabled with --no-recursive
-    // This matches workspace scanning behavior
-    if (!args.notRecursive) cmdArgs.add('--recursive');
-    if (args.verbose) cmdArgs.add('--verbose');
-    if (args.dryRun) cmdArgs.add('--dry-run');
-
-    // Pass through extra options
-    for (final entry in args.extraOptions.entries) {
-      final key = entry.key;
-      final val = entry.value;
-      if (val is bool && val) cmdArgs.add('--$key');
-    }
-
-    // Per-command args
-    if (args.commands.isNotEmpty) {
-      final cmdName = args.commands.first;
-      final perCmd = args.commandArgs[cmdName];
-      if (perCmd != null) {
-        for (final p in perCmd.projectPatterns) {
-          cmdArgs.addAll(['--project', p]);
-        }
-        for (final entry in perCmd.options.entries) {
-          if (entry.value is bool && entry.value == true) {
-            cmdArgs.add('--${entry.key}');
-          }
-        }
-      }
-    }
-
-    final success = await pubGet.execute(cmdArgs);
-    return success
-        ? const ToolResult.success()
-        : const ToolResult.failure('pub get failed');
   }
 }
 
-/// Passthrough executor for :pubgetall (pubget -R `<workspace>` --scan `<workspace>` --recursive).
+/// Executor for :pubgetall - alias for :pubget with full recursive.
 ///
-/// Always operates on the complete workspace by resolving the workspace root
-/// and passing it as both -R (execution root) and --scan root.
+/// Deprecated: Use `:pubget` which now defaults to recursive.
+/// Kept for backwards compatibility.
 class PubGetAllExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    return ItemResult.failure(
-      path: context.path,
-      name: context.name,
-      error: 'pubgetall uses executeWithoutTraversal',
-    );
-  }
+    // Delegate to same logic as PubGetExecutor
+    final projectPath = context.path;
+    final isFlutter = context.hasNature<FlutterProjectFolder>();
+    final executable = isFlutter ? 'flutter' : 'dart';
 
-  @override
-  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final wsRoot =
-        args.root ?? findWorkspaceRoot(args.scan ?? Directory.current.path);
-    final pubGet = PubGetCommand(rootPath: wsRoot, verbose: args.verbose);
-
-    final cmdArgs = <String>['--scan', wsRoot, '--recursive'];
-    if (args.verbose) cmdArgs.add('--verbose');
-    if (args.dryRun) cmdArgs.add('--dry-run');
-
-    for (final entry in args.extraOptions.entries) {
-      if (entry.value is bool && entry.value == true) {
-        cmdArgs.add('--${entry.key}');
-      }
+    if (args.dryRun) {
+      print('  [DRY RUN] $executable pub get in ${context.name}');
+      return ItemResult.success(
+        path: projectPath,
+        name: context.name,
+        message: 'dry-run',
+      );
     }
 
-    final success = await pubGet.execute(cmdArgs);
-    return success
-        ? const ToolResult.success()
-        : const ToolResult.failure('pub get failed');
+    if (args.verbose) {
+      print('  Running: $executable pub get');
+      print('  Working directory: ${context.name}');
+    }
+
+    final exitCode = await ProcessRunner.runStreaming(
+      executable,
+      ['pub', 'get'],
+      workingDirectory: projectPath,
+    );
+
+    if (exitCode != 0) {
+      return ItemResult.failure(
+        path: projectPath,
+        name: context.name,
+        error: '$executable pub get failed (exit $exitCode)',
+      );
+    }
+
+    return ItemResult.success(
+      path: projectPath,
+      name: context.name,
+      message: 'pub get OK',
+    );
   }
 }
 
-/// Passthrough executor for :pubupdate.
+/// Executor for :pubupdate - runs `dart pub upgrade` or `flutter pub upgrade` per project.
 ///
-/// Resolves the workspace root and defaults to recursive scanning when no
-/// explicit --no-recursive is provided. This matches the behavior of other
-/// workspace-aware commands.
+/// Uses framework traversal to work on each project individually.
+/// Detects Flutter projects and uses appropriate command.
 class PubUpdateExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    return ItemResult.failure(
-      path: context.path,
+    final projectPath = context.path;
+
+    // Detect if this is a Flutter project
+    final isFlutter = context.hasNature<FlutterProjectFolder>();
+    final executable = isFlutter ? 'flutter' : 'dart';
+
+    if (args.dryRun) {
+      print('  [DRY RUN] $executable pub upgrade in ${context.name}');
+      return ItemResult.success(
+        path: projectPath,
+        name: context.name,
+        message: 'dry-run',
+      );
+    }
+
+    if (args.verbose) {
+      print('  Running: $executable pub upgrade');
+      print('  Working directory: ${context.name}');
+    }
+
+    // Use streaming for live output
+    final exitCode = await ProcessRunner.runStreaming(
+      executable,
+      ['pub', 'upgrade'],
+      workingDirectory: projectPath,
+    );
+
+    if (exitCode != 0) {
+      return ItemResult.failure(
+        path: projectPath,
+        name: context.name,
+        error: '$executable pub upgrade failed (exit $exitCode)',
+      );
+    }
+
+    return ItemResult.success(
+      path: projectPath,
       name: context.name,
-      error: 'pubupdate uses executeWithoutTraversal',
+      message: 'pub upgrade OK',
     );
-  }
-
-  @override
-  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    // Resolve workspace root (like other traversal commands do)
-    final wsRoot = findWorkspaceRoot(
-      args.scan ?? args.root ?? Directory.current.path,
-    );
-    final pubUpdate = PubUpdateCommand(rootPath: wsRoot, verbose: args.verbose);
-
-    final cmdArgs = <String>['--scan', wsRoot];
-    // Default to recursive unless explicitly disabled with --no-recursive
-    // This matches workspace scanning behavior
-    if (!args.notRecursive) cmdArgs.add('--recursive');
-    if (args.verbose) cmdArgs.add('--verbose');
-    if (args.dryRun) cmdArgs.add('--dry-run');
-
-    for (final entry in args.extraOptions.entries) {
-      final key = entry.key;
-      final val = entry.value;
-      if (val is bool && val) cmdArgs.add('--$key');
-    }
-
-    if (args.commands.isNotEmpty) {
-      final cmdName = args.commands.first;
-      final perCmd = args.commandArgs[cmdName];
-      if (perCmd != null) {
-        for (final p in perCmd.projectPatterns) {
-          cmdArgs.addAll(['--project', p]);
-        }
-        for (final entry in perCmd.options.entries) {
-          if (entry.value is bool && entry.value == true) {
-            cmdArgs.add('--${entry.key}');
-          }
-        }
-      }
-    }
-
-    final success = await pubUpdate.execute(cmdArgs);
-    return success
-        ? const ToolResult.success()
-        : const ToolResult.failure('pub upgrade failed');
   }
 }
 
-/// Passthrough executor for :pubupdateall (pubupdate -R `<workspace>` --scan `<workspace>` --recursive).
+/// Executor for :pubupdateall - alias for :pubupdate with full recursive.
 ///
-/// Always operates on the complete workspace by resolving the workspace root
-/// and passing it as both -R (execution root) and --scan root.
+/// Deprecated: Use `:pubupdate` which now defaults to recursive.
+/// Kept for backwards compatibility.
 class PubUpdateAllExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    return ItemResult.failure(
-      path: context.path,
-      name: context.name,
-      error: 'pubupdateall uses executeWithoutTraversal',
-    );
-  }
+    // Delegate to same logic as PubUpdateExecutor
+    final projectPath = context.path;
+    final isFlutter = context.hasNature<FlutterProjectFolder>();
+    final executable = isFlutter ? 'flutter' : 'dart';
 
-  @override
-  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final wsRoot =
-        args.root ?? findWorkspaceRoot(args.scan ?? Directory.current.path);
-    final pubUpdate = PubUpdateCommand(rootPath: wsRoot, verbose: args.verbose);
-
-    final cmdArgs = <String>['--scan', wsRoot, '--recursive'];
-    if (args.verbose) cmdArgs.add('--verbose');
-    if (args.dryRun) cmdArgs.add('--dry-run');
-
-    for (final entry in args.extraOptions.entries) {
-      if (entry.value is bool && entry.value == true) {
-        cmdArgs.add('--${entry.key}');
-      }
+    if (args.dryRun) {
+      print('  [DRY RUN] $executable pub upgrade in ${context.name}');
+      return ItemResult.success(
+        path: projectPath,
+        name: context.name,
+        message: 'dry-run',
+      );
     }
 
-    final success = await pubUpdate.execute(cmdArgs);
-    return success
-        ? const ToolResult.success()
-        : const ToolResult.failure('pub upgrade failed');
+    if (args.verbose) {
+      print('  Running: $executable pub upgrade');
+      print('  Working directory: ${context.name}');
+    }
+
+    final exitCode = await ProcessRunner.runStreaming(
+      executable,
+      ['pub', 'upgrade'],
+      workingDirectory: projectPath,
+    );
+
+    if (exitCode != 0) {
+      return ItemResult.failure(
+        path: projectPath,
+        name: context.name,
+        error: '$executable pub upgrade failed (exit $exitCode)',
+      );
+    }
+
+    return ItemResult.success(
+      path: projectPath,
+      name: context.name,
+      message: 'pub upgrade OK',
+    );
   }
 }
 

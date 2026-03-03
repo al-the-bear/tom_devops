@@ -632,47 +632,47 @@ const statusCommand = CommandDefinition(
 
 const pubgetCommand = CommandDefinition(
   name: 'pubget',
-  description: 'Run dart pub get on projects',
+  description: 'Run dart/flutter pub get on projects',
   aliases: ['pg'],
   options: pubOptions,
   worksWithNatures: {DartProjectFolder},
   supportsProjectTraversal: true,
   supportsGitTraversal: false,
-  requiresTraversal: false,
+  requiresTraversal: true,
   examples: ['buildkit :pubget'],
 );
 
 const pubgetallCommand = CommandDefinition(
   name: 'pubgetall',
-  description: 'Shortcut for :pubget --scan . --recursive',
+  description: 'Shortcut for :pubget (defaults to recursive)',
   aliases: ['pga'],
   options: pubOptions,
   worksWithNatures: {DartProjectFolder},
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
+  requiresTraversal: true,
+  supportsProjectTraversal: true,
   examples: ['buildkit :pubgetall'],
 );
 
 const pubupdateCommand = CommandDefinition(
   name: 'pubupdate',
-  description: 'Run dart pub upgrade on projects',
+  description: 'Run dart/flutter pub upgrade on projects',
   aliases: ['pu'],
   options: pubOptions,
   worksWithNatures: {DartProjectFolder},
   supportsProjectTraversal: true,
   supportsGitTraversal: false,
-  requiresTraversal: false,
+  requiresTraversal: true,
   examples: ['buildkit :pubupdate'],
 );
 
 const pubupdateallCommand = CommandDefinition(
   name: 'pubupdateall',
-  description: 'Shortcut for :pubupdate --scan . --recursive',
+  description: 'Shortcut for :pubupdate (defaults to recursive)',
   aliases: ['pua'],
   options: pubOptions,
   worksWithNatures: {DartProjectFolder},
-  requiresTraversal: false,
-  supportsProjectTraversal: false,
+  requiresTraversal: true,
+  supportsProjectTraversal: true,
   examples: ['buildkit :pubupdateall'],
 );
 
