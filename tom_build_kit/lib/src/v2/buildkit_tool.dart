@@ -1018,6 +1018,7 @@ final buildkitTool = ToolDefinition(
   version: BuildkitVersionInfo.version,
   versionString: 'BuildKit ${BuildkitVersionInfo.versionLong}',
   mode: ToolMode.multiCommand,
+  wiringFile: ToolDefinition.kAutoWiringFile,
   helpTopics: defaultHelpTopics,
   features: const NavigationFeatures(
     projectTraversal: true,
