@@ -14,19 +14,21 @@ import 'package:tom_issue_kit/src/v2/issuekit_executors.dart';
 import 'package:tom_issue_kit/src/v2/issuekit_tool.dart';
 
 void main(List<String> args) async {
-  // Normalize non-standard -help flag to --help.
-  // Bare `help` positional is intentionally left as-is; ToolRunner's positional
-  // help dispatcher handles it (e.g. `issuekit help`, `issuekit help pipelines`).
-  final normalizedArgs = _normalizeLegacyHelpFlag(args);
+  // Normalize non-standard -help / -version flags to --help / --version.
+  // Bare `help` and `version` positionals are left as-is; ToolRunner's
+  // dispatchers handle them (e.g. `issuekit help`, `issuekit version`).
+  final normalizedArgs = _normalizeLegacyFlags(args);
 
   final preParser = CliArgParser(toolDefinition: issuekitTool);
   final preArgs = preParser.parse(normalizedArgs);
 
-  // Early exit for help/version and bare 'help' positional — must run before
-  // loading GitHub config to avoid a token-not-configured error on help requests.
+  // Early exit for help/version and bare 'help'/'version' positionals — must
+  // run before loading GitHub config to avoid a token-not-configured error.
   final isBareHelp =
       normalizedArgs.isNotEmpty && normalizedArgs.first.trim() == 'help';
-  if (preArgs.help || preArgs.version || isBareHelp) {
+  final isBareVersion =
+      normalizedArgs.isNotEmpty && normalizedArgs.first.trim() == 'version';
+  if (preArgs.help || preArgs.version || isBareHelp || isBareVersion) {
     final preRunner = ToolRunner(
       tool: issuekitTool,
       executors: const <String, CommandExecutor>{},
@@ -91,16 +93,19 @@ void main(List<String> args) async {
   }
 }
 
-/// Normalize the non-standard `-help` flag to `--help`.
+/// Normalize single-dash `-help` / `-version` flags to their double-dash form.
 ///
-/// All other args, including bare `help`, are passed through as-is so that
-/// [ToolRunner]'s positional help dispatcher handles them (e.g. `issuekit help`,
-/// `issuekit help pipelines`).
-List<String> _normalizeLegacyHelpFlag(List<String> args) {
+/// All other args, including bare `help`/`version`, are passed through as-is so
+/// that [ToolRunner]'s positional help/version dispatcher handles them
+/// (e.g. `issuekit help`, `issuekit help pipelines`, `issuekit version`).
+List<String> _normalizeLegacyFlags(List<String> args) {
   if (args.isEmpty) return args;
   final first = args.first.trim();
   if (first == '-help') {
     return ['--help', ...args.skip(1)];
+  }
+  if (first == '-version') {
+    return ['--version', ...args.skip(1)];
   }
   return args;
 }

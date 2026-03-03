@@ -249,6 +249,7 @@ final testkitTool = ToolDefinition(
   name: 'testkit',
   description: 'Test result tracking for Dart projects',
   version: TestKitVersionInfo.version,
+  versionString: 'Tom TestKit ${TestKitVersionInfo.versionLong}',
   mode: ToolMode.multiCommand,
   helpTopics: defaultHelpTopics,
   features: const NavigationFeatures(

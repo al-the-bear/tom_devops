@@ -717,6 +717,7 @@ final issuekitTool = ToolDefinition(
   name: 'issuekit',
   description: 'Issue tracking CLI for the Tom Framework',
   version: IssueKitVersionInfo.version,
+  versionString: 'Tom IssueKit ${IssueKitVersionInfo.versionLong}',
   mode: ToolMode.multiCommand,
   helpTopics: defaultHelpTopics,
   features: const NavigationFeatures(
