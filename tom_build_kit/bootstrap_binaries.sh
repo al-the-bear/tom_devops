@@ -161,7 +161,10 @@ EOF
 fi
 
 echo "Running versioner..."
-dart run bin/buildkit.dart --scan . --no-recursive :versioner --variable-prefix buildkit
+if ! TOM_BOOTSTRAP_ALLOW_MISSING_SETUP=1 \
+    dart run bin/buildkit.dart --scan . --no-recursive :versioner --variable-prefix buildkit; then
+    warn "Versioner step failed during bootstrap; continuing with existing version file."
+fi
 
 TOOLS=(buildkit findproject)
 echo "Compiling tools..."
