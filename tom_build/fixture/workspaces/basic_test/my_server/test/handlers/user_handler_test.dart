@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:test/test.dart';
 
-import 'package:my_server/my_server.dart';
+import '../../lib/my_server.dart';
 
 void main() {
   group('User handlers', () {

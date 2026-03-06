@@ -1,4 +1,4 @@
-import 'package:core_lib/core_lib.dart';
+import '../lib/core_lib.dart';
 
 void main() {
   // Create a user

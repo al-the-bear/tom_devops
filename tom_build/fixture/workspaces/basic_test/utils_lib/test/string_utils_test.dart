@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:utils_lib/utils_lib.dart';
+import '../lib/utils_lib.dart';
 
 void main() {
   group('capitalize', () {

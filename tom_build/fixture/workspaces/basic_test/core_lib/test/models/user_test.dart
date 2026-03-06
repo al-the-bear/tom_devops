@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:core_lib/core_lib.dart';
+import '../../lib/core_lib.dart';
 
 void main() {
   group('User', () {
