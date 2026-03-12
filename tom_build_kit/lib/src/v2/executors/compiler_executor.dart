@@ -9,13 +9,13 @@ library;
 
 import 'dart:io';
 
+import 'package:dcli/dcli.dart' as dcli;
 import 'package:path/path.dart' as p;
 import 'package:tom_build_base/tom_build_base.dart'
     show findWorkspaceRoot, ProcessRunner;
 import 'package:tom_build_base/tom_build_base_v2.dart';
 import 'package:yaml/yaml.dart';
 
-import '../../builtin_commands.dart';
 import '../../compiler_config.dart';
 import '../../platform_utils.dart';
 import '../../script_utils.dart' as script_utils;
@@ -147,7 +147,7 @@ class CompilerExecutor extends CommandExecutor {
           for (final section in config.compileSections) {
             final desc = section.files.isNotEmpty
                 ? section.files.join(', ')
-                : section.commandlines.join(', ');
+                : section.pipelineCommands.join(', ');
             final tgt = section.targets.isNotEmpty
                 ? ' → ${section.targets.join(', ')}'
                 : '';
@@ -323,25 +323,13 @@ class CompilerExecutor extends CommandExecutor {
 
         for (final file in files) {
           for (final target in targets) {
-            final success = section.isBuiltinCommand
-                ? await _compileFileBuiltin(
-                    file: file,
-                    targetPlatform: target,
-                    currentPlatform: currentPlatform,
-                    commandTemplates: section.commands,
-                    projectPath: projectPath,
-                    args: args,
-                    placeholderCtx: placeholderCtx,
-                  )
-                : await _compileFile(
-                    file: file,
-                    targetPlatform: target,
-                    currentPlatform: currentPlatform,
-                    commandTemplates: section.commandlines,
-                    projectPath: projectPath,
-                    args: args,
-                    placeholderCtx: placeholderCtx,
-                  );
+            final success = await _compileFile(
+              file: file,
+              targetPlatform: target,
+              currentPlatform: currentPlatform,
+              commandTemplates: section.pipelineCommands,
+              args: args,
+            );
             if (success) compilationCount++;
           }
         }
@@ -359,7 +347,7 @@ class CompilerExecutor extends CommandExecutor {
         );
       }
 
-      if (compilationCount > 0) {
+      if (compilationCount > 0 && args.verbose) {
         print('  Completed $compilationCount compilation(s)');
       }
 
@@ -423,35 +411,7 @@ class CompilerExecutor extends CommandExecutor {
       }
     }
 
-    if (section.isBuiltinCommand) {
-      for (final commandRef in section.commands) {
-        if (args.dryRun) {
-          print('  [DRY RUN] $sectionName (builtin): $commandRef');
-          continue;
-        }
-        if (args.verbose) print('  $sectionName (builtin): $commandRef');
-
-        final builtinCommands = BuiltinCommands(
-          projectPath: projectPath,
-          rootPath: findWorkspaceRoot(projectPath),
-          verbose: args.verbose,
-          dryRun: args.dryRun,
-        );
-
-        if (!builtinCommands.isBuiltin(commandRef)) {
-          print('  Error: "$commandRef" is not a recognized built-in command.');
-          return false;
-        }
-
-        final result = await builtinCommands.execute(commandRef);
-        if (!result) {
-          print('  Error: $sectionName built-in command failed: $commandRef');
-        }
-      }
-      return true;
-    }
-
-    for (final commandTemplate in section.commandlines) {
+    for (final commandTemplate in section.pipelineCommands) {
       // Resolve general placeholders (folder, nature, path, etc.)
       // before compiler-specific platform replacements.
       var command = ExecutePlaceholderResolver.resolveCommand(
@@ -473,41 +433,14 @@ class CompilerExecutor extends CommandExecutor {
             PlatformUtils.vsCodeToDartTarget(currentPlatform),
           )
           .replaceAll(r'%{current-platform-vs}', currentPlatform);
-
-      if (script_utils.isStdinCommand(command)) {
-        final parsed = script_utils.parseStdinCommand(command);
-        if (parsed != null) {
-          final expandedCmd = _replaceEnvVars(parsed.command);
-          final result = await script_utils.executeWithStdin(
-            command: expandedCmd,
-            stdinContent: parsed.stdinContent,
-            environment: Platform.environment,
-            dryRun: args.dryRun,
-            verbose: args.verbose,
-          );
-          if (!result) {
-            print('  Error: $sectionName stdin command failed');
-          }
-          continue;
-        }
-      }
-
-      command = _replaceEnvVars(command);
-
-      if (args.dryRun) {
-        print('  [DRY RUN] $sectionName: $command');
-        continue;
-      }
-      if (args.verbose) print('  $sectionName: $command');
-
-      final result = await ProcessRunner.runShell(
-        command,
-        environment: Platform.environment,
+      final success = await _executePipelineCommand(
+        rawCommand: _replaceEnvVars(command),
+        args: args,
+        phaseLabel: sectionName,
       );
-      if (result.stdout.isNotEmpty) stdout.write(result.stdout);
-      if (result.stderr.isNotEmpty) stderr.write(result.stderr);
-      if (result.exitCode != 0) {
-        print('  Error: $sectionName command failed (exit ${result.exitCode})');
+      if (!success) {
+        print('  Error: $sectionName command failed: $command');
+        return false;
       }
     }
     return true;
@@ -518,11 +451,12 @@ class CompilerExecutor extends CommandExecutor {
     required String targetPlatform,
     required String currentPlatform,
     required List<String> commandTemplates,
-    required String projectPath,
     required CliArgs args,
-    required ExecutePlaceholderContext placeholderCtx,
   }) async {
-    final filePath = p.normalize(file);
+    final normalizedFilePath = p.normalize(file);
+    final filePath = Platform.isWindows
+        ? normalizedFilePath.replaceAll('\\', '/')
+        : normalizedFilePath;
     final fileName = p.basenameWithoutExtension(filePath);
     final fileBasename = p.basename(filePath);
     final fileExtension = p.extension(filePath);
@@ -534,10 +468,15 @@ class CompilerExecutor extends CommandExecutor {
     final currentOS = PlatformUtils.getTargetOS(currentPlatform);
     final currentArch = PlatformUtils.getTargetArch(currentPlatform);
 
-    if (!args.dryRun) {
+    if (!args.dryRun && args.verbose) {
       print('  Compiling $fileName for $targetPlatform');
     }
 
+    _ensureTargetOutputDirectory(
+      targetPlatform: targetPlatform,
+      args: args,
+    );
+
     for (final template in commandTemplates) {
       var command = _resolvePlaceholders(
         template,
@@ -554,135 +493,235 @@ class CompilerExecutor extends CommandExecutor {
         currentArch: currentArch,
         currentPlatform: currentPlatform,
       );
-      if (script_utils.isStdinCommand(command)) {
-        final parsed = script_utils.parseStdinCommand(command);
-        if (parsed != null) {
-          if (args.dryRun) {
-            print(
-              '  [DRY RUN] compile stdin ($targetPlatform): '
-              '${parsed.command}',
-            );
-            continue;
-          }
-          if (args.verbose) {
-            print('    Command (stdin): ${parsed.command}');
-          }
-          final stdinCommand = _replaceEnvVars(parsed.command);
-          final result = await script_utils.executeWithStdin(
-            command: stdinCommand,
-            stdinContent: parsed.stdinContent,
-            workingDirectory: Directory.current.path,
-            environment: Platform.environment,
-            dryRun: args.dryRun,
-            verbose: args.verbose,
-          );
-          if (!result) {
-            print(
-              '  Error: Compilation failed for $fileName ($targetPlatform)',
-            );
-            return false;
-          }
-          continue;
-        }
-      }
-
-      command = _replaceEnvVars(command);
-
-      if (args.dryRun) {
-        print('  [DRY RUN] compile ($targetPlatform): $command');
-        continue;
-      }
-
-      if (args.verbose) {
-        print('    Command: $command');
-      }
-
-      final result = await ProcessRunner.runShell(
-        command,
-        workingDirectory: Directory.current.path,
-        environment: Platform.environment,
+      final success = await _executePipelineCommand(
+        rawCommand: _replaceEnvVars(command),
+        args: args,
+        phaseLabel: 'compile ($targetPlatform)',
       );
-      if (result.stdout.isNotEmpty) stdout.write(result.stdout);
-      if (result.stderr.isNotEmpty) stderr.write(result.stderr);
-      if (result.exitCode != 0) {
+      if (!success) {
         print('  Error: Compilation failed for $fileName ($targetPlatform)');
         return false;
       }
     }
+
     return true;
   }
 
-  Future<bool> _compileFileBuiltin({
-    required String file,
-    required String targetPlatform,
-    required String currentPlatform,
-    required List<String> commandTemplates,
-    required String projectPath,
+  Future<bool> _executePipelineCommand({
+    required String rawCommand,
     required CliArgs args,
-    required ExecutePlaceholderContext placeholderCtx,
+    required String phaseLabel,
   }) async {
-    final filePath = p.normalize(file);
-    final fileName = p.basenameWithoutExtension(filePath);
-    final fileBasename = p.basename(filePath);
-    final fileExtension = p.extension(filePath);
-    final fileDir = p.dirname(filePath);
-
-    final targetOS = PlatformUtils.getTargetOS(targetPlatform);
-    final targetArch = PlatformUtils.getTargetArch(targetPlatform);
-    final targetDart = PlatformUtils.vsCodeToDartTarget(targetPlatform);
-    final currentOS = PlatformUtils.getTargetOS(currentPlatform);
-    final currentArch = PlatformUtils.getTargetArch(currentPlatform);
-
-    if (!args.dryRun) {
-      print('  Compiling $fileName for $targetPlatform (builtin)');
+    final trimmed = rawCommand.trimLeft();
+    if (trimmed == 'print' || trimmed.startsWith('print ')) {
+      final message = trimmed == 'print' ? '' : trimmed.substring(6);
+      print(message);
+      return true;
     }
 
-    for (final template in commandTemplates) {
-      // Resolve general placeholders (folder, nature, path, etc.)
-      // before compiler-specific file/target placeholders.
-      final preResolved = ExecutePlaceholderResolver.resolveCommand(
-        template,
-        placeholderCtx,
-        skipUnknown: true,
+    final parsed = PipelineCommandPrefixParser.parse(
+      rawCommand,
+      toolPrefix: 'buildkit',
+    );
+
+    if (parsed == null) {
+      print(
+        '  Error: Unsupported command prefix in "$rawCommand". '
+        'Use one of: shell, stdin, shell-scan, print, buildkit.',
       );
-      var command = _resolvePlaceholders(
-        preResolved,
-        filePath: filePath,
-        fileName: fileName,
-        fileBasename: fileBasename,
-        fileExtension: fileExtension,
-        fileDir: fileDir,
-        targetOS: targetOS,
-        targetArch: targetArch,
-        targetDart: targetDart,
-        targetPlatform: targetPlatform,
-        currentOS: currentOS,
-        currentArch: currentArch,
-        currentPlatform: currentPlatform,
-      );
+      return false;
+    }
+
+    switch (parsed.prefix) {
+      case PipelineCommandPrefix.shell:
+        final shellCommand = parsed.body.trim();
+        if (args.dryRun) {
+          print('  [DRY RUN] $phaseLabel: $shellCommand');
+          return true;
+        }
+        if (args.verbose) {
+          print('  $phaseLabel: $shellCommand');
+        }
+        final result = await ProcessRunner.runShell(
+          shellCommand,
+          workingDirectory: Directory.current.path,
+          environment: Platform.environment,
+        );
+        final shellFailed = result.exitCode != 0;
+        final shellCombined =
+            '${result.stdout.toLowerCase()}\n${result.stderr.toLowerCase()}';
+        final shellHasSignals = shellCombined.contains('error') ||
+            shellCombined.contains('warn') ||
+            shellCombined.contains('fail');
+        if (args.verbose || shellFailed || shellHasSignals) {
+          if (result.stdout.isNotEmpty) stdout.write(result.stdout);
+          if (result.stderr.isNotEmpty) stderr.write(result.stderr);
+        }
+        return !shellFailed;
+
+      case PipelineCommandPrefix.stdin:
+        final stdinParsed = script_utils.parseStdinCommand(
+          'stdin ${parsed.body}',
+        );
+        if (stdinParsed == null) {
+          print('  Error: Invalid stdin command format in "$rawCommand".');
+          return false;
+        }
+        final stdinResult = await script_utils.executeWithStdin(
+          command: stdinParsed.command,
+          stdinContent: stdinParsed.stdinContent,
+          workingDirectory: Directory.current.path,
+          environment: Platform.environment,
+          dryRun: args.dryRun,
+          verbose: args.verbose,
+        );
+        return stdinResult;
+
+      case PipelineCommandPrefix.print:
+        print(parsed.body);
+        return true;
+
+      case PipelineCommandPrefix.shellScan:
+        final shellScanCommand = parsed.body.trim();
+        if (args.dryRun) {
+          print('  [DRY RUN] $phaseLabel [shell-scan]: $shellScanCommand');
+          return true;
+        }
+        if (args.verbose) {
+          print('  $phaseLabel [shell-scan]: $shellScanCommand');
+        }
+        final shellScanResult = await ProcessRunner.runShell(
+          shellScanCommand,
+          workingDirectory: Directory.current.path,
+          environment: Platform.environment,
+        );
+        final scanFailed = shellScanResult.exitCode != 0;
+        final scanCombined =
+            '${shellScanResult.stdout.toLowerCase()}\n${shellScanResult.stderr.toLowerCase()}';
+        final scanHasSignals = scanCombined.contains('error') ||
+            scanCombined.contains('warn') ||
+            scanCombined.contains('fail');
+        if (args.verbose || scanFailed || scanHasSignals) {
+          if (shellScanResult.stdout.isNotEmpty) {
+            stdout.write(shellScanResult.stdout);
+          }
+          if (shellScanResult.stderr.isNotEmpty) {
+            stderr.write(shellScanResult.stderr);
+          }
+        }
+        return !scanFailed;
+
+      case PipelineCommandPrefix.tool:
+        final argv = _tokenize(parsed.body);
+        final inProcessMklink = _tryRunInProcessMklink(argv, args, phaseLabel);
+        if (inProcessMklink != null) {
+          return inProcessMklink;
+        }
+        if (args.dryRun) {
+          print('  [DRY RUN] $phaseLabel: buildkit ${argv.join(' ')}');
+          return true;
+        }
+        if (args.verbose) {
+          print('  $phaseLabel: buildkit ${argv.join(' ')}');
+        }
+        final exitCode = await runBinaryStreaming(
+          'buildkit',
+          argv,
+          Directory.current.path,
+        );
+        return exitCode == 0;
+    }
+  }
+
+  Future<bool>? _tryRunInProcessMklink(
+    List<String> argv,
+    CliArgs args,
+    String phaseLabel,
+  ) {
+    if (argv.isEmpty) {
+      return null;
+    }
+
+    final commandToken = argv.first.trim().toLowerCase();
+    if (commandToken != ':mklink' && commandToken != 'mklink') {
+      return null;
+    }
+
+    final positional = <String>[];
+    var force = false;
+    for (var i = 1; i < argv.length; i++) {
+      final token = argv[i].trim();
+      if (token == '--force' || token == '-f') {
+        force = true;
+      } else {
+        positional.add(token);
+      }
+    }
+
+    if (args.verbose || args.dryRun) {
+      final prefix = args.dryRun ? '[DRY RUN] ' : '';
+      print('  $prefix$phaseLabel: buildkit ${argv.join(' ')} (in-process)');
+    }
+
+    return () async {
+      if (positional.length < 2) {
+        print('  Error: :mklink requires <target-path> <link-path>.');
+        return false;
+      }
+
+      final targetPath = positional[0];
+      final linkPath = positional[1];
 
       if (args.dryRun) {
-        print('  [DRY RUN] compile builtin ($targetPlatform): $command');
-        continue;
+        return true;
       }
 
-      final builtinCommands = BuiltinCommands(
-        projectPath: projectPath,
-        rootPath: findWorkspaceRoot(projectPath),
-        verbose: args.verbose,
-        dryRun: args.dryRun,
+      final existingType = FileSystemEntity.typeSync(
+        linkPath,
+        followLinks: false,
       );
+      if (existingType != FileSystemEntityType.notFound) {
+        if (!force) {
+          print(
+            '  Error: Destination already exists: $linkPath '
+            '(use --force to replace).',
+          );
+          return false;
+        }
 
-      if (!builtinCommands.isBuiltin(command)) {
-        print('  Error: "$command" is not a recognized built-in command.');
-        return false;
+        switch (existingType) {
+          case FileSystemEntityType.directory:
+            Directory(linkPath).deleteSync(recursive: true);
+          case FileSystemEntityType.file:
+            File(linkPath).deleteSync();
+          case FileSystemEntityType.link:
+            Link(linkPath).deleteSync();
+          case FileSystemEntityType.pipe:
+          case FileSystemEntityType.unixDomainSock:
+          case FileSystemEntityType.notFound:
+            break;
+        }
       }
-      if (!await builtinCommands.execute(command)) {
-        print('  Error: Compilation failed for $fileName ($targetPlatform)');
-        return false;
+
+      final parentDir = Directory(p.dirname(linkPath));
+      if (!parentDir.existsSync()) {
+        parentDir.createSync(recursive: true);
       }
-    }
-    return true;
+
+      dcli.createSymLink(targetPath: targetPath, linkPath: linkPath);
+      return true;
+    }();
+  }
+
+  List<String> _tokenize(String input) {
+    final matches = RegExp(r'''("[^"]*"|'[^']*'|\S+)''').allMatches(input);
+    return matches.map((m) => m.group(0)!).map((token) {
+      if ((token.startsWith('"') && token.endsWith('"')) ||
+          (token.startsWith("'") && token.endsWith("'"))) {
+        return token.substring(1, token.length - 1);
+      }
+      return token;
+    }).toList();
   }
 
   String _resolvePlaceholders(
@@ -738,12 +777,37 @@ class CompilerExecutor extends CommandExecutor {
     result = result.replaceAllMapped(RegExp(r'\$(\w+)'), (match) {
       final varName = match.group(1)!;
       if (varName.startsWith('{')) return match.group(0)!;
-      return Platform.environment[varName] ?? '';
+      var value = Platform.environment[varName] ?? '';
+      if (Platform.isWindows) {
+        value = value.replaceAll('\\', '/');
+      }
+      return value;
     });
     result = result.replaceAllMapped(RegExp(r'\[(\w+)\]'), (match) {
       final varName = match.group(1)!;
-      return Platform.environment[varName] ?? '';
+      var value = Platform.environment[varName] ?? '';
+      if (Platform.isWindows) {
+        value = value.replaceAll('\\', '/');
+      }
+      return value;
     });
     return result;
   }
+
+  void _ensureTargetOutputDirectory({
+    required String targetPlatform,
+    required CliArgs args,
+  }) {
+    final binaryRoot = Platform.environment['TOM_BINARY_PATH'];
+    if (binaryRoot == null || binaryRoot.isEmpty) return;
+
+    final platformDir = Directory(p.join(binaryRoot, targetPlatform));
+    if (!platformDir.existsSync()) {
+      platformDir.createSync(recursive: true);
+      if (args.verbose) {
+        print('  Created output directory: ${platformDir.path}');
+      }
+    }
+  }
+
 }

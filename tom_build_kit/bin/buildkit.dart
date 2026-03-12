@@ -29,6 +29,23 @@ Future<void> main(List<String> args) async {
   );
 
   final result = await runner.run(args);
+  final failures = result.itemResults.where((item) => !item.success).toList();
+
+  if (failures.isEmpty) {
+    stdout.writeln('\nDone. No errors.');
+  } else {
+    stdout.writeln('\n=== Errors ===');
+    for (final item in failures) {
+      final cmd = item.commandName != null ? ' :${item.commandName}' : '';
+      final err = item.error ?? 'unknown error';
+      stdout.writeln('  ${item.name}$cmd — $err');
+    }
+    stdout.writeln(
+      '${failures.length} error(s) in '
+      '${failures.map((f) => f.name).toSet().length} project(s).',
+    );
+  }
+
   if (!result.success) {
     exit(1);
   }

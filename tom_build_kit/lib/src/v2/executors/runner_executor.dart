@@ -217,18 +217,33 @@ class RunnerExecutor extends CommandExecutor {
       );
     }
 
-    print('  Running: dart ${dartArgs.join(' ')}');
-    print('  Working directory: ${p.basename(projectPath)}');
+    if (args.verbose) {
+      print('  Running: dart ${dartArgs.join(' ')}');
+      print('  Working directory: ${p.basename(projectPath)}');
+    }
 
     final result = await ProcessRunner.run(
       'dart',
       dartArgs,
       workingDirectory: projectPath,
+      runInShell: Platform.isWindows,
     );
-    if (result.stdout.isNotEmpty) stdout.write(result.stdout);
-    if (result.stderr.isNotEmpty) stderr.write(result.stderr);
 
-    if (result.exitCode != 0) {
+    final failed = result.exitCode != 0;
+    final combined =
+        '${result.stdout.toLowerCase()}\n${result.stderr.toLowerCase()}';
+    final hasSignalWords = combined.contains('error') ||
+        combined.contains('warn') ||
+        combined.contains('fail');
+
+    // Only show subprocess output in verbose mode, or when there are
+    // errors/warnings/failures.
+    if (args.verbose || failed || hasSignalWords) {
+      if (result.stdout.isNotEmpty) stdout.write(result.stdout);
+      if (result.stderr.isNotEmpty) stderr.write(result.stderr);
+    }
+
+    if (failed) {
       return ItemResult.failure(
         path: projectPath,
         name: context.name,
@@ -239,7 +254,7 @@ class RunnerExecutor extends CommandExecutor {
     return ItemResult.success(
       path: projectPath,
       name: context.name,
-      message: 'build_runner $command succeeded',
+      message: 'ok',
     );
   }
 

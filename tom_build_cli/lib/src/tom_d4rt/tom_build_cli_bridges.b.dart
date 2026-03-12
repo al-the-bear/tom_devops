@@ -1,8 +1,8 @@
 // D4rt Bridge - Generated file, do not edit
-// Sources: 40 files
-// Generated: 2026-02-27T00:31:40.756702
+// Sources: 42 files
+// Generated: 2026-03-12T17:09:22.745532
 
-// ignore_for_file: unused_import, deprecated_member_use, prefer_function_declarations_over_variables
+// ignore_for_file: unused_import, deprecated_member_use, prefer_function_declarations_over_variables, implementation_imports, sort_child_properties_last, non_constant_identifier_names, avoid_function_literals_in_foreach_calls
 
 import 'package:tom_d4rt/d4rt.dart';
 import 'package:tom_d4rt/tom_d4rt.dart';
@@ -13,42 +13,33 @@ import 'package:tom_basics/src/runtime/platform_environment_runtime.dart' as $to
 import 'package:tom_build/src/tom/file_object_model/file_object_model.dart' as $tom_build_1;
 import 'package:tom_build/src/tom/tom_context.dart' as $tom_build_2;
 import 'package:tom_build_cli/src/dartscript/bridge_configuration.dart' as $tom_build_cli_1;
-import 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart' as $tom_build_cli_2;
-import 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart' as $tom_build_cli_3;
-import 'package:tom_build_cli/src/dartscript/d4rt_globals.dart' as $tom_build_cli_4;
-import 'package:tom_build_cli/src/dartscript/d4rt_instance.dart' as $tom_build_cli_5;
-import 'package:tom_build_cli/src/tom/cli/argument_parser.dart' as $tom_build_cli_6;
-import 'package:tom_build_cli/src/tom/cli/git_helper.dart' as $tom_build_cli_7;
-import 'package:tom_build_cli/src/tom/cli/internal_commands.dart' as $tom_build_cli_8;
-import 'package:tom_build_cli/src/tom/cli/tom_cli.dart' as $tom_build_cli_9;
-import 'package:tom_build_cli/src/tom/cli/version_bumper.dart' as $tom_build_cli_10;
-import 'package:tom_build_cli/src/tom/cli/workspace_context.dart' as $tom_build_cli_11;
-import 'package:tom_build_cli/src/tom/config/config_loader.dart' as $tom_build_cli_12;
-import 'package:tom_build_cli/src/tom/config/config_merger.dart' as $tom_build_cli_13;
-import 'package:tom_build_cli/src/tom/config/validation.dart' as $tom_build_cli_14;
-import 'package:tom_build_cli/src/tom/execution/action_executor.dart' as $tom_build_cli_15;
-import 'package:tom_build_cli/src/tom/execution/command_runner.dart' as $tom_build_cli_16;
-import 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart' as $tom_build_cli_17;
-import 'package:tom_build_cli/src/tom/execution/output_formatter.dart' as $tom_build_cli_18;
-import 'package:tom_build_cli/src/tom/generation/build_order.dart' as $tom_build_cli_19;
-import 'package:tom_build_cli/src/tom/generation/generator_placeholder.dart' as $tom_build_cli_20;
-import 'package:tom_build_cli/src/tom/generation/master_generator.dart' as $tom_build_cli_21;
-import 'package:tom_build_cli/src/tom/generation/placeholder_resolver.dart' as $tom_build_cli_22;
-import 'package:tom_build_cli/src/tom/mode/mode_processor.dart' as $tom_build_cli_23;
-import 'package:tom_build_cli/src/tom/mode/mode_resolver.dart' as $tom_build_cli_24;
-import 'package:tom_build_cli/src/tom/template/tomplate_parser.dart' as $tom_build_cli_25;
-import 'package:tom_build_cli/src/tom/template/tomplate_processor.dart' as $tom_build_cli_26;
-import 'package:tom_build_cli/src/tom_cli_api/tom_api.dart' as $tom_build_cli_27;
-import 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart' as $tom_build_cli_28;
-import 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_repl.dart' as $tom_build_cli_29;
-import 'package:tom_build_cli/src/tom_d4rt/version.versioner.dart' as $tom_build_cli_30;
-import 'package:tom_build_cli/src/tools/cli_args.dart' as $tom_build_cli_31;
-import 'package:tom_build_cli/src/tools/pipeline.dart' as $tom_build_cli_32;
-import 'package:tom_build_cli/src/tools/placeholder_resolver.dart' as $tom_build_cli_33;
-import 'package:tom_build_cli/src/tools/tom_command_parser.dart' as $tom_build_cli_34;
-import 'package:tom_build_cli/src/tools/tom_runner.dart' as $tom_build_cli_35;
-import 'package:tom_build_cli/src/ws_prepper/template_parser.dart' as $tom_build_cli_36;
-import 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart' as $tom_build_cli_37;
+import 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart' as $tom_build_cli_2;
+import 'package:tom_build_cli/src/dartscript/d4rt_instance.dart' as $tom_build_cli_3;
+import 'package:tom_build_cli/src/tom/cli/argument_parser.dart' as $tom_build_cli_4;
+import 'package:tom_build_cli/src/tom/cli/internal_commands.dart' as $tom_build_cli_5;
+import 'package:tom_build_cli/src/tom/cli/tom_cli.dart' as $tom_build_cli_6;
+import 'package:tom_build_cli/src/tom/cli/version_bumper.dart' as $tom_build_cli_7;
+import 'package:tom_build_cli/src/tom/cli/workspace_context.dart' as $tom_build_cli_8;
+import 'package:tom_build_cli/src/tom/config/validation.dart' as $tom_build_cli_9;
+import 'package:tom_build_cli/src/tom/execution/action_executor.dart' as $tom_build_cli_10;
+import 'package:tom_build_cli/src/tom/execution/command_runner.dart' as $tom_build_cli_11;
+import 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart' as $tom_build_cli_12;
+import 'package:tom_build_cli/src/tom/execution/output_formatter.dart' as $tom_build_cli_13;
+import 'package:tom_build_cli/src/tom/generation/build_order.dart' as $tom_build_cli_14;
+import 'package:tom_build_cli/src/tom/generation/generator_placeholder.dart' as $tom_build_cli_15;
+import 'package:tom_build_cli/src/tom/generation/master_generator.dart' as $tom_build_cli_16;
+import 'package:tom_build_cli/src/tom/generation/placeholder_resolver.dart' as $tom_build_cli_17;
+import 'package:tom_build_cli/src/tom/mode/mode_processor.dart' as $tom_build_cli_18;
+import 'package:tom_build_cli/src/tom/mode/mode_resolver.dart' as $tom_build_cli_19;
+import 'package:tom_build_cli/src/tom/template/tomplate_parser.dart' as $tom_build_cli_20;
+import 'package:tom_build_cli/src/tom/template/tomplate_processor.dart' as $tom_build_cli_21;
+import 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart' as $tom_build_cli_22;
+import 'package:tom_build_cli/src/tools/cli_args.dart' as $tom_build_cli_23;
+import 'package:tom_build_cli/src/tools/pipeline.dart' as $tom_build_cli_24;
+import 'package:tom_build_cli/src/tools/tom_command_parser.dart' as $tom_build_cli_25;
+import 'package:tom_build_cli/src/tools/tom_runner.dart' as $tom_build_cli_26;
+import 'package:tom_build_cli/src/ws_prepper/template_parser.dart' as $tom_build_cli_27;
+import 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart' as $tom_build_cli_28;
 import 'package:tom_core_kernel/src/tombase/beanlocator/bean_locator.dart' as $tom_core_kernel_1;
 import 'package:tom_core_kernel/src/tombase/context/execution_context.dart' as $tom_core_kernel_2;
 import 'package:tom_core_kernel/src/tombase/reflection/reflection.dart' as $tom_core_kernel_3;
@@ -173,128 +164,150 @@ class TomBuildCliBridge {
   /// multiple barrels (e.g., tom_core_kernel and tom_core_server).
   static Map<String, String> classSourceUris() {
     return {
-      'BridgeConfiguration': 'package:tom_build_cli/src/dartscript/bridge_configuration.dart',
-      'BridgeModuleRegistry': 'package:tom_build_cli/src/dartscript/bridge_configuration.dart',
-      'D4rtContextProvider': 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart',
-      'D4rtContextProviderDefaults': 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart',
-      'ActionContextProvider': 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart',
-      'TemplateContextProvider': 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart',
-      'StandaloneContextProvider': 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart',
-      'CompositeContextProvider': 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart',
-      'D4rtGlobals': 'package:tom_build_cli/src/dartscript/d4rt_globals.dart',
-      'D4rtInstance': 'package:tom_build_cli/src/dartscript/d4rt_instance.dart',
-      'ActionD4rtContext': 'package:tom_build_cli/src/dartscript/d4rt_instance.dart',
-      'ParsedArguments': 'package:tom_build_cli/src/tom/cli/argument_parser.dart',
-      'ActionInvocation': 'package:tom_build_cli/src/tom/cli/argument_parser.dart',
-      'ArgumentParser': 'package:tom_build_cli/src/tom/cli/argument_parser.dart',
-      'GitHelper': 'package:tom_build_cli/src/tom/cli/git_helper.dart',
-      'InternalCommands': 'package:tom_build_cli/src/tom/cli/internal_commands.dart',
-      'InternalCommandInfo': 'package:tom_build_cli/src/tom/cli/internal_commands.dart',
-      'InternalCommandConfig': 'package:tom_build_cli/src/tom/cli/internal_commands.dart',
-      'InternalCommandResult': 'package:tom_build_cli/src/tom/cli/internal_commands.dart',
-      'InternalCommandExecutor': 'package:tom_build_cli/src/tom/cli/internal_commands.dart',
-      'ActionCounterManager': 'package:tom_build_cli/src/tom/cli/internal_commands.dart',
-      'TomCliConfig': 'package:tom_build_cli/src/tom/cli/tom_cli.dart',
-      'TomCliResult': 'package:tom_build_cli/src/tom/cli/tom_cli.dart',
-      'TomCli': 'package:tom_build_cli/src/tom/cli/tom_cli.dart',
-      'VersionBumper': 'package:tom_build_cli/src/tom/cli/version_bumper.dart',
-      'VersionBumpResult': 'package:tom_build_cli/src/tom/cli/version_bumper.dart',
-      'WorkspaceDiscoveryResult': 'package:tom_build_cli/src/tom/cli/workspace_context.dart',
-      'WorkspaceContext': 'package:tom_build_cli/src/tom/cli/workspace_context.dart',
-      'MasterGenerationSummary': 'package:tom_build_cli/src/tom/cli/workspace_context.dart',
-      'WorkspaceContextException': 'package:tom_build_cli/src/tom/cli/workspace_context.dart',
-      'ConfigLoader': 'package:tom_build_cli/src/tom/config/config_loader.dart',
-      'ConfigLoadException': 'package:tom_build_cli/src/tom/config/config_loader.dart',
-      'ConfigMerger': 'package:tom_build_cli/src/tom/config/config_merger.dart',
-      'ValidationResult': 'package:tom_build_cli/src/tom/config/validation.dart',
-      'ConfigValidationError': 'package:tom_build_cli/src/tom/config/validation.dart',
-      'ConfigValidator': 'package:tom_build_cli/src/tom/config/validation.dart',
-      'ActionExecutorConfig': 'package:tom_build_cli/src/tom/execution/action_executor.dart',
-      'ActionExecutionResult': 'package:tom_build_cli/src/tom/execution/action_executor.dart',
-      'ActionExecutor': 'package:tom_build_cli/src/tom/execution/action_executor.dart',
-      'CommandResult': 'package:tom_build_cli/src/tom/execution/command_runner.dart',
-      'CommandRunner': 'package:tom_build_cli/src/tom/execution/command_runner.dart',
-      'D4rtResult': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'D4rtRunnerConfig': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'D4rtRunner': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'AnsiColors': 'package:tom_build_cli/src/tom/execution/output_formatter.dart',
-      'OutputFormatterConfig': 'package:tom_build_cli/src/tom/execution/output_formatter.dart',
-      'ErrorMessage': 'package:tom_build_cli/src/tom/execution/output_formatter.dart',
-      'ProgressIndicator': 'package:tom_build_cli/src/tom/execution/output_formatter.dart',
-      'OutputFormatter': 'package:tom_build_cli/src/tom/execution/output_formatter.dart',
-      'BuildOrderProject': 'package:tom_build_cli/src/tom/generation/build_order.dart',
-      'BuildOrderResult': 'package:tom_build_cli/src/tom/generation/build_order.dart',
-      'CircularDependencyException': 'package:tom_build_cli/src/tom/generation/build_order.dart',
-      'BuildOrderCalculator': 'package:tom_build_cli/src/tom/generation/build_order.dart',
-      'GeneratorResult': 'package:tom_build_cli/src/tom/generation/generator_placeholder.dart',
-      'GeneratorResolutionException': 'package:tom_build_cli/src/tom/generation/generator_placeholder.dart',
-      'GeneratorPlaceholderResolver': 'package:tom_build_cli/src/tom/generation/generator_placeholder.dart',
-      'MasterGeneratorConfig': 'package:tom_build_cli/src/tom/generation/master_generator.dart',
-      'MasterGenerationResult': 'package:tom_build_cli/src/tom/generation/master_generator.dart',
-      'MasterGenerator': 'package:tom_build_cli/src/tom/generation/master_generator.dart',
-      'PlaceholderResult': 'package:tom_build_cli/src/tom/generation/placeholder_resolver.dart',
-      'GeneratorPlaceholderException': 'package:tom_build_cli/src/tom/generation/placeholder_resolver.dart',
-      'PlaceholderResolver': 'package:tom_build_cli/src/tom/generation/placeholder_resolver.dart',
-      'ModeProcessor': 'package:tom_build_cli/src/tom/mode/mode_processor.dart',
-      'ModeResolver': 'package:tom_build_cli/src/tom/mode/mode_resolver.dart',
-      'ResolvedModes': 'package:tom_build_cli/src/tom/mode/mode_resolver.dart',
-      'TomplateParser': 'package:tom_build_cli/src/tom/template/tomplate_parser.dart',
-      'TomplateFile': 'package:tom_build_cli/src/tom/template/tomplate_parser.dart',
-      'PlaceholderInfo': 'package:tom_build_cli/src/tom/template/tomplate_parser.dart',
-      'TomplateProcessor': 'package:tom_build_cli/src/tom/template/tomplate_processor.dart',
-      'TomplateResult': 'package:tom_build_cli/src/tom/template/tomplate_processor.dart',
-      'PlaceholderResolutionException': 'package:tom_build_cli/src/tom/template/tomplate_processor.dart',
-      'ToolPrefix': 'package:tom_build_cli/src/tools/cli_args.dart',
-      'CliArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
-      'PipelineDefinition': 'package:tom_build_cli/src/tools/pipeline.dart',
-      'PipelineResult': 'package:tom_build_cli/src/tools/pipeline.dart',
-      'PipelineLoader': 'package:tom_build_cli/src/tools/pipeline.dart',
-      'PipelineRunner': 'package:tom_build_cli/src/tools/pipeline.dart',
-      'PackageInfo': 'package:tom_build_cli/src/tools/placeholder_resolver.dart',
-      'TomPlaceholderResolver': 'package:tom_build_cli/src/tools/placeholder_resolver.dart',
-      'ParsedCommand': 'package:tom_build_cli/src/tools/tom_command_parser.dart',
-      'ParsedTomCommand': 'package:tom_build_cli/src/tools/tom_command_parser.dart',
-      'TomCommandParser': 'package:tom_build_cli/src/tools/tom_command_parser.dart',
-      'TomRunResult': 'package:tom_build_cli/src/tools/tom_runner.dart',
-      'TomRunResults': 'package:tom_build_cli/src/tools/tom_runner.dart',
-      'TomRunner': 'package:tom_build_cli/src/tools/tom_runner.dart',
-      'TemplateParser': 'package:tom_build_cli/src/ws_prepper/template_parser.dart',
-      'ParsedTemplate': 'package:tom_build_cli/src/ws_prepper/template_parser.dart',
-      'TemplateSegment': 'package:tom_build_cli/src/ws_prepper/template_parser.dart',
-      'TextSegment': 'package:tom_build_cli/src/ws_prepper/template_parser.dart',
-      'ModeBlockGroup': 'package:tom_build_cli/src/ws_prepper/template_parser.dart',
-      'ModeBlock': 'package:tom_build_cli/src/ws_prepper/template_parser.dart',
-      'WsPrepper': 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart',
-      'WsPrepperOptions': 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart',
-      'WsPrepperResult': 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart',
-      'PreparedTemplate': 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart',
-      'WsPrepperError': 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart',
-      'TomD4rtRepl': 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_repl.dart',
-      'TomVersionInfo': 'package:tom_build_cli/src/tom_d4rt/version.versioner.dart',
-      'Tom': 'package:tom_build_cli/src/tom_cli_api/tom_api.dart',
-      'TomWorkspace': 'package:tom_build/src/tom/file_object_model/file_object_model.dart',
-      'TomProject': 'package:tom_build/src/tom/file_object_model/file_object_model.dart',
+      'BridgeConfiguration': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\bridge_configuration.dart',
+      'BridgeModuleRegistry': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\bridge_configuration.dart',
+      'D4rtContextProvider': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_context_provider.dart',
+      'D4rtContextProviderDefaults': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_context_provider.dart',
+      'ActionContextProvider': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_context_provider.dart',
+      'TemplateContextProvider': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_context_provider.dart',
+      'StandaloneContextProvider': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_context_provider.dart',
+      'CompositeContextProvider': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_context_provider.dart',
+      'D4rtGlobals': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_globals.dart',
+      'D4rtInstance': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_instance.dart',
+      'ActionD4rtContext': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_instance.dart',
+      'ParsedArguments': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\argument_parser.dart',
+      'ActionInvocation': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\argument_parser.dart',
+      'ArgumentParser': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\argument_parser.dart',
+      'GitHelper': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\git_helper.dart',
+      'InternalCommands': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\internal_commands.dart',
+      'InternalCommandInfo': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\internal_commands.dart',
+      'InternalCommandConfig': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\internal_commands.dart',
+      'InternalCommandResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\internal_commands.dart',
+      'InternalCommandExecutor': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\internal_commands.dart',
+      'ActionCounterManager': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\internal_commands.dart',
+      'TomCliConfig': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\tom_cli.dart',
+      'TomCliResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\tom_cli.dart',
+      'TomCli': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\tom_cli.dart',
+      'VersionBumper': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\version_bumper.dart',
+      'VersionBumpResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\version_bumper.dart',
+      'WorkspaceDiscoveryResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\workspace_context.dart',
+      'WorkspaceContext': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\workspace_context.dart',
+      'MasterGenerationSummary': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\workspace_context.dart',
+      'WorkspaceContextException': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\workspace_context.dart',
+      'ConfigLoader': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\config_loader.dart',
+      'ConfigLoadException': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\config_loader.dart',
+      'ConfigMerger': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\config_merger.dart',
+      'ValidationResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\validation.dart',
+      'ConfigValidationError': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\validation.dart',
+      'ConfigValidator': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\validation.dart',
+      'ActionExecutorConfig': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\action_executor.dart',
+      'ActionExecutionResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\action_executor.dart',
+      'ActionExecutor': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\action_executor.dart',
+      'CommandResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\command_runner.dart',
+      'CommandRunner': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\command_runner.dart',
+      'D4rtResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'D4rtRunnerConfig': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'D4rtRunner': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'AnsiColors': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\output_formatter.dart',
+      'OutputFormatterConfig': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\output_formatter.dart',
+      'ErrorMessage': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\output_formatter.dart',
+      'ProgressIndicator': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\output_formatter.dart',
+      'OutputFormatter': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\output_formatter.dart',
+      'BuildOrderProject': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\build_order.dart',
+      'BuildOrderResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\build_order.dart',
+      'CircularDependencyException': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\build_order.dart',
+      'BuildOrderCalculator': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\build_order.dart',
+      'GeneratorResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\generator_placeholder.dart',
+      'GeneratorResolutionException': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\generator_placeholder.dart',
+      'GeneratorPlaceholderResolver': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\generator_placeholder.dart',
+      'MasterGeneratorConfig': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\master_generator.dart',
+      'MasterGenerationResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\master_generator.dart',
+      'MasterGenerator': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\master_generator.dart',
+      'PlaceholderResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\placeholder_resolver.dart',
+      'GeneratorPlaceholderException': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\placeholder_resolver.dart',
+      'PlaceholderResolver': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\placeholder_resolver.dart',
+      'ModeProcessor': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\mode\mode_processor.dart',
+      'ModeResolver': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\mode\mode_resolver.dart',
+      'ResolvedModes': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\mode\mode_resolver.dart',
+      'TomplateParser': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_parser.dart',
+      'TomplateFile': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_parser.dart',
+      'PlaceholderInfo': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_parser.dart',
+      'TomplateProcessor': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_processor.dart',
+      'TomplateResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_processor.dart',
+      'PlaceholderResolutionException': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_processor.dart',
+      'ToolPrefix': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\cli_args.dart',
+      'CliArgs': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\cli_args.dart',
+      'PipelineDefinition': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\pipeline.dart',
+      'PipelineResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\pipeline.dart',
+      'PipelineLoader': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\pipeline.dart',
+      'PipelineRunner': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\pipeline.dart',
+      'PackageInfo': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\placeholder_resolver.dart',
+      'TomPlaceholderResolver': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\placeholder_resolver.dart',
+      'ParsedCommand': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_command_parser.dart',
+      'ParsedTomCommand': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_command_parser.dart',
+      'TomCommandParser': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_command_parser.dart',
+      'TomRunResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_runner.dart',
+      'TomRunResults': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_runner.dart',
+      'TomRunner': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_runner.dart',
+      'TemplateParser': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\template_parser.dart',
+      'ParsedTemplate': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\template_parser.dart',
+      'TemplateSegment': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\template_parser.dart',
+      'TextSegment': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\template_parser.dart',
+      'ModeBlockGroup': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\template_parser.dart',
+      'ModeBlock': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\template_parser.dart',
+      'WsPrepper': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\ws_prepper.dart',
+      'WsPrepperOptions': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\ws_prepper.dart',
+      'WsPrepperResult': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\ws_prepper.dart',
+      'PreparedTemplate': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\ws_prepper.dart',
+      'WsPrepperError': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\ws_prepper.dart',
+      'TomD4rtRepl': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\tom_d4rt_repl.dart',
+      'TomVersionInfo': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\version.versioner.dart',
+      'Tom': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_cli_api\tom_api.dart',
+      'TomWorkspace': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build\lib\src\tom\file_object_model\file_object_model.dart',
+      'TomProject': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build\lib\src\tom\file_object_model\file_object_model.dart',
     };
+  }
+
+  /// Returns a map of type alias names to their target class names.
+  ///
+  /// Type aliases like `typedef MaterialStateProperty<T> = WidgetStateProperty<T>`
+  /// are registered so that code using the alias name can resolve to the
+  /// bridged class under its canonical name.
+  static Map<String, String> classAliases() {
+    return {
+    };
+  }
+
+  /// Returns the list of function typedef names declared in this library.
+  ///
+  /// Function typedefs like `typedef VoidCallback = void Function()` are
+  /// registered so that they can be used as type arguments in D4rt scripts.
+  static List<String> functionTypedefs() {
+    return [
+      'D4rtInstanceFactory',
+      'D4rtEvaluatorFunction',
+      'ActionD4rtEvaluator',
+    ];
   }
 
   /// Returns all bridged enum definitions.
   static List<BridgedEnumDefinition> bridgedEnums() {
     return [
-      BridgedEnumDefinition<$tom_build_cli_10.BumpType>(
+      BridgedEnumDefinition<$tom_build_cli_7.BumpType>(
         name: 'BumpType',
-        values: $tom_build_cli_10.BumpType.values,
+        values: $tom_build_cli_7.BumpType.values,
       ),
-      BridgedEnumDefinition<$tom_build_cli_17.D4rtCommandType>(
+      BridgedEnumDefinition<$tom_build_cli_12.D4rtCommandType>(
         name: 'D4rtCommandType',
-        values: $tom_build_cli_17.D4rtCommandType.values,
+        values: $tom_build_cli_12.D4rtCommandType.values,
       ),
-      BridgedEnumDefinition<$tom_build_cli_25.PlaceholderType>(
+      BridgedEnumDefinition<$tom_build_cli_20.PlaceholderType>(
         name: 'PlaceholderType',
-        values: $tom_build_cli_25.PlaceholderType.values,
+        values: $tom_build_cli_20.PlaceholderType.values,
       ),
-      BridgedEnumDefinition<$tom_build_cli_28.TomExecutionMode>(
+      BridgedEnumDefinition<$tom_build_cli_22.TomExecutionMode>(
         name: 'TomExecutionMode',
-        values: $tom_build_cli_28.TomExecutionMode.values,
+        values: $tom_build_cli_22.TomExecutionMode.values,
       ),
     ];
   }
@@ -305,10 +318,10 @@ class TomBuildCliBridge {
   /// multiple barrels (e.g., tom_core_kernel and tom_core_server).
   static Map<String, String> enumSourceUris() {
     return {
-      'BumpType': 'package:tom_build_cli/src/tom/cli/version_bumper.dart',
-      'D4rtCommandType': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'PlaceholderType': 'package:tom_build_cli/src/tom/template/tomplate_parser.dart',
-      'TomExecutionMode': 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart',
+      'BumpType': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\version_bumper.dart',
+      'D4rtCommandType': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'PlaceholderType': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_parser.dart',
+      'TomExecutionMode': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\tom_d4rt_main.dart',
     };
   }
 
@@ -319,12 +332,12 @@ class TomBuildCliBridge {
         name: 'ParsedArgumentsExtensions',
         onTypeName: 'ParsedArguments',
         getters: {
-          'actionNames': (visitor, target) => (target as $tom_build_cli_6.ParsedArguments).actionNames,
-          'hasInternalCommands': (visitor, target) => (target as $tom_build_cli_6.ParsedArguments).hasInternalCommands,
+          'actionNames': (visitor, target) => (target as $tom_build_cli_4.ParsedArguments).actionNames,
+          'hasInternalCommands': (visitor, target) => (target as $tom_build_cli_4.ParsedArguments).hasInternalCommands,
         },
         methods: {
           'getActionParameters': (visitor, target, positional, named, typeArgs) {
-            final t = target as $tom_build_cli_6.ParsedArguments;
+            final t = target as $tom_build_cli_4.ParsedArguments;
             return Function.apply(t.getActionParameters, positional, named.map((k, v) => MapEntry(Symbol(k), v)));
           },
         },
@@ -350,12 +363,46 @@ class TomBuildCliBridge {
         },
       ),
       BridgedExtensionDefinition(
+        name: 'ParsedArgumentsExtensions',
+        onTypeName: 'ParsedArguments',
+        getters: {
+          'actionNames': (visitor, target) => (target as $tom_build_cli_4.ParsedArguments).actionNames,
+          'hasInternalCommands': (visitor, target) => (target as $tom_build_cli_4.ParsedArguments).hasInternalCommands,
+        },
+        methods: {
+          'getActionParameters': (visitor, target, positional, named, typeArgs) {
+            final t = target as $tom_build_cli_4.ParsedArguments;
+            return Function.apply(t.getActionParameters, positional, named.map((k, v) => MapEntry(Symbol(k), v)));
+          },
+        },
+      ),
+      BridgedExtensionDefinition(
         name: 'CommandResultExtensions',
         onTypeName: 'List',
         getters: {
-          'allSucceeded': (visitor, target) => (target as List<$tom_build_cli_16.CommandResult>).allSucceeded,
-          'firstFailure': (visitor, target) => (target as List<$tom_build_cli_16.CommandResult>).firstFailure,
-          'totalDuration': (visitor, target) => (target as List<$tom_build_cli_16.CommandResult>).totalDuration,
+          'allSucceeded': (visitor, target) => (target as List<$tom_build_cli_11.CommandResult>).allSucceeded,
+          'firstFailure': (visitor, target) => (target as List<$tom_build_cli_11.CommandResult>).firstFailure,
+          'totalDuration': (visitor, target) => (target as List<$tom_build_cli_11.CommandResult>).totalDuration,
+        },
+      ),
+      BridgedExtensionDefinition(
+        name: 'D4rtCommandExtension',
+        onTypeName: 'String',
+        getters: {
+          'isD4rtCommand': (visitor, target) => (target as String).isD4rtCommand,
+          'isVSCodeCommand': (visitor, target) => (target as String).isVSCodeCommand,
+          'vscodeCommandPort': (visitor, target) => (target as String).vscodeCommandPort,
+          'vscodeCommandBody': (visitor, target) => (target as String).vscodeCommandBody,
+          'isLocalD4rtCommand': (visitor, target) => (target as String).isLocalD4rtCommand,
+          'isVSCodeSimpleCommand': (visitor, target) => (target as String).isVSCodeSimpleCommand,
+          'vscodeSimpleCommandPort': (visitor, target) => (target as String).vscodeSimpleCommandPort,
+          'vscodeSimpleCommandBody': (visitor, target) => (target as String).vscodeSimpleCommandBody,
+          'isDartscriptSimpleCommand': (visitor, target) => (target as String).isDartscriptSimpleCommand,
+          'dartscriptSimpleCommandPort': (visitor, target) => (target as String).dartscriptSimpleCommandPort,
+          'dartscriptSimpleCommandBody': (visitor, target) => (target as String).dartscriptSimpleCommandBody,
+          'isTomCommand': (visitor, target) => (target as String).isTomCommand,
+          'tomCommandArgs': (visitor, target) => (target as String).tomCommandArgs,
+          'tomCommandArgsList': (visitor, target) => (target as String).tomCommandArgsList,
         },
       ),
       BridgedExtensionDefinition(
@@ -363,7 +410,17 @@ class TomBuildCliBridge {
         onTypeName: 'TomRunner',
         methods: {
           'runPipeline': (visitor, target, positional, named, typeArgs) {
-            final t = target as $tom_build_cli_35.TomRunner;
+            final t = target as $tom_build_cli_26.TomRunner;
+            return Function.apply(t.runPipeline, positional, named.map((k, v) => MapEntry(Symbol(k), v)));
+          },
+        },
+      ),
+      BridgedExtensionDefinition(
+        name: 'PipelineCommands',
+        onTypeName: 'TomRunner',
+        methods: {
+          'runPipeline': (visitor, target, positional, named, typeArgs) {
+            final t = target as $tom_build_cli_26.TomRunner;
             return Function.apply(t.runPipeline, positional, named.map((k, v) => MapEntry(Symbol(k), v)));
           },
         },
@@ -374,9 +431,12 @@ class TomBuildCliBridge {
   /// Returns a map of extension identifiers to their canonical source URIs.
   static Map<String, String> extensionSourceUris() {
     return {
-      'ParsedArgumentsExtensions': 'package:tom_build_cli/src/tom/cli/argument_parser.dart',
+      'ParsedArgumentsExtensions': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\argument_parser.dart',
       'D4rtCommandExtension': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
+      'ParsedArgumentsExtensions': 'package:tom_build_cli/src/tom/cli/argument_parser.dart',
       'CommandResultExtensions': 'package:tom_build_cli/src/tom/execution/command_runner.dart',
+      'D4rtCommandExtension': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'PipelineCommands': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\pipeline.dart',
       'PipelineCommands': 'package:tom_build_cli/src/tools/pipeline.dart',
     };
   }
@@ -418,6 +478,12 @@ class TomBuildCliBridge {
       final extKey = extDef.name ?? '<unnamed>@${extDef.onTypeName}';
       interpreter.registerBridgedExtension(extDef, importPath, sourceUri: extSources[extKey]);
     }
+
+    // Register function typedefs for type resolution
+    final typedefs = functionTypedefs();
+    for (final name in typedefs) {
+      interpreter.registerFunctionTypedef(name, importPath);
+    }
   }
 
   /// Registers all global variables with the interpreter.
@@ -429,17 +495,17 @@ class TomBuildCliBridge {
     final errors = <String>[];
 
     try {
-      interpreter.registerGlobalVariable('cliGlobalVariables', $tom_build_cli_2.cliGlobalVariables, importPath, sourceUri: 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart');
+      interpreter.registerGlobalVariable('cliGlobalVariables', cliGlobalVariables, importPath, sourceUri: 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_cli_initialization.dart');
     } catch (e) {
       errors.add('Failed to register variable "cliGlobalVariables": $e');
     }
     try {
-      interpreter.registerGlobalVariable('d4rtInstanceZoneKey', $tom_build_cli_5.d4rtInstanceZoneKey, importPath, sourceUri: 'package:tom_build_cli/src/dartscript/d4rt_instance.dart');
+      interpreter.registerGlobalVariable('d4rtInstanceZoneKey', d4rtInstanceZoneKey, importPath, sourceUri: 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_instance.dart');
     } catch (e) {
       errors.add('Failed to register variable "d4rtInstanceZoneKey": $e');
     }
     try {
-      interpreter.registerGlobalVariable('knownCommands', $tom_build_cli_34.knownCommands, importPath, sourceUri: 'package:tom_build_cli/src/tools/tom_command_parser.dart');
+      interpreter.registerGlobalVariable('knownCommands', knownCommands, importPath, sourceUri: 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_command_parser.dart');
     } catch (e) {
       errors.add('Failed to register variable "knownCommands": $e');
     }
@@ -453,111 +519,111 @@ class TomBuildCliBridge {
   static Map<String, NativeFunctionImpl> globalFunctions() {
     return {
       'getCliInitializationScript': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_2.getCliInitializationScript();
+        return getCliInitializationScript();
       },
       'getCliImportsOnly': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_2.getCliImportsOnly();
+        return getCliImportsOnly();
       },
       'getCliGlobalVariablesOnly': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_2.getCliGlobalVariablesOnly();
+        return getCliGlobalVariablesOnly();
       },
       'getProjectClearScript': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_2.getProjectClearScript();
+        return getProjectClearScript();
       },
       'getProjectPrepareScript': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_2.getProjectPrepareScript();
+        return getProjectPrepareScript();
       },
       'createD4rtEvaluatorFromContext': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'createD4rtEvaluatorFromContext');
-        final context = D4.getRequiredArg<$tom_build_cli_5.ActionD4rtContext>(positional, 0, 'context', 'createD4rtEvaluatorFromContext');
-        return $tom_build_cli_5.createD4rtEvaluatorFromContext(context);
+        final context = D4.getRequiredArg<$tom_build_cli_3.ActionD4rtContext>(positional, 0, 'context', 'createD4rtEvaluatorFromContext');
+        return createD4rtEvaluatorFromContext(context);
       },
       'runTomCli': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'runTomCli');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'runTomCli');
-        return $tom_build_cli_9.runTomCli(args);
+        return runTomCli(args);
       },
       'parseBumpType': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'parseBumpType');
         final value = D4.getRequiredArg<String?>(positional, 0, 'value', 'parseBumpType');
-        return $tom_build_cli_10.parseBumpType(value);
+        return parseBumpType(value);
       },
       'discoverWorkspace': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'discoverWorkspace');
         final startPath = D4.getRequiredArg<String>(positional, 0, 'startPath', 'discoverWorkspace');
-        return $tom_build_cli_11.discoverWorkspace(startPath);
+        return discoverWorkspace(startPath);
       },
       'discoverProjects': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 2, 'discoverProjects');
         final workspacePath = D4.getRequiredArg<String>(positional, 0, 'workspacePath', 'discoverProjects');
         final workspace = D4.getRequiredArg<$tom_build_1.TomWorkspace>(positional, 1, 'workspace', 'discoverProjects');
-        return $tom_build_cli_11.discoverProjects(workspacePath, workspace);
+        return discoverProjects(workspacePath, workspace);
       },
       'mergeStringLists': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 2, 'mergeStringLists');
         final base = D4.getRequiredArg<List<String>?>(positional, 0, 'base', 'mergeStringLists');
         final override = D4.getRequiredArg<List<String>?>(positional, 1, 'override', 'mergeStringLists');
-        return $tom_build_cli_13.mergeStringLists(base, override);
+        return mergeStringLists(base, override);
       },
       'mergeDeps': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 2, 'mergeDeps');
         final base = D4.getRequiredArg<Map<String, String>?>(positional, 0, 'base', 'mergeDeps');
         final override = D4.getRequiredArg<Map<String, String>?>(positional, 1, 'override', 'mergeDeps');
-        return $tom_build_cli_13.mergeDeps(base, override);
+        return mergeDeps(base, override);
       },
       'createRealD4rtEvaluator': (visitor, positional, named, typeArgs) {
         final globalContext = D4.getOptionalNamedArg<Map<String, dynamic>?>(named, 'globalContext');
         final bridgeConfiguration = D4.getOptionalNamedArg<$tom_build_cli_1.BridgeConfiguration?>(named, 'bridgeConfiguration');
         final workspace = D4.getOptionalNamedArg<$tom_build_1.TomWorkspace?>(named, 'workspace');
-        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_11.WorkspaceContext?>(named, 'workspaceContext');
+        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_8.WorkspaceContext?>(named, 'workspaceContext');
         final currentProject = D4.getOptionalNamedArg<$tom_build_1.TomProject?>(named, 'currentProject');
         final workspacePath = D4.getOptionalNamedArg<String?>(named, 'workspacePath');
-        return $tom_build_cli_17.createRealD4rtEvaluator(globalContext: globalContext, bridgeConfiguration: bridgeConfiguration, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject, workspacePath: workspacePath);
+        return createRealD4rtEvaluator(globalContext: globalContext, bridgeConfiguration: bridgeConfiguration, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject, workspacePath: workspacePath);
       },
       'createEvaluatorFromContext': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'createEvaluatorFromContext');
-        final actionContext = D4.getRequiredArg<$tom_build_cli_5.ActionD4rtContext>(positional, 0, 'actionContext', 'createEvaluatorFromContext');
-        return $tom_build_cli_17.createEvaluatorFromContext(actionContext);
+        final actionContext = D4.getRequiredArg<$tom_build_cli_3.ActionD4rtContext>(positional, 0, 'actionContext', 'createEvaluatorFromContext');
+        return createEvaluatorFromContext(actionContext);
       },
       'splitShellArgs': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'splitShellArgs');
         final command = D4.getRequiredArg<String>(positional, 0, 'command', 'splitShellArgs');
-        return $tom_build_cli_17.splitShellArgs(command);
+        return splitShellArgs(command);
       },
       'parseWsPrepperArgs': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'parseWsPrepperArgs');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseWsPrepperArgs');
-        return $tom_build_cli_31.parseWsPrepperArgs(args);
+        return parseWsPrepperArgs(args);
       },
       'parseWorkspaceAnalyzerArgs': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'parseWorkspaceAnalyzerArgs');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseWorkspaceAnalyzerArgs');
-        return $tom_build_cli_31.parseWorkspaceAnalyzerArgs(args);
+        return parseWorkspaceAnalyzerArgs(args);
       },
       'parseReflectionGeneratorArgs': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'parseReflectionGeneratorArgs');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseReflectionGeneratorArgs');
-        return $tom_build_cli_31.parseReflectionGeneratorArgs(args);
+        return parseReflectionGeneratorArgs(args);
       },
       'loadEnvironmentWithDotEnv': (visitor, positional, named, typeArgs) {
         final dotEnvPath = positional.isNotEmpty ? positional[0] as String? : null;
-        return $tom_build_cli_33.loadEnvironmentWithDotEnv(dotEnvPath);
+        return loadEnvironmentWithDotEnv(dotEnvPath);
       },
       'parseTomCommand': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'parseTomCommand');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'parseTomCommand');
         final additionalCommands = D4.getOptionalNamedArg<Set<String>?>(named, 'additionalCommands');
-        return $tom_build_cli_34.parseTomCommand(args, additionalCommands: additionalCommands);
+        return parseTomCommand(args, additionalCommands: additionalCommands);
       },
       'determineExecutionMode': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'determineExecutionMode');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'determineExecutionMode');
-        return $tom_build_cli_28.determineExecutionMode(args);
+        return determineExecutionMode(args);
       },
       'runTomD4rt': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'runTomD4rt');
         final args = D4.getRequiredArg<List<String>>(positional, 0, 'args', 'runTomD4rt');
-        return $tom_build_cli_28.runTomD4rt(args);
+        return runTomD4rt(args);
       },
       'runTomFromRepl': (visitor, positional, named, typeArgs) {
         if (!named.containsKey('args') || named['args'] == null) {
@@ -565,7 +631,7 @@ class TomBuildCliBridge {
         }
         final args = D4.coerceList<String>(named['args'], 'args');
         final cwd = D4.getRequiredNamedArg<String>(named, 'cwd', 'runTomFromRepl');
-        return $tom_build_cli_28.runTomFromRepl(args: args, cwd: cwd);
+        return runTomFromRepl(args: args, cwd: cwd);
       },
     };
   }
@@ -576,29 +642,29 @@ class TomBuildCliBridge {
   /// multiple barrels (e.g., tom_core_kernel and tom_core_server).
   static Map<String, String> globalFunctionSourceUris() {
     return {
-      'getCliInitializationScript': 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart',
-      'getCliImportsOnly': 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart',
-      'getCliGlobalVariablesOnly': 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart',
-      'getProjectClearScript': 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart',
-      'getProjectPrepareScript': 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart',
-      'createD4rtEvaluatorFromContext': 'package:tom_build_cli/src/dartscript/d4rt_instance.dart',
-      'runTomCli': 'package:tom_build_cli/src/tom/cli/tom_cli.dart',
-      'parseBumpType': 'package:tom_build_cli/src/tom/cli/version_bumper.dart',
-      'discoverWorkspace': 'package:tom_build_cli/src/tom/cli/workspace_context.dart',
-      'discoverProjects': 'package:tom_build_cli/src/tom/cli/workspace_context.dart',
-      'mergeStringLists': 'package:tom_build_cli/src/tom/config/config_merger.dart',
-      'mergeDeps': 'package:tom_build_cli/src/tom/config/config_merger.dart',
-      'createRealD4rtEvaluator': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'createEvaluatorFromContext': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'splitShellArgs': 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'parseWsPrepperArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
-      'parseWorkspaceAnalyzerArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
-      'parseReflectionGeneratorArgs': 'package:tom_build_cli/src/tools/cli_args.dart',
-      'loadEnvironmentWithDotEnv': 'package:tom_build_cli/src/tools/placeholder_resolver.dart',
-      'parseTomCommand': 'package:tom_build_cli/src/tools/tom_command_parser.dart',
-      'determineExecutionMode': 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart',
-      'runTomD4rt': 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart',
-      'runTomFromRepl': 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart',
+      'getCliInitializationScript': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_cli_initialization.dart',
+      'getCliImportsOnly': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_cli_initialization.dart',
+      'getCliGlobalVariablesOnly': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_cli_initialization.dart',
+      'getProjectClearScript': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_cli_initialization.dart',
+      'getProjectPrepareScript': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_cli_initialization.dart',
+      'createD4rtEvaluatorFromContext': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_instance.dart',
+      'runTomCli': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\tom_cli.dart',
+      'parseBumpType': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\version_bumper.dart',
+      'discoverWorkspace': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\workspace_context.dart',
+      'discoverProjects': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\workspace_context.dart',
+      'mergeStringLists': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\config_merger.dart',
+      'mergeDeps': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\config_merger.dart',
+      'createRealD4rtEvaluator': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'createEvaluatorFromContext': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'splitShellArgs': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'parseWsPrepperArgs': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\cli_args.dart',
+      'parseWorkspaceAnalyzerArgs': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\cli_args.dart',
+      'parseReflectionGeneratorArgs': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\cli_args.dart',
+      'loadEnvironmentWithDotEnv': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\placeholder_resolver.dart',
+      'parseTomCommand': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_command_parser.dart',
+      'determineExecutionMode': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\tom_d4rt_main.dart',
+      'runTomD4rt': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\tom_d4rt_main.dart',
+      'runTomFromRepl': 'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\tom_d4rt_main.dart',
     };
   }
 
@@ -638,44 +704,44 @@ class TomBuildCliBridge {
   /// multiple barrels.
   static List<String> sourceLibraries() {
     return [
-      'package:tom_build/src/tom/file_object_model/file_object_model.dart',
-      'package:tom_build_cli/src/dartscript/bridge_configuration.dart',
-      'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart',
-      'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart',
-      'package:tom_build_cli/src/dartscript/d4rt_globals.dart',
-      'package:tom_build_cli/src/dartscript/d4rt_instance.dart',
-      'package:tom_build_cli/src/tom/cli/argument_parser.dart',
-      'package:tom_build_cli/src/tom/cli/git_helper.dart',
-      'package:tom_build_cli/src/tom/cli/internal_commands.dart',
-      'package:tom_build_cli/src/tom/cli/tom_cli.dart',
-      'package:tom_build_cli/src/tom/cli/version_bumper.dart',
-      'package:tom_build_cli/src/tom/cli/workspace_context.dart',
-      'package:tom_build_cli/src/tom/config/config_loader.dart',
-      'package:tom_build_cli/src/tom/config/config_merger.dart',
-      'package:tom_build_cli/src/tom/config/validation.dart',
-      'package:tom_build_cli/src/tom/execution/action_executor.dart',
-      'package:tom_build_cli/src/tom/execution/command_runner.dart',
-      'package:tom_build_cli/src/tom/execution/d4rt_runner.dart',
-      'package:tom_build_cli/src/tom/execution/output_formatter.dart',
-      'package:tom_build_cli/src/tom/generation/build_order.dart',
-      'package:tom_build_cli/src/tom/generation/generator_placeholder.dart',
-      'package:tom_build_cli/src/tom/generation/master_generator.dart',
-      'package:tom_build_cli/src/tom/generation/placeholder_resolver.dart',
-      'package:tom_build_cli/src/tom/mode/mode_processor.dart',
-      'package:tom_build_cli/src/tom/mode/mode_resolver.dart',
-      'package:tom_build_cli/src/tom/template/tomplate_parser.dart',
-      'package:tom_build_cli/src/tom/template/tomplate_processor.dart',
-      'package:tom_build_cli/src/tom_cli_api/tom_api.dart',
-      'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart',
-      'package:tom_build_cli/src/tom_d4rt/tom_d4rt_repl.dart',
-      'package:tom_build_cli/src/tom_d4rt/version.versioner.dart',
-      'package:tom_build_cli/src/tools/cli_args.dart',
-      'package:tom_build_cli/src/tools/pipeline.dart',
-      'package:tom_build_cli/src/tools/placeholder_resolver.dart',
-      'package:tom_build_cli/src/tools/tom_command_parser.dart',
-      'package:tom_build_cli/src/tools/tom_runner.dart',
-      'package:tom_build_cli/src/ws_prepper/template_parser.dart',
-      'package:tom_build_cli/src/ws_prepper/ws_prepper.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build\lib\src\tom\file_object_model\file_object_model.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\bridge_configuration.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_cli_initialization.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_context_provider.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_globals.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\dartscript\d4rt_instance.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\argument_parser.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\git_helper.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\internal_commands.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\tom_cli.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\version_bumper.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\cli\workspace_context.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\config_loader.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\config_merger.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\config\validation.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\action_executor.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\command_runner.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\d4rt_runner.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\execution\output_formatter.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\build_order.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\generator_placeholder.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\master_generator.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\generation\placeholder_resolver.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\mode\mode_processor.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\mode\mode_resolver.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_parser.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom\template\tomplate_processor.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_cli_api\tom_api.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\tom_d4rt_main.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\tom_d4rt_repl.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tom_d4rt\version.versioner.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\cli_args.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\pipeline.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\placeholder_resolver.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_command_parser.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\tools\tom_runner.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\template_parser.dart',
+      'C:\Code\al_the_bear\inhouse\second_wind\enterprise_flutter\tom_agent_container\tom_ai\devops\tom_build_cli\lib\src\ws_prepper\ws_prepper.dart',
     ];
   }
 
@@ -684,10 +750,7 @@ class TomBuildCliBridge {
   /// Use this in your D4rt initialization script to make all
   /// bridged classes available to scripts.
   static String getImportBlock() {
-    final imports = StringBuffer();
-    imports.writeln("import 'package:tom_build_cli/tom_build_cli.dart';");
-    imports.writeln("import 'package:tom_build/tom_build.dart';");
-    return imports.toString();
+    return "import 'package:tom_build_cli/tom_build_cli.dart';";
   }
 
   /// Returns barrel import URIs for sub-packages discovered through re-exports.
@@ -697,9 +760,7 @@ class TomBuildCliBridge {
   /// These barrels need to be registered with the interpreter separately
   /// so that module resolution finds content for those URIs.
   static List<String> subPackageBarrels() {
-    return [
-      'package:tom_build/tom_build.dart',
-    ];
+    return [];
   }
 
   /// Returns a list of bridged enum names.
@@ -720,6 +781,7 @@ BridgedClass _createBridgeConfigurationBridge() {
   return BridgedClass(
     nativeType: $tom_build_cli_1.BridgeConfiguration,
     name: 'BridgeConfiguration',
+    isAssignable: (v) => v is $tom_build_cli_1.BridgeConfiguration,
     constructors: {
       '': (visitor, positional, named) {
         final bridgeModules = named.containsKey('bridgeModules') && named['bridgeModules'] != null
@@ -793,15 +855,16 @@ BridgedClass _createBridgeConfigurationBridge() {
 
 BridgedClass _createBridgeModuleRegistryBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_1.BridgeModuleRegistry,
+    nativeType: BridgeModuleRegistry,
     name: 'BridgeModuleRegistry',
+    isAssignable: (v) => v is BridgeModuleRegistry,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_1.BridgeModuleRegistry();
+        return BridgeModuleRegistry();
       },
     },
     staticGetters: {
-      'registeredModules': (visitor) => $tom_build_cli_1.BridgeModuleRegistry.registeredModules,
+      'registeredModules': (visitor) => BridgeModuleRegistry.registeredModules,
     },
     staticMethods: {
       'register': (visitor, positional, named, typeArgs) {
@@ -811,21 +874,21 @@ BridgedClass _createBridgeModuleRegistryBridge() {
           throw ArgumentError('register: Missing required argument "registrar" at position 1');
         }
         final registrarRaw = positional[1];
-        final registrar = ($tom_d4rt_2.D4rt p0) { D4.callInterpreterCallback(visitor, registrarRaw, [p0]); };
-        return $tom_build_cli_1.BridgeModuleRegistry.register(name, registrar);
+        final registrar = ($tom_d4rt_2.D4rt p0) { D4.callInterpreterCallback(visitor!, registrarRaw, [p0]); };
+        return BridgeModuleRegistry.register(name, registrar);
       },
       'get': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'get');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'get');
-        return $tom_build_cli_1.BridgeModuleRegistry.get(name);
+        return BridgeModuleRegistry.get(name);
       },
       'isRegistered': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'isRegistered');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'isRegistered');
-        return $tom_build_cli_1.BridgeModuleRegistry.isRegistered(name);
+        return BridgeModuleRegistry.isRegistered(name);
       },
       'clear': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_1.BridgeModuleRegistry.clear();
+        return BridgeModuleRegistry.clear();
       },
     },
     constructorSignatures: {
@@ -849,25 +912,26 @@ BridgedClass _createBridgeModuleRegistryBridge() {
 
 BridgedClass _createD4rtContextProviderBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_3.D4rtContextProvider,
+    nativeType: $tom_build_cli_2.D4rtContextProvider,
     name: 'D4rtContextProvider',
+    isAssignable: (v) => v is $tom_build_cli_2.D4rtContextProvider,
     constructors: {
     },
     getters: {
-      'importPath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider').importPath,
-      'initializeTomContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider').initializeTomContext,
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider').workspace,
-      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider').workspaceContext,
-      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider').currentProject,
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider').workspacePath,
+      'importPath': (visitor, target) => D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider').importPath,
+      'initializeTomContext': (visitor, target) => D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider').initializeTomContext,
+      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider').workspace,
+      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider').workspaceContext,
+      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider').currentProject,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider').workspacePath,
     },
     methods: {
       'getContext': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider');
+        final t = D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider');
         return t.getContext();
       },
       'getBridgeConfiguration': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.D4rtContextProvider>(target, 'D4rtContextProvider');
+        final t = D4.validateTarget<$tom_build_cli_2.D4rtContextProvider>(target, 'D4rtContextProvider');
         return t.getBridgeConfiguration();
       },
     },
@@ -892,25 +956,26 @@ BridgedClass _createD4rtContextProviderBridge() {
 
 BridgedClass _createD4rtContextProviderDefaultsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_3.D4rtContextProviderDefaults,
+    nativeType: D4rtContextProviderDefaults,
     name: 'D4rtContextProviderDefaults',
+    isAssignable: (v) => v is D4rtContextProviderDefaults,
     constructors: {
     },
     getters: {
-      'importPath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').importPath,
-      'initializeTomContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').initializeTomContext,
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').workspace,
-      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').workspaceContext,
-      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').currentProject,
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').workspacePath,
+      'importPath': (visitor, target) => D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').importPath,
+      'initializeTomContext': (visitor, target) => D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').initializeTomContext,
+      'workspace': (visitor, target) => D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').workspace,
+      'workspaceContext': (visitor, target) => D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').workspaceContext,
+      'currentProject': (visitor, target) => D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').currentProject,
+      'workspacePath': (visitor, target) => D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults').workspacePath,
     },
     methods: {
       'getBridgeConfiguration': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults');
+        final t = D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults');
         return t.getBridgeConfiguration();
       },
       'getContext': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults');
+        final t = D4.validateTarget<D4rtContextProviderDefaults>(target, 'D4rtContextProviderDefaults');
         return t.getContext();
       },
     },
@@ -935,8 +1000,9 @@ BridgedClass _createD4rtContextProviderDefaultsBridge() {
 
 BridgedClass _createActionContextProviderBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_3.ActionContextProvider,
+    nativeType: ActionContextProvider,
     name: 'ActionContextProvider',
+    isAssignable: (v) => v is ActionContextProvider,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'ActionContextProvider');
@@ -944,32 +1010,32 @@ BridgedClass _createActionContextProviderBridge() {
         final actionName = D4.getRequiredNamedArg<String>(named, 'actionName', 'ActionContextProvider');
         final workspace = D4.getOptionalNamedArg<$tom_build_1.TomWorkspace?>(named, 'workspace');
         final currentProject = D4.getOptionalNamedArg<$tom_build_1.TomProject?>(named, 'currentProject');
-        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_11.WorkspaceContext?>(named, 'workspaceContext');
+        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_8.WorkspaceContext?>(named, 'workspaceContext');
         final additionalContext = named.containsKey('additionalContext') && named['additionalContext'] != null
             ? D4.coerceMap<String, dynamic>(named['additionalContext'], 'additionalContext')
             : const <String, dynamic>{};
         final bridgeConfiguration = D4.getOptionalNamedArg<$tom_build_cli_1.BridgeConfiguration?>(named, 'bridgeConfiguration');
-        return $tom_build_cli_3.ActionContextProvider(workspacePath: workspacePath, projectName: projectName, actionName: actionName, workspace: workspace, currentProject: currentProject, workspaceContext: workspaceContext, additionalContext: additionalContext, bridgeConfiguration: bridgeConfiguration);
+        return ActionContextProvider(workspacePath: workspacePath, projectName: projectName, actionName: actionName, workspace: workspace, currentProject: currentProject, workspaceContext: workspaceContext, additionalContext: additionalContext, bridgeConfiguration: bridgeConfiguration);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').workspacePath,
-      'projectName': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').projectName,
-      'actionName': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').actionName,
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').workspace,
-      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').currentProject,
-      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').workspaceContext,
-      'additionalContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').additionalContext,
-      'initializeTomContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').initializeTomContext,
-      'importPath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider').importPath,
+      'workspacePath': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').workspacePath,
+      'projectName': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').projectName,
+      'actionName': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').actionName,
+      'workspace': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').workspace,
+      'currentProject': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').currentProject,
+      'workspaceContext': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').workspaceContext,
+      'additionalContext': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').additionalContext,
+      'initializeTomContext': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').initializeTomContext,
+      'importPath': (visitor, target) => D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider').importPath,
     },
     methods: {
       'getContext': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider');
+        final t = D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider');
         return t.getContext();
       },
       'getBridgeConfiguration': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.ActionContextProvider>(target, 'ActionContextProvider');
+        final t = D4.validateTarget<ActionContextProvider>(target, 'ActionContextProvider');
         return t.getBridgeConfiguration();
       },
     },
@@ -1000,34 +1066,35 @@ BridgedClass _createActionContextProviderBridge() {
 
 BridgedClass _createTemplateContextProviderBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_3.TemplateContextProvider,
+    nativeType: TemplateContextProvider,
     name: 'TemplateContextProvider',
+    isAssignable: (v) => v is TemplateContextProvider,
     constructors: {
       '': (visitor, positional, named) {
         final workspace = D4.getOptionalNamedArg<$tom_build_1.TomWorkspace?>(named, 'workspace');
         final project = D4.getOptionalNamedArg<$tom_build_1.TomProject?>(named, 'project');
-        final resolvedModes = D4.getOptionalNamedArg<$tom_build_cli_24.ResolvedModes?>(named, 'resolvedModes');
+        final resolvedModes = D4.getOptionalNamedArg<$tom_build_cli_19.ResolvedModes?>(named, 'resolvedModes');
         final workspacePath = D4.getOptionalNamedArg<String?>(named, 'workspacePath');
-        return $tom_build_cli_3.TemplateContextProvider(workspace: workspace, project: project, resolvedModes: resolvedModes, workspacePath: workspacePath);
+        return TemplateContextProvider(workspace: workspace, project: project, resolvedModes: resolvedModes, workspacePath: workspacePath);
       },
     },
     getters: {
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').workspace,
-      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').currentProject,
-      'project': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').project,
-      'resolvedModes': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').resolvedModes,
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').workspacePath,
-      'initializeTomContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').initializeTomContext,
-      'importPath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').importPath,
-      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider').workspaceContext,
+      'workspace': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').workspace,
+      'currentProject': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').currentProject,
+      'project': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').project,
+      'resolvedModes': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').resolvedModes,
+      'workspacePath': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').workspacePath,
+      'initializeTomContext': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').initializeTomContext,
+      'importPath': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').importPath,
+      'workspaceContext': (visitor, target) => D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider').workspaceContext,
     },
     methods: {
       'getContext': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider');
+        final t = D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider');
         return t.getContext();
       },
       'getBridgeConfiguration': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.TemplateContextProvider>(target, 'TemplateContextProvider');
+        final t = D4.validateTarget<TemplateContextProvider>(target, 'TemplateContextProvider');
         return t.getBridgeConfiguration();
       },
     },
@@ -1057,8 +1124,9 @@ BridgedClass _createTemplateContextProviderBridge() {
 
 BridgedClass _createStandaloneContextProviderBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_3.StandaloneContextProvider,
+    nativeType: StandaloneContextProvider,
     name: 'StandaloneContextProvider',
+    isAssignable: (v) => v is StandaloneContextProvider,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'StandaloneContextProvider');
@@ -1068,25 +1136,25 @@ BridgedClass _createStandaloneContextProviderBridge() {
         final customContext = D4.coerceMap<String, dynamic>(positional[0], 'customContext');
         final bridgeConfiguration = D4.getOptionalNamedArg<$tom_build_cli_1.BridgeConfiguration?>(named, 'bridgeConfiguration');
         final importPath = D4.getOptionalNamedArg<String?>(named, 'importPath');
-        return $tom_build_cli_3.StandaloneContextProvider(customContext, bridgeConfiguration: bridgeConfiguration, importPath: importPath);
+        return StandaloneContextProvider(customContext, bridgeConfiguration: bridgeConfiguration, importPath: importPath);
       },
     },
     getters: {
-      'customContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider').customContext,
-      'importPath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider').importPath,
-      'initializeTomContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider').initializeTomContext,
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider').workspace,
-      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider').workspaceContext,
-      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider').currentProject,
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider').workspacePath,
+      'customContext': (visitor, target) => D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider').customContext,
+      'importPath': (visitor, target) => D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider').importPath,
+      'initializeTomContext': (visitor, target) => D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider').initializeTomContext,
+      'workspace': (visitor, target) => D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider').workspace,
+      'workspaceContext': (visitor, target) => D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider').workspaceContext,
+      'currentProject': (visitor, target) => D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider').currentProject,
+      'workspacePath': (visitor, target) => D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider').workspacePath,
     },
     methods: {
       'getContext': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider');
+        final t = D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider');
         return t.getContext();
       },
       'getBridgeConfiguration': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.StandaloneContextProvider>(target, 'StandaloneContextProvider');
+        final t = D4.validateTarget<StandaloneContextProvider>(target, 'StandaloneContextProvider');
         return t.getBridgeConfiguration();
       },
     },
@@ -1115,34 +1183,35 @@ BridgedClass _createStandaloneContextProviderBridge() {
 
 BridgedClass _createCompositeContextProviderBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_3.CompositeContextProvider,
+    nativeType: CompositeContextProvider,
     name: 'CompositeContextProvider',
+    isAssignable: (v) => v is CompositeContextProvider,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'CompositeContextProvider');
         if (positional.isEmpty) {
           throw ArgumentError('CompositeContextProvider: Missing required argument "providers" at position 0');
         }
-        final providers = D4.coerceList<$tom_build_cli_3.D4rtContextProvider>(positional[0], 'providers');
-        return $tom_build_cli_3.CompositeContextProvider(providers);
+        final providers = D4.coerceList<$tom_build_cli_2.D4rtContextProvider>(positional[0], 'providers');
+        return CompositeContextProvider(providers);
       },
     },
     getters: {
-      'providers': (visitor, target) => D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider').providers,
-      'initializeTomContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider').initializeTomContext,
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider').workspace,
-      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider').workspaceContext,
-      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider').currentProject,
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider').workspacePath,
-      'importPath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider').importPath,
+      'providers': (visitor, target) => D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider').providers,
+      'initializeTomContext': (visitor, target) => D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider').initializeTomContext,
+      'workspace': (visitor, target) => D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider').workspace,
+      'workspaceContext': (visitor, target) => D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider').workspaceContext,
+      'currentProject': (visitor, target) => D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider').currentProject,
+      'workspacePath': (visitor, target) => D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider').workspacePath,
+      'importPath': (visitor, target) => D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider').importPath,
     },
     methods: {
       'getContext': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider');
+        final t = D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider');
         return t.getContext();
       },
       'getBridgeConfiguration': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_3.CompositeContextProvider>(target, 'CompositeContextProvider');
+        final t = D4.validateTarget<CompositeContextProvider>(target, 'CompositeContextProvider');
         return t.getBridgeConfiguration();
       },
     },
@@ -1171,28 +1240,29 @@ BridgedClass _createCompositeContextProviderBridge() {
 
 BridgedClass _createD4rtGlobalsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_4.D4rtGlobals,
+    nativeType: D4rtGlobals,
     name: 'D4rtGlobals',
+    isAssignable: (v) => v is D4rtGlobals,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_4.D4rtGlobals();
+        return D4rtGlobals();
       },
     },
     staticGetters: {
-      'tom': (visitor) => $tom_build_cli_4.D4rtGlobals.tom,
-      'tomExecutionContext': (visitor) => $tom_build_cli_4.D4rtGlobals.tomExecutionContext,
-      'tomReflector': (visitor) => $tom_build_cli_4.D4rtGlobals.tomReflector,
-      'tomComponent': (visitor) => $tom_build_cli_4.D4rtGlobals.tomComponent,
-      'platformWeb': (visitor) => $tom_build_cli_4.D4rtGlobals.platformWeb,
-      'platformMacos': (visitor) => $tom_build_cli_4.D4rtGlobals.platformMacos,
-      'platformWindows': (visitor) => $tom_build_cli_4.D4rtGlobals.platformWindows,
-      'platformAndroid': (visitor) => $tom_build_cli_4.D4rtGlobals.platformAndroid,
-      'platformIos': (visitor) => $tom_build_cli_4.D4rtGlobals.platformIos,
-      'platformLinux': (visitor) => $tom_build_cli_4.D4rtGlobals.platformLinux,
-      'platformFuchsia': (visitor) => $tom_build_cli_4.D4rtGlobals.platformFuchsia,
-      'defaultTomEnvironment': (visitor) => $tom_build_cli_4.D4rtGlobals.defaultTomEnvironment,
-      'noTomEnvironment': (visitor) => $tom_build_cli_4.D4rtGlobals.noTomEnvironment,
-      'noTomPlatform': (visitor) => $tom_build_cli_4.D4rtGlobals.noTomPlatform,
+      'tom': (visitor) => D4rtGlobals.tom,
+      'tomExecutionContext': (visitor) => D4rtGlobals.tomExecutionContext,
+      'tomReflector': (visitor) => D4rtGlobals.tomReflector,
+      'tomComponent': (visitor) => D4rtGlobals.tomComponent,
+      'platformWeb': (visitor) => D4rtGlobals.platformWeb,
+      'platformMacos': (visitor) => D4rtGlobals.platformMacos,
+      'platformWindows': (visitor) => D4rtGlobals.platformWindows,
+      'platformAndroid': (visitor) => D4rtGlobals.platformAndroid,
+      'platformIos': (visitor) => D4rtGlobals.platformIos,
+      'platformLinux': (visitor) => D4rtGlobals.platformLinux,
+      'platformFuchsia': (visitor) => D4rtGlobals.platformFuchsia,
+      'defaultTomEnvironment': (visitor) => D4rtGlobals.defaultTomEnvironment,
+      'noTomEnvironment': (visitor) => D4rtGlobals.noTomEnvironment,
+      'noTomPlatform': (visitor) => D4rtGlobals.noTomPlatform,
     },
     constructorSignatures: {
       '': 'D4rtGlobals()',
@@ -1222,40 +1292,41 @@ BridgedClass _createD4rtGlobalsBridge() {
 
 BridgedClass _createD4rtInstanceBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_5.D4rtInstance,
+    nativeType: $tom_build_cli_3.D4rtInstance,
     name: 'D4rtInstance',
+    isAssignable: (v) => v is $tom_build_cli_3.D4rtInstance,
     constructors: {
       'currentOrCreate': (visitor, positional, named) {
         final bridgeConfiguration = D4.getOptionalNamedArg<$tom_build_cli_1.BridgeConfiguration?>(named, 'bridgeConfiguration');
         final workspace = D4.getOptionalNamedArg<$tom_build_1.TomWorkspace?>(named, 'workspace');
-        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_11.WorkspaceContext?>(named, 'workspaceContext');
+        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_8.WorkspaceContext?>(named, 'workspaceContext');
         final currentProject = D4.getOptionalNamedArg<$tom_build_1.TomProject?>(named, 'currentProject');
         final workspacePath = D4.getOptionalNamedArg<String?>(named, 'workspacePath');
-        return $tom_build_cli_5.D4rtInstance.currentOrCreate(bridgeConfiguration: bridgeConfiguration, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject, workspacePath: workspacePath);
+        return $tom_build_cli_3.D4rtInstance.currentOrCreate(bridgeConfiguration: bridgeConfiguration, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject, workspacePath: workspacePath);
       },
       'create': (visitor, positional, named) {
         final bridgeConfiguration = D4.getOptionalNamedArg<$tom_build_cli_1.BridgeConfiguration?>(named, 'bridgeConfiguration');
         final workspace = D4.getOptionalNamedArg<$tom_build_1.TomWorkspace?>(named, 'workspace');
-        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_11.WorkspaceContext?>(named, 'workspaceContext');
+        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_8.WorkspaceContext?>(named, 'workspaceContext');
         final currentProject = D4.getOptionalNamedArg<$tom_build_1.TomProject?>(named, 'currentProject');
         final workspacePath = D4.getOptionalNamedArg<String?>(named, 'workspacePath');
-        return $tom_build_cli_5.D4rtInstance.create(bridgeConfiguration: bridgeConfiguration, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject, workspacePath: workspacePath);
+        return $tom_build_cli_3.D4rtInstance.create(bridgeConfiguration: bridgeConfiguration, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject, workspacePath: workspacePath);
       },
       'fromProvider': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'D4rtInstance');
-        final provider = D4.getRequiredArg<$tom_build_cli_3.D4rtContextProvider>(positional, 0, 'provider', 'D4rtInstance');
-        return $tom_build_cli_5.D4rtInstance.fromProvider(provider);
+        final provider = D4.getRequiredArg<$tom_build_cli_2.D4rtContextProvider>(positional, 0, 'provider', 'D4rtInstance');
+        return $tom_build_cli_3.D4rtInstance.fromProvider(provider);
       },
     },
     getters: {
-      'interpreter': (visitor, target) => D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance').interpreter,
-      'isDisposed': (visitor, target) => D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance').isDisposed,
-      'isInitialized': (visitor, target) => D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance').isInitialized,
-      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance').context,
+      'interpreter': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance').interpreter,
+      'isDisposed': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance').isDisposed,
+      'isInitialized': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance').isInitialized,
+      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance').context,
     },
     methods: {
       'setContext': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance');
+        final t = D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance');
         D4.requireMinArgs(positional, 2, 'setContext');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'setContext');
         final value = D4.getRequiredArg<dynamic>(positional, 1, 'value', 'setContext');
@@ -1263,7 +1334,7 @@ BridgedClass _createD4rtInstanceBridge() {
         return null;
       },
       'setContextAll': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance');
+        final t = D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance');
         D4.requireMinArgs(positional, 1, 'setContextAll');
         if (positional.isEmpty) {
           throw ArgumentError('setContextAll: Missing required argument "values" at position 0');
@@ -1273,34 +1344,34 @@ BridgedClass _createD4rtInstanceBridge() {
         return null;
       },
       'prepareForScripts': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance');
+        final t = D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance');
         return t.prepareForScripts();
       },
       'evaluate': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance');
+        final t = D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance');
         D4.requireMinArgs(positional, 1, 'evaluate');
         final expression = D4.getRequiredArg<String>(positional, 0, 'expression', 'evaluate');
         return t.evaluate(expression);
       },
       'executeScript': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance');
+        final t = D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance');
         D4.requireMinArgs(positional, 1, 'executeScript');
         final scriptContent = D4.getRequiredArg<String>(positional, 0, 'scriptContent', 'executeScript');
         return t.executeScript(scriptContent);
       },
       'dispose': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance');
-        t.dispose();
+        final t = D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance');
+        (t as dynamic).dispose();
         return null;
       },
       'updateTomGlobal': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.D4rtInstance>(target, 'D4rtInstance');
+        final t = D4.validateTarget<$tom_build_cli_3.D4rtInstance>(target, 'D4rtInstance');
         t.updateTomGlobal();
         return null;
       },
     },
     staticGetters: {
-      'current': (visitor) => $tom_build_cli_5.D4rtInstance.current,
+      'current': (visitor) => $tom_build_cli_3.D4rtInstance.current,
     },
     constructorSignatures: {
       'currentOrCreate': 'factory D4rtInstance.currentOrCreate({BridgeConfiguration? bridgeConfiguration, TomWorkspace? workspace, WorkspaceContext? workspaceContext, TomProject? currentProject, String? workspacePath})',
@@ -1334,8 +1405,9 @@ BridgedClass _createD4rtInstanceBridge() {
 
 BridgedClass _createActionD4rtContextBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_5.ActionD4rtContext,
+    nativeType: $tom_build_cli_3.ActionD4rtContext,
     name: 'ActionD4rtContext',
+    isAssignable: (v) => v is $tom_build_cli_3.ActionD4rtContext,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'ActionD4rtContext');
@@ -1345,35 +1417,35 @@ BridgedClass _createActionD4rtContextBridge() {
             ? D4.coerceMap<String, dynamic>(named['additionalContext'], 'additionalContext')
             : const <String, dynamic>{};
         final bridgeConfiguration = D4.getOptionalNamedArg<$tom_build_cli_1.BridgeConfiguration?>(named, 'bridgeConfiguration');
-        return $tom_build_cli_5.ActionD4rtContext(workspacePath: workspacePath, projectName: projectName, actionName: actionName, additionalContext: additionalContext, bridgeConfiguration: bridgeConfiguration);
+        return $tom_build_cli_3.ActionD4rtContext(workspacePath: workspacePath, projectName: projectName, actionName: actionName, additionalContext: additionalContext, bridgeConfiguration: bridgeConfiguration);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').workspacePath,
-      'projectName': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').projectName,
-      'actionName': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').actionName,
-      'additionalContext': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').additionalContext,
-      'bridgeConfiguration': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').bridgeConfiguration,
-      'instance': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').instance,
-      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').context,
-      'isInstanceCreated': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext').isInstanceCreated,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').workspacePath,
+      'projectName': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').projectName,
+      'actionName': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').actionName,
+      'additionalContext': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').additionalContext,
+      'bridgeConfiguration': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').bridgeConfiguration,
+      'instance': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').instance,
+      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').context,
+      'isInstanceCreated': (visitor, target) => D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext').isInstanceCreated,
     },
     methods: {
       'evaluate': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext');
+        final t = D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext');
         D4.requireMinArgs(positional, 1, 'evaluate');
         final expression = D4.getRequiredArg<String>(positional, 0, 'expression', 'evaluate');
         return t.evaluate(expression);
       },
       'executeScript': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext');
+        final t = D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext');
         D4.requireMinArgs(positional, 1, 'executeScript');
         final scriptContent = D4.getRequiredArg<String>(positional, 0, 'scriptContent', 'executeScript');
         return t.executeScript(scriptContent);
       },
       'dispose': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_5.ActionD4rtContext>(target, 'ActionD4rtContext');
-        t.dispose();
+        final t = D4.validateTarget<$tom_build_cli_3.ActionD4rtContext>(target, 'ActionD4rtContext');
+        (t as dynamic).dispose();
         return null;
       },
     },
@@ -1404,8 +1476,9 @@ BridgedClass _createActionD4rtContextBridge() {
 
 BridgedClass _createParsedArgumentsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_6.ParsedArguments,
+    nativeType: $tom_build_cli_4.ParsedArguments,
     name: 'ParsedArguments',
+    isAssignable: (v) => v is $tom_build_cli_4.ParsedArguments,
     constructors: {
       '': (visitor, positional, named) {
         final globalParameters = named.containsKey('globalParameters') && named['globalParameters'] != null
@@ -1426,30 +1499,30 @@ BridgedClass _createParsedArgumentsBridge() {
             ? D4.coerceMap<String, Map<String, String>>(named['groupParameters'], 'groupParameters')
             : const <String, Map<String, String>>{};
         final actions = named.containsKey('actions') && named['actions'] != null
-            ? D4.coerceList<$tom_build_cli_6.ActionInvocation>(named['actions'], 'actions')
-            : const <$tom_build_cli_6.ActionInvocation>[];
+            ? D4.coerceList<$tom_build_cli_4.ActionInvocation>(named['actions'], 'actions')
+            : const <$tom_build_cli_4.ActionInvocation>[];
         final helpRequested = D4.getNamedArgWithDefault<bool>(named, 'helpRequested', false);
         final versionRequested = D4.getNamedArgWithDefault<bool>(named, 'versionRequested', false);
         final verbose = D4.getNamedArgWithDefault<bool>(named, 'verbose', false);
         final dryRun = D4.getNamedArgWithDefault<bool>(named, 'dryRun', false);
-        return $tom_build_cli_6.ParsedArguments(globalParameters: globalParameters, hasProjectsScope: hasProjectsScope, hasGroupsScope: hasGroupsScope, projects: projects, projectParameters: projectParameters, groups: groups, groupParameters: groupParameters, actions: actions, helpRequested: helpRequested, versionRequested: versionRequested, verbose: verbose, dryRun: dryRun);
+        return $tom_build_cli_4.ParsedArguments(globalParameters: globalParameters, hasProjectsScope: hasProjectsScope, hasGroupsScope: hasGroupsScope, projects: projects, projectParameters: projectParameters, groups: groups, groupParameters: groupParameters, actions: actions, helpRequested: helpRequested, versionRequested: versionRequested, verbose: verbose, dryRun: dryRun);
       },
     },
     getters: {
-      'globalParameters': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').globalParameters,
-      'hasProjectsScope': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').hasProjectsScope,
-      'hasGroupsScope': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').hasGroupsScope,
-      'projects': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').projects,
-      'projectParameters': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').projectParameters,
-      'groups': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').groups,
-      'groupParameters': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').groupParameters,
-      'actions': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').actions,
-      'helpRequested': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').helpRequested,
-      'versionRequested': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').versionRequested,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').dryRun,
-      'targetsAllProjects': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').targetsAllProjects,
-      'targets': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ParsedArguments>(target, 'ParsedArguments').targets,
+      'globalParameters': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').globalParameters,
+      'hasProjectsScope': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').hasProjectsScope,
+      'hasGroupsScope': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').hasGroupsScope,
+      'projects': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').projects,
+      'projectParameters': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').projectParameters,
+      'groups': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').groups,
+      'groupParameters': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').groupParameters,
+      'actions': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').actions,
+      'helpRequested': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').helpRequested,
+      'versionRequested': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').versionRequested,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').dryRun,
+      'targetsAllProjects': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').targetsAllProjects,
+      'targets': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ParsedArguments>(target, 'ParsedArguments').targets,
     },
     constructorSignatures: {
       '': 'const ParsedArguments({Map<String, String> globalParameters = const {}, bool hasProjectsScope = false, bool hasGroupsScope = false, List<String> projects = const [], Map<String, Map<String, String>> projectParameters = const {}, List<String> groups = const [], Map<String, Map<String, String>> groupParameters = const {}, List<ActionInvocation> actions = const [], bool helpRequested = false, bool versionRequested = false, bool verbose = false, bool dryRun = false})',
@@ -1479,8 +1552,9 @@ BridgedClass _createParsedArgumentsBridge() {
 
 BridgedClass _createActionInvocationBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_6.ActionInvocation,
+    nativeType: $tom_build_cli_4.ActionInvocation,
     name: 'ActionInvocation',
+    isAssignable: (v) => v is $tom_build_cli_4.ActionInvocation,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getRequiredNamedArg<String>(named, 'name', 'ActionInvocation');
@@ -1489,14 +1563,14 @@ BridgedClass _createActionInvocationBridge() {
             : const <String, String>{};
         final isInternalCommand = D4.getNamedArgWithDefault<bool>(named, 'isInternalCommand', false);
         final bypassWorkspaceAction = D4.getNamedArgWithDefault<bool>(named, 'bypassWorkspaceAction', false);
-        return $tom_build_cli_6.ActionInvocation(name: name, parameters: parameters, isInternalCommand: isInternalCommand, bypassWorkspaceAction: bypassWorkspaceAction);
+        return $tom_build_cli_4.ActionInvocation(name: name, parameters: parameters, isInternalCommand: isInternalCommand, bypassWorkspaceAction: bypassWorkspaceAction);
       },
     },
     getters: {
-      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ActionInvocation>(target, 'ActionInvocation').name,
-      'parameters': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ActionInvocation>(target, 'ActionInvocation').parameters,
-      'isInternalCommand': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ActionInvocation>(target, 'ActionInvocation').isInternalCommand,
-      'bypassWorkspaceAction': (visitor, target) => D4.validateTarget<$tom_build_cli_6.ActionInvocation>(target, 'ActionInvocation').bypassWorkspaceAction,
+      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ActionInvocation>(target, 'ActionInvocation').name,
+      'parameters': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ActionInvocation>(target, 'ActionInvocation').parameters,
+      'isInternalCommand': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ActionInvocation>(target, 'ActionInvocation').isInternalCommand,
+      'bypassWorkspaceAction': (visitor, target) => D4.validateTarget<$tom_build_cli_4.ActionInvocation>(target, 'ActionInvocation').bypassWorkspaceAction,
     },
     constructorSignatures: {
       '': 'const ActionInvocation({required String name, Map<String, String> parameters = const {}, bool isInternalCommand = false, bool bypassWorkspaceAction = false})',
@@ -1516,16 +1590,17 @@ BridgedClass _createActionInvocationBridge() {
 
 BridgedClass _createArgumentParserBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_6.ArgumentParser,
+    nativeType: $tom_build_cli_4.ArgumentParser,
     name: 'ArgumentParser',
+    isAssignable: (v) => v is $tom_build_cli_4.ArgumentParser,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_6.ArgumentParser();
+        return $tom_build_cli_4.ArgumentParser();
       },
     },
     methods: {
       'parse': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_6.ArgumentParser>(target, 'ArgumentParser');
+        final t = D4.validateTarget<$tom_build_cli_4.ArgumentParser>(target, 'ArgumentParser');
         D4.requireMinArgs(positional, 1, 'parse');
         if (positional.isEmpty) {
           throw ArgumentError('parse: Missing required argument "args" at position 0');
@@ -1535,8 +1610,8 @@ BridgedClass _createArgumentParserBridge() {
       },
     },
     staticGetters: {
-      'internalCommands': (visitor) => $tom_build_cli_6.ArgumentParser.internalCommands,
-      'argumentPrefixes': (visitor) => $tom_build_cli_6.ArgumentParser.argumentPrefixes,
+      'internalCommands': (visitor) => $tom_build_cli_4.ArgumentParser.internalCommands,
+      'argumentPrefixes': (visitor) => $tom_build_cli_4.ArgumentParser.argumentPrefixes,
     },
     constructorSignatures: {
       '': 'ArgumentParser()',
@@ -1557,48 +1632,49 @@ BridgedClass _createArgumentParserBridge() {
 
 BridgedClass _createGitHelperBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_7.GitHelper,
+    nativeType: GitHelper,
     name: 'GitHelper',
+    isAssignable: (v) => v is GitHelper,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'GitHelper');
-        return $tom_build_cli_7.GitHelper(workspacePath: workspacePath);
+        return GitHelper(workspacePath: workspacePath);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_7.GitHelper>(target, 'GitHelper').workspacePath,
+      'workspacePath': (visitor, target) => D4.validateTarget<GitHelper>(target, 'GitHelper').workspacePath,
     },
     methods: {
       'isGitRepository': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_7.GitHelper>(target, 'GitHelper');
+        final t = D4.validateTarget<GitHelper>(target, 'GitHelper');
         return t.isGitRepository();
       },
       'getChangedFiles': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_7.GitHelper>(target, 'GitHelper');
+        final t = D4.validateTarget<GitHelper>(target, 'GitHelper');
         final since = D4.getOptionalNamedArg<String?>(named, 'since');
         return t.getChangedFiles(since: since);
       },
       'getChangesSinceLastTag': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_7.GitHelper>(target, 'GitHelper');
+        final t = D4.validateTarget<GitHelper>(target, 'GitHelper');
         D4.requireMinArgs(positional, 1, 'getChangesSinceLastTag');
         final projectName = D4.getRequiredArg<String>(positional, 0, 'projectName', 'getChangesSinceLastTag');
         return t.getChangesSinceLastTag(projectName);
       },
       'hasProjectChanges': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_7.GitHelper>(target, 'GitHelper');
+        final t = D4.validateTarget<GitHelper>(target, 'GitHelper');
         D4.requireMinArgs(positional, 1, 'hasProjectChanges');
         final projectPath = D4.getRequiredArg<String>(positional, 0, 'projectPath', 'hasProjectChanges');
         return t.hasProjectChanges(projectPath);
       },
       'createTag': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_7.GitHelper>(target, 'GitHelper');
+        final t = D4.validateTarget<GitHelper>(target, 'GitHelper');
         D4.requireMinArgs(positional, 1, 'createTag');
         final tagName = D4.getRequiredArg<String>(positional, 0, 'tagName', 'createTag');
         final message = D4.getOptionalNamedArg<String?>(named, 'message');
         return t.createTag(tagName, message: message);
       },
       'commitAll': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_7.GitHelper>(target, 'GitHelper');
+        final t = D4.validateTarget<GitHelper>(target, 'GitHelper');
         D4.requireMinArgs(positional, 1, 'commitAll');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'commitAll');
         return t.commitAll(message);
@@ -1627,33 +1703,34 @@ BridgedClass _createGitHelperBridge() {
 
 BridgedClass _createInternalCommandsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_8.InternalCommands,
+    nativeType: InternalCommands,
     name: 'InternalCommands',
+    isAssignable: (v) => v is InternalCommands,
     constructors: {
     },
     staticGetters: {
-      'commands': (visitor) => $tom_build_cli_8.InternalCommands.commands,
+      'commands': (visitor) => InternalCommands.commands,
     },
     staticMethods: {
       'isInternalCommand': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'isInternalCommand');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'isInternalCommand');
-        return $tom_build_cli_8.InternalCommands.isInternalCommand(name);
+        return InternalCommands.isInternalCommand(name);
       },
       'getCommand': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'getCommand');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'getCommand');
-        return $tom_build_cli_8.InternalCommands.getCommand(name);
+        return InternalCommands.getCommand(name);
       },
       'getPrefix': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'getPrefix');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'getPrefix');
-        return $tom_build_cli_8.InternalCommands.getPrefix(name);
+        return InternalCommands.getPrefix(name);
       },
       'getCommandForPrefix': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'getCommandForPrefix');
         final prefix = D4.getRequiredArg<String>(positional, 0, 'prefix', 'getCommandForPrefix');
-        return $tom_build_cli_8.InternalCommands.getCommandForPrefix(prefix);
+        return InternalCommands.getCommandForPrefix(prefix);
       },
     },
     staticMethodSignatures: {
@@ -1674,22 +1751,23 @@ BridgedClass _createInternalCommandsBridge() {
 
 BridgedClass _createInternalCommandInfoBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_8.InternalCommandInfo,
+    nativeType: $tom_build_cli_5.InternalCommandInfo,
     name: 'InternalCommandInfo',
+    isAssignable: (v) => v is $tom_build_cli_5.InternalCommandInfo,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getRequiredNamedArg<String>(named, 'name', 'InternalCommandInfo');
         final prefix = D4.getRequiredNamedArg<String?>(named, 'prefix', 'InternalCommandInfo');
         final description = D4.getRequiredNamedArg<String>(named, 'description', 'InternalCommandInfo');
         final requiresWorkspace = D4.getRequiredNamedArg<bool>(named, 'requiresWorkspace', 'InternalCommandInfo');
-        return $tom_build_cli_8.InternalCommandInfo(name: name, prefix: prefix, description: description, requiresWorkspace: requiresWorkspace);
+        return $tom_build_cli_5.InternalCommandInfo(name: name, prefix: prefix, description: description, requiresWorkspace: requiresWorkspace);
       },
     },
     getters: {
-      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandInfo>(target, 'InternalCommandInfo').name,
-      'prefix': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandInfo>(target, 'InternalCommandInfo').prefix,
-      'description': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandInfo>(target, 'InternalCommandInfo').description,
-      'requiresWorkspace': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandInfo>(target, 'InternalCommandInfo').requiresWorkspace,
+      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandInfo>(target, 'InternalCommandInfo').name,
+      'prefix': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandInfo>(target, 'InternalCommandInfo').prefix,
+      'description': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandInfo>(target, 'InternalCommandInfo').description,
+      'requiresWorkspace': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandInfo>(target, 'InternalCommandInfo').requiresWorkspace,
     },
     constructorSignatures: {
       '': 'const InternalCommandInfo({required String name, required String? prefix, required String description, required bool requiresWorkspace})',
@@ -1709,8 +1787,9 @@ BridgedClass _createInternalCommandInfoBridge() {
 
 BridgedClass _createInternalCommandConfigBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_8.InternalCommandConfig,
+    nativeType: $tom_build_cli_5.InternalCommandConfig,
     name: 'InternalCommandConfig',
+    isAssignable: (v) => v is $tom_build_cli_5.InternalCommandConfig,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'InternalCommandConfig');
@@ -1723,18 +1802,18 @@ BridgedClass _createInternalCommandConfigBridge() {
         final groups = named.containsKey('groups') && named['groups'] != null
             ? D4.coerceList<String>(named['groups'], 'groups')
             : const <String>[];
-        return $tom_build_cli_8.InternalCommandConfig(workspacePath: workspacePath, metadataPath: metadataPath, verbose: verbose, dryRun: dryRun, projects: projects, groups: groups);
+        return $tom_build_cli_5.InternalCommandConfig(workspacePath: workspacePath, metadataPath: metadataPath, verbose: verbose, dryRun: dryRun, projects: projects, groups: groups);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').workspacePath,
-      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').metadataPath,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').dryRun,
-      'projects': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').projects,
-      'groups': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').groups,
-      'metadataDir': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').metadataDir,
-      'stateFilePath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandConfig>(target, 'InternalCommandConfig').stateFilePath,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').workspacePath,
+      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').metadataPath,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').dryRun,
+      'projects': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').projects,
+      'groups': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').groups,
+      'metadataDir': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').metadataDir,
+      'stateFilePath': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandConfig>(target, 'InternalCommandConfig').stateFilePath,
     },
     constructorSignatures: {
       '': 'const InternalCommandConfig({required String workspacePath, String? metadataPath, bool verbose = false, bool dryRun = false, List<String> projects = const [], List<String> groups = const []})',
@@ -1758,28 +1837,29 @@ BridgedClass _createInternalCommandConfigBridge() {
 
 BridgedClass _createInternalCommandResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_8.InternalCommandResult,
+    nativeType: $tom_build_cli_5.InternalCommandResult,
     name: 'InternalCommandResult',
+    isAssignable: (v) => v is $tom_build_cli_5.InternalCommandResult,
     constructors: {
       'success': (visitor, positional, named) {
         final command = D4.getRequiredNamedArg<String>(named, 'command', 'InternalCommandResult');
         final message = D4.getOptionalNamedArg<String?>(named, 'message');
         final duration = D4.getRequiredNamedArg<Duration>(named, 'duration', 'InternalCommandResult');
-        return $tom_build_cli_8.InternalCommandResult.success(command: command, message: message, duration: duration);
+        return $tom_build_cli_5.InternalCommandResult.success(command: command, message: message, duration: duration);
       },
       'failure': (visitor, positional, named) {
         final command = D4.getRequiredNamedArg<String>(named, 'command', 'InternalCommandResult');
         final error = D4.getRequiredNamedArg<String>(named, 'error', 'InternalCommandResult');
         final duration = D4.getRequiredNamedArg<Duration>(named, 'duration', 'InternalCommandResult');
-        return $tom_build_cli_8.InternalCommandResult.failure(command: command, error: error, duration: duration);
+        return $tom_build_cli_5.InternalCommandResult.failure(command: command, error: error, duration: duration);
       },
     },
     getters: {
-      'command': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandResult>(target, 'InternalCommandResult').command,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandResult>(target, 'InternalCommandResult').success,
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandResult>(target, 'InternalCommandResult').message,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandResult>(target, 'InternalCommandResult').error,
-      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandResult>(target, 'InternalCommandResult').duration,
+      'command': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandResult>(target, 'InternalCommandResult').command,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandResult>(target, 'InternalCommandResult').success,
+      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandResult>(target, 'InternalCommandResult').message,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandResult>(target, 'InternalCommandResult').error,
+      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandResult>(target, 'InternalCommandResult').duration,
     },
     constructorSignatures: {
       'success': 'factory InternalCommandResult.success({required String command, String? message, required Duration duration})',
@@ -1801,21 +1881,22 @@ BridgedClass _createInternalCommandResultBridge() {
 
 BridgedClass _createInternalCommandExecutorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_8.InternalCommandExecutor,
+    nativeType: $tom_build_cli_5.InternalCommandExecutor,
     name: 'InternalCommandExecutor',
+    isAssignable: (v) => v is $tom_build_cli_5.InternalCommandExecutor,
     constructors: {
       '': (visitor, positional, named) {
-        final config = D4.getRequiredNamedArg<$tom_build_cli_8.InternalCommandConfig>(named, 'config', 'InternalCommandExecutor');
-        final counterManager = D4.getOptionalNamedArg<$tom_build_cli_8.ActionCounterManager?>(named, 'counterManager');
-        return $tom_build_cli_8.InternalCommandExecutor(config: config, counterManager: counterManager);
+        final config = D4.getRequiredNamedArg<$tom_build_cli_5.InternalCommandConfig>(named, 'config', 'InternalCommandExecutor');
+        final counterManager = D4.getOptionalNamedArg<$tom_build_cli_5.ActionCounterManager?>(named, 'counterManager');
+        return $tom_build_cli_5.InternalCommandExecutor(config: config, counterManager: counterManager);
       },
     },
     getters: {
-      'config': (visitor, target) => D4.validateTarget<$tom_build_cli_8.InternalCommandExecutor>(target, 'InternalCommandExecutor').config,
+      'config': (visitor, target) => D4.validateTarget<$tom_build_cli_5.InternalCommandExecutor>(target, 'InternalCommandExecutor').config,
     },
     methods: {
       'execute': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_8.InternalCommandExecutor>(target, 'InternalCommandExecutor');
+        final t = D4.validateTarget<$tom_build_cli_5.InternalCommandExecutor>(target, 'InternalCommandExecutor');
         final commandName = D4.getRequiredNamedArg<String>(named, 'commandName', 'execute');
         final parameters = named.containsKey('parameters') && named['parameters'] != null
             ? D4.coerceMap<String, String>(named['parameters'], 'parameters')
@@ -1841,32 +1922,33 @@ BridgedClass _createInternalCommandExecutorBridge() {
 
 BridgedClass _createActionCounterManagerBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_8.ActionCounterManager,
+    nativeType: $tom_build_cli_5.ActionCounterManager,
     name: 'ActionCounterManager',
+    isAssignable: (v) => v is $tom_build_cli_5.ActionCounterManager,
     constructors: {
       '': (visitor, positional, named) {
         final stateFilePath = D4.getRequiredNamedArg<String>(named, 'stateFilePath', 'ActionCounterManager');
-        return $tom_build_cli_8.ActionCounterManager(stateFilePath: stateFilePath);
+        return $tom_build_cli_5.ActionCounterManager(stateFilePath: stateFilePath);
       },
     },
     getters: {
-      'stateFilePath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.ActionCounterManager>(target, 'ActionCounterManager').stateFilePath,
+      'stateFilePath': (visitor, target) => D4.validateTarget<$tom_build_cli_5.ActionCounterManager>(target, 'ActionCounterManager').stateFilePath,
     },
     methods: {
       'get': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_8.ActionCounterManager>(target, 'ActionCounterManager');
+        final t = D4.validateTarget<$tom_build_cli_5.ActionCounterManager>(target, 'ActionCounterManager');
         return t.get();
       },
       'increment': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_8.ActionCounterManager>(target, 'ActionCounterManager');
+        final t = D4.validateTarget<$tom_build_cli_5.ActionCounterManager>(target, 'ActionCounterManager');
         return t.increment();
       },
       'reset': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_8.ActionCounterManager>(target, 'ActionCounterManager');
+        final t = D4.validateTarget<$tom_build_cli_5.ActionCounterManager>(target, 'ActionCounterManager');
         return t.reset();
       },
       'set': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_8.ActionCounterManager>(target, 'ActionCounterManager');
+        final t = D4.validateTarget<$tom_build_cli_5.ActionCounterManager>(target, 'ActionCounterManager');
         D4.requireMinArgs(positional, 1, 'set');
         final value = D4.getRequiredArg<int>(positional, 0, 'value', 'set');
         return t.set(value);
@@ -1893,8 +1975,9 @@ BridgedClass _createActionCounterManagerBridge() {
 
 BridgedClass _createTomCliConfigBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_9.TomCliConfig,
+    nativeType: $tom_build_cli_6.TomCliConfig,
     name: 'TomCliConfig',
+    isAssignable: (v) => v is $tom_build_cli_6.TomCliConfig,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getOptionalNamedArg<String?>(named, 'workspacePath');
@@ -1902,21 +1985,21 @@ BridgedClass _createTomCliConfigBridge() {
         final verbose = D4.getNamedArgWithDefault<bool>(named, 'verbose', false);
         final dryRun = D4.getNamedArgWithDefault<bool>(named, 'dryRun', false);
         final stopOnFailure = D4.getNamedArgWithDefault<bool>(named, 'stopOnFailure', true);
-        return $tom_build_cli_9.TomCliConfig(workspacePath: workspacePath, metadataPath: metadataPath, verbose: verbose, dryRun: dryRun, stopOnFailure: stopOnFailure);
+        return $tom_build_cli_6.TomCliConfig(workspacePath: workspacePath, metadataPath: metadataPath, verbose: verbose, dryRun: dryRun, stopOnFailure: stopOnFailure);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig').workspacePath,
-      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig').metadataPath,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig').dryRun,
-      'stopOnFailure': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig').stopOnFailure,
-      'resolvedWorkspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig').resolvedWorkspacePath,
-      'resolvedMetadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig').resolvedMetadataPath,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig').workspacePath,
+      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig').metadataPath,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig').dryRun,
+      'stopOnFailure': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig').stopOnFailure,
+      'resolvedWorkspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig').resolvedWorkspacePath,
+      'resolvedMetadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig').resolvedMetadataPath,
     },
     methods: {
       'copyWith': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_9.TomCliConfig>(target, 'TomCliConfig');
+        final t = D4.validateTarget<$tom_build_cli_6.TomCliConfig>(target, 'TomCliConfig');
         final workspacePath = D4.getOptionalNamedArg<String?>(named, 'workspacePath');
         final metadataPath = D4.getOptionalNamedArg<String?>(named, 'metadataPath');
         final verbose = D4.getOptionalNamedArg<bool?>(named, 'verbose');
@@ -1949,43 +2032,44 @@ BridgedClass _createTomCliConfigBridge() {
 
 BridgedClass _createTomCliResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_9.TomCliResult,
+    nativeType: $tom_build_cli_6.TomCliResult,
     name: 'TomCliResult',
+    isAssignable: (v) => v is $tom_build_cli_6.TomCliResult,
     constructors: {
       'success': (visitor, positional, named) {
         final message = D4.getOptionalNamedArg<String?>(named, 'message');
         final actionResults = named.containsKey('actionResults') && named['actionResults'] != null
-            ? D4.coerceList<$tom_build_cli_15.ActionExecutionResult>(named['actionResults'], 'actionResults')
-            : const <$tom_build_cli_15.ActionExecutionResult>[];
+            ? D4.coerceList<$tom_build_cli_10.ActionExecutionResult>(named['actionResults'], 'actionResults')
+            : const <$tom_build_cli_10.ActionExecutionResult>[];
         final commandResults = named.containsKey('commandResults') && named['commandResults'] != null
-            ? D4.coerceList<$tom_build_cli_8.InternalCommandResult>(named['commandResults'], 'commandResults')
-            : const <$tom_build_cli_8.InternalCommandResult>[];
-        return $tom_build_cli_9.TomCliResult.success(message: message, actionResults: actionResults, commandResults: commandResults);
+            ? D4.coerceList<$tom_build_cli_5.InternalCommandResult>(named['commandResults'], 'commandResults')
+            : const <$tom_build_cli_5.InternalCommandResult>[];
+        return $tom_build_cli_6.TomCliResult.success(message: message, actionResults: actionResults, commandResults: commandResults);
       },
       'failure': (visitor, positional, named) {
         final error = D4.getRequiredNamedArg<String>(named, 'error', 'TomCliResult');
         final exitCode = D4.getNamedArgWithDefault<int>(named, 'exitCode', 1);
         final actionResults = named.containsKey('actionResults') && named['actionResults'] != null
-            ? D4.coerceList<$tom_build_cli_15.ActionExecutionResult>(named['actionResults'], 'actionResults')
-            : const <$tom_build_cli_15.ActionExecutionResult>[];
+            ? D4.coerceList<$tom_build_cli_10.ActionExecutionResult>(named['actionResults'], 'actionResults')
+            : const <$tom_build_cli_10.ActionExecutionResult>[];
         final commandResults = named.containsKey('commandResults') && named['commandResults'] != null
-            ? D4.coerceList<$tom_build_cli_8.InternalCommandResult>(named['commandResults'], 'commandResults')
-            : const <$tom_build_cli_8.InternalCommandResult>[];
-        return $tom_build_cli_9.TomCliResult.failure(error: error, exitCode: exitCode, actionResults: actionResults, commandResults: commandResults);
+            ? D4.coerceList<$tom_build_cli_5.InternalCommandResult>(named['commandResults'], 'commandResults')
+            : const <$tom_build_cli_5.InternalCommandResult>[];
+        return $tom_build_cli_6.TomCliResult.failure(error: error, exitCode: exitCode, actionResults: actionResults, commandResults: commandResults);
       },
       'help': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'TomCliResult');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'TomCliResult');
-        return $tom_build_cli_9.TomCliResult.help(message);
+        return $tom_build_cli_6.TomCliResult.help(message);
       },
     },
     getters: {
-      'exitCode': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliResult>(target, 'TomCliResult').exitCode,
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliResult>(target, 'TomCliResult').message,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliResult>(target, 'TomCliResult').error,
-      'actionResults': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliResult>(target, 'TomCliResult').actionResults,
-      'commandResults': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliResult>(target, 'TomCliResult').commandResults,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_9.TomCliResult>(target, 'TomCliResult').success,
+      'exitCode': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliResult>(target, 'TomCliResult').exitCode,
+      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliResult>(target, 'TomCliResult').message,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliResult>(target, 'TomCliResult').error,
+      'actionResults': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliResult>(target, 'TomCliResult').actionResults,
+      'commandResults': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliResult>(target, 'TomCliResult').commandResults,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_6.TomCliResult>(target, 'TomCliResult').success,
     },
     constructorSignatures: {
       'success': 'factory TomCliResult.success({String? message, List<ActionExecutionResult> actionResults = const [], List<InternalCommandResult> commandResults = const []})',
@@ -2009,20 +2093,21 @@ BridgedClass _createTomCliResultBridge() {
 
 BridgedClass _createTomCliBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_9.TomCli,
+    nativeType: $tom_build_cli_6.TomCli,
     name: 'TomCli',
+    isAssignable: (v) => v is $tom_build_cli_6.TomCli,
     constructors: {
       '': (visitor, positional, named) {
-        final config = D4.getOptionalNamedArg<$tom_build_cli_9.TomCliConfig?>(named, 'config');
-        final argumentParser = D4.getOptionalNamedArg<$tom_build_cli_6.ArgumentParser?>(named, 'argumentParser');
-        final commandExecutor = D4.getOptionalNamedArg<$tom_build_cli_8.InternalCommandExecutor?>(named, 'commandExecutor');
-        final actionExecutor = D4.getOptionalNamedArg<$tom_build_cli_15.ActionExecutor?>(named, 'actionExecutor');
-        return $tom_build_cli_9.TomCli(config: config, argumentParser: argumentParser, commandExecutor: commandExecutor, actionExecutor: actionExecutor);
+        final config = D4.getOptionalNamedArg<$tom_build_cli_6.TomCliConfig?>(named, 'config');
+        final argumentParser = D4.getOptionalNamedArg<$tom_build_cli_4.ArgumentParser?>(named, 'argumentParser');
+        final commandExecutor = D4.getOptionalNamedArg<$tom_build_cli_5.InternalCommandExecutor?>(named, 'commandExecutor');
+        final actionExecutor = D4.getOptionalNamedArg<$tom_build_cli_10.ActionExecutor?>(named, 'actionExecutor');
+        return $tom_build_cli_6.TomCli(config: config, argumentParser: argumentParser, commandExecutor: commandExecutor, actionExecutor: actionExecutor);
       },
     },
     methods: {
       'run': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_9.TomCli>(target, 'TomCli');
+        final t = D4.validateTarget<$tom_build_cli_6.TomCli>(target, 'TomCli');
         D4.requireMinArgs(positional, 1, 'run');
         if (positional.isEmpty) {
           throw ArgumentError('run: Missing required argument "args" at position 0');
@@ -2046,27 +2131,28 @@ BridgedClass _createTomCliBridge() {
 
 BridgedClass _createVersionBumperBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_10.VersionBumper,
+    nativeType: VersionBumper,
     name: 'VersionBumper',
+    isAssignable: (v) => v is VersionBumper,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'VersionBumper');
         final dryRun = D4.getNamedArgWithDefault<bool>(named, 'dryRun', false);
         final verbose = D4.getNamedArgWithDefault<bool>(named, 'verbose', false);
-        return $tom_build_cli_10.VersionBumper(workspacePath: workspacePath, dryRun: dryRun, verbose: verbose);
+        return VersionBumper(workspacePath: workspacePath, dryRun: dryRun, verbose: verbose);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumper>(target, 'VersionBumper').workspacePath,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumper>(target, 'VersionBumper').dryRun,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumper>(target, 'VersionBumper').verbose,
+      'workspacePath': (visitor, target) => D4.validateTarget<VersionBumper>(target, 'VersionBumper').workspacePath,
+      'dryRun': (visitor, target) => D4.validateTarget<VersionBumper>(target, 'VersionBumper').dryRun,
+      'verbose': (visitor, target) => D4.validateTarget<VersionBumper>(target, 'VersionBumper').verbose,
     },
     methods: {
       'bumpVersion': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_10.VersionBumper>(target, 'VersionBumper');
+        final t = D4.validateTarget<VersionBumper>(target, 'VersionBumper');
         D4.requireMinArgs(positional, 1, 'bumpVersion');
         final projectPath = D4.getRequiredArg<String>(positional, 0, 'projectPath', 'bumpVersion');
-        final bumpType = D4.getRequiredNamedArg<$tom_build_cli_10.BumpType>(named, 'bumpType', 'bumpVersion');
+        final bumpType = D4.getRequiredNamedArg<$tom_build_cli_7.BumpType>(named, 'bumpType', 'bumpVersion');
         return t.bumpVersion(projectPath, bumpType: bumpType);
       },
     },
@@ -2090,29 +2176,30 @@ BridgedClass _createVersionBumperBridge() {
 
 BridgedClass _createVersionBumpResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_10.VersionBumpResult,
+    nativeType: $tom_build_cli_7.VersionBumpResult,
     name: 'VersionBumpResult',
+    isAssignable: (v) => v is $tom_build_cli_7.VersionBumpResult,
     constructors: {
       'success': (visitor, positional, named) {
         final projectPath = D4.getRequiredNamedArg<String>(named, 'projectPath', 'VersionBumpResult');
         final oldVersion = D4.getRequiredNamedArg<String>(named, 'oldVersion', 'VersionBumpResult');
         final newVersion = D4.getRequiredNamedArg<String>(named, 'newVersion', 'VersionBumpResult');
         final dryRun = D4.getRequiredNamedArg<bool>(named, 'dryRun', 'VersionBumpResult');
-        return $tom_build_cli_10.VersionBumpResult.success(projectPath: projectPath, oldVersion: oldVersion, newVersion: newVersion, dryRun: dryRun);
+        return $tom_build_cli_7.VersionBumpResult.success(projectPath: projectPath, oldVersion: oldVersion, newVersion: newVersion, dryRun: dryRun);
       },
       'failure': (visitor, positional, named) {
         final projectPath = D4.getRequiredNamedArg<String>(named, 'projectPath', 'VersionBumpResult');
         final error = D4.getRequiredNamedArg<String>(named, 'error', 'VersionBumpResult');
-        return $tom_build_cli_10.VersionBumpResult.failure(projectPath: projectPath, error: error);
+        return $tom_build_cli_7.VersionBumpResult.failure(projectPath: projectPath, error: error);
       },
     },
     getters: {
-      'projectPath': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumpResult>(target, 'VersionBumpResult').projectPath,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumpResult>(target, 'VersionBumpResult').success,
-      'oldVersion': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumpResult>(target, 'VersionBumpResult').oldVersion,
-      'newVersion': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumpResult>(target, 'VersionBumpResult').newVersion,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumpResult>(target, 'VersionBumpResult').error,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_10.VersionBumpResult>(target, 'VersionBumpResult').dryRun,
+      'projectPath': (visitor, target) => D4.validateTarget<$tom_build_cli_7.VersionBumpResult>(target, 'VersionBumpResult').projectPath,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_7.VersionBumpResult>(target, 'VersionBumpResult').success,
+      'oldVersion': (visitor, target) => D4.validateTarget<$tom_build_cli_7.VersionBumpResult>(target, 'VersionBumpResult').oldVersion,
+      'newVersion': (visitor, target) => D4.validateTarget<$tom_build_cli_7.VersionBumpResult>(target, 'VersionBumpResult').newVersion,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_7.VersionBumpResult>(target, 'VersionBumpResult').error,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_7.VersionBumpResult>(target, 'VersionBumpResult').dryRun,
     },
     constructorSignatures: {
       'success': 'factory VersionBumpResult.success({required String projectPath, required String oldVersion, required String newVersion, required bool dryRun})',
@@ -2135,24 +2222,25 @@ BridgedClass _createVersionBumpResultBridge() {
 
 BridgedClass _createWorkspaceDiscoveryResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_11.WorkspaceDiscoveryResult,
+    nativeType: $tom_build_cli_8.WorkspaceDiscoveryResult,
     name: 'WorkspaceDiscoveryResult',
+    isAssignable: (v) => v is $tom_build_cli_8.WorkspaceDiscoveryResult,
     constructors: {
       'found': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'WorkspaceDiscoveryResult');
         final workspacePath = D4.getRequiredArg<String>(positional, 0, 'workspacePath', 'WorkspaceDiscoveryResult');
-        return $tom_build_cli_11.WorkspaceDiscoveryResult.found(workspacePath);
+        return $tom_build_cli_8.WorkspaceDiscoveryResult.found(workspacePath);
       },
       'notFound': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'WorkspaceDiscoveryResult');
         final searchStart = D4.getRequiredArg<String>(positional, 0, 'searchStart', 'WorkspaceDiscoveryResult');
-        return $tom_build_cli_11.WorkspaceDiscoveryResult.notFound(searchStart);
+        return $tom_build_cli_8.WorkspaceDiscoveryResult.notFound(searchStart);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceDiscoveryResult>(target, 'WorkspaceDiscoveryResult').workspacePath,
-      'found': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceDiscoveryResult>(target, 'WorkspaceDiscoveryResult').found,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceDiscoveryResult>(target, 'WorkspaceDiscoveryResult').error,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceDiscoveryResult>(target, 'WorkspaceDiscoveryResult').workspacePath,
+      'found': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceDiscoveryResult>(target, 'WorkspaceDiscoveryResult').found,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceDiscoveryResult>(target, 'WorkspaceDiscoveryResult').error,
     },
     constructorSignatures: {
       'found': 'factory WorkspaceDiscoveryResult.found(String workspacePath)',
@@ -2172,50 +2260,51 @@ BridgedClass _createWorkspaceDiscoveryResultBridge() {
 
 BridgedClass _createWorkspaceContextBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_11.WorkspaceContext,
+    nativeType: $tom_build_cli_8.WorkspaceContext,
     name: 'WorkspaceContext',
+    isAssignable: (v) => v is $tom_build_cli_8.WorkspaceContext,
     constructors: {
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').workspacePath,
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').workspace,
-      'projects': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').projects,
-      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').metadataPath,
-      'stateFilePath': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').stateFilePath,
-      'masterFilesGenerated': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').masterFilesGenerated,
-      'actions': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').actions,
-      'pipelines': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').pipelines,
-      'groups': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').groups,
-      'projectsInBuildOrder': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext').projectsInBuildOrder,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').workspacePath,
+      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').workspace,
+      'projects': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').projects,
+      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').metadataPath,
+      'stateFilePath': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').stateFilePath,
+      'masterFilesGenerated': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').masterFilesGenerated,
+      'actions': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').actions,
+      'pipelines': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').pipelines,
+      'groups': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').groups,
+      'projectsInBuildOrder': (visitor, target) => D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext').projectsInBuildOrder,
     },
     methods: {
       'markMasterFilesGenerated': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext');
+        final t = D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext');
         t.markMasterFilesGenerated();
         return null;
       },
       'ensureMasterFilesGenerated': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext');
+        final t = D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext');
         return t.ensureMasterFilesGenerated();
       },
       'getProjectsInGroup': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_11.WorkspaceContext>(target, 'WorkspaceContext');
+        final t = D4.validateTarget<$tom_build_cli_8.WorkspaceContext>(target, 'WorkspaceContext');
         D4.requireMinArgs(positional, 1, 'getProjectsInGroup');
         final groupName = D4.getRequiredArg<String>(positional, 0, 'groupName', 'getProjectsInGroup');
         return t.getProjectsInGroup(groupName);
       },
     },
     staticGetters: {
-      'current': (visitor) => $tom_build_cli_11.WorkspaceContext.current,
+      'current': (visitor) => $tom_build_cli_8.WorkspaceContext.current,
     },
     staticMethods: {
       'load': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'load');
         final workspacePath = D4.getRequiredArg<String>(positional, 0, 'workspacePath', 'load');
-        return $tom_build_cli_11.WorkspaceContext.load(workspacePath);
+        return $tom_build_cli_8.WorkspaceContext.load(workspacePath);
       },
       'reset': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_11.WorkspaceContext.reset();
+        return $tom_build_cli_8.WorkspaceContext.reset();
       },
     },
     methodSignatures: {
@@ -2251,20 +2340,21 @@ BridgedClass _createWorkspaceContextBridge() {
 
 BridgedClass _createMasterGenerationSummaryBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_11.MasterGenerationSummary,
+    nativeType: $tom_build_cli_8.MasterGenerationSummary,
     name: 'MasterGenerationSummary',
+    isAssignable: (v) => v is $tom_build_cli_8.MasterGenerationSummary,
     constructors: {
       '': (visitor, positional, named) {
         final success = D4.getRequiredNamedArg<bool>(named, 'success', 'MasterGenerationSummary');
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'MasterGenerationSummary');
         final filesGenerated = D4.getRequiredNamedArg<int>(named, 'filesGenerated', 'MasterGenerationSummary');
-        return $tom_build_cli_11.MasterGenerationSummary(success: success, message: message, filesGenerated: filesGenerated);
+        return $tom_build_cli_8.MasterGenerationSummary(success: success, message: message, filesGenerated: filesGenerated);
       },
     },
     getters: {
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_11.MasterGenerationSummary>(target, 'MasterGenerationSummary').success,
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_11.MasterGenerationSummary>(target, 'MasterGenerationSummary').message,
-      'filesGenerated': (visitor, target) => D4.validateTarget<$tom_build_cli_11.MasterGenerationSummary>(target, 'MasterGenerationSummary').filesGenerated,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_8.MasterGenerationSummary>(target, 'MasterGenerationSummary').success,
+      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_8.MasterGenerationSummary>(target, 'MasterGenerationSummary').message,
+      'filesGenerated': (visitor, target) => D4.validateTarget<$tom_build_cli_8.MasterGenerationSummary>(target, 'MasterGenerationSummary').filesGenerated,
     },
     constructorSignatures: {
       '': 'const MasterGenerationSummary({required bool success, required String message, required int filesGenerated})',
@@ -2283,21 +2373,22 @@ BridgedClass _createMasterGenerationSummaryBridge() {
 
 BridgedClass _createWorkspaceContextExceptionBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_11.WorkspaceContextException,
+    nativeType: WorkspaceContextException,
     name: 'WorkspaceContextException',
+    isAssignable: (v) => v is WorkspaceContextException,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'WorkspaceContextException');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'WorkspaceContextException');
-        return $tom_build_cli_11.WorkspaceContextException(message);
+        return WorkspaceContextException(message);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_11.WorkspaceContextException>(target, 'WorkspaceContextException').message,
+      'message': (visitor, target) => D4.validateTarget<WorkspaceContextException>(target, 'WorkspaceContextException').message,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_11.WorkspaceContextException>(target, 'WorkspaceContextException');
+        final t = D4.validateTarget<WorkspaceContextException>(target, 'WorkspaceContextException');
         return t.toString();
       },
     },
@@ -2319,35 +2410,36 @@ BridgedClass _createWorkspaceContextExceptionBridge() {
 
 BridgedClass _createConfigLoaderBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_12.ConfigLoader,
+    nativeType: ConfigLoader,
     name: 'ConfigLoader',
+    isAssignable: (v) => v is ConfigLoader,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_12.ConfigLoader();
+        return ConfigLoader();
       },
     },
     methods: {
       'loadWorkspaceConfig': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_12.ConfigLoader>(target, 'ConfigLoader');
+        final t = D4.validateTarget<ConfigLoader>(target, 'ConfigLoader');
         D4.requireMinArgs(positional, 1, 'loadWorkspaceConfig');
         final workspaceDir = D4.getRequiredArg<String>(positional, 0, 'workspaceDir', 'loadWorkspaceConfig');
         return t.loadWorkspaceConfig(workspaceDir);
       },
       'loadProjectConfig': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_12.ConfigLoader>(target, 'ConfigLoader');
+        final t = D4.validateTarget<ConfigLoader>(target, 'ConfigLoader');
         D4.requireMinArgs(positional, 2, 'loadProjectConfig');
         final projectDir = D4.getRequiredArg<String>(positional, 0, 'projectDir', 'loadProjectConfig');
         final projectName = D4.getRequiredArg<String>(positional, 1, 'projectName', 'loadProjectConfig');
         return t.loadProjectConfig(projectDir, projectName);
       },
       'loadYamlFile': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_12.ConfigLoader>(target, 'ConfigLoader');
+        final t = D4.validateTarget<ConfigLoader>(target, 'ConfigLoader');
         D4.requireMinArgs(positional, 1, 'loadYamlFile');
         final filePath = D4.getRequiredArg<String>(positional, 0, 'filePath', 'loadYamlFile');
         return t.loadYamlFile(filePath);
       },
       'loadWorkspaceWithImports': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_12.ConfigLoader>(target, 'ConfigLoader');
+        final t = D4.validateTarget<ConfigLoader>(target, 'ConfigLoader');
         D4.requireMinArgs(positional, 1, 'loadWorkspaceWithImports');
         final workspaceDir = D4.getRequiredArg<String>(positional, 0, 'workspaceDir', 'loadWorkspaceWithImports');
         return t.loadWorkspaceWithImports(workspaceDir);
@@ -2371,26 +2463,27 @@ BridgedClass _createConfigLoaderBridge() {
 
 BridgedClass _createConfigLoadExceptionBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_12.ConfigLoadException,
+    nativeType: ConfigLoadException,
     name: 'ConfigLoadException',
+    isAssignable: (v) => v is ConfigLoadException,
     constructors: {
       '': (visitor, positional, named) {
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'ConfigLoadException');
         final filePath = D4.getRequiredNamedArg<String>(named, 'filePath', 'ConfigLoadException');
         final line = D4.getOptionalNamedArg<int?>(named, 'line');
         final resolution = D4.getRequiredNamedArg<String>(named, 'resolution', 'ConfigLoadException');
-        return $tom_build_cli_12.ConfigLoadException(message: message, filePath: filePath, line: line, resolution: resolution);
+        return ConfigLoadException(message: message, filePath: filePath, line: line, resolution: resolution);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_12.ConfigLoadException>(target, 'ConfigLoadException').message,
-      'filePath': (visitor, target) => D4.validateTarget<$tom_build_cli_12.ConfigLoadException>(target, 'ConfigLoadException').filePath,
-      'line': (visitor, target) => D4.validateTarget<$tom_build_cli_12.ConfigLoadException>(target, 'ConfigLoadException').line,
-      'resolution': (visitor, target) => D4.validateTarget<$tom_build_cli_12.ConfigLoadException>(target, 'ConfigLoadException').resolution,
+      'message': (visitor, target) => D4.validateTarget<ConfigLoadException>(target, 'ConfigLoadException').message,
+      'filePath': (visitor, target) => D4.validateTarget<ConfigLoadException>(target, 'ConfigLoadException').filePath,
+      'line': (visitor, target) => D4.validateTarget<ConfigLoadException>(target, 'ConfigLoadException').line,
+      'resolution': (visitor, target) => D4.validateTarget<ConfigLoadException>(target, 'ConfigLoadException').resolution,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_12.ConfigLoadException>(target, 'ConfigLoadException');
+        final t = D4.validateTarget<ConfigLoadException>(target, 'ConfigLoadException');
         return t.toString();
       },
     },
@@ -2415,16 +2508,17 @@ BridgedClass _createConfigLoadExceptionBridge() {
 
 BridgedClass _createConfigMergerBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_13.ConfigMerger,
+    nativeType: ConfigMerger,
     name: 'ConfigMerger',
+    isAssignable: (v) => v is ConfigMerger,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_13.ConfigMerger();
+        return ConfigMerger();
       },
     },
     methods: {
       'deepMerge': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_13.ConfigMerger>(target, 'ConfigMerger');
+        final t = D4.validateTarget<ConfigMerger>(target, 'ConfigMerger');
         D4.requireMinArgs(positional, 2, 'deepMerge');
         if (positional.isEmpty) {
           throw ArgumentError('deepMerge: Missing required argument "base" at position 0');
@@ -2437,7 +2531,7 @@ BridgedClass _createConfigMergerBridge() {
         return t.deepMerge(base, override);
       },
       'mergeAll': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_13.ConfigMerger>(target, 'ConfigMerger');
+        final t = D4.validateTarget<ConfigMerger>(target, 'ConfigMerger');
         D4.requireMinArgs(positional, 1, 'mergeAll');
         if (positional.isEmpty) {
           throw ArgumentError('mergeAll: Missing required argument "configs" at position 0');
@@ -2446,7 +2540,7 @@ BridgedClass _createConfigMergerBridge() {
         return t.mergeAll(configs);
       },
       'mergeProjectConfig': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_13.ConfigMerger>(target, 'ConfigMerger');
+        final t = D4.validateTarget<ConfigMerger>(target, 'ConfigMerger');
         final autoDetected = D4.coerceMapOrNull<String, dynamic>(named['autoDetected'], 'autoDetected');
         final projectTypeDefaults = D4.coerceMapOrNull<String, dynamic>(named['projectTypeDefaults'], 'projectTypeDefaults');
         final groupOverrides = D4.coerceMapOrNull<String, dynamic>(named['groupOverrides'], 'groupOverrides');
@@ -2474,28 +2568,29 @@ BridgedClass _createConfigMergerBridge() {
 
 BridgedClass _createValidationResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_14.ValidationResult,
+    nativeType: $tom_build_cli_9.ValidationResult,
     name: 'ValidationResult',
+    isAssignable: (v) => v is $tom_build_cli_9.ValidationResult,
     constructors: {
       'success': (visitor, positional, named) {
-        return $tom_build_cli_14.ValidationResult.success();
+        return $tom_build_cli_9.ValidationResult.success();
       },
       'failure': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'ValidationResult');
         if (positional.isEmpty) {
           throw ArgumentError('ValidationResult: Missing required argument "errors" at position 0');
         }
-        final errors = D4.coerceList<$tom_build_cli_14.ConfigValidationError>(positional[0], 'errors');
-        return $tom_build_cli_14.ValidationResult.failure(errors);
+        final errors = D4.coerceList<$tom_build_cli_9.ConfigValidationError>(positional[0], 'errors');
+        return $tom_build_cli_9.ValidationResult.failure(errors);
       },
     },
     getters: {
-      'isValid': (visitor, target) => D4.validateTarget<$tom_build_cli_14.ValidationResult>(target, 'ValidationResult').isValid,
-      'errors': (visitor, target) => D4.validateTarget<$tom_build_cli_14.ValidationResult>(target, 'ValidationResult').errors,
+      'isValid': (visitor, target) => D4.validateTarget<$tom_build_cli_9.ValidationResult>(target, 'ValidationResult').isValid,
+      'errors': (visitor, target) => D4.validateTarget<$tom_build_cli_9.ValidationResult>(target, 'ValidationResult').errors,
     },
     methods: {
       'formatErrors': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_14.ValidationResult>(target, 'ValidationResult');
+        final t = D4.validateTarget<$tom_build_cli_9.ValidationResult>(target, 'ValidationResult');
         return t.formatErrors();
       },
     },
@@ -2519,26 +2614,27 @@ BridgedClass _createValidationResultBridge() {
 
 BridgedClass _createConfigValidationErrorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_14.ConfigValidationError,
+    nativeType: $tom_build_cli_9.ConfigValidationError,
     name: 'ConfigValidationError',
+    isAssignable: (v) => v is $tom_build_cli_9.ConfigValidationError,
     constructors: {
       '': (visitor, positional, named) {
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'ConfigValidationError');
         final filePath = D4.getRequiredNamedArg<String>(named, 'filePath', 'ConfigValidationError');
         final line = D4.getOptionalNamedArg<int?>(named, 'line');
         final resolution = D4.getRequiredNamedArg<String>(named, 'resolution', 'ConfigValidationError');
-        return $tom_build_cli_14.ConfigValidationError(message: message, filePath: filePath, line: line, resolution: resolution);
+        return $tom_build_cli_9.ConfigValidationError(message: message, filePath: filePath, line: line, resolution: resolution);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_14.ConfigValidationError>(target, 'ConfigValidationError').message,
-      'filePath': (visitor, target) => D4.validateTarget<$tom_build_cli_14.ConfigValidationError>(target, 'ConfigValidationError').filePath,
-      'line': (visitor, target) => D4.validateTarget<$tom_build_cli_14.ConfigValidationError>(target, 'ConfigValidationError').line,
-      'resolution': (visitor, target) => D4.validateTarget<$tom_build_cli_14.ConfigValidationError>(target, 'ConfigValidationError').resolution,
+      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_9.ConfigValidationError>(target, 'ConfigValidationError').message,
+      'filePath': (visitor, target) => D4.validateTarget<$tom_build_cli_9.ConfigValidationError>(target, 'ConfigValidationError').filePath,
+      'line': (visitor, target) => D4.validateTarget<$tom_build_cli_9.ConfigValidationError>(target, 'ConfigValidationError').line,
+      'resolution': (visitor, target) => D4.validateTarget<$tom_build_cli_9.ConfigValidationError>(target, 'ConfigValidationError').resolution,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_14.ConfigValidationError>(target, 'ConfigValidationError');
+        final t = D4.validateTarget<$tom_build_cli_9.ConfigValidationError>(target, 'ConfigValidationError');
         return t.toString();
       },
     },
@@ -2563,30 +2659,31 @@ BridgedClass _createConfigValidationErrorBridge() {
 
 BridgedClass _createConfigValidatorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_14.ConfigValidator,
+    nativeType: ConfigValidator,
     name: 'ConfigValidator',
+    isAssignable: (v) => v is ConfigValidator,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_14.ConfigValidator();
+        return ConfigValidator();
       },
     },
     methods: {
       'validateWorkspace': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_14.ConfigValidator>(target, 'ConfigValidator');
+        final t = D4.validateTarget<ConfigValidator>(target, 'ConfigValidator');
         D4.requireMinArgs(positional, 2, 'validateWorkspace');
         final workspace = D4.getRequiredArg<$tom_build_1.TomWorkspace>(positional, 0, 'workspace', 'validateWorkspace');
         final filePath = D4.getRequiredArg<String>(positional, 1, 'filePath', 'validateWorkspace');
         return t.validateWorkspace(workspace, filePath);
       },
       'validateProject': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_14.ConfigValidator>(target, 'ConfigValidator');
+        final t = D4.validateTarget<ConfigValidator>(target, 'ConfigValidator');
         D4.requireMinArgs(positional, 2, 'validateProject');
         final project = D4.getRequiredArg<$tom_build_1.TomProject>(positional, 0, 'project', 'validateProject');
         final filePath = D4.getRequiredArg<String>(positional, 1, 'filePath', 'validateProject');
         return t.validateProject(project, filePath);
       },
       'validateMaster': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_14.ConfigValidator>(target, 'ConfigValidator');
+        final t = D4.validateTarget<ConfigValidator>(target, 'ConfigValidator');
         D4.requireMinArgs(positional, 2, 'validateMaster');
         final master = D4.getRequiredArg<$tom_build_1.TomMaster>(positional, 0, 'master', 'validateMaster');
         final filePath = D4.getRequiredArg<String>(positional, 1, 'filePath', 'validateMaster');
@@ -2610,8 +2707,9 @@ BridgedClass _createConfigValidatorBridge() {
 
 BridgedClass _createActionExecutorConfigBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_15.ActionExecutorConfig,
+    nativeType: $tom_build_cli_10.ActionExecutorConfig,
     name: 'ActionExecutorConfig',
+    isAssignable: (v) => v is $tom_build_cli_10.ActionExecutorConfig,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'ActionExecutorConfig');
@@ -2621,16 +2719,16 @@ BridgedClass _createActionExecutorConfigBridge() {
         final environment = named.containsKey('environment') && named['environment'] != null
             ? D4.coerceMap<String, String>(named['environment'], 'environment')
             : const <String, String>{};
-        return $tom_build_cli_15.ActionExecutorConfig(workspacePath: workspacePath, metadataPath: metadataPath, verbose: verbose, dryRun: dryRun, environment: environment);
+        return $tom_build_cli_10.ActionExecutorConfig(workspacePath: workspacePath, metadataPath: metadataPath, verbose: verbose, dryRun: dryRun, environment: environment);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutorConfig>(target, 'ActionExecutorConfig').workspacePath,
-      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutorConfig>(target, 'ActionExecutorConfig').metadataPath,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutorConfig>(target, 'ActionExecutorConfig').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutorConfig>(target, 'ActionExecutorConfig').dryRun,
-      'environment': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutorConfig>(target, 'ActionExecutorConfig').environment,
-      'metadataDir': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutorConfig>(target, 'ActionExecutorConfig').metadataDir,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutorConfig>(target, 'ActionExecutorConfig').workspacePath,
+      'metadataPath': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutorConfig>(target, 'ActionExecutorConfig').metadataPath,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutorConfig>(target, 'ActionExecutorConfig').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutorConfig>(target, 'ActionExecutorConfig').dryRun,
+      'environment': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutorConfig>(target, 'ActionExecutorConfig').environment,
+      'metadataDir': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutorConfig>(target, 'ActionExecutorConfig').metadataDir,
     },
     constructorSignatures: {
       '': 'const ActionExecutorConfig({required String workspacePath, String? metadataPath, bool verbose = false, bool dryRun = false, Map<String, String> environment = const {}})',
@@ -2652,8 +2750,9 @@ BridgedClass _createActionExecutorConfigBridge() {
 
 BridgedClass _createActionExecutionResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_15.ActionExecutionResult,
+    nativeType: $tom_build_cli_10.ActionExecutionResult,
     name: 'ActionExecutionResult',
+    isAssignable: (v) => v is $tom_build_cli_10.ActionExecutionResult,
     constructors: {
       'success': (visitor, positional, named) {
         final projectName = D4.getRequiredNamedArg<String>(named, 'projectName', 'ActionExecutionResult');
@@ -2661,28 +2760,28 @@ BridgedClass _createActionExecutionResultBridge() {
         if (!named.containsKey('commandResults') || named['commandResults'] == null) {
           throw ArgumentError('ActionExecutionResult: Missing required named argument "commandResults"');
         }
-        final commandResults = D4.coerceList<$tom_build_cli_16.CommandResult>(named['commandResults'], 'commandResults');
+        final commandResults = D4.coerceList<$tom_build_cli_11.CommandResult>(named['commandResults'], 'commandResults');
         final duration = D4.getRequiredNamedArg<Duration>(named, 'duration', 'ActionExecutionResult');
-        return $tom_build_cli_15.ActionExecutionResult.success(projectName: projectName, actionName: actionName, commandResults: commandResults, duration: duration);
+        return $tom_build_cli_10.ActionExecutionResult.success(projectName: projectName, actionName: actionName, commandResults: commandResults, duration: duration);
       },
       'failure': (visitor, positional, named) {
         final projectName = D4.getRequiredNamedArg<String>(named, 'projectName', 'ActionExecutionResult');
         final actionName = D4.getRequiredNamedArg<String>(named, 'actionName', 'ActionExecutionResult');
         final error = D4.getRequiredNamedArg<String>(named, 'error', 'ActionExecutionResult');
         final commandResults = named.containsKey('commandResults') && named['commandResults'] != null
-            ? D4.coerceList<$tom_build_cli_16.CommandResult>(named['commandResults'], 'commandResults')
-            : const <$tom_build_cli_16.CommandResult>[];
+            ? D4.coerceList<$tom_build_cli_11.CommandResult>(named['commandResults'], 'commandResults')
+            : const <$tom_build_cli_11.CommandResult>[];
         final duration = D4.getNamedArgWithDefault<Duration>(named, 'duration', Duration.zero);
-        return $tom_build_cli_15.ActionExecutionResult.failure(projectName: projectName, actionName: actionName, error: error, commandResults: commandResults, duration: duration);
+        return $tom_build_cli_10.ActionExecutionResult.failure(projectName: projectName, actionName: actionName, error: error, commandResults: commandResults, duration: duration);
       },
     },
     getters: {
-      'projectName': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutionResult>(target, 'ActionExecutionResult').projectName,
-      'actionName': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutionResult>(target, 'ActionExecutionResult').actionName,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutionResult>(target, 'ActionExecutionResult').success,
-      'commandResults': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutionResult>(target, 'ActionExecutionResult').commandResults,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutionResult>(target, 'ActionExecutionResult').error,
-      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutionResult>(target, 'ActionExecutionResult').duration,
+      'projectName': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutionResult>(target, 'ActionExecutionResult').projectName,
+      'actionName': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutionResult>(target, 'ActionExecutionResult').actionName,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutionResult>(target, 'ActionExecutionResult').success,
+      'commandResults': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutionResult>(target, 'ActionExecutionResult').commandResults,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutionResult>(target, 'ActionExecutionResult').error,
+      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutionResult>(target, 'ActionExecutionResult').duration,
     },
     constructorSignatures: {
       'success': 'factory ActionExecutionResult.success({required String projectName, required String actionName, required List<CommandResult> commandResults, required Duration duration})',
@@ -2705,30 +2804,31 @@ BridgedClass _createActionExecutionResultBridge() {
 
 BridgedClass _createActionExecutorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_15.ActionExecutor,
+    nativeType: $tom_build_cli_10.ActionExecutor,
     name: 'ActionExecutor',
+    isAssignable: (v) => v is $tom_build_cli_10.ActionExecutor,
     constructors: {
       '': (visitor, positional, named) {
-        final config = D4.getRequiredNamedArg<$tom_build_cli_15.ActionExecutorConfig>(named, 'config', 'ActionExecutor');
-        final commandRunner = D4.getOptionalNamedArg<$tom_build_cli_16.CommandRunner?>(named, 'commandRunner');
-        final tomplateProcessor = D4.getOptionalNamedArg<$tom_build_cli_26.TomplateProcessor?>(named, 'tomplateProcessor');
-        return $tom_build_cli_15.ActionExecutor(config: config, commandRunner: commandRunner, tomplateProcessor: tomplateProcessor);
+        final config = D4.getRequiredNamedArg<$tom_build_cli_10.ActionExecutorConfig>(named, 'config', 'ActionExecutor');
+        final commandRunner = D4.getOptionalNamedArg<$tom_build_cli_11.CommandRunner?>(named, 'commandRunner');
+        final tomplateProcessor = D4.getOptionalNamedArg<$tom_build_cli_21.TomplateProcessor?>(named, 'tomplateProcessor');
+        return $tom_build_cli_10.ActionExecutor(config: config, commandRunner: commandRunner, tomplateProcessor: tomplateProcessor);
       },
     },
     getters: {
-      'config': (visitor, target) => D4.validateTarget<$tom_build_cli_15.ActionExecutor>(target, 'ActionExecutor').config,
+      'config': (visitor, target) => D4.validateTarget<$tom_build_cli_10.ActionExecutor>(target, 'ActionExecutor').config,
     },
     methods: {
       'executeAction': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_15.ActionExecutor>(target, 'ActionExecutor');
+        final t = D4.validateTarget<$tom_build_cli_10.ActionExecutor>(target, 'ActionExecutor');
         final actionName = D4.getRequiredNamedArg<String>(named, 'actionName', 'executeAction');
         final projectName = D4.getRequiredNamedArg<String>(named, 'projectName', 'executeAction');
-        final additionalModes = D4.getOptionalNamedArg<Set<String>?>(named, 'additionalModes');
+        final additionalModes = D4.coerceSetOrNull<String>(named['additionalModes'], 'additionalModes');
         final parameters = D4.coerceMapOrNull<String, String>(named['parameters'], 'parameters');
         return t.executeAction(actionName: actionName, projectName: projectName, additionalModes: additionalModes, parameters: parameters);
       },
       'executeActionOnProjects': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_15.ActionExecutor>(target, 'ActionExecutor');
+        final t = D4.validateTarget<$tom_build_cli_10.ActionExecutor>(target, 'ActionExecutor');
         final actionName = D4.getRequiredNamedArg<String>(named, 'actionName', 'executeActionOnProjects');
         if (!named.containsKey('projectNames') || named['projectNames'] == null) {
           throw ArgumentError('executeActionOnProjects: Missing required named argument "projectNames"');
@@ -2757,15 +2857,16 @@ BridgedClass _createActionExecutorBridge() {
 
 BridgedClass _createCommandResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_16.CommandResult,
+    nativeType: $tom_build_cli_11.CommandResult,
     name: 'CommandResult',
+    isAssignable: (v) => v is $tom_build_cli_11.CommandResult,
     constructors: {
       'success': (visitor, positional, named) {
         final command = D4.getRequiredNamedArg<String>(named, 'command', 'CommandResult');
         final stdout = D4.getRequiredNamedArg<String>(named, 'stdout', 'CommandResult');
         final stderr = D4.getNamedArgWithDefault<String>(named, 'stderr', '');
         final duration = D4.getNamedArgWithDefault<Duration>(named, 'duration', Duration.zero);
-        return $tom_build_cli_16.CommandResult.success(command: command, stdout: stdout, stderr: stderr, duration: duration);
+        return $tom_build_cli_11.CommandResult.success(command: command, stdout: stdout, stderr: stderr, duration: duration);
       },
       'failure': (visitor, positional, named) {
         final command = D4.getRequiredNamedArg<String>(named, 'command', 'CommandResult');
@@ -2773,16 +2874,16 @@ BridgedClass _createCommandResultBridge() {
         final stdout = D4.getNamedArgWithDefault<String>(named, 'stdout', '');
         final stderr = D4.getNamedArgWithDefault<String>(named, 'stderr', '');
         final duration = D4.getNamedArgWithDefault<Duration>(named, 'duration', Duration.zero);
-        return $tom_build_cli_16.CommandResult.failure(command: command, exitCode: exitCode, stdout: stdout, stderr: stderr, duration: duration);
+        return $tom_build_cli_11.CommandResult.failure(command: command, exitCode: exitCode, stdout: stdout, stderr: stderr, duration: duration);
       },
     },
     getters: {
-      'command': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandResult>(target, 'CommandResult').command,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandResult>(target, 'CommandResult').success,
-      'exitCode': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandResult>(target, 'CommandResult').exitCode,
-      'stdout': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandResult>(target, 'CommandResult').stdout,
-      'stderr': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandResult>(target, 'CommandResult').stderr,
-      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandResult>(target, 'CommandResult').duration,
+      'command': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandResult>(target, 'CommandResult').command,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandResult>(target, 'CommandResult').success,
+      'exitCode': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandResult>(target, 'CommandResult').exitCode,
+      'stdout': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandResult>(target, 'CommandResult').stdout,
+      'stderr': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandResult>(target, 'CommandResult').stderr,
+      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandResult>(target, 'CommandResult').duration,
     },
     constructorSignatures: {
       'success': 'factory CommandResult.success({required String command, required String stdout, String stderr = \'\', Duration duration = Duration.zero})',
@@ -2805,22 +2906,23 @@ BridgedClass _createCommandResultBridge() {
 
 BridgedClass _createCommandRunnerBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_16.CommandRunner,
+    nativeType: $tom_build_cli_11.CommandRunner,
     name: 'CommandRunner',
+    isAssignable: (v) => v is $tom_build_cli_11.CommandRunner,
     constructors: {
       '': (visitor, positional, named) {
         final shell = D4.getNamedArgWithDefault<bool>(named, 'shell', true);
         final defaultTimeout = D4.getNamedArgWithDefault<Duration>(named, 'defaultTimeout', const Duration(minutes: 5));
-        return $tom_build_cli_16.CommandRunner(shell: shell, defaultTimeout: defaultTimeout);
+        return $tom_build_cli_11.CommandRunner(shell: shell, defaultTimeout: defaultTimeout);
       },
     },
     getters: {
-      'shell': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandRunner>(target, 'CommandRunner').shell,
-      'defaultTimeout': (visitor, target) => D4.validateTarget<$tom_build_cli_16.CommandRunner>(target, 'CommandRunner').defaultTimeout,
+      'shell': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandRunner>(target, 'CommandRunner').shell,
+      'defaultTimeout': (visitor, target) => D4.validateTarget<$tom_build_cli_11.CommandRunner>(target, 'CommandRunner').defaultTimeout,
     },
     methods: {
       'run': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_16.CommandRunner>(target, 'CommandRunner');
+        final t = D4.validateTarget<$tom_build_cli_11.CommandRunner>(target, 'CommandRunner');
         final command = D4.getRequiredNamedArg<String>(named, 'command', 'run');
         final workingDirectory = D4.getOptionalNamedArg<String?>(named, 'workingDirectory');
         final environment = D4.coerceMapOrNull<String, String>(named['environment'], 'environment');
@@ -2829,7 +2931,7 @@ BridgedClass _createCommandRunnerBridge() {
         return t.run(command: command, workingDirectory: workingDirectory, environment: environment, verbose: verbose, timeout: timeout);
       },
       'runAll': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_16.CommandRunner>(target, 'CommandRunner');
+        final t = D4.validateTarget<$tom_build_cli_11.CommandRunner>(target, 'CommandRunner');
         if (!named.containsKey('commands') || named['commands'] == null) {
           throw ArgumentError('runAll: Missing required named argument "commands"');
         }
@@ -2861,31 +2963,38 @@ BridgedClass _createCommandRunnerBridge() {
 
 BridgedClass _createD4rtResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_17.D4rtResult,
+    nativeType: $tom_build_cli_12.D4rtResult,
     name: 'D4rtResult',
+    isAssignable: (v) => v is $tom_build_cli_12.D4rtResult,
     constructors: {
       'success': (visitor, positional, named) {
         final code = D4.getRequiredNamedArg<String>(named, 'code', 'D4rtResult');
-        final value = D4.getOptionalNamedArg<dynamic>(named, 'value');
         final output = D4.getNamedArgWithDefault<String>(named, 'output', '');
         final duration = D4.getNamedArgWithDefault<Duration>(named, 'duration', Duration.zero);
-        return $tom_build_cli_17.D4rtResult.success(code: code, value: value, output: output, duration: duration);
+        if (!named.containsKey('value')) {
+          return $tom_build_cli_12.D4rtResult.success(code: code, output: output, duration: duration);
+        }
+        if (named.containsKey('value')) {
+          final value = D4.getRequiredNamedArg<dynamic>(named, 'value', 'D4rtResult');
+          return $tom_build_cli_12.D4rtResult.success(code: code, output: output, duration: duration, value: value);
+        }
+        throw StateError('Unreachable: all named parameter combinations should be covered');
       },
       'failure': (visitor, positional, named) {
         final code = D4.getRequiredNamedArg<String>(named, 'code', 'D4rtResult');
         final error = D4.getRequiredNamedArg<String>(named, 'error', 'D4rtResult');
         final output = D4.getNamedArgWithDefault<String>(named, 'output', '');
         final duration = D4.getNamedArgWithDefault<Duration>(named, 'duration', Duration.zero);
-        return $tom_build_cli_17.D4rtResult.failure(code: code, error: error, output: output, duration: duration);
+        return $tom_build_cli_12.D4rtResult.failure(code: code, error: error, output: output, duration: duration);
       },
     },
     getters: {
-      'code': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtResult>(target, 'D4rtResult').code,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtResult>(target, 'D4rtResult').success,
-      'value': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtResult>(target, 'D4rtResult').value,
-      'output': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtResult>(target, 'D4rtResult').output,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtResult>(target, 'D4rtResult').error,
-      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtResult>(target, 'D4rtResult').duration,
+      'code': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtResult>(target, 'D4rtResult').code,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtResult>(target, 'D4rtResult').success,
+      'value': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtResult>(target, 'D4rtResult').value,
+      'output': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtResult>(target, 'D4rtResult').output,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtResult>(target, 'D4rtResult').error,
+      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtResult>(target, 'D4rtResult').duration,
     },
     constructorSignatures: {
       'success': 'factory D4rtResult.success({required String code, dynamic value, String output = \'\', Duration duration = Duration.zero})',
@@ -2908,8 +3017,9 @@ BridgedClass _createD4rtResultBridge() {
 
 BridgedClass _createD4rtRunnerConfigBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_17.D4rtRunnerConfig,
+    nativeType: $tom_build_cli_12.D4rtRunnerConfig,
     name: 'D4rtRunnerConfig',
+    isAssignable: (v) => v is $tom_build_cli_12.D4rtRunnerConfig,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'D4rtRunnerConfig');
@@ -2919,20 +3029,20 @@ BridgedClass _createD4rtRunnerConfigBridge() {
             ? D4.coerceMap<String, dynamic>(named['context'], 'context')
             : const <String, dynamic>{};
         final workspace = D4.getOptionalNamedArg<$tom_build_1.TomWorkspace?>(named, 'workspace');
-        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_11.WorkspaceContext?>(named, 'workspaceContext');
+        final workspaceContext = D4.getOptionalNamedArg<$tom_build_cli_8.WorkspaceContext?>(named, 'workspaceContext');
         final currentProject = D4.getOptionalNamedArg<$tom_build_1.TomProject?>(named, 'currentProject');
-        return $tom_build_cli_17.D4rtRunnerConfig(workspacePath: workspacePath, scriptsPath: scriptsPath, verbose: verbose, context: context, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject);
+        return $tom_build_cli_12.D4rtRunnerConfig(workspacePath: workspacePath, scriptsPath: scriptsPath, verbose: verbose, context: context, workspace: workspace, workspaceContext: workspaceContext, currentProject: currentProject);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').workspacePath,
-      'scriptsPath': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').scriptsPath,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').verbose,
-      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').context,
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').workspace,
-      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').workspaceContext,
-      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').currentProject,
-      'scriptsDir': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').scriptsDir,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').workspacePath,
+      'scriptsPath': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').scriptsPath,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').verbose,
+      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').context,
+      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').workspace,
+      'workspaceContext': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').workspaceContext,
+      'currentProject': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').currentProject,
+      'scriptsDir': (visitor, target) => D4.validateTarget<$tom_build_cli_12.D4rtRunnerConfig>(target, 'D4rtRunnerConfig').scriptsDir,
     },
     constructorSignatures: {
       '': 'const D4rtRunnerConfig({required String workspacePath, String? scriptsPath, bool verbose = false, Map<String, dynamic> context = const {}, TomWorkspace? workspace, WorkspaceContext? workspaceContext, TomProject? currentProject})',
@@ -2956,45 +3066,46 @@ BridgedClass _createD4rtRunnerConfigBridge() {
 
 BridgedClass _createD4rtRunnerBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_17.D4rtRunner,
+    nativeType: D4rtRunner,
     name: 'D4rtRunner',
+    isAssignable: (v) => v is D4rtRunner,
     constructors: {
       '': (visitor, positional, named) {
-        final config = D4.getRequiredNamedArg<$tom_build_cli_17.D4rtRunnerConfig>(named, 'config', 'D4rtRunner');
+        final config = D4.getRequiredNamedArg<$tom_build_cli_12.D4rtRunnerConfig>(named, 'config', 'D4rtRunner');
         final evaluatorRaw = named['evaluator'];
-        return $tom_build_cli_17.D4rtRunner(config: config, evaluator: evaluatorRaw == null ? null : (String p0, Map<String, dynamic> p1) { return D4.callInterpreterCallback(visitor, evaluatorRaw, [p0, p1]) as Future<dynamic>; });
+        return D4rtRunner(config: config, evaluator: evaluatorRaw == null ? null : (String p0, Map<String, dynamic> p1) { return D4.callInterpreterCallback(visitor!, evaluatorRaw, [p0, p1]) as Future<dynamic>; });
       },
     },
     getters: {
-      'config': (visitor, target) => D4.validateTarget<$tom_build_cli_17.D4rtRunner>(target, 'D4rtRunner').config,
+      'config': (visitor, target) => D4.validateTarget<D4rtRunner>(target, 'D4rtRunner').config,
     },
     methods: {
       'getCommandType': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_17.D4rtRunner>(target, 'D4rtRunner');
+        final t = D4.validateTarget<D4rtRunner>(target, 'D4rtRunner');
         D4.requireMinArgs(positional, 1, 'getCommandType');
         final command = D4.getRequiredArg<String>(positional, 0, 'command', 'getCommandType');
         return t.getCommandType(command);
       },
       'isD4rtCommand': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_17.D4rtRunner>(target, 'D4rtRunner');
+        final t = D4.validateTarget<D4rtRunner>(target, 'D4rtRunner');
         D4.requireMinArgs(positional, 1, 'isD4rtCommand');
         final command = D4.getRequiredArg<String>(positional, 0, 'command', 'isD4rtCommand');
         return t.isD4rtCommand(command);
       },
       'isVSCodeCommand': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_17.D4rtRunner>(target, 'D4rtRunner');
+        final t = D4.validateTarget<D4rtRunner>(target, 'D4rtRunner');
         D4.requireMinArgs(positional, 1, 'isVSCodeCommand');
         final command = D4.getRequiredArg<String>(positional, 0, 'command', 'isVSCodeCommand');
         return t.isVSCodeCommand(command);
       },
       'isLocalD4rtCommand': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_17.D4rtRunner>(target, 'D4rtRunner');
+        final t = D4.validateTarget<D4rtRunner>(target, 'D4rtRunner');
         D4.requireMinArgs(positional, 1, 'isLocalD4rtCommand');
         final command = D4.getRequiredArg<String>(positional, 0, 'command', 'isLocalD4rtCommand');
         return t.isLocalD4rtCommand(command);
       },
       'run': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_17.D4rtRunner>(target, 'D4rtRunner');
+        final t = D4.validateTarget<D4rtRunner>(target, 'D4rtRunner');
         D4.requireMinArgs(positional, 1, 'run');
         final command = D4.getRequiredArg<String>(positional, 0, 'command', 'run');
         return t.run(command);
@@ -3022,32 +3133,33 @@ BridgedClass _createD4rtRunnerBridge() {
 
 BridgedClass _createAnsiColorsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_18.AnsiColors,
+    nativeType: AnsiColors,
     name: 'AnsiColors',
+    isAssignable: (v) => v is AnsiColors,
     constructors: {
     },
     staticGetters: {
-      'reset': (visitor) => $tom_build_cli_18.AnsiColors.reset,
-      'black': (visitor) => $tom_build_cli_18.AnsiColors.black,
-      'red': (visitor) => $tom_build_cli_18.AnsiColors.red,
-      'green': (visitor) => $tom_build_cli_18.AnsiColors.green,
-      'yellow': (visitor) => $tom_build_cli_18.AnsiColors.yellow,
-      'blue': (visitor) => $tom_build_cli_18.AnsiColors.blue,
-      'magenta': (visitor) => $tom_build_cli_18.AnsiColors.magenta,
-      'cyan': (visitor) => $tom_build_cli_18.AnsiColors.cyan,
-      'white': (visitor) => $tom_build_cli_18.AnsiColors.white,
-      'brightBlack': (visitor) => $tom_build_cli_18.AnsiColors.brightBlack,
-      'brightRed': (visitor) => $tom_build_cli_18.AnsiColors.brightRed,
-      'brightGreen': (visitor) => $tom_build_cli_18.AnsiColors.brightGreen,
-      'brightYellow': (visitor) => $tom_build_cli_18.AnsiColors.brightYellow,
-      'brightBlue': (visitor) => $tom_build_cli_18.AnsiColors.brightBlue,
-      'brightMagenta': (visitor) => $tom_build_cli_18.AnsiColors.brightMagenta,
-      'brightCyan': (visitor) => $tom_build_cli_18.AnsiColors.brightCyan,
-      'brightWhite': (visitor) => $tom_build_cli_18.AnsiColors.brightWhite,
-      'bold': (visitor) => $tom_build_cli_18.AnsiColors.bold,
-      'dim': (visitor) => $tom_build_cli_18.AnsiColors.dim,
-      'italic': (visitor) => $tom_build_cli_18.AnsiColors.italic,
-      'underline': (visitor) => $tom_build_cli_18.AnsiColors.underline,
+      'reset': (visitor) => AnsiColors.reset,
+      'black': (visitor) => AnsiColors.black,
+      'red': (visitor) => AnsiColors.red,
+      'green': (visitor) => AnsiColors.green,
+      'yellow': (visitor) => AnsiColors.yellow,
+      'blue': (visitor) => AnsiColors.blue,
+      'magenta': (visitor) => AnsiColors.magenta,
+      'cyan': (visitor) => AnsiColors.cyan,
+      'white': (visitor) => AnsiColors.white,
+      'brightBlack': (visitor) => AnsiColors.brightBlack,
+      'brightRed': (visitor) => AnsiColors.brightRed,
+      'brightGreen': (visitor) => AnsiColors.brightGreen,
+      'brightYellow': (visitor) => AnsiColors.brightYellow,
+      'brightBlue': (visitor) => AnsiColors.brightBlue,
+      'brightMagenta': (visitor) => AnsiColors.brightMagenta,
+      'brightCyan': (visitor) => AnsiColors.brightCyan,
+      'brightWhite': (visitor) => AnsiColors.brightWhite,
+      'bold': (visitor) => AnsiColors.bold,
+      'dim': (visitor) => AnsiColors.dim,
+      'italic': (visitor) => AnsiColors.italic,
+      'underline': (visitor) => AnsiColors.underline,
     },
     staticGetterSignatures: {
       'reset': 'String get reset',
@@ -3081,8 +3193,9 @@ BridgedClass _createAnsiColorsBridge() {
 
 BridgedClass _createOutputFormatterConfigBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_18.OutputFormatterConfig,
+    nativeType: $tom_build_cli_13.OutputFormatterConfig,
     name: 'OutputFormatterConfig',
+    isAssignable: (v) => v is $tom_build_cli_13.OutputFormatterConfig,
     constructors: {
       '': (visitor, positional, named) {
         final useColors = D4.getNamedArgWithDefault<bool>(named, 'useColors', true);
@@ -3090,19 +3203,19 @@ BridgedClass _createOutputFormatterConfigBridge() {
         final showProgress = D4.getNamedArgWithDefault<bool>(named, 'showProgress', true);
         final showTimings = D4.getNamedArgWithDefault<bool>(named, 'showTimings', true);
         final maxWidth = D4.getNamedArgWithDefault<int>(named, 'maxWidth', 80);
-        return $tom_build_cli_18.OutputFormatterConfig(useColors: useColors, verbose: verbose, showProgress: showProgress, showTimings: showTimings, maxWidth: maxWidth);
+        return $tom_build_cli_13.OutputFormatterConfig(useColors: useColors, verbose: verbose, showProgress: showProgress, showTimings: showTimings, maxWidth: maxWidth);
       },
     },
     getters: {
-      'useColors': (visitor, target) => D4.validateTarget<$tom_build_cli_18.OutputFormatterConfig>(target, 'OutputFormatterConfig').useColors,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_18.OutputFormatterConfig>(target, 'OutputFormatterConfig').verbose,
-      'showProgress': (visitor, target) => D4.validateTarget<$tom_build_cli_18.OutputFormatterConfig>(target, 'OutputFormatterConfig').showProgress,
-      'showTimings': (visitor, target) => D4.validateTarget<$tom_build_cli_18.OutputFormatterConfig>(target, 'OutputFormatterConfig').showTimings,
-      'maxWidth': (visitor, target) => D4.validateTarget<$tom_build_cli_18.OutputFormatterConfig>(target, 'OutputFormatterConfig').maxWidth,
+      'useColors': (visitor, target) => D4.validateTarget<$tom_build_cli_13.OutputFormatterConfig>(target, 'OutputFormatterConfig').useColors,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_13.OutputFormatterConfig>(target, 'OutputFormatterConfig').verbose,
+      'showProgress': (visitor, target) => D4.validateTarget<$tom_build_cli_13.OutputFormatterConfig>(target, 'OutputFormatterConfig').showProgress,
+      'showTimings': (visitor, target) => D4.validateTarget<$tom_build_cli_13.OutputFormatterConfig>(target, 'OutputFormatterConfig').showTimings,
+      'maxWidth': (visitor, target) => D4.validateTarget<$tom_build_cli_13.OutputFormatterConfig>(target, 'OutputFormatterConfig').maxWidth,
     },
     methods: {
       'copyWith': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatterConfig>(target, 'OutputFormatterConfig');
+        final t = D4.validateTarget<$tom_build_cli_13.OutputFormatterConfig>(target, 'OutputFormatterConfig');
         final useColors = D4.getOptionalNamedArg<bool?>(named, 'useColors');
         final verbose = D4.getOptionalNamedArg<bool?>(named, 'verbose');
         final showProgress = D4.getOptionalNamedArg<bool?>(named, 'showProgress');
@@ -3133,8 +3246,9 @@ BridgedClass _createOutputFormatterConfigBridge() {
 
 BridgedClass _createErrorMessageBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_18.ErrorMessage,
+    nativeType: $tom_build_cli_13.ErrorMessage,
     name: 'ErrorMessage',
+    isAssignable: (v) => v is $tom_build_cli_13.ErrorMessage,
     constructors: {
       '': (visitor, positional, named) {
         final description = D4.getRequiredNamedArg<String>(named, 'description', 'ErrorMessage');
@@ -3142,19 +3256,19 @@ BridgedClass _createErrorMessageBridge() {
         final lineNumber = D4.getOptionalNamedArg<int?>(named, 'lineNumber');
         final resolution = D4.getOptionalNamedArg<String?>(named, 'resolution');
         final context = D4.getOptionalNamedArg<String?>(named, 'context');
-        return $tom_build_cli_18.ErrorMessage(description: description, filePath: filePath, lineNumber: lineNumber, resolution: resolution, context: context);
+        return $tom_build_cli_13.ErrorMessage(description: description, filePath: filePath, lineNumber: lineNumber, resolution: resolution, context: context);
       },
     },
     getters: {
-      'description': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ErrorMessage>(target, 'ErrorMessage').description,
-      'filePath': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ErrorMessage>(target, 'ErrorMessage').filePath,
-      'lineNumber': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ErrorMessage>(target, 'ErrorMessage').lineNumber,
-      'resolution': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ErrorMessage>(target, 'ErrorMessage').resolution,
-      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ErrorMessage>(target, 'ErrorMessage').context,
+      'description': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ErrorMessage>(target, 'ErrorMessage').description,
+      'filePath': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ErrorMessage>(target, 'ErrorMessage').filePath,
+      'lineNumber': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ErrorMessage>(target, 'ErrorMessage').lineNumber,
+      'resolution': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ErrorMessage>(target, 'ErrorMessage').resolution,
+      'context': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ErrorMessage>(target, 'ErrorMessage').context,
     },
     methods: {
       'format': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.ErrorMessage>(target, 'ErrorMessage');
+        final t = D4.validateTarget<$tom_build_cli_13.ErrorMessage>(target, 'ErrorMessage');
         final useColors = D4.getNamedArgWithDefault<bool>(named, 'useColors', false);
         return t.format(useColors: useColors);
       },
@@ -3181,24 +3295,25 @@ BridgedClass _createErrorMessageBridge() {
 
 BridgedClass _createProgressIndicatorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_18.ProgressIndicator,
+    nativeType: $tom_build_cli_13.ProgressIndicator,
     name: 'ProgressIndicator',
+    isAssignable: (v) => v is $tom_build_cli_13.ProgressIndicator,
     constructors: {
       '': (visitor, positional, named) {
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'ProgressIndicator');
         final total = D4.getRequiredNamedArg<int>(named, 'total', 'ProgressIndicator');
         final useColors = D4.getNamedArgWithDefault<bool>(named, 'useColors', false);
-        return $tom_build_cli_18.ProgressIndicator(message: message, total: total, useColors: useColors);
+        return $tom_build_cli_13.ProgressIndicator(message: message, total: total, useColors: useColors);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ProgressIndicator>(target, 'ProgressIndicator').message,
-      'total': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ProgressIndicator>(target, 'ProgressIndicator').total,
-      'useColors': (visitor, target) => D4.validateTarget<$tom_build_cli_18.ProgressIndicator>(target, 'ProgressIndicator').useColors,
+      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ProgressIndicator>(target, 'ProgressIndicator').message,
+      'total': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ProgressIndicator>(target, 'ProgressIndicator').total,
+      'useColors': (visitor, target) => D4.validateTarget<$tom_build_cli_13.ProgressIndicator>(target, 'ProgressIndicator').useColors,
     },
     methods: {
       'update': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.ProgressIndicator>(target, 'ProgressIndicator');
+        final t = D4.validateTarget<$tom_build_cli_13.ProgressIndicator>(target, 'ProgressIndicator');
         D4.requireMinArgs(positional, 1, 'update');
         final current = D4.getRequiredArg<int>(positional, 0, 'current', 'update');
         final itemName = D4.getOptionalNamedArg<String?>(named, 'itemName');
@@ -3206,13 +3321,13 @@ BridgedClass _createProgressIndicatorBridge() {
         return null;
       },
       'increment': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.ProgressIndicator>(target, 'ProgressIndicator');
+        final t = D4.validateTarget<$tom_build_cli_13.ProgressIndicator>(target, 'ProgressIndicator');
         final itemName = D4.getOptionalNamedArg<String?>(named, 'itemName');
         t.increment(itemName: itemName);
         return null;
       },
       'complete': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.ProgressIndicator>(target, 'ProgressIndicator');
+        final t = D4.validateTarget<$tom_build_cli_13.ProgressIndicator>(target, 'ProgressIndicator');
         final summary = D4.getOptionalNamedArg<String?>(named, 'summary');
         t.complete(summary: summary);
         return null;
@@ -3240,36 +3355,37 @@ BridgedClass _createProgressIndicatorBridge() {
 
 BridgedClass _createOutputFormatterBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_18.OutputFormatter,
+    nativeType: OutputFormatter,
     name: 'OutputFormatter',
+    isAssignable: (v) => v is OutputFormatter,
     constructors: {
       '': (visitor, positional, named) {
-        final config = D4.getOptionalNamedArg<$tom_build_cli_18.OutputFormatterConfig?>(named, 'config');
+        final config = D4.getOptionalNamedArg<$tom_build_cli_13.OutputFormatterConfig?>(named, 'config');
         final output = D4.getOptionalNamedArg<StringSink?>(named, 'output');
         final errorOutput = D4.getOptionalNamedArg<StringSink?>(named, 'errorOutput');
-        return $tom_build_cli_18.OutputFormatter(config: config, output: output, errorOutput: errorOutput);
+        return OutputFormatter(config: config, output: output, errorOutput: errorOutput);
       },
     },
     getters: {
-      'useColors': (visitor, target) => D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter').useColors,
+      'useColors': (visitor, target) => D4.validateTarget<OutputFormatter>(target, 'OutputFormatter').useColors,
     },
     methods: {
       'printError': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printError');
-        final error = D4.getRequiredArg<$tom_build_cli_18.ErrorMessage>(positional, 0, 'error', 'printError');
+        final error = D4.getRequiredArg<$tom_build_cli_13.ErrorMessage>(positional, 0, 'error', 'printError');
         t.printError(error);
         return null;
       },
       'printErrorString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printErrorString');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'printErrorString');
         t.printErrorString(message);
         return null;
       },
       'printCircularDependencyError': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printCircularDependencyError');
         if (positional.isEmpty) {
           throw ArgumentError('printCircularDependencyError: Missing required argument "cycle" at position 0');
@@ -3279,7 +3395,7 @@ BridgedClass _createOutputFormatterBridge() {
         return null;
       },
       'printPlaceholderRecursionError': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         final filePath = D4.getRequiredNamedArg<String>(named, 'filePath', 'printPlaceholderRecursionError');
         if (!named.containsKey('unresolved') || named['unresolved'] == null) {
           throw ArgumentError('printPlaceholderRecursionError: Missing required named argument "unresolved"');
@@ -3289,101 +3405,101 @@ BridgedClass _createOutputFormatterBridge() {
         return null;
       },
       'printScopeConflictError': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printScopeConflictError');
         final command = D4.getRequiredArg<String>(positional, 0, 'command', 'printScopeConflictError');
         t.printScopeConflictError(command);
         return null;
       },
       'printSuccess': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printSuccess');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'printSuccess');
         t.printSuccess(message);
         return null;
       },
       'printInfo': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printInfo');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'printInfo');
         t.printInfo(message);
         return null;
       },
       'printWarning': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printWarning');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'printWarning');
         t.printWarning(message);
         return null;
       },
       'printVerbose': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printVerbose');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'printVerbose');
         t.printVerbose(message);
         return null;
       },
       'createProgress': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 2, 'createProgress');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'createProgress');
         final total = D4.getRequiredArg<int>(positional, 1, 'total', 'createProgress');
         return t.createProgress(message, total);
       },
       'printHeader': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'printHeader');
         final title = D4.getRequiredArg<String>(positional, 0, 'title', 'printHeader');
         t.printHeader(title);
         return null;
       },
       'formatCommandResult': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'formatCommandResult');
-        final result = D4.getRequiredArg<$tom_build_cli_16.CommandResult>(positional, 0, 'result', 'formatCommandResult');
+        final result = D4.getRequiredArg<$tom_build_cli_11.CommandResult>(positional, 0, 'result', 'formatCommandResult');
         return t.formatCommandResult(result);
       },
       'formatActionResult': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'formatActionResult');
-        final result = D4.getRequiredArg<$tom_build_cli_15.ActionExecutionResult>(positional, 0, 'result', 'formatActionResult');
+        final result = D4.getRequiredArg<$tom_build_cli_10.ActionExecutionResult>(positional, 0, 'result', 'formatActionResult');
         return t.formatActionResult(result);
       },
       'formatInternalCommandResult': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         D4.requireMinArgs(positional, 1, 'formatInternalCommandResult');
-        final result = D4.getRequiredArg<$tom_build_cli_8.InternalCommandResult>(positional, 0, 'result', 'formatInternalCommandResult');
+        final result = D4.getRequiredArg<$tom_build_cli_5.InternalCommandResult>(positional, 0, 'result', 'formatInternalCommandResult');
         return t.formatInternalCommandResult(result);
       },
       'formatSummary': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         if (!named.containsKey('actionResults') || named['actionResults'] == null) {
           throw ArgumentError('formatSummary: Missing required named argument "actionResults"');
         }
-        final actionResults = D4.coerceList<$tom_build_cli_15.ActionExecutionResult>(named['actionResults'], 'actionResults');
+        final actionResults = D4.coerceList<$tom_build_cli_10.ActionExecutionResult>(named['actionResults'], 'actionResults');
         if (!named.containsKey('commandResults') || named['commandResults'] == null) {
           throw ArgumentError('formatSummary: Missing required named argument "commandResults"');
         }
-        final commandResults = D4.coerceList<$tom_build_cli_8.InternalCommandResult>(named['commandResults'], 'commandResults');
+        final commandResults = D4.coerceList<$tom_build_cli_5.InternalCommandResult>(named['commandResults'], 'commandResults');
         final totalDuration = D4.getRequiredNamedArg<Duration>(named, 'totalDuration', 'formatSummary');
         return t.formatSummary(actionResults: actionResults, commandResults: commandResults, totalDuration: totalDuration);
       },
       'printSummary': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         if (!named.containsKey('actionResults') || named['actionResults'] == null) {
           throw ArgumentError('printSummary: Missing required named argument "actionResults"');
         }
-        final actionResults = D4.coerceList<$tom_build_cli_15.ActionExecutionResult>(named['actionResults'], 'actionResults');
+        final actionResults = D4.coerceList<$tom_build_cli_10.ActionExecutionResult>(named['actionResults'], 'actionResults');
         if (!named.containsKey('commandResults') || named['commandResults'] == null) {
           throw ArgumentError('printSummary: Missing required named argument "commandResults"');
         }
-        final commandResults = D4.coerceList<$tom_build_cli_8.InternalCommandResult>(named['commandResults'], 'commandResults');
+        final commandResults = D4.coerceList<$tom_build_cli_5.InternalCommandResult>(named['commandResults'], 'commandResults');
         final totalDuration = D4.getRequiredNamedArg<Duration>(named, 'totalDuration', 'printSummary');
         t.printSummary(actionResults: actionResults, commandResults: commandResults, totalDuration: totalDuration);
         return null;
       },
       'formatHelp': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_18.OutputFormatter>(target, 'OutputFormatter');
+        final t = D4.validateTarget<OutputFormatter>(target, 'OutputFormatter');
         final toolName = D4.getRequiredNamedArg<String>(named, 'toolName', 'formatHelp');
         final version = D4.getRequiredNamedArg<String>(named, 'version', 'formatHelp');
         final description = D4.getRequiredNamedArg<String>(named, 'description', 'formatHelp');
@@ -3436,20 +3552,21 @@ BridgedClass _createOutputFormatterBridge() {
 
 BridgedClass _createBuildOrderProjectBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_19.BuildOrderProject,
+    nativeType: $tom_build_cli_14.BuildOrderProject,
     name: 'BuildOrderProject',
+    isAssignable: (v) => v is $tom_build_cli_14.BuildOrderProject,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getRequiredNamedArg<String>(named, 'name', 'BuildOrderProject');
         final buildAfter = named.containsKey('buildAfter') && named['buildAfter'] != null
             ? D4.coerceList<String>(named['buildAfter'], 'buildAfter')
             : const <String>[];
-        return $tom_build_cli_19.BuildOrderProject(name: name, buildAfter: buildAfter);
+        return $tom_build_cli_14.BuildOrderProject(name: name, buildAfter: buildAfter);
       },
     },
     getters: {
-      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_19.BuildOrderProject>(target, 'BuildOrderProject').name,
-      'buildAfter': (visitor, target) => D4.validateTarget<$tom_build_cli_19.BuildOrderProject>(target, 'BuildOrderProject').buildAfter,
+      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_14.BuildOrderProject>(target, 'BuildOrderProject').name,
+      'buildAfter': (visitor, target) => D4.validateTarget<$tom_build_cli_14.BuildOrderProject>(target, 'BuildOrderProject').buildAfter,
     },
     constructorSignatures: {
       '': 'const BuildOrderProject({required String name, List<String> buildAfter = const []})',
@@ -3467,8 +3584,9 @@ BridgedClass _createBuildOrderProjectBridge() {
 
 BridgedClass _createBuildOrderResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_19.BuildOrderResult,
+    nativeType: $tom_build_cli_14.BuildOrderResult,
     name: 'BuildOrderResult',
+    isAssignable: (v) => v is $tom_build_cli_14.BuildOrderResult,
     constructors: {
       'success': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'BuildOrderResult');
@@ -3476,20 +3594,20 @@ BridgedClass _createBuildOrderResultBridge() {
           throw ArgumentError('BuildOrderResult: Missing required argument "order" at position 0');
         }
         final order = D4.coerceList<String>(positional[0], 'order');
-        return $tom_build_cli_19.BuildOrderResult.success(order);
+        return $tom_build_cli_14.BuildOrderResult.success(order);
       },
       'error': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'BuildOrderResult');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'BuildOrderResult');
         final circularPath = D4.coerceListOrNull<String>(named['circularPath'], 'circularPath');
-        return $tom_build_cli_19.BuildOrderResult.error(message, circularPath: circularPath);
+        return $tom_build_cli_14.BuildOrderResult.error(message, circularPath: circularPath);
       },
     },
     getters: {
-      'order': (visitor, target) => D4.validateTarget<$tom_build_cli_19.BuildOrderResult>(target, 'BuildOrderResult').order,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_19.BuildOrderResult>(target, 'BuildOrderResult').success,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_19.BuildOrderResult>(target, 'BuildOrderResult').error,
-      'circularPath': (visitor, target) => D4.validateTarget<$tom_build_cli_19.BuildOrderResult>(target, 'BuildOrderResult').circularPath,
+      'order': (visitor, target) => D4.validateTarget<$tom_build_cli_14.BuildOrderResult>(target, 'BuildOrderResult').order,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_14.BuildOrderResult>(target, 'BuildOrderResult').success,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_14.BuildOrderResult>(target, 'BuildOrderResult').error,
+      'circularPath': (visitor, target) => D4.validateTarget<$tom_build_cli_14.BuildOrderResult>(target, 'BuildOrderResult').circularPath,
     },
     constructorSignatures: {
       'success': 'factory BuildOrderResult.success(List<String> order)',
@@ -3510,8 +3628,9 @@ BridgedClass _createBuildOrderResultBridge() {
 
 BridgedClass _createCircularDependencyExceptionBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_19.CircularDependencyException,
+    nativeType: CircularDependencyException,
     name: 'CircularDependencyException',
+    isAssignable: (v) => v is CircularDependencyException,
     constructors: {
       '': (visitor, positional, named) {
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'CircularDependencyException');
@@ -3519,16 +3638,16 @@ BridgedClass _createCircularDependencyExceptionBridge() {
           throw ArgumentError('CircularDependencyException: Missing required named argument "cyclePath"');
         }
         final cyclePath = D4.coerceList<String>(named['cyclePath'], 'cyclePath');
-        return $tom_build_cli_19.CircularDependencyException(message: message, cyclePath: cyclePath);
+        return CircularDependencyException(message: message, cyclePath: cyclePath);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_19.CircularDependencyException>(target, 'CircularDependencyException').message,
-      'cyclePath': (visitor, target) => D4.validateTarget<$tom_build_cli_19.CircularDependencyException>(target, 'CircularDependencyException').cyclePath,
+      'message': (visitor, target) => D4.validateTarget<CircularDependencyException>(target, 'CircularDependencyException').message,
+      'cyclePath': (visitor, target) => D4.validateTarget<CircularDependencyException>(target, 'CircularDependencyException').cyclePath,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_19.CircularDependencyException>(target, 'CircularDependencyException');
+        final t = D4.validateTarget<CircularDependencyException>(target, 'CircularDependencyException');
         return t.toString();
       },
     },
@@ -3551,49 +3670,50 @@ BridgedClass _createCircularDependencyExceptionBridge() {
 
 BridgedClass _createBuildOrderCalculatorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_19.BuildOrderCalculator,
+    nativeType: BuildOrderCalculator,
     name: 'BuildOrderCalculator',
+    isAssignable: (v) => v is BuildOrderCalculator,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_19.BuildOrderCalculator();
+        return BuildOrderCalculator();
       },
     },
     methods: {
       'calculateBuildOrder': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_19.BuildOrderCalculator>(target, 'BuildOrderCalculator');
+        final t = D4.validateTarget<BuildOrderCalculator>(target, 'BuildOrderCalculator');
         D4.requireMinArgs(positional, 1, 'calculateBuildOrder');
         if (positional.isEmpty) {
           throw ArgumentError('calculateBuildOrder: Missing required argument "projects" at position 0');
         }
-        final projects = D4.coerceMap<String, $tom_build_cli_19.BuildOrderProject>(positional[0], 'projects');
+        final projects = D4.coerceMap<String, $tom_build_cli_14.BuildOrderProject>(positional[0], 'projects');
         return t.calculateBuildOrder(projects);
       },
       'calculateBuildOrderSafe': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_19.BuildOrderCalculator>(target, 'BuildOrderCalculator');
+        final t = D4.validateTarget<BuildOrderCalculator>(target, 'BuildOrderCalculator');
         D4.requireMinArgs(positional, 1, 'calculateBuildOrderSafe');
         if (positional.isEmpty) {
           throw ArgumentError('calculateBuildOrderSafe: Missing required argument "projects" at position 0');
         }
-        final projects = D4.coerceMap<String, $tom_build_cli_19.BuildOrderProject>(positional[0], 'projects');
+        final projects = D4.coerceMap<String, $tom_build_cli_14.BuildOrderProject>(positional[0], 'projects');
         return t.calculateBuildOrderSafe(projects);
       },
       'calculateActionOrder': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_19.BuildOrderCalculator>(target, 'BuildOrderCalculator');
+        final t = D4.validateTarget<BuildOrderCalculator>(target, 'BuildOrderCalculator');
         if (!named.containsKey('projects') || named['projects'] == null) {
           throw ArgumentError('calculateActionOrder: Missing required named argument "projects"');
         }
-        final projects = D4.coerceMap<String, $tom_build_cli_19.BuildOrderProject>(named['projects'], 'projects');
+        final projects = D4.coerceMap<String, $tom_build_cli_14.BuildOrderProject>(named['projects'], 'projects');
         final action = D4.getRequiredNamedArg<String>(named, 'action', 'calculateActionOrder');
         final actionDeps = D4.coerceMapOrNull<String, List<String>>(named['actionDeps'], 'actionDeps');
         return t.calculateActionOrder(projects: projects, action: action, actionDeps: actionDeps);
       },
       'validateDependencies': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_19.BuildOrderCalculator>(target, 'BuildOrderCalculator');
+        final t = D4.validateTarget<BuildOrderCalculator>(target, 'BuildOrderCalculator');
         D4.requireMinArgs(positional, 1, 'validateDependencies');
         if (positional.isEmpty) {
           throw ArgumentError('validateDependencies: Missing required argument "projects" at position 0');
         }
-        final projects = D4.coerceMap<String, $tom_build_cli_19.BuildOrderProject>(positional[0], 'projects');
+        final projects = D4.coerceMap<String, $tom_build_cli_14.BuildOrderProject>(positional[0], 'projects');
         return t.validateDependencies(projects);
       },
     },
@@ -3604,7 +3724,7 @@ BridgedClass _createBuildOrderCalculatorBridge() {
           throw ArgumentError('fromProjectConfigs: Missing required argument "configs" at position 0');
         }
         final configs = D4.coerceMap<String, Map<String, dynamic>>(positional[0], 'configs');
-        return $tom_build_cli_19.BuildOrderCalculator.fromProjectConfigs(configs);
+        return BuildOrderCalculator.fromProjectConfigs(configs);
       },
     },
     constructorSignatures: {
@@ -3628,8 +3748,9 @@ BridgedClass _createBuildOrderCalculatorBridge() {
 
 BridgedClass _createGeneratorResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_20.GeneratorResult,
+    nativeType: $tom_build_cli_15.GeneratorResult,
     name: 'GeneratorResult',
+    isAssignable: (v) => v is $tom_build_cli_15.GeneratorResult,
     constructors: {
       '': (visitor, positional, named) {
         final value = D4.getRequiredNamedArg<dynamic>(named, 'value', 'GeneratorResult');
@@ -3637,13 +3758,13 @@ BridgedClass _createGeneratorResultBridge() {
         final unresolvedGenerators = named.containsKey('unresolvedGenerators') && named['unresolvedGenerators'] != null
             ? D4.coerceList<String>(named['unresolvedGenerators'], 'unresolvedGenerators')
             : const <String>[];
-        return $tom_build_cli_20.GeneratorResult(value: value, fullyResolved: fullyResolved, unresolvedGenerators: unresolvedGenerators);
+        return $tom_build_cli_15.GeneratorResult(value: value, fullyResolved: fullyResolved, unresolvedGenerators: unresolvedGenerators);
       },
     },
     getters: {
-      'value': (visitor, target) => D4.validateTarget<$tom_build_cli_20.GeneratorResult>(target, 'GeneratorResult').value,
-      'fullyResolved': (visitor, target) => D4.validateTarget<$tom_build_cli_20.GeneratorResult>(target, 'GeneratorResult').fullyResolved,
-      'unresolvedGenerators': (visitor, target) => D4.validateTarget<$tom_build_cli_20.GeneratorResult>(target, 'GeneratorResult').unresolvedGenerators,
+      'value': (visitor, target) => D4.validateTarget<$tom_build_cli_15.GeneratorResult>(target, 'GeneratorResult').value,
+      'fullyResolved': (visitor, target) => D4.validateTarget<$tom_build_cli_15.GeneratorResult>(target, 'GeneratorResult').fullyResolved,
+      'unresolvedGenerators': (visitor, target) => D4.validateTarget<$tom_build_cli_15.GeneratorResult>(target, 'GeneratorResult').unresolvedGenerators,
     },
     constructorSignatures: {
       '': 'const GeneratorResult({required dynamic value, required bool fullyResolved, List<String> unresolvedGenerators = const []})',
@@ -3662,23 +3783,24 @@ BridgedClass _createGeneratorResultBridge() {
 
 BridgedClass _createGeneratorResolutionExceptionBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_20.GeneratorResolutionException,
+    nativeType: GeneratorResolutionException,
     name: 'GeneratorResolutionException',
+    isAssignable: (v) => v is GeneratorResolutionException,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'GeneratorResolutionException');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'GeneratorResolutionException');
         final generator = D4.getOptionalNamedArg<String?>(named, 'generator');
-        return $tom_build_cli_20.GeneratorResolutionException(message, generator: generator);
+        return GeneratorResolutionException(message, generator: generator);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_20.GeneratorResolutionException>(target, 'GeneratorResolutionException').message,
-      'generator': (visitor, target) => D4.validateTarget<$tom_build_cli_20.GeneratorResolutionException>(target, 'GeneratorResolutionException').generator,
+      'message': (visitor, target) => D4.validateTarget<GeneratorResolutionException>(target, 'GeneratorResolutionException').message,
+      'generator': (visitor, target) => D4.validateTarget<GeneratorResolutionException>(target, 'GeneratorResolutionException').generator,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_20.GeneratorResolutionException>(target, 'GeneratorResolutionException');
+        final t = D4.validateTarget<GeneratorResolutionException>(target, 'GeneratorResolutionException');
         return t.toString();
       },
     },
@@ -3701,16 +3823,17 @@ BridgedClass _createGeneratorResolutionExceptionBridge() {
 
 BridgedClass _createGeneratorPlaceholderResolverBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_20.GeneratorPlaceholderResolver,
+    nativeType: GeneratorPlaceholderResolver,
     name: 'GeneratorPlaceholderResolver',
+    isAssignable: (v) => v is GeneratorPlaceholderResolver,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_20.GeneratorPlaceholderResolver();
+        return GeneratorPlaceholderResolver();
       },
     },
     methods: {
       'resolve': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_20.GeneratorPlaceholderResolver>(target, 'GeneratorPlaceholderResolver');
+        final t = D4.validateTarget<GeneratorPlaceholderResolver>(target, 'GeneratorPlaceholderResolver');
         final content = D4.getRequiredNamedArg<dynamic>(named, 'content', 'resolve');
         if (!named.containsKey('context') || named['context'] == null) {
           throw ArgumentError('resolve: Missing required named argument "context"');
@@ -3735,23 +3858,24 @@ BridgedClass _createGeneratorPlaceholderResolverBridge() {
 
 BridgedClass _createMasterGeneratorConfigBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_21.MasterGeneratorConfig,
+    nativeType: $tom_build_cli_16.MasterGeneratorConfig,
     name: 'MasterGeneratorConfig',
+    isAssignable: (v) => v is $tom_build_cli_16.MasterGeneratorConfig,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'MasterGeneratorConfig');
         final outputPath = D4.getOptionalNamedArg<String?>(named, 'outputPath');
         final resolvePlaceholders = D4.getNamedArgWithDefault<bool>(named, 'resolvePlaceholders', true);
         final processModeBlocks = D4.getNamedArgWithDefault<bool>(named, 'processModeBlocks', true);
-        return $tom_build_cli_21.MasterGeneratorConfig(workspacePath: workspacePath, outputPath: outputPath, resolvePlaceholders: resolvePlaceholders, processModeBlocks: processModeBlocks);
+        return $tom_build_cli_16.MasterGeneratorConfig(workspacePath: workspacePath, outputPath: outputPath, resolvePlaceholders: resolvePlaceholders, processModeBlocks: processModeBlocks);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').workspacePath,
-      'outputPath': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').outputPath,
-      'resolvePlaceholders': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').resolvePlaceholders,
-      'processModeBlocks': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').processModeBlocks,
-      'outputDir': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').outputDir,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').workspacePath,
+      'outputPath': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').outputPath,
+      'resolvePlaceholders': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').resolvePlaceholders,
+      'processModeBlocks': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').processModeBlocks,
+      'outputDir': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGeneratorConfig>(target, 'MasterGeneratorConfig').outputDir,
     },
     constructorSignatures: {
       '': 'const MasterGeneratorConfig({required String workspacePath, String? outputPath, bool resolvePlaceholders = true, bool processModeBlocks = true})',
@@ -3772,8 +3896,9 @@ BridgedClass _createMasterGeneratorConfigBridge() {
 
 BridgedClass _createMasterGenerationResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_21.MasterGenerationResult,
+    nativeType: $tom_build_cli_16.MasterGenerationResult,
     name: 'MasterGenerationResult',
+    isAssignable: (v) => v is $tom_build_cli_16.MasterGenerationResult,
     constructors: {
       'success': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'MasterGenerationResult');
@@ -3782,19 +3907,19 @@ BridgedClass _createMasterGenerationResultBridge() {
         }
         final data = D4.coerceMap<String, dynamic>(positional[0], 'data');
         final outputPath = D4.getOptionalNamedArg<String?>(named, 'outputPath');
-        return $tom_build_cli_21.MasterGenerationResult.success(data, outputPath: outputPath);
+        return $tom_build_cli_16.MasterGenerationResult.success(data, outputPath: outputPath);
       },
       'error': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'MasterGenerationResult');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'MasterGenerationResult');
-        return $tom_build_cli_21.MasterGenerationResult.error(message);
+        return $tom_build_cli_16.MasterGenerationResult.error(message);
       },
     },
     getters: {
-      'data': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGenerationResult>(target, 'MasterGenerationResult').data,
-      'outputPath': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGenerationResult>(target, 'MasterGenerationResult').outputPath,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGenerationResult>(target, 'MasterGenerationResult').success,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGenerationResult>(target, 'MasterGenerationResult').error,
+      'data': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGenerationResult>(target, 'MasterGenerationResult').data,
+      'outputPath': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGenerationResult>(target, 'MasterGenerationResult').outputPath,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGenerationResult>(target, 'MasterGenerationResult').success,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_16.MasterGenerationResult>(target, 'MasterGenerationResult').error,
     },
     constructorSignatures: {
       'success': 'factory MasterGenerationResult.success(Map<String, dynamic> data, {String? outputPath})',
@@ -3815,8 +3940,9 @@ BridgedClass _createMasterGenerationResultBridge() {
 
 BridgedClass _createMasterGeneratorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_21.MasterGenerator,
+    nativeType: MasterGenerator,
     name: 'MasterGenerator',
+    isAssignable: (v) => v is MasterGenerator,
     constructors: {
       '': (visitor, positional, named) {
         final workspace = D4.getRequiredNamedArg<$tom_build_1.TomWorkspace>(named, 'workspace', 'MasterGenerator');
@@ -3824,38 +3950,38 @@ BridgedClass _createMasterGeneratorBridge() {
           throw ArgumentError('MasterGenerator: Missing required named argument "projects"');
         }
         final projects = D4.coerceMap<String, $tom_build_1.TomProject>(named['projects'], 'projects');
-        final config = D4.getRequiredNamedArg<$tom_build_cli_21.MasterGeneratorConfig>(named, 'config', 'MasterGenerator');
-        return $tom_build_cli_21.MasterGenerator(workspace: workspace, projects: projects, config: config);
+        final config = D4.getRequiredNamedArg<$tom_build_cli_16.MasterGeneratorConfig>(named, 'config', 'MasterGenerator');
+        return MasterGenerator(workspace: workspace, projects: projects, config: config);
       },
     },
     getters: {
-      'workspace': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator').workspace,
-      'projects': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator').projects,
-      'config': (visitor, target) => D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator').config,
+      'workspace': (visitor, target) => D4.validateTarget<MasterGenerator>(target, 'MasterGenerator').workspace,
+      'projects': (visitor, target) => D4.validateTarget<MasterGenerator>(target, 'MasterGenerator').projects,
+      'config': (visitor, target) => D4.validateTarget<MasterGenerator>(target, 'MasterGenerator').config,
     },
     methods: {
       'generateMaster': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator');
+        final t = D4.validateTarget<MasterGenerator>(target, 'MasterGenerator');
         return t.generateMaster();
       },
       'generateActionMaster': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator');
+        final t = D4.validateTarget<MasterGenerator>(target, 'MasterGenerator');
         D4.requireMinArgs(positional, 1, 'generateActionMaster');
         final action = D4.getRequiredArg<String>(positional, 0, 'action', 'generateActionMaster');
         return t.generateActionMaster(action);
       },
       'generateAndWriteMaster': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator');
+        final t = D4.validateTarget<MasterGenerator>(target, 'MasterGenerator');
         return t.generateAndWriteMaster();
       },
       'generateAndWriteActionMaster': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator');
+        final t = D4.validateTarget<MasterGenerator>(target, 'MasterGenerator');
         D4.requireMinArgs(positional, 1, 'generateAndWriteActionMaster');
         final action = D4.getRequiredArg<String>(positional, 0, 'action', 'generateAndWriteActionMaster');
         return t.generateAndWriteActionMaster(action);
       },
       'generateAndWriteAllActionMasters': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_21.MasterGenerator>(target, 'MasterGenerator');
+        final t = D4.validateTarget<MasterGenerator>(target, 'MasterGenerator');
         return t.generateAndWriteAllActionMasters();
       },
     },
@@ -3883,8 +4009,9 @@ BridgedClass _createMasterGeneratorBridge() {
 
 BridgedClass _createPlaceholderResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_22.PlaceholderResult,
+    nativeType: $tom_build_cli_17.PlaceholderResult,
     name: 'PlaceholderResult',
+    isAssignable: (v) => v is $tom_build_cli_17.PlaceholderResult,
     constructors: {
       '': (visitor, positional, named) {
         final value = D4.getRequiredNamedArg<dynamic>(named, 'value', 'PlaceholderResult');
@@ -3893,14 +4020,14 @@ BridgedClass _createPlaceholderResultBridge() {
             ? D4.coerceList<String>(named['unresolvedPlaceholders'], 'unresolvedPlaceholders')
             : const <String>[];
         final iterations = D4.getNamedArgWithDefault<int>(named, 'iterations', 0);
-        return $tom_build_cli_22.PlaceholderResult(value: value, fullyResolved: fullyResolved, unresolvedPlaceholders: unresolvedPlaceholders, iterations: iterations);
+        return $tom_build_cli_17.PlaceholderResult(value: value, fullyResolved: fullyResolved, unresolvedPlaceholders: unresolvedPlaceholders, iterations: iterations);
       },
     },
     getters: {
-      'value': (visitor, target) => D4.validateTarget<$tom_build_cli_22.PlaceholderResult>(target, 'PlaceholderResult').value,
-      'fullyResolved': (visitor, target) => D4.validateTarget<$tom_build_cli_22.PlaceholderResult>(target, 'PlaceholderResult').fullyResolved,
-      'unresolvedPlaceholders': (visitor, target) => D4.validateTarget<$tom_build_cli_22.PlaceholderResult>(target, 'PlaceholderResult').unresolvedPlaceholders,
-      'iterations': (visitor, target) => D4.validateTarget<$tom_build_cli_22.PlaceholderResult>(target, 'PlaceholderResult').iterations,
+      'value': (visitor, target) => D4.validateTarget<$tom_build_cli_17.PlaceholderResult>(target, 'PlaceholderResult').value,
+      'fullyResolved': (visitor, target) => D4.validateTarget<$tom_build_cli_17.PlaceholderResult>(target, 'PlaceholderResult').fullyResolved,
+      'unresolvedPlaceholders': (visitor, target) => D4.validateTarget<$tom_build_cli_17.PlaceholderResult>(target, 'PlaceholderResult').unresolvedPlaceholders,
+      'iterations': (visitor, target) => D4.validateTarget<$tom_build_cli_17.PlaceholderResult>(target, 'PlaceholderResult').iterations,
     },
     constructorSignatures: {
       '': 'const PlaceholderResult({required dynamic value, required bool fullyResolved, List<String> unresolvedPlaceholders = const [], int iterations = 0})',
@@ -3920,8 +4047,9 @@ BridgedClass _createPlaceholderResultBridge() {
 
 BridgedClass _createGeneratorPlaceholderExceptionBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_22.GeneratorPlaceholderException,
+    nativeType: GeneratorPlaceholderException,
     name: 'GeneratorPlaceholderException',
+    isAssignable: (v) => v is GeneratorPlaceholderException,
     constructors: {
       '': (visitor, positional, named) {
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'GeneratorPlaceholderException');
@@ -3930,17 +4058,17 @@ BridgedClass _createGeneratorPlaceholderExceptionBridge() {
         }
         final unresolvedPlaceholders = D4.coerceList<String>(named['unresolvedPlaceholders'], 'unresolvedPlaceholders');
         final iterations = D4.getRequiredNamedArg<int>(named, 'iterations', 'GeneratorPlaceholderException');
-        return $tom_build_cli_22.GeneratorPlaceholderException(message: message, unresolvedPlaceholders: unresolvedPlaceholders, iterations: iterations);
+        return GeneratorPlaceholderException(message: message, unresolvedPlaceholders: unresolvedPlaceholders, iterations: iterations);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_22.GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException').message,
-      'unresolvedPlaceholders': (visitor, target) => D4.validateTarget<$tom_build_cli_22.GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException').unresolvedPlaceholders,
-      'iterations': (visitor, target) => D4.validateTarget<$tom_build_cli_22.GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException').iterations,
+      'message': (visitor, target) => D4.validateTarget<GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException').message,
+      'unresolvedPlaceholders': (visitor, target) => D4.validateTarget<GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException').unresolvedPlaceholders,
+      'iterations': (visitor, target) => D4.validateTarget<GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException').iterations,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_22.GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException');
+        final t = D4.validateTarget<GeneratorPlaceholderException>(target, 'GeneratorPlaceholderException');
         return t.toString();
       },
     },
@@ -3964,16 +4092,17 @@ BridgedClass _createGeneratorPlaceholderExceptionBridge() {
 
 BridgedClass _createPlaceholderResolverBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_22.PlaceholderResolver,
+    nativeType: PlaceholderResolver,
     name: 'PlaceholderResolver',
+    isAssignable: (v) => v is PlaceholderResolver,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_22.PlaceholderResolver();
+        return PlaceholderResolver();
       },
     },
     methods: {
       'resolve': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_22.PlaceholderResolver>(target, 'PlaceholderResolver');
+        final t = D4.validateTarget<PlaceholderResolver>(target, 'PlaceholderResolver');
         final content = D4.getRequiredNamedArg<dynamic>(named, 'content', 'resolve');
         if (!named.containsKey('context') || named['context'] == null) {
           throw ArgumentError('resolve: Missing required named argument "context"');
@@ -3984,7 +4113,7 @@ BridgedClass _createPlaceholderResolverBridge() {
       },
     },
     staticGetters: {
-      'maxIterations': (visitor) => $tom_build_cli_22.PlaceholderResolver.maxIterations,
+      'maxIterations': (visitor) => PlaceholderResolver.maxIterations,
     },
     constructorSignatures: {
       '': 'PlaceholderResolver()',
@@ -4004,19 +4133,23 @@ BridgedClass _createPlaceholderResolverBridge() {
 
 BridgedClass _createModeProcessorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_23.ModeProcessor,
+    nativeType: $tom_build_cli_18.ModeProcessor,
     name: 'ModeProcessor',
+    isAssignable: (v) => v is $tom_build_cli_18.ModeProcessor,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_23.ModeProcessor();
+        return $tom_build_cli_18.ModeProcessor();
       },
     },
     methods: {
       'processContent': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_23.ModeProcessor>(target, 'ModeProcessor');
+        final t = D4.validateTarget<$tom_build_cli_18.ModeProcessor>(target, 'ModeProcessor');
         D4.requireMinArgs(positional, 2, 'processContent');
         final content = D4.getRequiredArg<String>(positional, 0, 'content', 'processContent');
-        final activeModes = D4.getRequiredArg<Set<String>>(positional, 1, 'activeModes', 'processContent');
+        if (positional.length <= 1) {
+          throw ArgumentError('processContent: Missing required argument "activeModes" at position 1');
+        }
+        final activeModes = D4.coerceSet<String>(positional[1], 'activeModes');
         final modeTypeValues = named.containsKey('modeTypeValues') && named['modeTypeValues'] != null
             ? D4.coerceMap<String, String>(named['modeTypeValues'], 'modeTypeValues')
             : const <String, String>{};
@@ -4038,16 +4171,17 @@ BridgedClass _createModeProcessorBridge() {
 
 BridgedClass _createModeResolverBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_24.ModeResolver,
+    nativeType: ModeResolver,
     name: 'ModeResolver',
+    isAssignable: (v) => v is ModeResolver,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_24.ModeResolver();
+        return ModeResolver();
       },
     },
     methods: {
       'resolve': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_24.ModeResolver>(target, 'ModeResolver');
+        final t = D4.validateTarget<ModeResolver>(target, 'ModeResolver');
         final actionName = D4.getRequiredNamedArg<String>(named, 'actionName', 'resolve');
         final workspaceModes = D4.getOptionalNamedArg<$tom_build_1.WorkspaceModes?>(named, 'workspaceModes');
         final modeDefinitions = D4.coerceMapOrNull<String, $tom_build_1.ModeDefinitions>(named['modeDefinitions'], 'modeDefinitions');
@@ -4057,16 +4191,16 @@ BridgedClass _createModeResolverBridge() {
         return t.resolve(actionName: actionName, workspaceModes: workspaceModes, modeDefinitions: modeDefinitions, cliOverrides: cliOverrides);
       },
       'resolveModeProperties': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_24.ModeResolver>(target, 'ModeResolver');
-        final resolved = D4.getRequiredNamedArg<$tom_build_cli_24.ResolvedModes>(named, 'resolved', 'resolveModeProperties');
-        if (!named.containsKey('modeDefinitions') || named['modeDefinitions'] == null) {
+        final t = D4.validateTarget<ModeResolver>(target, 'ModeResolver');
+        final resolved = D4.getRequiredNamedArg<$tom_build_cli_19.ResolvedModes>(named, 'resolved', 'resolveModeProperties');
+        if (!named.containsKey('modeDefinitions')) {
           throw ArgumentError('resolveModeProperties: Missing required named argument "modeDefinitions"');
         }
         final modeDefinitions = D4.coerceMapOrNull<String, $tom_build_1.ModeDefinitions>(named['modeDefinitions'], 'modeDefinitions');
         return t.resolveModeProperties(resolved: resolved, modeDefinitions: modeDefinitions);
       },
       'getDefaultMode': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_24.ModeResolver>(target, 'ModeResolver');
+        final t = D4.validateTarget<ModeResolver>(target, 'ModeResolver');
         D4.requireMinArgs(positional, 2, 'getDefaultMode');
         final modeType = D4.getRequiredArg<String>(positional, 0, 'modeType', 'getDefaultMode');
         final workspaceModes = D4.getRequiredArg<$tom_build_1.WorkspaceModes?>(positional, 1, 'workspaceModes', 'getDefaultMode');
@@ -4090,39 +4224,46 @@ BridgedClass _createModeResolverBridge() {
 
 BridgedClass _createResolvedModesBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_24.ResolvedModes,
+    nativeType: $tom_build_cli_19.ResolvedModes,
     name: 'ResolvedModes',
+    isAssignable: (v) => v is $tom_build_cli_19.ResolvedModes,
     constructors: {
       '': (visitor, positional, named) {
-        final activeModes = D4.getRequiredNamedArg<Set<String>>(named, 'activeModes', 'ResolvedModes');
+        if (!named.containsKey('activeModes') || named['activeModes'] == null) {
+          throw ArgumentError('ResolvedModes: Missing required named argument "activeModes"');
+        }
+        final activeModes = D4.coerceSet<String>(named['activeModes'], 'activeModes');
         if (!named.containsKey('modeTypeValues') || named['modeTypeValues'] == null) {
           throw ArgumentError('ResolvedModes: Missing required named argument "modeTypeValues"');
         }
         final modeTypeValues = D4.coerceMap<String, String>(named['modeTypeValues'], 'modeTypeValues');
-        final impliedModes = D4.getRequiredNamedArg<Set<String>>(named, 'impliedModes', 'ResolvedModes');
-        return $tom_build_cli_24.ResolvedModes(activeModes: activeModes, modeTypeValues: modeTypeValues, impliedModes: impliedModes);
+        if (!named.containsKey('impliedModes') || named['impliedModes'] == null) {
+          throw ArgumentError('ResolvedModes: Missing required named argument "impliedModes"');
+        }
+        final impliedModes = D4.coerceSet<String>(named['impliedModes'], 'impliedModes');
+        return $tom_build_cli_19.ResolvedModes(activeModes: activeModes, modeTypeValues: modeTypeValues, impliedModes: impliedModes);
       },
     },
     getters: {
-      'activeModes': (visitor, target) => D4.validateTarget<$tom_build_cli_24.ResolvedModes>(target, 'ResolvedModes').activeModes,
-      'modeTypeValues': (visitor, target) => D4.validateTarget<$tom_build_cli_24.ResolvedModes>(target, 'ResolvedModes').modeTypeValues,
-      'impliedModes': (visitor, target) => D4.validateTarget<$tom_build_cli_24.ResolvedModes>(target, 'ResolvedModes').impliedModes,
+      'activeModes': (visitor, target) => D4.validateTarget<$tom_build_cli_19.ResolvedModes>(target, 'ResolvedModes').activeModes,
+      'modeTypeValues': (visitor, target) => D4.validateTarget<$tom_build_cli_19.ResolvedModes>(target, 'ResolvedModes').modeTypeValues,
+      'impliedModes': (visitor, target) => D4.validateTarget<$tom_build_cli_19.ResolvedModes>(target, 'ResolvedModes').impliedModes,
     },
     methods: {
       'isActive': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_24.ResolvedModes>(target, 'ResolvedModes');
+        final t = D4.validateTarget<$tom_build_cli_19.ResolvedModes>(target, 'ResolvedModes');
         D4.requireMinArgs(positional, 1, 'isActive');
         final mode = D4.getRequiredArg<String>(positional, 0, 'mode', 'isActive');
         return t.isActive(mode);
       },
       'getModeValue': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_24.ResolvedModes>(target, 'ResolvedModes');
+        final t = D4.validateTarget<$tom_build_cli_19.ResolvedModes>(target, 'ResolvedModes');
         D4.requireMinArgs(positional, 1, 'getModeValue');
         final modeType = D4.getRequiredArg<String>(positional, 0, 'modeType', 'getModeValue');
         return t.getModeValue(modeType);
       },
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_24.ResolvedModes>(target, 'ResolvedModes');
+        final t = D4.validateTarget<$tom_build_cli_19.ResolvedModes>(target, 'ResolvedModes');
         return t.toString();
       },
     },
@@ -4148,28 +4289,29 @@ BridgedClass _createResolvedModesBridge() {
 
 BridgedClass _createTomplateParserBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_25.TomplateParser,
+    nativeType: $tom_build_cli_20.TomplateParser,
     name: 'TomplateParser',
+    isAssignable: (v) => v is $tom_build_cli_20.TomplateParser,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_25.TomplateParser();
+        return $tom_build_cli_20.TomplateParser();
       },
     },
     methods: {
       'findTemplates': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_25.TomplateParser>(target, 'TomplateParser');
+        final t = D4.validateTarget<$tom_build_cli_20.TomplateParser>(target, 'TomplateParser');
         D4.requireMinArgs(positional, 1, 'findTemplates');
         final directory = D4.getRequiredArg<String>(positional, 0, 'directory', 'findTemplates');
         return t.findTemplates(directory);
       },
       'parseFile': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_25.TomplateParser>(target, 'TomplateParser');
+        final t = D4.validateTarget<$tom_build_cli_20.TomplateParser>(target, 'TomplateParser');
         D4.requireMinArgs(positional, 1, 'parseFile');
         final filePath = D4.getRequiredArg<String>(positional, 0, 'filePath', 'parseFile');
         return t.parseFile(filePath);
       },
       'parseContent': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_25.TomplateParser>(target, 'TomplateParser');
+        final t = D4.validateTarget<$tom_build_cli_20.TomplateParser>(target, 'TomplateParser');
         D4.requireMinArgs(positional, 2, 'parseContent');
         final content = D4.getRequiredArg<String>(positional, 0, 'content', 'parseContent');
         final sourcePath = D4.getRequiredArg<String>(positional, 1, 'sourcePath', 'parseContent');
@@ -4193,8 +4335,9 @@ BridgedClass _createTomplateParserBridge() {
 
 BridgedClass _createTomplateFileBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_25.TomplateFile,
+    nativeType: $tom_build_cli_20.TomplateFile,
     name: 'TomplateFile',
+    isAssignable: (v) => v is $tom_build_cli_20.TomplateFile,
     constructors: {
       '': (visitor, positional, named) {
         final sourcePath = D4.getRequiredNamedArg<String>(named, 'sourcePath', 'TomplateFile');
@@ -4203,24 +4346,24 @@ BridgedClass _createTomplateFileBridge() {
         if (!named.containsKey('placeholders') || named['placeholders'] == null) {
           throw ArgumentError('TomplateFile: Missing required named argument "placeholders"');
         }
-        final placeholders = D4.coerceList<$tom_build_cli_25.PlaceholderInfo>(named['placeholders'], 'placeholders');
+        final placeholders = D4.coerceList<$tom_build_cli_20.PlaceholderInfo>(named['placeholders'], 'placeholders');
         final hasModeBlocks = D4.getRequiredNamedArg<bool>(named, 'hasModeBlocks', 'TomplateFile');
-        return $tom_build_cli_25.TomplateFile(sourcePath: sourcePath, targetPath: targetPath, content: content, placeholders: placeholders, hasModeBlocks: hasModeBlocks);
+        return $tom_build_cli_20.TomplateFile(sourcePath: sourcePath, targetPath: targetPath, content: content, placeholders: placeholders, hasModeBlocks: hasModeBlocks);
       },
     },
     getters: {
-      'sourcePath': (visitor, target) => D4.validateTarget<$tom_build_cli_25.TomplateFile>(target, 'TomplateFile').sourcePath,
-      'targetPath': (visitor, target) => D4.validateTarget<$tom_build_cli_25.TomplateFile>(target, 'TomplateFile').targetPath,
-      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_25.TomplateFile>(target, 'TomplateFile').content,
-      'placeholders': (visitor, target) => D4.validateTarget<$tom_build_cli_25.TomplateFile>(target, 'TomplateFile').placeholders,
-      'hasModeBlocks': (visitor, target) => D4.validateTarget<$tom_build_cli_25.TomplateFile>(target, 'TomplateFile').hasModeBlocks,
-      'hasPlaceholders': (visitor, target) => D4.validateTarget<$tom_build_cli_25.TomplateFile>(target, 'TomplateFile').hasPlaceholders,
+      'sourcePath': (visitor, target) => D4.validateTarget<$tom_build_cli_20.TomplateFile>(target, 'TomplateFile').sourcePath,
+      'targetPath': (visitor, target) => D4.validateTarget<$tom_build_cli_20.TomplateFile>(target, 'TomplateFile').targetPath,
+      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_20.TomplateFile>(target, 'TomplateFile').content,
+      'placeholders': (visitor, target) => D4.validateTarget<$tom_build_cli_20.TomplateFile>(target, 'TomplateFile').placeholders,
+      'hasModeBlocks': (visitor, target) => D4.validateTarget<$tom_build_cli_20.TomplateFile>(target, 'TomplateFile').hasModeBlocks,
+      'hasPlaceholders': (visitor, target) => D4.validateTarget<$tom_build_cli_20.TomplateFile>(target, 'TomplateFile').hasPlaceholders,
     },
     methods: {
       'getPlaceholdersOfType': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_25.TomplateFile>(target, 'TomplateFile');
+        final t = D4.validateTarget<$tom_build_cli_20.TomplateFile>(target, 'TomplateFile');
         D4.requireMinArgs(positional, 1, 'getPlaceholdersOfType');
-        final type = D4.getRequiredArg<$tom_build_cli_25.PlaceholderType>(positional, 0, 'type', 'getPlaceholdersOfType');
+        final type = D4.getRequiredArg<$tom_build_cli_20.PlaceholderType>(positional, 0, 'type', 'getPlaceholdersOfType');
         return t.getPlaceholdersOfType(type);
       },
     },
@@ -4247,28 +4390,29 @@ BridgedClass _createTomplateFileBridge() {
 
 BridgedClass _createPlaceholderInfoBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_25.PlaceholderInfo,
+    nativeType: $tom_build_cli_20.PlaceholderInfo,
     name: 'PlaceholderInfo',
+    isAssignable: (v) => v is $tom_build_cli_20.PlaceholderInfo,
     constructors: {
       '': (visitor, positional, named) {
-        final type = D4.getRequiredNamedArg<$tom_build_cli_25.PlaceholderType>(named, 'type', 'PlaceholderInfo');
+        final type = D4.getRequiredNamedArg<$tom_build_cli_20.PlaceholderType>(named, 'type', 'PlaceholderInfo');
         final fullMatch = D4.getRequiredNamedArg<String>(named, 'fullMatch', 'PlaceholderInfo');
         final key = D4.getRequiredNamedArg<String>(named, 'key', 'PlaceholderInfo');
         final defaultValue = D4.getOptionalNamedArg<String?>(named, 'defaultValue');
         final offset = D4.getRequiredNamedArg<int>(named, 'offset', 'PlaceholderInfo');
-        return $tom_build_cli_25.PlaceholderInfo(type: type, fullMatch: fullMatch, key: key, defaultValue: defaultValue, offset: offset);
+        return $tom_build_cli_20.PlaceholderInfo(type: type, fullMatch: fullMatch, key: key, defaultValue: defaultValue, offset: offset);
       },
     },
     getters: {
-      'type': (visitor, target) => D4.validateTarget<$tom_build_cli_25.PlaceholderInfo>(target, 'PlaceholderInfo').type,
-      'fullMatch': (visitor, target) => D4.validateTarget<$tom_build_cli_25.PlaceholderInfo>(target, 'PlaceholderInfo').fullMatch,
-      'key': (visitor, target) => D4.validateTarget<$tom_build_cli_25.PlaceholderInfo>(target, 'PlaceholderInfo').key,
-      'defaultValue': (visitor, target) => D4.validateTarget<$tom_build_cli_25.PlaceholderInfo>(target, 'PlaceholderInfo').defaultValue,
-      'offset': (visitor, target) => D4.validateTarget<$tom_build_cli_25.PlaceholderInfo>(target, 'PlaceholderInfo').offset,
+      'type': (visitor, target) => D4.validateTarget<$tom_build_cli_20.PlaceholderInfo>(target, 'PlaceholderInfo').type,
+      'fullMatch': (visitor, target) => D4.validateTarget<$tom_build_cli_20.PlaceholderInfo>(target, 'PlaceholderInfo').fullMatch,
+      'key': (visitor, target) => D4.validateTarget<$tom_build_cli_20.PlaceholderInfo>(target, 'PlaceholderInfo').key,
+      'defaultValue': (visitor, target) => D4.validateTarget<$tom_build_cli_20.PlaceholderInfo>(target, 'PlaceholderInfo').defaultValue,
+      'offset': (visitor, target) => D4.validateTarget<$tom_build_cli_20.PlaceholderInfo>(target, 'PlaceholderInfo').offset,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_25.PlaceholderInfo>(target, 'PlaceholderInfo');
+        final t = D4.validateTarget<$tom_build_cli_20.PlaceholderInfo>(target, 'PlaceholderInfo');
         return t.toString();
       },
     },
@@ -4294,19 +4438,20 @@ BridgedClass _createPlaceholderInfoBridge() {
 
 BridgedClass _createTomplateProcessorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_26.TomplateProcessor,
+    nativeType: $tom_build_cli_21.TomplateProcessor,
     name: 'TomplateProcessor',
+    isAssignable: (v) => v is $tom_build_cli_21.TomplateProcessor,
     constructors: {
       '': (visitor, positional, named) {
-        final modeProcessor = D4.getOptionalNamedArg<$tom_build_cli_23.ModeProcessor?>(named, 'modeProcessor');
-        return $tom_build_cli_26.TomplateProcessor(modeProcessor: modeProcessor);
+        final modeProcessor = D4.getOptionalNamedArg<$tom_build_cli_18.ModeProcessor?>(named, 'modeProcessor');
+        return $tom_build_cli_21.TomplateProcessor(modeProcessor: modeProcessor);
       },
     },
     methods: {
       'process': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_26.TomplateProcessor>(target, 'TomplateProcessor');
-        final template = D4.getRequiredNamedArg<$tom_build_cli_25.TomplateFile>(named, 'template', 'process');
-        final resolvedModes = D4.getOptionalNamedArg<$tom_build_cli_24.ResolvedModes?>(named, 'resolvedModes');
+        final t = D4.validateTarget<$tom_build_cli_21.TomplateProcessor>(target, 'TomplateProcessor');
+        final template = D4.getRequiredNamedArg<$tom_build_cli_20.TomplateFile>(named, 'template', 'process');
+        final resolvedModes = D4.getOptionalNamedArg<$tom_build_cli_19.ResolvedModes?>(named, 'resolvedModes');
         final context = D4.coerceMapOrNull<String, dynamic>(named['context'], 'context');
         final resolveEnvironment = D4.getNamedArgWithDefault<bool>(named, 'resolveEnvironment', false);
         final environment = D4.coerceMapOrNull<String, String>(named['environment'], 'environment');
@@ -4314,16 +4459,16 @@ BridgedClass _createTomplateProcessorBridge() {
         return t.process(template: template, resolvedModes: resolvedModes, context: context, resolveEnvironment: resolveEnvironment, environment: environment, resolveGenerators: resolveGenerators);
       },
       'writeToFile': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_26.TomplateProcessor>(target, 'TomplateProcessor');
+        final t = D4.validateTarget<$tom_build_cli_21.TomplateProcessor>(target, 'TomplateProcessor');
         D4.requireMinArgs(positional, 1, 'writeToFile');
-        final processed = D4.getRequiredArg<$tom_build_cli_26.TomplateResult>(positional, 0, 'processed', 'writeToFile');
+        final processed = D4.getRequiredArg<$tom_build_cli_21.TomplateResult>(positional, 0, 'processed', 'writeToFile');
         t.writeToFile(processed);
         return null;
       },
       'processAndWrite': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_26.TomplateProcessor>(target, 'TomplateProcessor');
-        final template = D4.getRequiredNamedArg<$tom_build_cli_25.TomplateFile>(named, 'template', 'processAndWrite');
-        final resolvedModes = D4.getOptionalNamedArg<$tom_build_cli_24.ResolvedModes?>(named, 'resolvedModes');
+        final t = D4.validateTarget<$tom_build_cli_21.TomplateProcessor>(target, 'TomplateProcessor');
+        final template = D4.getRequiredNamedArg<$tom_build_cli_20.TomplateFile>(named, 'template', 'processAndWrite');
+        final resolvedModes = D4.getOptionalNamedArg<$tom_build_cli_19.ResolvedModes?>(named, 'resolvedModes');
         final context = D4.coerceMapOrNull<String, dynamic>(named['context'], 'context');
         final resolveEnvironment = D4.getNamedArgWithDefault<bool>(named, 'resolveEnvironment', false);
         final environment = D4.coerceMapOrNull<String, String>(named['environment'], 'environment');
@@ -4348,20 +4493,21 @@ BridgedClass _createTomplateProcessorBridge() {
 
 BridgedClass _createTomplateResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_26.TomplateResult,
+    nativeType: $tom_build_cli_21.TomplateResult,
     name: 'TomplateResult',
+    isAssignable: (v) => v is $tom_build_cli_21.TomplateResult,
     constructors: {
       '': (visitor, positional, named) {
         final sourcePath = D4.getRequiredNamedArg<String>(named, 'sourcePath', 'TomplateResult');
         final targetPath = D4.getRequiredNamedArg<String>(named, 'targetPath', 'TomplateResult');
         final content = D4.getRequiredNamedArg<String>(named, 'content', 'TomplateResult');
-        return $tom_build_cli_26.TomplateResult(sourcePath: sourcePath, targetPath: targetPath, content: content);
+        return $tom_build_cli_21.TomplateResult(sourcePath: sourcePath, targetPath: targetPath, content: content);
       },
     },
     getters: {
-      'sourcePath': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomplateResult>(target, 'TomplateResult').sourcePath,
-      'targetPath': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomplateResult>(target, 'TomplateResult').targetPath,
-      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomplateResult>(target, 'TomplateResult').content,
+      'sourcePath': (visitor, target) => D4.validateTarget<$tom_build_cli_21.TomplateResult>(target, 'TomplateResult').sourcePath,
+      'targetPath': (visitor, target) => D4.validateTarget<$tom_build_cli_21.TomplateResult>(target, 'TomplateResult').targetPath,
+      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_21.TomplateResult>(target, 'TomplateResult').content,
     },
     constructorSignatures: {
       '': 'const TomplateResult({required String sourcePath, required String targetPath, required String content})',
@@ -4380,23 +4526,24 @@ BridgedClass _createTomplateResultBridge() {
 
 BridgedClass _createPlaceholderResolutionExceptionBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_26.PlaceholderResolutionException,
+    nativeType: PlaceholderResolutionException,
     name: 'PlaceholderResolutionException',
+    isAssignable: (v) => v is PlaceholderResolutionException,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'PlaceholderResolutionException');
         final message = D4.getRequiredArg<String>(positional, 0, 'message', 'PlaceholderResolutionException');
         final unresolved = D4.getOptionalNamedArg<String?>(named, 'unresolved');
-        return $tom_build_cli_26.PlaceholderResolutionException(message, unresolved: unresolved);
+        return PlaceholderResolutionException(message, unresolved: unresolved);
       },
     },
     getters: {
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_26.PlaceholderResolutionException>(target, 'PlaceholderResolutionException').message,
-      'unresolved': (visitor, target) => D4.validateTarget<$tom_build_cli_26.PlaceholderResolutionException>(target, 'PlaceholderResolutionException').unresolved,
+      'message': (visitor, target) => D4.validateTarget<PlaceholderResolutionException>(target, 'PlaceholderResolutionException').message,
+      'unresolved': (visitor, target) => D4.validateTarget<PlaceholderResolutionException>(target, 'PlaceholderResolutionException').unresolved,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_26.PlaceholderResolutionException>(target, 'PlaceholderResolutionException');
+        final t = D4.validateTarget<PlaceholderResolutionException>(target, 'PlaceholderResolutionException');
         return t.toString();
       },
     },
@@ -4419,17 +4566,18 @@ BridgedClass _createPlaceholderResolutionExceptionBridge() {
 
 BridgedClass _createToolPrefixBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_31.ToolPrefix,
+    nativeType: ToolPrefix,
     name: 'ToolPrefix',
+    isAssignable: (v) => v is ToolPrefix,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_31.ToolPrefix();
+        return ToolPrefix();
       },
     },
     staticGetters: {
-      'wsPrepper': (visitor) => $tom_build_cli_31.ToolPrefix.wsPrepper,
-      'workspaceAnalyzer': (visitor) => $tom_build_cli_31.ToolPrefix.workspaceAnalyzer,
-      'reflectionGenerator': (visitor) => $tom_build_cli_31.ToolPrefix.reflectionGenerator,
+      'wsPrepper': (visitor) => ToolPrefix.wsPrepper,
+      'workspaceAnalyzer': (visitor) => ToolPrefix.workspaceAnalyzer,
+      'reflectionGenerator': (visitor) => ToolPrefix.reflectionGenerator,
     },
     constructorSignatures: {
       '': 'ToolPrefix()',
@@ -4448,8 +4596,9 @@ BridgedClass _createToolPrefixBridge() {
 
 BridgedClass _createCliArgsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_31.CliArgs,
+    nativeType: $tom_build_cli_23.CliArgs,
     name: 'CliArgs',
+    isAssignable: (v) => v is $tom_build_cli_23.CliArgs,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 2, 'CliArgs');
@@ -4458,69 +4607,69 @@ BridgedClass _createCliArgsBridge() {
           throw ArgumentError('CliArgs: Missing required argument "arguments" at position 1');
         }
         final arguments = D4.coerceList<String>(positional[1], 'arguments');
-        return $tom_build_cli_31.CliArgs(prefix, arguments);
+        return $tom_build_cli_23.CliArgs(prefix, arguments);
       },
     },
     getters: {
-      'prefix': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').prefix,
-      'rawArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').rawArgs,
-      'positionalArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').positionalArgs,
-      'namedParams': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').namedParams,
-      'flags': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').flags,
-      'help': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').help,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').dryRun,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs').verbose,
+      'prefix': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').prefix,
+      'rawArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').rawArgs,
+      'positionalArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').positionalArgs,
+      'namedParams': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').namedParams,
+      'flags': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').flags,
+      'help': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').help,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').dryRun,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs').verbose,
     },
     methods: {
       'get': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         D4.requireMinArgs(positional, 1, 'get');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'get');
         final defaultValue = D4.getOptionalArgWithDefault<String>(positional, 1, 'defaultValue', '');
         return t.get(key, defaultValue);
       },
       'getInt': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         D4.requireMinArgs(positional, 1, 'getInt');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'getInt');
         return t.getInt(key);
       },
       'getBool': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         D4.requireMinArgs(positional, 1, 'getBool');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'getBool');
         final defaultValue = D4.getOptionalArgWithDefault<bool>(positional, 1, 'defaultValue', false);
         return t.getBool(key, defaultValue);
       },
       'hasFlag': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         D4.requireMinArgs(positional, 1, 'hasFlag');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'hasFlag');
         return t.hasFlag(key);
       },
       'has': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         D4.requireMinArgs(positional, 1, 'has');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'has');
         return t.has(key);
       },
       'resolvePath': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         D4.requireMinArgs(positional, 1, 'resolvePath');
         final pathArg = D4.getRequiredArg<String>(positional, 0, 'pathArg', 'resolvePath');
         return t.resolvePath(pathArg);
       },
       'getWorkspacePath': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         final positionalIndex = D4.getNamedArgWithDefault<int>(named, 'positionalIndex', 0);
         return t.getWorkspacePath(positionalIndex: positionalIndex);
       },
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         return t.toString();
       },
       '[]': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_31.CliArgs>(target, 'CliArgs');
+        final t = D4.validateTarget<$tom_build_cli_23.CliArgs>(target, 'CliArgs');
         final index = D4.getRequiredArg<String>(positional, 0, 'index', 'operator[]');
         return t[index];
       },
@@ -4557,8 +4706,9 @@ BridgedClass _createCliArgsBridge() {
 
 BridgedClass _createPipelineDefinitionBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_32.PipelineDefinition,
+    nativeType: $tom_build_cli_24.PipelineDefinition,
     name: 'PipelineDefinition',
+    isAssignable: (v) => v is $tom_build_cli_24.PipelineDefinition,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getRequiredNamedArg<String>(named, 'name', 'PipelineDefinition');
@@ -4566,26 +4716,26 @@ BridgedClass _createPipelineDefinitionBridge() {
           throw ArgumentError('PipelineDefinition: Missing required named argument "commands"');
         }
         final commands = D4.coerceList<String>(named['commands'], 'commands');
-        return $tom_build_cli_32.PipelineDefinition(name: name, commands: commands);
+        return $tom_build_cli_24.PipelineDefinition(name: name, commands: commands);
       },
       'fromYaml': (visitor, positional, named) {
         D4.requireMinArgs(positional, 2, 'PipelineDefinition');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'PipelineDefinition');
         final yaml = D4.getRequiredArg<dynamic>(positional, 1, 'yaml', 'PipelineDefinition');
-        return $tom_build_cli_32.PipelineDefinition.fromYaml(name, yaml);
+        return $tom_build_cli_24.PipelineDefinition.fromYaml(name, yaml);
       },
     },
     getters: {
-      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineDefinition>(target, 'PipelineDefinition').name,
-      'commands': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineDefinition>(target, 'PipelineDefinition').commands,
+      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_24.PipelineDefinition>(target, 'PipelineDefinition').name,
+      'commands': (visitor, target) => D4.validateTarget<$tom_build_cli_24.PipelineDefinition>(target, 'PipelineDefinition').commands,
     },
     methods: {
       'parseCommands': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineDefinition>(target, 'PipelineDefinition');
+        final t = D4.validateTarget<$tom_build_cli_24.PipelineDefinition>(target, 'PipelineDefinition');
         return t.parseCommands();
       },
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineDefinition>(target, 'PipelineDefinition');
+        final t = D4.validateTarget<$tom_build_cli_24.PipelineDefinition>(target, 'PipelineDefinition');
         return t.toString();
       },
     },
@@ -4610,27 +4760,28 @@ BridgedClass _createPipelineDefinitionBridge() {
 
 BridgedClass _createPipelineResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_32.PipelineResult,
+    nativeType: $tom_build_cli_24.PipelineResult,
     name: 'PipelineResult',
+    isAssignable: (v) => v is $tom_build_cli_24.PipelineResult,
     constructors: {
       '': (visitor, positional, named) {
-        final pipeline = D4.getRequiredNamedArg<$tom_build_cli_32.PipelineDefinition>(named, 'pipeline', 'PipelineResult');
+        final pipeline = D4.getRequiredNamedArg<$tom_build_cli_24.PipelineDefinition>(named, 'pipeline', 'PipelineResult');
         if (!named.containsKey('commandResults') || named['commandResults'] == null) {
           throw ArgumentError('PipelineResult: Missing required named argument "commandResults"');
         }
-        final commandResults = D4.coerceList<$tom_build_cli_35.TomRunResults>(named['commandResults'], 'commandResults');
-        return $tom_build_cli_32.PipelineResult(pipeline: pipeline, commandResults: commandResults);
+        final commandResults = D4.coerceList<$tom_build_cli_26.TomRunResults>(named['commandResults'], 'commandResults');
+        return $tom_build_cli_24.PipelineResult(pipeline: pipeline, commandResults: commandResults);
       },
     },
     getters: {
-      'pipeline': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineResult>(target, 'PipelineResult').pipeline,
-      'commandResults': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineResult>(target, 'PipelineResult').commandResults,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineResult>(target, 'PipelineResult').success,
-      'totalDuration': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineResult>(target, 'PipelineResult').totalDuration,
+      'pipeline': (visitor, target) => D4.validateTarget<$tom_build_cli_24.PipelineResult>(target, 'PipelineResult').pipeline,
+      'commandResults': (visitor, target) => D4.validateTarget<$tom_build_cli_24.PipelineResult>(target, 'PipelineResult').commandResults,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_24.PipelineResult>(target, 'PipelineResult').success,
+      'totalDuration': (visitor, target) => D4.validateTarget<$tom_build_cli_24.PipelineResult>(target, 'PipelineResult').totalDuration,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineResult>(target, 'PipelineResult');
+        final t = D4.validateTarget<$tom_build_cli_24.PipelineResult>(target, 'PipelineResult');
         return t.toString();
       },
     },
@@ -4655,31 +4806,32 @@ BridgedClass _createPipelineResultBridge() {
 
 BridgedClass _createPipelineLoaderBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_32.PipelineLoader,
+    nativeType: PipelineLoader,
     name: 'PipelineLoader',
+    isAssignable: (v) => v is PipelineLoader,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'PipelineLoader');
         final workspacePath = D4.getRequiredArg<String>(positional, 0, 'workspacePath', 'PipelineLoader');
-        return $tom_build_cli_32.PipelineLoader(workspacePath);
+        return PipelineLoader(workspacePath);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineLoader>(target, 'PipelineLoader').workspacePath,
+      'workspacePath': (visitor, target) => D4.validateTarget<PipelineLoader>(target, 'PipelineLoader').workspacePath,
     },
     methods: {
       'loadPipelines': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineLoader>(target, 'PipelineLoader');
+        final t = D4.validateTarget<PipelineLoader>(target, 'PipelineLoader');
         return t.loadPipelines();
       },
       'getPipeline': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineLoader>(target, 'PipelineLoader');
+        final t = D4.validateTarget<PipelineLoader>(target, 'PipelineLoader');
         D4.requireMinArgs(positional, 1, 'getPipeline');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'getPipeline');
         return t.getPipeline(name);
       },
       'listPipelineNames': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineLoader>(target, 'PipelineLoader');
+        final t = D4.validateTarget<PipelineLoader>(target, 'PipelineLoader');
         return t.listPipelineNames();
       },
     },
@@ -4703,34 +4855,35 @@ BridgedClass _createPipelineLoaderBridge() {
 
 BridgedClass _createPipelineRunnerBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_32.PipelineRunner,
+    nativeType: PipelineRunner,
     name: 'PipelineRunner',
+    isAssignable: (v) => v is PipelineRunner,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'PipelineRunner');
         final verbose = D4.getNamedArgWithDefault<bool>(named, 'verbose', false);
         final dryRun = D4.getNamedArgWithDefault<bool>(named, 'dryRun', false);
         final output = D4.getOptionalNamedArg<StringSink?>(named, 'output');
-        return $tom_build_cli_32.PipelineRunner(workspacePath: workspacePath, verbose: verbose, dryRun: dryRun, output: output);
+        return PipelineRunner(workspacePath: workspacePath, verbose: verbose, dryRun: dryRun, output: output);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineRunner>(target, 'PipelineRunner').workspacePath,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineRunner>(target, 'PipelineRunner').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineRunner>(target, 'PipelineRunner').dryRun,
-      'output': (visitor, target) => D4.validateTarget<$tom_build_cli_32.PipelineRunner>(target, 'PipelineRunner').output,
+      'workspacePath': (visitor, target) => D4.validateTarget<PipelineRunner>(target, 'PipelineRunner').workspacePath,
+      'verbose': (visitor, target) => D4.validateTarget<PipelineRunner>(target, 'PipelineRunner').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<PipelineRunner>(target, 'PipelineRunner').dryRun,
+      'output': (visitor, target) => D4.validateTarget<PipelineRunner>(target, 'PipelineRunner').output,
     },
     methods: {
       'runPipeline': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineRunner>(target, 'PipelineRunner');
+        final t = D4.validateTarget<PipelineRunner>(target, 'PipelineRunner');
         D4.requireMinArgs(positional, 1, 'runPipeline');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'runPipeline');
         return t.runPipeline(name);
       },
       'execute': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_32.PipelineRunner>(target, 'PipelineRunner');
+        final t = D4.validateTarget<PipelineRunner>(target, 'PipelineRunner');
         D4.requireMinArgs(positional, 1, 'execute');
-        final pipeline = D4.getRequiredArg<$tom_build_cli_32.PipelineDefinition>(positional, 0, 'pipeline', 'execute');
+        final pipeline = D4.getRequiredArg<$tom_build_cli_24.PipelineDefinition>(positional, 0, 'pipeline', 'execute');
         return t.execute(pipeline);
       },
     },
@@ -4756,8 +4909,9 @@ BridgedClass _createPipelineRunnerBridge() {
 
 BridgedClass _createPackageInfoBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_33.PackageInfo,
+    nativeType: PackageInfo,
     name: 'PackageInfo',
+    isAssignable: (v) => v is PackageInfo,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getRequiredNamedArg<String>(named, 'name', 'PackageInfo');
@@ -4767,29 +4921,29 @@ BridgedClass _createPackageInfoBridge() {
         final metadata = named.containsKey('metadata') && named['metadata'] != null
             ? D4.coerceMap<String, dynamic>(named['metadata'], 'metadata')
             : const <String, dynamic>{};
-        return $tom_build_cli_33.PackageInfo(name: name, version: version, publishable: publishable, lastChangeCommit: lastChangeCommit, metadata: metadata);
+        return PackageInfo(name: name, version: version, publishable: publishable, lastChangeCommit: lastChangeCommit, metadata: metadata);
       },
       'fromYaml': (visitor, positional, named) {
         D4.requireMinArgs(positional, 2, 'PackageInfo');
         final name = D4.getRequiredArg<String>(positional, 0, 'name', 'PackageInfo');
         final yaml = D4.getRequiredArg<$yaml_1.YamlMap>(positional, 1, 'yaml', 'PackageInfo');
-        return $tom_build_cli_33.PackageInfo.fromYaml(name, yaml);
+        return PackageInfo.fromYaml(name, yaml);
       },
     },
     getters: {
-      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_33.PackageInfo>(target, 'PackageInfo').name,
-      'version': (visitor, target) => D4.validateTarget<$tom_build_cli_33.PackageInfo>(target, 'PackageInfo').version,
-      'publishable': (visitor, target) => D4.validateTarget<$tom_build_cli_33.PackageInfo>(target, 'PackageInfo').publishable,
-      'lastChangeCommit': (visitor, target) => D4.validateTarget<$tom_build_cli_33.PackageInfo>(target, 'PackageInfo').lastChangeCommit,
-      'metadata': (visitor, target) => D4.validateTarget<$tom_build_cli_33.PackageInfo>(target, 'PackageInfo').metadata,
+      'name': (visitor, target) => D4.validateTarget<PackageInfo>(target, 'PackageInfo').name,
+      'version': (visitor, target) => D4.validateTarget<PackageInfo>(target, 'PackageInfo').version,
+      'publishable': (visitor, target) => D4.validateTarget<PackageInfo>(target, 'PackageInfo').publishable,
+      'lastChangeCommit': (visitor, target) => D4.validateTarget<PackageInfo>(target, 'PackageInfo').lastChangeCommit,
+      'metadata': (visitor, target) => D4.validateTarget<PackageInfo>(target, 'PackageInfo').metadata,
     },
     methods: {
       'toMap': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_33.PackageInfo>(target, 'PackageInfo');
+        final t = D4.validateTarget<PackageInfo>(target, 'PackageInfo');
         return t.toMap();
       },
       '[]': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_33.PackageInfo>(target, 'PackageInfo');
+        final t = D4.validateTarget<PackageInfo>(target, 'PackageInfo');
         final index = D4.getRequiredArg<String>(positional, 0, 'index', 'operator[]');
         return t[index];
       },
@@ -4817,8 +4971,9 @@ BridgedClass _createPackageInfoBridge() {
 
 BridgedClass _createTomPlaceholderResolverBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_33.TomPlaceholderResolver,
+    nativeType: TomPlaceholderResolver,
     name: 'TomPlaceholderResolver',
+    isAssignable: (v) => v is TomPlaceholderResolver,
     constructors: {
       '': (visitor, positional, named) {
         if (!named.containsKey('data') || named['data'] == null) {
@@ -4826,18 +4981,18 @@ BridgedClass _createTomPlaceholderResolverBridge() {
         }
         final data = D4.coerceMap<String, dynamic>(named['data'], 'data');
         final environment = D4.coerceMapOrNull<String, String>(named['environment'], 'environment');
-        final d4rt = D4.getOptionalNamedArg<$tom_build_cli_5.D4rtInstance?>(named, 'd4rt');
-        return $tom_build_cli_33.TomPlaceholderResolver(data: data, environment: environment, d4rt: d4rt);
+        final d4rt = D4.getOptionalNamedArg<$tom_build_cli_3.D4rtInstance?>(named, 'd4rt');
+        return TomPlaceholderResolver(data: data, environment: environment, d4rt: d4rt);
       },
     },
     getters: {
-      'data': (visitor, target) => D4.validateTarget<$tom_build_cli_33.TomPlaceholderResolver>(target, 'TomPlaceholderResolver').data,
-      'environment': (visitor, target) => D4.validateTarget<$tom_build_cli_33.TomPlaceholderResolver>(target, 'TomPlaceholderResolver').environment,
-      'd4rt': (visitor, target) => D4.validateTarget<$tom_build_cli_33.TomPlaceholderResolver>(target, 'TomPlaceholderResolver').d4rt,
+      'data': (visitor, target) => D4.validateTarget<TomPlaceholderResolver>(target, 'TomPlaceholderResolver').data,
+      'environment': (visitor, target) => D4.validateTarget<TomPlaceholderResolver>(target, 'TomPlaceholderResolver').environment,
+      'd4rt': (visitor, target) => D4.validateTarget<TomPlaceholderResolver>(target, 'TomPlaceholderResolver').d4rt,
     },
     methods: {
       'resolve': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_33.TomPlaceholderResolver>(target, 'TomPlaceholderResolver');
+        final t = D4.validateTarget<TomPlaceholderResolver>(target, 'TomPlaceholderResolver');
         D4.requireMinArgs(positional, 1, 'resolve');
         final input = D4.getRequiredArg<String>(positional, 0, 'input', 'resolve');
         return t.resolve(input);
@@ -4863,53 +5018,56 @@ BridgedClass _createTomPlaceholderResolverBridge() {
 
 BridgedClass _createParsedCommandBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_34.ParsedCommand,
+    nativeType: $tom_build_cli_25.ParsedCommand,
     name: 'ParsedCommand',
+    isAssignable: (v) => v is $tom_build_cli_25.ParsedCommand,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getRequiredNamedArg<String>(named, 'name', 'ParsedCommand');
         final params = named.containsKey('params') && named['params'] != null
             ? D4.coerceMap<String, String>(named['params'], 'params')
             : const <String, String>{};
-        final flags = D4.getNamedArgWithDefault<Set<String>>(named, 'flags', const {});
+        final flags = named.containsKey('flags') && named['flags'] != null
+            ? D4.coerceSet<String>(named['flags'], 'flags')
+            : const {};
         final positionalArgs = named.containsKey('positionalArgs') && named['positionalArgs'] != null
             ? D4.coerceList<String>(named['positionalArgs'], 'positionalArgs')
             : const <String>[];
-        return $tom_build_cli_34.ParsedCommand(name: name, params: params, flags: flags, positionalArgs: positionalArgs);
+        return $tom_build_cli_25.ParsedCommand(name: name, params: params, flags: flags, positionalArgs: positionalArgs);
       },
     },
     getters: {
-      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand').name,
-      'params': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand').params,
-      'flags': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand').flags,
-      'positionalArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand').positionalArgs,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand').dryRun,
-      'help': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand').help,
+      'name': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand').name,
+      'params': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand').params,
+      'flags': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand').flags,
+      'positionalArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand').positionalArgs,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand').dryRun,
+      'help': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand').help,
     },
     methods: {
       'get': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand');
+        final t = D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand');
         D4.requireMinArgs(positional, 1, 'get');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'get');
         final defaultValue = D4.getOptionalArgWithDefault<String>(positional, 1, 'defaultValue', '');
         return t.get(key, defaultValue);
       },
       'getInt': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand');
+        final t = D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand');
         D4.requireMinArgs(positional, 1, 'getInt');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'getInt');
         return t.getInt(key);
       },
       'getBool': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand');
+        final t = D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand');
         D4.requireMinArgs(positional, 1, 'getBool');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'getBool');
         final defaultValue = D4.getOptionalArgWithDefault<bool>(positional, 1, 'defaultValue', false);
         return t.getBool(key, defaultValue);
       },
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.ParsedCommand>(target, 'ParsedCommand');
+        final t = D4.validateTarget<$tom_build_cli_25.ParsedCommand>(target, 'ParsedCommand');
         return t.toString();
       },
     },
@@ -4940,46 +5098,50 @@ BridgedClass _createParsedCommandBridge() {
 
 BridgedClass _createParsedTomCommandBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_34.ParsedTomCommand,
+    nativeType: $tom_build_cli_25.ParsedTomCommand,
     name: 'ParsedTomCommand',
+    isAssignable: (v) => v is $tom_build_cli_25.ParsedTomCommand,
     constructors: {
       '': (visitor, positional, named) {
         if (!named.containsKey('globalParams') || named['globalParams'] == null) {
           throw ArgumentError('ParsedTomCommand: Missing required named argument "globalParams"');
         }
         final globalParams = D4.coerceMap<String, String>(named['globalParams'], 'globalParams');
-        final globalFlags = D4.getRequiredNamedArg<Set<String>>(named, 'globalFlags', 'ParsedTomCommand');
+        if (!named.containsKey('globalFlags') || named['globalFlags'] == null) {
+          throw ArgumentError('ParsedTomCommand: Missing required named argument "globalFlags"');
+        }
+        final globalFlags = D4.coerceSet<String>(named['globalFlags'], 'globalFlags');
         if (!named.containsKey('commands') || named['commands'] == null) {
           throw ArgumentError('ParsedTomCommand: Missing required named argument "commands"');
         }
-        final commands = D4.coerceList<$tom_build_cli_34.ParsedCommand>(named['commands'], 'commands');
+        final commands = D4.coerceList<$tom_build_cli_25.ParsedCommand>(named['commands'], 'commands');
         if (!named.containsKey('rawArgs') || named['rawArgs'] == null) {
           throw ArgumentError('ParsedTomCommand: Missing required named argument "rawArgs"');
         }
         final rawArgs = D4.coerceList<String>(named['rawArgs'], 'rawArgs');
-        return $tom_build_cli_34.ParsedTomCommand(globalParams: globalParams, globalFlags: globalFlags, commands: commands, rawArgs: rawArgs);
+        return $tom_build_cli_25.ParsedTomCommand(globalParams: globalParams, globalFlags: globalFlags, commands: commands, rawArgs: rawArgs);
       },
     },
     getters: {
-      'globalParams': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').globalParams,
-      'globalFlags': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').globalFlags,
-      'commands': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').commands,
-      'rawArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').rawArgs,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').dryRun,
-      'help': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').help,
-      'hasCommands': (visitor, target) => D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand').hasCommands,
+      'globalParams': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').globalParams,
+      'globalFlags': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').globalFlags,
+      'commands': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').commands,
+      'rawArgs': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').rawArgs,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').dryRun,
+      'help': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').help,
+      'hasCommands': (visitor, target) => D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand').hasCommands,
     },
     methods: {
       'get': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand');
+        final t = D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand');
         D4.requireMinArgs(positional, 1, 'get');
         final key = D4.getRequiredArg<String>(positional, 0, 'key', 'get');
         final defaultValue = D4.getOptionalArgWithDefault<String>(positional, 1, 'defaultValue', '');
         return t.get(key, defaultValue);
       },
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.ParsedTomCommand>(target, 'ParsedTomCommand');
+        final t = D4.validateTarget<$tom_build_cli_25.ParsedTomCommand>(target, 'ParsedTomCommand');
         return t.toString();
       },
     },
@@ -5009,21 +5171,24 @@ BridgedClass _createParsedTomCommandBridge() {
 
 BridgedClass _createTomCommandParserBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_34.TomCommandParser,
+    nativeType: TomCommandParser,
     name: 'TomCommandParser',
+    isAssignable: (v) => v is TomCommandParser,
     constructors: {
       '': (visitor, positional, named) {
-        final additionalCommands = D4.getNamedArgWithDefault<Set<String>>(named, 'additionalCommands', const {});
-        return $tom_build_cli_34.TomCommandParser(additionalCommands: additionalCommands);
+        final additionalCommands = named.containsKey('additionalCommands') && named['additionalCommands'] != null
+            ? D4.coerceSet<String>(named['additionalCommands'], 'additionalCommands')
+            : const {};
+        return TomCommandParser(additionalCommands: additionalCommands);
       },
     },
     getters: {
-      'additionalCommands': (visitor, target) => D4.validateTarget<$tom_build_cli_34.TomCommandParser>(target, 'TomCommandParser').additionalCommands,
-      'allCommands': (visitor, target) => D4.validateTarget<$tom_build_cli_34.TomCommandParser>(target, 'TomCommandParser').allCommands,
+      'additionalCommands': (visitor, target) => D4.validateTarget<TomCommandParser>(target, 'TomCommandParser').additionalCommands,
+      'allCommands': (visitor, target) => D4.validateTarget<TomCommandParser>(target, 'TomCommandParser').allCommands,
     },
     methods: {
       'parse': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.TomCommandParser>(target, 'TomCommandParser');
+        final t = D4.validateTarget<TomCommandParser>(target, 'TomCommandParser');
         D4.requireMinArgs(positional, 1, 'parse');
         if (positional.isEmpty) {
           throw ArgumentError('parse: Missing required argument "args" at position 0');
@@ -5032,14 +5197,17 @@ BridgedClass _createTomCommandParserBridge() {
         return t.parse(args);
       },
       'mergeWithGlobals': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_34.TomCommandParser>(target, 'TomCommandParser');
+        final t = D4.validateTarget<TomCommandParser>(target, 'TomCommandParser');
         D4.requireMinArgs(positional, 3, 'mergeWithGlobals');
-        final cmd = D4.getRequiredArg<$tom_build_cli_34.ParsedCommand>(positional, 0, 'cmd', 'mergeWithGlobals');
+        final cmd = D4.getRequiredArg<$tom_build_cli_25.ParsedCommand>(positional, 0, 'cmd', 'mergeWithGlobals');
         if (positional.length <= 1) {
           throw ArgumentError('mergeWithGlobals: Missing required argument "globalParams" at position 1');
         }
         final globalParams = D4.coerceMap<String, String>(positional[1], 'globalParams');
-        final globalFlags = D4.getRequiredArg<Set<String>>(positional, 2, 'globalFlags', 'mergeWithGlobals');
+        if (positional.length <= 2) {
+          throw ArgumentError('mergeWithGlobals: Missing required argument "globalFlags" at position 2');
+        }
+        final globalFlags = D4.coerceSet<String>(positional[2], 'globalFlags');
         return t.mergeWithGlobals(cmd, globalParams, globalFlags);
       },
     },
@@ -5063,8 +5231,9 @@ BridgedClass _createTomCommandParserBridge() {
 
 BridgedClass _createTomRunResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_35.TomRunResult,
+    nativeType: $tom_build_cli_26.TomRunResult,
     name: 'TomRunResult',
+    isAssignable: (v) => v is $tom_build_cli_26.TomRunResult,
     constructors: {
       '': (visitor, positional, named) {
         final success = D4.getRequiredNamedArg<bool>(named, 'success', 'TomRunResult');
@@ -5072,19 +5241,19 @@ BridgedClass _createTomRunResultBridge() {
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'TomRunResult');
         final error = D4.getOptionalNamedArg<String?>(named, 'error');
         final duration = D4.getRequiredNamedArg<Duration>(named, 'duration', 'TomRunResult');
-        return $tom_build_cli_35.TomRunResult(success: success, command: command, message: message, error: error, duration: duration);
+        return $tom_build_cli_26.TomRunResult(success: success, command: command, message: message, error: error, duration: duration);
       },
     },
     getters: {
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResult>(target, 'TomRunResult').success,
-      'command': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResult>(target, 'TomRunResult').command,
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResult>(target, 'TomRunResult').message,
-      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResult>(target, 'TomRunResult').error,
-      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResult>(target, 'TomRunResult').duration,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResult>(target, 'TomRunResult').success,
+      'command': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResult>(target, 'TomRunResult').command,
+      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResult>(target, 'TomRunResult').message,
+      'error': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResult>(target, 'TomRunResult').error,
+      'duration': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResult>(target, 'TomRunResult').duration,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_35.TomRunResult>(target, 'TomRunResult');
+        final t = D4.validateTarget<$tom_build_cli_26.TomRunResult>(target, 'TomRunResult');
         return t.toString();
       },
     },
@@ -5110,26 +5279,27 @@ BridgedClass _createTomRunResultBridge() {
 
 BridgedClass _createTomRunResultsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_35.TomRunResults,
+    nativeType: $tom_build_cli_26.TomRunResults,
     name: 'TomRunResults',
+    isAssignable: (v) => v is $tom_build_cli_26.TomRunResults,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'TomRunResults');
         if (positional.isEmpty) {
           throw ArgumentError('TomRunResults: Missing required argument "results" at position 0');
         }
-        final results = D4.coerceList<$tom_build_cli_35.TomRunResult>(positional[0], 'results');
-        return $tom_build_cli_35.TomRunResults(results);
+        final results = D4.coerceList<$tom_build_cli_26.TomRunResult>(positional[0], 'results');
+        return $tom_build_cli_26.TomRunResults(results);
       },
     },
     getters: {
-      'results': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResults>(target, 'TomRunResults').results,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResults>(target, 'TomRunResults').success,
-      'totalDuration': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunResults>(target, 'TomRunResults').totalDuration,
+      'results': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResults>(target, 'TomRunResults').results,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResults>(target, 'TomRunResults').success,
+      'totalDuration': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunResults>(target, 'TomRunResults').totalDuration,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_35.TomRunResults>(target, 'TomRunResults');
+        final t = D4.validateTarget<$tom_build_cli_26.TomRunResults>(target, 'TomRunResults');
         return t.toString();
       },
     },
@@ -5153,28 +5323,29 @@ BridgedClass _createTomRunResultsBridge() {
 
 BridgedClass _createTomRunnerBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_35.TomRunner,
+    nativeType: $tom_build_cli_26.TomRunner,
     name: 'TomRunner',
+    isAssignable: (v) => v is $tom_build_cli_26.TomRunner,
     constructors: {
       '': (visitor, positional, named) {
         final workspacePath = D4.getRequiredNamedArg<String>(named, 'workspacePath', 'TomRunner');
         final verbose = D4.getNamedArgWithDefault<bool>(named, 'verbose', false);
         final dryRun = D4.getNamedArgWithDefault<bool>(named, 'dryRun', false);
         final output = D4.getOptionalNamedArg<StringSink?>(named, 'output');
-        return $tom_build_cli_35.TomRunner(workspacePath: workspacePath, verbose: verbose, dryRun: dryRun, output: output);
+        return $tom_build_cli_26.TomRunner(workspacePath: workspacePath, verbose: verbose, dryRun: dryRun, output: output);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunner>(target, 'TomRunner').workspacePath,
-      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunner>(target, 'TomRunner').verbose,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunner>(target, 'TomRunner').dryRun,
-      'output': (visitor, target) => D4.validateTarget<$tom_build_cli_35.TomRunner>(target, 'TomRunner').output,
+      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunner>(target, 'TomRunner').workspacePath,
+      'verbose': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunner>(target, 'TomRunner').verbose,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunner>(target, 'TomRunner').dryRun,
+      'output': (visitor, target) => D4.validateTarget<$tom_build_cli_26.TomRunner>(target, 'TomRunner').output,
     },
     methods: {
       'run': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_35.TomRunner>(target, 'TomRunner');
+        final t = D4.validateTarget<$tom_build_cli_26.TomRunner>(target, 'TomRunner');
         D4.requireMinArgs(positional, 1, 'run');
-        final parsed = D4.getRequiredArg<$tom_build_cli_34.ParsedTomCommand>(positional, 0, 'parsed', 'run');
+        final parsed = D4.getRequiredArg<$tom_build_cli_25.ParsedTomCommand>(positional, 0, 'parsed', 'run');
         return t.run(parsed);
       },
     },
@@ -5199,28 +5370,29 @@ BridgedClass _createTomRunnerBridge() {
 
 BridgedClass _createTemplateParserBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_36.TemplateParser,
+    nativeType: TemplateParser,
     name: 'TemplateParser',
+    isAssignable: (v) => v is TemplateParser,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'TemplateParser');
         final content = D4.getRequiredArg<String>(positional, 0, 'content', 'TemplateParser');
-        return $tom_build_cli_36.TemplateParser(content);
+        return TemplateParser(content);
       },
     },
     getters: {
-      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_36.TemplateParser>(target, 'TemplateParser').content,
+      'content': (visitor, target) => D4.validateTarget<TemplateParser>(target, 'TemplateParser').content,
     },
     methods: {
       'parse': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_36.TemplateParser>(target, 'TemplateParser');
+        final t = D4.validateTarget<TemplateParser>(target, 'TemplateParser');
         return t.parse();
       },
     },
     staticGetters: {
-      'markerPrefix': (visitor) => $tom_build_cli_36.TemplateParser.markerPrefix,
-      'modeStartPattern': (visitor) => $tom_build_cli_36.TemplateParser.modeStartPattern,
-      'modeEndPattern': (visitor) => $tom_build_cli_36.TemplateParser.modeEndPattern,
+      'markerPrefix': (visitor) => TemplateParser.markerPrefix,
+      'modeStartPattern': (visitor) => TemplateParser.modeStartPattern,
+      'modeEndPattern': (visitor) => TemplateParser.modeEndPattern,
     },
     constructorSignatures: {
       '': 'TemplateParser(String content)',
@@ -5245,25 +5417,26 @@ BridgedClass _createTemplateParserBridge() {
 
 BridgedClass _createParsedTemplateBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_36.ParsedTemplate,
+    nativeType: $tom_build_cli_27.ParsedTemplate,
     name: 'ParsedTemplate',
+    isAssignable: (v) => v is $tom_build_cli_27.ParsedTemplate,
     constructors: {
       '': (visitor, positional, named) {
         if (!named.containsKey('segments') || named['segments'] == null) {
           throw ArgumentError('ParsedTemplate: Missing required named argument "segments"');
         }
-        final segments = D4.coerceList<$tom_build_cli_36.TemplateSegment>(named['segments'], 'segments');
+        final segments = D4.coerceList<$tom_build_cli_27.TemplateSegment>(named['segments'], 'segments');
         if (!named.containsKey('blocks') || named['blocks'] == null) {
           throw ArgumentError('ParsedTemplate: Missing required named argument "blocks"');
         }
-        final blocks = D4.coerceList<$tom_build_cli_36.ModeBlock>(named['blocks'], 'blocks');
-        return $tom_build_cli_36.ParsedTemplate(segments: segments, blocks: blocks);
+        final blocks = D4.coerceList<$tom_build_cli_27.ModeBlock>(named['blocks'], 'blocks');
+        return $tom_build_cli_27.ParsedTemplate(segments: segments, blocks: blocks);
       },
     },
     getters: {
-      'segments': (visitor, target) => D4.validateTarget<$tom_build_cli_36.ParsedTemplate>(target, 'ParsedTemplate').segments,
-      'blocks': (visitor, target) => D4.validateTarget<$tom_build_cli_36.ParsedTemplate>(target, 'ParsedTemplate').blocks,
-      'definedModes': (visitor, target) => D4.validateTarget<$tom_build_cli_36.ParsedTemplate>(target, 'ParsedTemplate').definedModes,
+      'segments': (visitor, target) => D4.validateTarget<$tom_build_cli_27.ParsedTemplate>(target, 'ParsedTemplate').segments,
+      'blocks': (visitor, target) => D4.validateTarget<$tom_build_cli_27.ParsedTemplate>(target, 'ParsedTemplate').blocks,
+      'definedModes': (visitor, target) => D4.validateTarget<$tom_build_cli_27.ParsedTemplate>(target, 'ParsedTemplate').definedModes,
     },
     constructorSignatures: {
       '': 'ParsedTemplate({required List<TemplateSegment> segments, required List<ModeBlock> blocks})',
@@ -5282,8 +5455,9 @@ BridgedClass _createParsedTemplateBridge() {
 
 BridgedClass _createTemplateSegmentBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_36.TemplateSegment,
+    nativeType: $tom_build_cli_27.TemplateSegment,
     name: 'TemplateSegment',
+    isAssignable: (v) => v is $tom_build_cli_27.TemplateSegment,
     constructors: {
     },
   );
@@ -5295,17 +5469,18 @@ BridgedClass _createTemplateSegmentBridge() {
 
 BridgedClass _createTextSegmentBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_36.TextSegment,
+    nativeType: TextSegment,
     name: 'TextSegment',
+    isAssignable: (v) => v is TextSegment,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'TextSegment');
         final content = D4.getRequiredArg<String>(positional, 0, 'content', 'TextSegment');
-        return $tom_build_cli_36.TextSegment(content);
+        return TextSegment(content);
       },
     },
     getters: {
-      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_36.TextSegment>(target, 'TextSegment').content,
+      'content': (visitor, target) => D4.validateTarget<TextSegment>(target, 'TextSegment').content,
     },
     constructorSignatures: {
       '': 'TextSegment(String content)',
@@ -5322,20 +5497,21 @@ BridgedClass _createTextSegmentBridge() {
 
 BridgedClass _createModeBlockGroupBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_36.ModeBlockGroup,
+    nativeType: ModeBlockGroup,
     name: 'ModeBlockGroup',
+    isAssignable: (v) => v is ModeBlockGroup,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'ModeBlockGroup');
         if (positional.isEmpty) {
           throw ArgumentError('ModeBlockGroup: Missing required argument "blocks" at position 0');
         }
-        final blocks = D4.coerceList<$tom_build_cli_36.ModeBlock>(positional[0], 'blocks');
-        return $tom_build_cli_36.ModeBlockGroup(blocks);
+        final blocks = D4.coerceList<$tom_build_cli_27.ModeBlock>(positional[0], 'blocks');
+        return ModeBlockGroup(blocks);
       },
     },
     getters: {
-      'blocks': (visitor, target) => D4.validateTarget<$tom_build_cli_36.ModeBlockGroup>(target, 'ModeBlockGroup').blocks,
+      'blocks': (visitor, target) => D4.validateTarget<ModeBlockGroup>(target, 'ModeBlockGroup').blocks,
     },
     constructorSignatures: {
       '': 'ModeBlockGroup(List<ModeBlock> blocks)',
@@ -5352,8 +5528,9 @@ BridgedClass _createModeBlockGroupBridge() {
 
 BridgedClass _createModeBlockBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_36.ModeBlock,
+    nativeType: $tom_build_cli_27.ModeBlock,
     name: 'ModeBlock',
+    isAssignable: (v) => v is $tom_build_cli_27.ModeBlock,
     constructors: {
       '': (visitor, positional, named) {
         if (!named.containsKey('modes') || named['modes'] == null) {
@@ -5361,16 +5538,16 @@ BridgedClass _createModeBlockBridge() {
         }
         final modes = D4.coerceList<String>(named['modes'], 'modes');
         final content = D4.getRequiredNamedArg<String>(named, 'content', 'ModeBlock');
-        return $tom_build_cli_36.ModeBlock(modes: modes, content: content);
+        return $tom_build_cli_27.ModeBlock(modes: modes, content: content);
       },
     },
     getters: {
-      'modes': (visitor, target) => D4.validateTarget<$tom_build_cli_36.ModeBlock>(target, 'ModeBlock').modes,
-      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_36.ModeBlock>(target, 'ModeBlock').content,
+      'modes': (visitor, target) => D4.validateTarget<$tom_build_cli_27.ModeBlock>(target, 'ModeBlock').modes,
+      'content': (visitor, target) => D4.validateTarget<$tom_build_cli_27.ModeBlock>(target, 'ModeBlock').content,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_36.ModeBlock>(target, 'ModeBlock');
+        final t = D4.validateTarget<$tom_build_cli_27.ModeBlock>(target, 'ModeBlock');
         return t.toString();
       },
     },
@@ -5393,42 +5570,43 @@ BridgedClass _createModeBlockBridge() {
 
 BridgedClass _createWsPrepperBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_37.WsPrepper,
+    nativeType: WsPrepper,
     name: 'WsPrepper',
+    isAssignable: (v) => v is WsPrepper,
     constructors: {
       '': (visitor, positional, named) {
         D4.requireMinArgs(positional, 1, 'WsPrepper');
         final workspacePath = D4.getRequiredArg<String>(positional, 0, 'workspacePath', 'WsPrepper');
-        final options = D4.getOptionalNamedArg<$tom_build_cli_37.WsPrepperOptions?>(named, 'options');
-        return $tom_build_cli_37.WsPrepper(workspacePath, options: options);
+        final options = D4.getOptionalNamedArg<$tom_build_cli_28.WsPrepperOptions?>(named, 'options');
+        return WsPrepper(workspacePath, options: options);
       },
     },
     getters: {
-      'workspacePath': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepper>(target, 'WsPrepper').workspacePath,
-      'options': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepper>(target, 'WsPrepper').options,
+      'workspacePath': (visitor, target) => D4.validateTarget<WsPrepper>(target, 'WsPrepper').workspacePath,
+      'options': (visitor, target) => D4.validateTarget<WsPrepper>(target, 'WsPrepper').options,
     },
     methods: {
       'findTemplates': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_37.WsPrepper>(target, 'WsPrepper');
+        final t = D4.validateTarget<WsPrepper>(target, 'WsPrepper');
         return t.findTemplates();
       },
       'processAll': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_37.WsPrepper>(target, 'WsPrepper');
+        final t = D4.validateTarget<WsPrepper>(target, 'WsPrepper');
         D4.requireMinArgs(positional, 1, 'processAll');
         final mode = D4.getRequiredArg<String>(positional, 0, 'mode', 'processAll');
         return t.processAll(mode);
       },
       'processTemplate': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_37.WsPrepper>(target, 'WsPrepper');
+        final t = D4.validateTarget<WsPrepper>(target, 'WsPrepper');
         D4.requireMinArgs(positional, 2, 'processTemplate');
         final template = D4.getRequiredArg<File>(positional, 0, 'template', 'processTemplate');
         final mode = D4.getRequiredArg<String>(positional, 1, 'mode', 'processTemplate');
         return t.processTemplate(template, mode);
       },
       'generateOutput': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_37.WsPrepper>(target, 'WsPrepper');
+        final t = D4.validateTarget<WsPrepper>(target, 'WsPrepper');
         D4.requireMinArgs(positional, 2, 'generateOutput');
-        final parsed = D4.getRequiredArg<$tom_build_cli_36.ParsedTemplate>(positional, 0, 'parsed', 'generateOutput');
+        final parsed = D4.getRequiredArg<$tom_build_cli_27.ParsedTemplate>(positional, 0, 'parsed', 'generateOutput');
         final mode = D4.getRequiredArg<String>(positional, 1, 'mode', 'generateOutput');
         return t.generateOutput(parsed, mode);
       },
@@ -5455,18 +5633,19 @@ BridgedClass _createWsPrepperBridge() {
 
 BridgedClass _createWsPrepperOptionsBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_37.WsPrepperOptions,
+    nativeType: $tom_build_cli_28.WsPrepperOptions,
     name: 'WsPrepperOptions',
+    isAssignable: (v) => v is $tom_build_cli_28.WsPrepperOptions,
     constructors: {
       '': (visitor, positional, named) {
         final dryRun = D4.getNamedArgWithDefault<bool>(named, 'dryRun', false);
         final excludePatterns = D4.coerceListOrNull<String>(named['excludePatterns'], 'excludePatterns');
-        return $tom_build_cli_37.WsPrepperOptions(dryRun: dryRun, excludePatterns: excludePatterns);
+        return $tom_build_cli_28.WsPrepperOptions(dryRun: dryRun, excludePatterns: excludePatterns);
       },
     },
     getters: {
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperOptions>(target, 'WsPrepperOptions').dryRun,
-      'excludePatterns': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperOptions>(target, 'WsPrepperOptions').excludePatterns,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperOptions>(target, 'WsPrepperOptions').dryRun,
+      'excludePatterns': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperOptions>(target, 'WsPrepperOptions').excludePatterns,
     },
     constructorSignatures: {
       '': 'WsPrepperOptions({bool dryRun = false, List<String>? excludePatterns})',
@@ -5484,22 +5663,23 @@ BridgedClass _createWsPrepperOptionsBridge() {
 
 BridgedClass _createWsPrepperResultBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_37.WsPrepperResult,
+    nativeType: $tom_build_cli_28.WsPrepperResult,
     name: 'WsPrepperResult',
+    isAssignable: (v) => v is $tom_build_cli_28.WsPrepperResult,
     constructors: {
       '': (visitor, positional, named) {
         final mode = D4.getRequiredNamedArg<String>(named, 'mode', 'WsPrepperResult');
-        final processed = D4.coerceListOrNull<$tom_build_cli_37.PreparedTemplate>(named['processed'], 'processed');
-        final errors = D4.coerceListOrNull<$tom_build_cli_37.WsPrepperError>(named['errors'], 'errors');
-        return $tom_build_cli_37.WsPrepperResult(mode: mode, processed: processed, errors: errors);
+        final processed = D4.coerceListOrNull<$tom_build_cli_28.PreparedTemplate>(named['processed'], 'processed');
+        final errors = D4.coerceListOrNull<$tom_build_cli_28.WsPrepperError>(named['errors'], 'errors');
+        return $tom_build_cli_28.WsPrepperResult(mode: mode, processed: processed, errors: errors);
       },
     },
     getters: {
-      'mode': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperResult>(target, 'WsPrepperResult').mode,
-      'processed': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperResult>(target, 'WsPrepperResult').processed,
-      'errors': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperResult>(target, 'WsPrepperResult').errors,
-      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperResult>(target, 'WsPrepperResult').success,
-      'totalTemplates': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperResult>(target, 'WsPrepperResult').totalTemplates,
+      'mode': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperResult>(target, 'WsPrepperResult').mode,
+      'processed': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperResult>(target, 'WsPrepperResult').processed,
+      'errors': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperResult>(target, 'WsPrepperResult').errors,
+      'success': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperResult>(target, 'WsPrepperResult').success,
+      'totalTemplates': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperResult>(target, 'WsPrepperResult').totalTemplates,
     },
     constructorSignatures: {
       '': 'WsPrepperResult({required String mode, List<PreparedTemplate>? processed, List<WsPrepperError>? errors})',
@@ -5520,8 +5700,9 @@ BridgedClass _createWsPrepperResultBridge() {
 
 BridgedClass _createPreparedTemplateBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_37.PreparedTemplate,
+    nativeType: $tom_build_cli_28.PreparedTemplate,
     name: 'PreparedTemplate',
+    isAssignable: (v) => v is $tom_build_cli_28.PreparedTemplate,
     constructors: {
       '': (visitor, positional, named) {
         final templatePath = D4.getRequiredNamedArg<String>(named, 'templatePath', 'PreparedTemplate');
@@ -5529,19 +5710,19 @@ BridgedClass _createPreparedTemplateBridge() {
         final mode = D4.getRequiredNamedArg<String>(named, 'mode', 'PreparedTemplate');
         final blocksFound = D4.getRequiredNamedArg<int>(named, 'blocksFound', 'PreparedTemplate');
         final dryRun = D4.getNamedArgWithDefault<bool>(named, 'dryRun', false);
-        return $tom_build_cli_37.PreparedTemplate(templatePath: templatePath, outputPath: outputPath, mode: mode, blocksFound: blocksFound, dryRun: dryRun);
+        return $tom_build_cli_28.PreparedTemplate(templatePath: templatePath, outputPath: outputPath, mode: mode, blocksFound: blocksFound, dryRun: dryRun);
       },
     },
     getters: {
-      'templatePath': (visitor, target) => D4.validateTarget<$tom_build_cli_37.PreparedTemplate>(target, 'PreparedTemplate').templatePath,
-      'outputPath': (visitor, target) => D4.validateTarget<$tom_build_cli_37.PreparedTemplate>(target, 'PreparedTemplate').outputPath,
-      'mode': (visitor, target) => D4.validateTarget<$tom_build_cli_37.PreparedTemplate>(target, 'PreparedTemplate').mode,
-      'blocksFound': (visitor, target) => D4.validateTarget<$tom_build_cli_37.PreparedTemplate>(target, 'PreparedTemplate').blocksFound,
-      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_37.PreparedTemplate>(target, 'PreparedTemplate').dryRun,
+      'templatePath': (visitor, target) => D4.validateTarget<$tom_build_cli_28.PreparedTemplate>(target, 'PreparedTemplate').templatePath,
+      'outputPath': (visitor, target) => D4.validateTarget<$tom_build_cli_28.PreparedTemplate>(target, 'PreparedTemplate').outputPath,
+      'mode': (visitor, target) => D4.validateTarget<$tom_build_cli_28.PreparedTemplate>(target, 'PreparedTemplate').mode,
+      'blocksFound': (visitor, target) => D4.validateTarget<$tom_build_cli_28.PreparedTemplate>(target, 'PreparedTemplate').blocksFound,
+      'dryRun': (visitor, target) => D4.validateTarget<$tom_build_cli_28.PreparedTemplate>(target, 'PreparedTemplate').dryRun,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_37.PreparedTemplate>(target, 'PreparedTemplate');
+        final t = D4.validateTarget<$tom_build_cli_28.PreparedTemplate>(target, 'PreparedTemplate');
         return t.toString();
       },
     },
@@ -5567,22 +5748,23 @@ BridgedClass _createPreparedTemplateBridge() {
 
 BridgedClass _createWsPrepperErrorBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_37.WsPrepperError,
+    nativeType: $tom_build_cli_28.WsPrepperError,
     name: 'WsPrepperError',
+    isAssignable: (v) => v is $tom_build_cli_28.WsPrepperError,
     constructors: {
       '': (visitor, positional, named) {
         final templatePath = D4.getRequiredNamedArg<String>(named, 'templatePath', 'WsPrepperError');
         final message = D4.getRequiredNamedArg<String>(named, 'message', 'WsPrepperError');
-        return $tom_build_cli_37.WsPrepperError(templatePath: templatePath, message: message);
+        return $tom_build_cli_28.WsPrepperError(templatePath: templatePath, message: message);
       },
     },
     getters: {
-      'templatePath': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperError>(target, 'WsPrepperError').templatePath,
-      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_37.WsPrepperError>(target, 'WsPrepperError').message,
+      'templatePath': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperError>(target, 'WsPrepperError').templatePath,
+      'message': (visitor, target) => D4.validateTarget<$tom_build_cli_28.WsPrepperError>(target, 'WsPrepperError').message,
     },
     methods: {
       'toString': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_37.WsPrepperError>(target, 'WsPrepperError');
+        final t = D4.validateTarget<$tom_build_cli_28.WsPrepperError>(target, 'WsPrepperError');
         return t.toString();
       },
     },
@@ -5605,39 +5787,44 @@ BridgedClass _createWsPrepperErrorBridge() {
 
 BridgedClass _createTomD4rtReplBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_29.TomD4rtRepl,
+    nativeType: TomD4rtRepl,
     name: 'TomD4rtRepl',
+    isAssignable: (v) => v is TomD4rtRepl,
     constructors: {
       '': (visitor, positional, named) {
-        return $tom_build_cli_29.TomD4rtRepl();
+        return TomD4rtRepl();
       },
     },
     getters: {
-      'tomCli': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').tomCli,
-      'toolName': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').toolName,
-      'toolVersion': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').toolVersion,
-      'dataDirectory': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').dataDirectory,
-      'replayFilePatterns': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').replayFilePatterns,
-      'toolExtension': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').toolExtension,
-      'dataDirectoryShort': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').dataDirectoryShort,
-      'initSourceFileName': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').initSourceFileName,
-      'hasVSCodeIntegration': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').hasVSCodeIntegration,
-      'vscodePort': (visitor, target) => D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl').vscodePort,
+      'tomCli': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').tomCli,
+      'toolName': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').toolName,
+      'toolVersion': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').toolVersion,
+      'dataDirectory': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').dataDirectory,
+      'replayFilePatterns': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').replayFilePatterns,
+      'toolExtension': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').toolExtension,
+      'dataDirectoryShort': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').dataDirectoryShort,
+      'initSourceFileName': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').initSourceFileName,
+      'hasVSCodeIntegration': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').hasVSCodeIntegration,
+      'vscodePort': (visitor, target) => D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').vscodePort,
+    },
+    setters: {
+      'vscodePort': (visitor, target, value) => 
+        D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl').vscodePort = D4.extractBridgedArg<int>(value, 'vscodePort'),
     },
     methods: {
       'registerBridges': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 1, 'registerBridges');
         final d4rt = D4.getRequiredArg<$tom_d4rt_2.D4rt>(positional, 0, 'd4rt', 'registerBridges');
         t.registerBridges(d4rt);
         return null;
       },
       'getImportBlock': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.getImportBlock();
       },
       'handleAdditionalCommands': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 3, 'handleAdditionalCommands');
         final d4rt = D4.getRequiredArg<$tom_d4rt_2.D4rt>(positional, 0, 'd4rt', 'handleAdditionalCommands');
         final state = D4.getRequiredArg<$tom_d4rt_dcli_1.ReplState>(positional, 1, 'state', 'handleAdditionalCommands');
@@ -5646,20 +5833,20 @@ BridgedClass _createTomD4rtReplBridge() {
         return t.handleAdditionalCommands(d4rt, state, line, silent: silent);
       },
       'getAdditionalHelpSections': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.getAdditionalHelpSections();
       },
       'createReplState': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.createReplState();
       },
       'getBridgesHelp': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         final d4rt = D4.getOptionalArg<$tom_d4rt_2.D4rt?>(positional, 0, 'd4rt');
         return t.getBridgesHelp(d4rt);
       },
       'handleAdditionalMultilineEnd': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 4, 'handleAdditionalMultilineEnd');
         final d4rt = D4.getRequiredArg<$tom_d4rt_2.D4rt>(positional, 0, 'd4rt', 'handleAdditionalMultilineEnd');
         final state = D4.getRequiredArg<$tom_d4rt_dcli_1.ReplState>(positional, 1, 'state', 'handleAdditionalMultilineEnd');
@@ -5669,37 +5856,37 @@ BridgedClass _createTomD4rtReplBridge() {
         return t.handleAdditionalMultilineEnd(d4rt, state, mode, code, silent: silent);
       },
       'onReplStartup': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 2, 'onReplStartup');
         final d4rt = D4.getRequiredArg<$tom_d4rt_2.D4rt>(positional, 0, 'd4rt', 'onReplStartup');
         final state = D4.getRequiredArg<$tom_d4rt_dcli_1.ReplState>(positional, 1, 'state', 'onReplStartup');
         return t.onReplStartup(d4rt, state);
       },
       'getVersionBanner': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.getVersionBanner();
       },
       'getCliOptionsHelp': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.getCliOptionsHelp();
       },
       'getCliExamplesHelp': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.getCliExamplesHelp();
       },
       'printUsage': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         t.printUsage();
         return null;
       },
       'printReplHelp': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         final d4rt = D4.getOptionalArg<$tom_d4rt_2.D4rt?>(positional, 0, 'd4rt');
         t.printReplHelp(d4rt);
         return null;
       },
       'run': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 1, 'run');
         if (positional.isEmpty) {
           throw ArgumentError('run: Missing required argument "arguments" at position 0');
@@ -5708,7 +5895,7 @@ BridgedClass _createTomD4rtReplBridge() {
         return t.run(arguments);
       },
       'processInput': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 3, 'processInput');
         final d4rt = D4.getRequiredArg<$tom_d4rt_2.D4rt>(positional, 0, 'd4rt', 'processInput');
         final state = D4.getRequiredArg<$tom_d4rt_dcli_1.ReplState>(positional, 1, 'state', 'processInput');
@@ -5717,35 +5904,35 @@ BridgedClass _createTomD4rtReplBridge() {
         return t.processInput(d4rt, state, input, silent: silent);
       },
       'getPackageNames': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 1, 'getPackageNames');
         final d4rt = D4.getRequiredArg<$tom_d4rt_2.D4rt>(positional, 0, 'd4rt', 'getPackageNames');
         return t.getPackageNames(d4rt);
       },
       'printAllPackagesInfo': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 1, 'printAllPackagesInfo');
         final d4rt = D4.getRequiredArg<$tom_d4rt_2.D4rt>(positional, 0, 'd4rt', 'printAllPackagesInfo');
         t.printAllPackagesInfo(d4rt);
         return null;
       },
       'initVSCodeIntegration': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         final onStatusMessageRaw = named['onStatusMessage'];
         final onErrorMessageRaw = named['onErrorMessage'];
-        t.initVSCodeIntegration(onStatusMessage: onStatusMessageRaw == null ? null : (String p0) { D4.callInterpreterCallback(visitor, onStatusMessageRaw, [p0]); }, onErrorMessage: onErrorMessageRaw == null ? null : (String p0) { D4.callInterpreterCallback(visitor, onErrorMessageRaw, [p0]); });
+        t.initVSCodeIntegration(onStatusMessage: onStatusMessageRaw == null ? null : (String p0) { D4.callInterpreterCallback(visitor!, onStatusMessageRaw, [p0]); }, onErrorMessage: onErrorMessageRaw == null ? null : (String p0) { D4.callInterpreterCallback(visitor!, onErrorMessageRaw, [p0]); });
         return null;
       },
       'checkVSCodeAvailability': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.checkVSCodeAvailability();
       },
       'getVSCodeIntegrationHelp': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         return t.getVSCodeIntegrationHelp();
       },
       'handleVSCodeCommands': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 2, 'handleVSCodeCommands');
         final state = D4.getRequiredArg<$tom_d4rt_dcli_1.ReplState>(positional, 0, 'state', 'handleVSCodeCommands');
         final line = D4.getRequiredArg<String>(positional, 1, 'line', 'handleVSCodeCommands');
@@ -5753,7 +5940,7 @@ BridgedClass _createTomD4rtReplBridge() {
         return t.handleVSCodeCommands(state, line, silent: silent);
       },
       'handleVSCodeMultilineEnd': (visitor, target, positional, named, typeArgs) {
-        final t = D4.validateTarget<$tom_build_cli_29.TomD4rtRepl>(target, 'TomD4rtRepl');
+        final t = D4.validateTarget<TomD4rtRepl>(target, 'TomD4rtRepl');
         D4.requireMinArgs(positional, 3, 'handleVSCodeMultilineEnd');
         final state = D4.getRequiredArg<$tom_d4rt_dcli_1.ReplState>(positional, 0, 'state', 'handleVSCodeMultilineEnd');
         final mode = D4.getRequiredArg<$tom_d4rt_dcli_1.MultilineMode>(positional, 1, 'mode', 'handleVSCodeMultilineEnd');
@@ -5801,6 +5988,9 @@ BridgedClass _createTomD4rtReplBridge() {
       'hasVSCodeIntegration': 'bool get hasVSCodeIntegration',
       'vscodePort': 'int get vscodePort',
     },
+    setterSignatures: {
+      'vscodePort': 'set vscodePort(int value)',
+    },
   );
 }
 
@@ -5810,19 +6000,20 @@ BridgedClass _createTomD4rtReplBridge() {
 
 BridgedClass _createTomVersionInfoBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_30.TomVersionInfo,
+    nativeType: TomVersionInfo,
     name: 'TomVersionInfo',
+    isAssignable: (v) => v is TomVersionInfo,
     constructors: {
     },
     staticGetters: {
-      'version': (visitor) => $tom_build_cli_30.TomVersionInfo.version,
-      'buildTime': (visitor) => $tom_build_cli_30.TomVersionInfo.buildTime,
-      'gitCommit': (visitor) => $tom_build_cli_30.TomVersionInfo.gitCommit,
-      'buildNumber': (visitor) => $tom_build_cli_30.TomVersionInfo.buildNumber,
-      'dartSdkVersion': (visitor) => $tom_build_cli_30.TomVersionInfo.dartSdkVersion,
-      'versionShort': (visitor) => $tom_build_cli_30.TomVersionInfo.versionShort,
-      'versionMedium': (visitor) => $tom_build_cli_30.TomVersionInfo.versionMedium,
-      'versionLong': (visitor) => $tom_build_cli_30.TomVersionInfo.versionLong,
+      'version': (visitor) => TomVersionInfo.version,
+      'buildTime': (visitor) => TomVersionInfo.buildTime,
+      'gitCommit': (visitor) => TomVersionInfo.gitCommit,
+      'buildNumber': (visitor) => TomVersionInfo.buildNumber,
+      'dartSdkVersion': (visitor) => TomVersionInfo.dartSdkVersion,
+      'versionShort': (visitor) => TomVersionInfo.versionShort,
+      'versionMedium': (visitor) => TomVersionInfo.versionMedium,
+      'versionLong': (visitor) => TomVersionInfo.versionLong,
     },
     staticGetterSignatures: {
       'version': 'String get version',
@@ -5843,18 +6034,19 @@ BridgedClass _createTomVersionInfoBridge() {
 
 BridgedClass _createTomBridge() {
   return BridgedClass(
-    nativeType: $tom_build_cli_27.Tom,
+    nativeType: Tom,
     name: 'Tom',
+    isAssignable: (v) => v is Tom,
     constructors: {
     },
     staticGetters: {
-      'workspace': (visitor) => $tom_build_cli_27.Tom.workspace,
-      'cwd': (visitor) => $tom_build_cli_27.Tom.cwd,
-      'project': (visitor) => $tom_build_cli_27.Tom.project,
-      'projectInfo': (visitor) => $tom_build_cli_27.Tom.projectInfo,
-      'actions': (visitor) => $tom_build_cli_27.Tom.actions,
-      'groups': (visitor) => $tom_build_cli_27.Tom.groups,
-      'env': (visitor) => $tom_build_cli_27.Tom.env,
+      'workspace': (visitor) => Tom.workspace,
+      'cwd': (visitor) => Tom.cwd,
+      'project': (visitor) => Tom.project,
+      'projectInfo': (visitor) => Tom.projectInfo,
+      'actions': (visitor) => Tom.actions,
+      'groups': (visitor) => Tom.groups,
+      'env': (visitor) => Tom.env,
     },
     staticMethods: {
       'runAction': (visitor, positional, named, typeArgs) {
@@ -5863,7 +6055,7 @@ BridgedClass _createTomBridge() {
         final addArgs = positional.length > 1
             ? D4.coerceListOrNull<String>(positional[1], 'addArgs')
             : null;
-        return $tom_build_cli_27.Tom.runAction(action, addArgs);
+        return Tom.runAction(action, addArgs);
       },
       'runActions': (visitor, positional, named, typeArgs) {
         D4.requireMinArgs(positional, 1, 'runActions');
@@ -5871,18 +6063,18 @@ BridgedClass _createTomBridge() {
           throw ArgumentError('runActions: Missing required argument "actions" at position 0');
         }
         final actions = D4.coerceList<String>(positional[0], 'actions');
-        return $tom_build_cli_27.Tom.runActions(actions);
+        return Tom.runActions(actions);
       },
       'analyze': (visitor, positional, named, typeArgs) {
-        return $tom_build_cli_27.Tom.analyze();
+        return Tom.analyze();
       },
       'build': (visitor, positional, named, typeArgs) {
         final project = D4.getOptionalArg<String?>(positional, 0, 'project');
-        return $tom_build_cli_27.Tom.build(project);
+        return Tom.build(project);
       },
       'test': (visitor, positional, named, typeArgs) {
         final project = D4.getOptionalArg<String?>(positional, 0, 'project');
-        return $tom_build_cli_27.Tom.test(project);
+        return Tom.test(project);
       },
     },
     staticMethodSignatures: {
@@ -5912,6 +6104,7 @@ BridgedClass _createTomWorkspaceBridge() {
   return BridgedClass(
     nativeType: $tom_build_1.TomWorkspace,
     name: 'TomWorkspace',
+    isAssignable: (v) => v is $tom_build_1.TomWorkspace,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getOptionalNamedArg<String?>(named, 'name');
@@ -6022,6 +6215,7 @@ BridgedClass _createTomProjectBridge() {
   return BridgedClass(
     nativeType: $tom_build_1.TomProject,
     name: 'TomProject',
+    isAssignable: (v) => v is $tom_build_1.TomProject,
     constructors: {
       '': (visitor, positional, named) {
         final name = D4.getRequiredNamedArg<String>(named, 'name', 'TomProject');

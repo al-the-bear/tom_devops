@@ -307,11 +307,6 @@ class VersionerExecutor extends CommandExecutor {
         print('    Version: $version');
         print('    Build: $buildNumber');
         if (gitCommit != null) print('    Git: $gitCommit');
-      } else {
-        print(
-          '  Version file generated: ${p.basename(projectPath)} '
-          'v$version build $buildNumber',
-        );
       }
 
       return true;
