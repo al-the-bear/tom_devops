@@ -62,6 +62,7 @@ class PubGetExecutor extends CommandExecutor {
       executable,
       ['pub', 'get'],
       workingDirectory: projectPath,
+      runInShell: Platform.isWindows,
     );
 
     if (exitCode != 0) {
@@ -110,6 +111,7 @@ class PubGetAllExecutor extends CommandExecutor {
       executable,
       ['pub', 'get'],
       workingDirectory: projectPath,
+      runInShell: Platform.isWindows,
     );
 
     if (exitCode != 0) {
@@ -160,6 +162,7 @@ class PubUpdateExecutor extends CommandExecutor {
       executable,
       ['pub', 'upgrade'],
       workingDirectory: projectPath,
+      runInShell: Platform.isWindows,
     );
 
     if (exitCode != 0) {
@@ -208,6 +211,7 @@ class PubUpdateAllExecutor extends CommandExecutor {
       executable,
       ['pub', 'upgrade'],
       workingDirectory: projectPath,
+      runInShell: Platform.isWindows,
     );
 
     if (exitCode != 0) {
