@@ -21,18 +21,18 @@ function Detect-Platform {
   if ($InputPlatform) { return $InputPlatform }
 
   if ($IsWindows) {
-    if ([Environment]::Is64BitOperatingSystem) { return 'windows-x64' }
-    return 'windows-x86'
+    if ([Environment]::Is64BitOperatingSystem) { return 'win32-x64' }
+    return 'win32-x86'
   }
 
-  return 'windows-x64'
+  return 'win32-x64'
 }
 
 $Platform = Detect-Platform -InputPlatform $Platform
 Write-Host "=== Bootstrap tom_build_kit binaries ($Platform) ==="
 
-$home = [Environment]::GetFolderPath('UserProfile')
-$tacLink = Join-Path $home 'tac'
+$userProfile = [Environment]::GetFolderPath('UserProfile')
+$tacLink = Join-Path $userProfile 'tac'
 $workspaceHint = (Resolve-Path (Join-Path $PSScriptRoot '..\..\..')).Path
 
 $profileChanged = $false
@@ -126,7 +126,8 @@ foreach ($tool in $tools) {
     Write-Warn "$entry not found, skipping"
     continue
   }
-  dart compile exe $entry -o (Join-Path $platformDir $tool)
+  $outName = if ($Platform -like 'win32-*') { "$tool.exe" } else { $tool }
+  dart compile exe $entry -o (Join-Path $platformDir $outName)
 }
 
 Write-Host "=== Bootstrap complete ==="

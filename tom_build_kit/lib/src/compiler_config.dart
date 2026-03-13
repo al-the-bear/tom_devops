@@ -15,6 +15,10 @@ class CommandSection {
   /// Used when `command:` is specified — dispatches to built-in tools.
   final List<String> commands;
 
+  /// Pipeline commands in global pipeline syntax.
+  /// Used when `pipeline:` is specified — follows global pipelines format.
+  final List<String> pipeline;
+
   /// Whether this section uses built-in commands (true) or shell (false).
   final bool isBuiltinCommand;
 
@@ -24,26 +28,66 @@ class CommandSection {
   CommandSection({
     required this.commandlines,
     this.commands = const [],
+    this.pipeline = const [],
     this.isBuiltinCommand = false,
     List<String>? platforms,
   }) : platforms = platforms ?? [];
 
+  /// Returns the command templates to execute.
+  /// Prefers pipeline > commands > commandlines.
+  List<String> get pipelineCommands =>
+      pipeline.isNotEmpty ? pipeline : (commands.isNotEmpty ? commands : commandlines);
+
   /// Parse from JSON/YAML structure.
   ///
-  /// Supports two mutually exclusive keys:
-  /// - `commandline:` — shell command templates (existing behavior)
+  /// Supports three mutually exclusive keys:
+  /// - `pipeline:` — global pipeline syntax (preferred)
+  /// - `commandline:` — shell command templates (legacy)
   /// - `command:` — built-in tool references (e.g., "versioner --output ...")
   factory CommandSection.fromJson(dynamic json) {
     if (json is! Map) {
       throw ArgumentError('CommandSection must be a map');
     }
 
+    final pipelineRaw = json['pipeline'];
     final commandlineRaw = json['commandline'];
     final commandRaw = json['command'];
 
-    if (commandlineRaw != null && commandRaw != null) {
+    final keyCount = [pipelineRaw, commandlineRaw, commandRaw]
+        .where((k) => k != null)
+        .length;
+    if (keyCount > 1) {
       throw ArgumentError(
-          'CommandSection cannot have both "commandline" and "command"');
+          'CommandSection cannot have multiple of "pipeline", "commandline", and "command"');
+    }
+
+    final platformsRaw = json['platforms'];
+    List<String>? platforms;
+    if (platformsRaw is String) {
+      platforms = [platformsRaw];
+    } else if (platformsRaw is List) {
+      platforms = platformsRaw.map((e) => e.toString()).toList();
+    }
+
+    if (pipelineRaw != null) {
+      // Pipeline mode (global pipeline syntax)
+      List<String> pipeline;
+      if (pipelineRaw is String) {
+        pipeline = [pipelineRaw];
+      } else if (pipelineRaw is List) {
+        pipeline = pipelineRaw.map((e) => e.toString()).toList();
+      } else {
+        throw ArgumentError('pipeline must be a string or list');
+      }
+      if (pipeline.isEmpty) {
+        throw ArgumentError('pipeline cannot be empty');
+      }
+
+      return CommandSection(
+        commandlines: [],
+        pipeline: pipeline,
+        platforms: platforms,
+      );
     }
 
     if (commandRaw != null) {
@@ -58,14 +102,6 @@ class CommandSection {
       }
       if (commands.isEmpty) {
         throw ArgumentError('command cannot be empty');
-      }
-
-      final platformsRaw = json['platforms'];
-      List<String>? platforms;
-      if (platformsRaw is String) {
-        platforms = [platformsRaw];
-      } else if (platformsRaw is List) {
-        platforms = platformsRaw.map((e) => e.toString()).toList();
       }
 
       return CommandSection(
@@ -83,19 +119,11 @@ class CommandSection {
     } else if (commandlineRaw is List) {
       commandlines = commandlineRaw.map((e) => e.toString()).toList();
     } else {
-      throw ArgumentError('commandline or command must be specified');
+      throw ArgumentError('pipeline, commandline, or command must be specified');
     }
 
     if (commandlines.isEmpty) {
       throw ArgumentError('commandline cannot be empty');
-    }
-
-    final platformsRaw = json['platforms'];
-    List<String>? platforms;
-    if (platformsRaw is String) {
-      platforms = [platformsRaw];
-    } else if (platformsRaw is List) {
-      platforms = platformsRaw.map((e) => e.toString()).toList();
     }
 
     return CommandSection(
@@ -115,6 +143,10 @@ class CompileSection {
   /// Used when `command:` is specified — dispatches to built-in tools.
   final List<String> commands;
 
+  /// Pipeline commands in global pipeline syntax.
+  /// Used when `pipeline:` is specified — follows global pipelines format.
+  final List<String> pipeline;
+
   /// Whether this section uses built-in commands (true) or shell (false).
   final bool isBuiltinCommand;
 
@@ -130,6 +162,7 @@ class CompileSection {
   CompileSection({
     required this.commandlines,
     this.commands = const [],
+    this.pipeline = const [],
     this.isBuiltinCommand = false,
     required this.files,
     List<String>? targets,
@@ -137,37 +170,46 @@ class CompileSection {
   })  : targets = targets ?? [],
         platforms = platforms ?? [];
 
+  /// Returns the command templates to execute.
+  /// Prefers pipeline > commands > commandlines.
+  List<String> get pipelineCommands =>
+      pipeline.isNotEmpty ? pipeline : (commands.isNotEmpty ? commands : commandlines);
+
   /// Parse from JSON/YAML structure.
   ///
-  /// Supports two mutually exclusive keys:
-  /// - `commandline:` — shell command templates (existing behavior)
+  /// Supports three mutually exclusive keys:
+  /// - `pipeline:` — global pipeline syntax (preferred)
+  /// - `commandline:` — shell command templates (legacy)
   /// - `command:` — built-in tool references (e.g., "compiler --targets ...")
   factory CompileSection.fromJson(dynamic json) {
     if (json is! Map) {
       throw ArgumentError('CompileSection must be a map');
     }
 
+    final pipelineRaw = json['pipeline'];
     final commandlineRaw = json['commandline'];
     final commandRaw = json['command'];
 
-    if (commandlineRaw != null && commandRaw != null) {
+    final keyCount = [pipelineRaw, commandlineRaw, commandRaw]
+        .where((k) => k != null)
+        .length;
+    if (keyCount > 1) {
       throw ArgumentError(
-          'CompileSection cannot have both "commandline" and "command"');
+          'CompileSection cannot have multiple of "pipeline", "commandline", and "command"');
     }
 
-    // Parse files (required for both modes)
+    // Parse files (required for all modes, but optional for pipeline-only sections)
     final filesRaw = json['files'];
     List<String> files;
     if (filesRaw is String) {
       files = [filesRaw];
     } else if (filesRaw is List) {
       files = filesRaw.map((e) => e.toString()).toList();
+    } else if (pipelineRaw != null) {
+      // Pipeline mode can have empty files (commands don't need file iteration)
+      files = [];
     } else {
       throw ArgumentError('files must be a string or list');
-    }
-
-    if (files.isEmpty) {
-      throw ArgumentError('files cannot be empty');
     }
 
     final targetsRaw = json['targets'];
@@ -184,6 +226,29 @@ class CompileSection {
       platforms = [platformsRaw];
     } else if (platformsRaw is List) {
       platforms = platformsRaw.map((e) => e.toString()).toList();
+    }
+
+    if (pipelineRaw != null) {
+      // Pipeline mode (global pipeline syntax)
+      List<String> pipeline;
+      if (pipelineRaw is String) {
+        pipeline = [pipelineRaw];
+      } else if (pipelineRaw is List) {
+        pipeline = pipelineRaw.map((e) => e.toString()).toList();
+      } else {
+        throw ArgumentError('pipeline must be a string or list');
+      }
+      if (pipeline.isEmpty) {
+        throw ArgumentError('pipeline cannot be empty');
+      }
+
+      return CompileSection(
+        commandlines: [],
+        pipeline: pipeline,
+        files: files,
+        targets: targets,
+        platforms: platforms,
+      );
     }
 
     if (commandRaw != null) {
@@ -217,7 +282,7 @@ class CompileSection {
     } else if (commandlineRaw is List) {
       commandlines = commandlineRaw.map((e) => e.toString()).toList();
     } else {
-      throw ArgumentError('commandline or command must be specified');
+      throw ArgumentError('pipeline, commandline, or command must be specified');
     }
 
     if (commandlines.isEmpty) {
