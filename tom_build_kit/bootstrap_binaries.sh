@@ -9,6 +9,21 @@ CHANGED_PROFILE=0
 CHANGED_ENV=0
 CHANGED_PATH=0
 
+# Always use the real system git — never a buildkit-compiled wrapper that may
+# have been placed in TOM_BINARY_PATH.  We check well-known system locations
+# first, then fall back to whatever is on PATH.
+SYSTEM_GIT=""
+for candidate in /usr/bin/git /usr/local/bin/git /opt/homebrew/bin/git; do
+    if [[ -x "$candidate" ]]; then SYSTEM_GIT="$candidate"; break; fi
+done
+if [[ -z "$SYSTEM_GIT" ]]; then
+    SYSTEM_GIT="$(command -v git 2>/dev/null || true)"
+fi
+if [[ -z "$SYSTEM_GIT" ]]; then
+    echo "Error: git not found on the system. Please install git first."
+    exit 1
+fi
+
 warn() {
     echo "⚠️  $1"
 }
@@ -18,7 +33,8 @@ ask_yes_no() {
     local response
     while true; do
         read -r -p "$prompt [y/n]: " response
-        case "${response,,}" in
+        # Use tr for lowercase — compatible with macOS default Bash 3.2
+        case "$(printf '%s' "$response" | tr '[:upper:]' '[:lower:]')" in
             y|yes) return 0 ;;
             n|no) return 1 ;;
         esac
@@ -92,7 +108,7 @@ fi
 if [[ ! -d "$TAC_LINK/tom_binaries" ]]; then
     warn "No tom_binaries directory found in $TAC_LINK"
     if ask_yes_no "Clone tom_binaries into $TAC_LINK/tom_binaries?"; then
-        git clone https://github.com/al-the-bear/tom_binaries.git "$TAC_LINK/tom_binaries"
+        "$SYSTEM_GIT" clone https://github.com/al-the-bear/tom_binaries.git "$TAC_LINK/tom_binaries"
     else
         echo "Aborted: tom_binaries repository is required."
         exit 1
@@ -141,6 +157,19 @@ fi
 OUTPUT_DIR="$EXPECTED_PLATFORM_DIR"
 echo "Output directory: $OUTPUT_DIR"
 
+# --- Resolve dependencies ------------------------------------------------
+# Clear stale Dart tool cache to avoid errors from old package resolutions.
+if [[ -d .dart_tool ]]; then
+    echo "Clearing stale .dart_tool cache..."
+    rm -rf .dart_tool
+fi
+
+echo "Resolving dependencies..."
+if ! dart pub get; then
+    echo "Error: dart pub get failed. Check pubspec.yaml and network connectivity."
+    exit 1
+fi
+
 if [[ ! -f lib/src/version.versioner.dart ]]; then
     cat > lib/src/version.versioner.dart <<'EOF'
 // GENERATED FILE - DO NOT EDIT
@@ -167,6 +196,8 @@ if ! TOM_BOOTSTRAP_ALLOW_MISSING_SETUP=1 \
 fi
 
 TOOLS=(buildkit findproject)
+COMPILED=0
+FAILED=0
 echo "Compiling tools..."
 for tool in "${TOOLS[@]}"; do
     if [[ ! -f "bin/$tool.dart" ]]; then
@@ -174,12 +205,28 @@ for tool in "${TOOLS[@]}"; do
         continue
     fi
     echo "  Compiling $tool"
-    dart compile exe "bin/$tool.dart" -o "$OUTPUT_DIR/$tool"
+    if dart compile exe "bin/$tool.dart" -o "$OUTPUT_DIR/$tool"; then
+        COMPILED=$((COMPILED + 1))
+    else
+        warn "Failed to compile $tool"
+        FAILED=$((FAILED + 1))
+    fi
 done
 
+# Create 'bk' convenience symlink for buildkit
+if [[ -f "$OUTPUT_DIR/buildkit" && ! -e "$OUTPUT_DIR/bk" ]]; then
+    ln -s buildkit "$OUTPUT_DIR/bk"
+    echo "  Created symlink: bk -> buildkit"
+fi
+
 echo ""
+if (( FAILED > 0 )); then
+    echo "=== Bootstrap INCOMPLETE: $COMPILED compiled, $FAILED failed ==="
+    echo "Check the errors above and retry."
+    exit 1
+fi
 echo "=== Bootstrap complete ==="
-echo "Compiled tools to $OUTPUT_DIR"
+echo "Compiled $COMPILED tools to $OUTPUT_DIR"
 
 if (( CHANGED_PROFILE || CHANGED_ENV || CHANGED_PATH )); then
     echo ""
