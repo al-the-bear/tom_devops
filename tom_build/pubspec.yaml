@@ -6,6 +6,9 @@ publish_to: none
 environment:
   sdk: ^3.10.4
 
+executables:
+  workspace_analyzer: workspace_analyzer
+
 dependencies:
   analyzer: ^8.0.0
   build: ^4.0.3

@@ -429,20 +429,35 @@ class WorkspaceAnalyzer {
       final folders = wsConfig['folders'] as List<dynamic>?;
       if (folders == null) return;
       
+      bool hasOnlyRoot = folders.every((f) =>
+          f is! Map || (f['path'] as String?) == null || (f['path'] as String?) == '.');
+
       for (final folder in folders) {
         if (folder is! Map) continue;
         final folderPath = folder['path'] as String?;
-        if (folderPath == null || folderPath == '.') continue;
-        
+        if (folderPath == null) continue;
+
+        // When the workspace lists only "." (single-root workspace), perform a
+        // full recursive scan from the workspace root so all nested projects are
+        // discovered.  When there are explicit sub-workspace paths alongside
+        // ".", skip "." to avoid rescanning already-handled directories.
+        if (folderPath == '.') {
+          if (hasOnlyRoot) {
+            print('  Single-root workspace — scanning recursively from root');
+            await _scanSubWorkspaceFolder(Directory(workspaceRoot), '.');
+          }
+          continue;
+        }
+
         // Resolve to absolute path
         final absoluteFolderPath = path.normalize(path.join(workspaceRoot, folderPath));
         final folderDir = Directory(absoluteFolderPath);
-        
+
         if (!await folderDir.exists()) {
           print('  Sub-workspace folder not found: $folderPath');
           continue;
         }
-        
+
         print('  Scanning sub-workspace: $folderPath');
         await _scanSubWorkspaceFolder(folderDir, folderPath);
       }
@@ -474,8 +489,15 @@ class WorkspaceAnalyzer {
         }
 
         if (await _isProject(dirPath)) {
+          // Skip if already discovered (e.g. by the direct top-level scan)
+          final normalizedDir = path.normalize(path.absolute(dirPath));
+          if (projects.any((p) => path.normalize(path.absolute(p.path)) == normalizedDir)) {
+            continue;
+          }
           // Calculate relative path from workspace root
-          final relativePath = path.join(baseRelativePath, dirName);
+          final relativePath = baseRelativePath == '.'
+              ? dirName
+              : path.join(baseRelativePath, dirName);
           final project = await _createProjectInfo(dirPath, projectFolder: relativePath);
           if (project != null) {
             projects.add(project);
