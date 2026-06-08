@@ -2,3 +2,4 @@ project_id: DK
 name: deploykit
 description: >-
   Deployment CLI tools
+license: BSD-3-Clause

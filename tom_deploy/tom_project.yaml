@@ -2,3 +2,4 @@ project_id: DP
 name: deploy
 description: >-
   Deployment tool library
+license: BSD-3-Clause

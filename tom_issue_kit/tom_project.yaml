@@ -2,3 +2,4 @@ project_id: IK
 name: issuekit
 description: >-
   Issue tracking tool.
+license: BSD-3-Clause

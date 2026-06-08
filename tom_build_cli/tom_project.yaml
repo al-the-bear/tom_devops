@@ -2,3 +2,4 @@ project_id: TOM
 name: tom
 description: >-
   Tom CLI executable
+license: BSD-3-Clause

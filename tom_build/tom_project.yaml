@@ -6,3 +6,4 @@ description: >-
 executables:
   - name: tom
     path: bin/tom.dart
+license: BSD-3-Clause
