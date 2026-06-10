@@ -52,7 +52,6 @@ build/
 dist/
 out/
 target/
-bin/
 obj/
 
 # Coverage
@@ -88,6 +87,11 @@ pubspec.lock
 *.mocks.dart
 *.reflectable.dart
 reflectable.dart
+
+# Generated d4rt test-runner bundle — regenerated per build with an embedded
+# wall-clock timestamp, so committing it only causes fleet-wide churn. (Shipped
+# library bundles under lib/ are tracked deliberately; this runner is not.)
+d4rtrun.b.dart
 
 # Flutter build
 **/Flutter/ephemeral/
