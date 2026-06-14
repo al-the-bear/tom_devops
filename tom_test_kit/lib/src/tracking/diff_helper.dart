@@ -6,6 +6,7 @@ import 'package:path/path.dart' as p;
 import '../model/test_entry.dart';
 import '../model/test_run.dart';
 import '../model/tracking_file.dart';
+import '../util/file_helpers.dart';
 import '../util/format_helpers.dart';
 import '../util/output_formatter.dart';
 
@@ -77,9 +78,10 @@ class DiffHelper {
     String? filePath,
     String? title,
   }) async {
-    final jsonFile = File(p.join(projectPath, 'doc', 'last_testrun.json'));
+    final jsonFile =
+        File(p.join(projectPath, trackingDirName, 'last_testrun.json'));
     if (!jsonFile.existsSync()) {
-      stderr.writeln('Error: doc/last_testrun.json not found.');
+      stderr.writeln('Error: $trackingDirName/last_testrun.json not found.');
       stderr.writeln(
           'Run tests first to generate the JSON output file.');
       return;
@@ -166,7 +168,8 @@ class DiffHelper {
     String projectPath,
     TrackingFile tracking,
   ) {
-    final jsonFile = File(p.join(projectPath, 'doc', 'last_testrun.json'));
+    final jsonFile =
+        File(p.join(projectPath, trackingDirName, 'last_testrun.json'));
     if (!jsonFile.existsSync()) return false;
 
     final jsonContent = jsonFile.readAsStringSync();

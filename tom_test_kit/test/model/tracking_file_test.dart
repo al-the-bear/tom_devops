@@ -144,7 +144,7 @@ void main() {
           );
           final tracking = TrackingFile.fromBaseline(entries, run);
 
-          final filePath = p.join(tempDir.path, 'doc', 'baseline_test.csv');
+          final filePath = p.join(tempDir.path, 'testlog', 'baseline_test.csv');
           await tracking.write(filePath);
 
           final loaded = TrackingFile.load(filePath);
@@ -183,7 +183,7 @@ void main() {
         );
         final tracking = TrackingFile.fromBaseline(entries, run);
 
-        final filePath = p.join(tempDir.path, 'doc', 'tracking.csv');
+        final filePath = p.join(tempDir.path, 'testlog', 'tracking.csv');
         await tracking.write(filePath);
 
         final loaded = TrackingFile.load(filePath)!;
@@ -215,7 +215,7 @@ void main() {
           );
           tracking.addRun(secondRun, []);
 
-          final filePath = p.join(tempDir.path, 'doc', 'multi_run.csv');
+          final filePath = p.join(tempDir.path, 'testlog', 'multi_run.csv');
           await tracking.write(filePath);
 
           final loaded = TrackingFile.load(filePath)!;

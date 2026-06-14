@@ -27,8 +27,8 @@ void main() {
       expect(result, isTrue);
     });
 
-    test('TK-RST-2: returns true when doc directory is empty', () async {
-      Directory(p.join(tempDir.path, 'doc')).createSync(recursive: true);
+    test('TK-RST-2: returns true when testlog directory is empty', () async {
+      Directory(p.join(tempDir.path, 'testlog')).createSync(recursive: true);
 
       final result = await ResetCommand.run(
         projectPath: tempDir.path,
@@ -42,7 +42,7 @@ void main() {
       await writeTrackingToTemp(tracking, tempDir);
 
       // Verify file exists
-      final docDir = Directory(p.join(tempDir.path, 'doc'));
+      final docDir = Directory(p.join(tempDir.path, 'testlog'));
       expect(
         docDir.listSync().whereType<File>().where(
               (f) => p.basename(f.path).startsWith('baseline_'),
@@ -68,7 +68,7 @@ void main() {
         'some test': null,
       });
 
-      final jsonFile = File(p.join(tempDir.path, 'doc', 'last_testrun.json'));
+      final jsonFile = File(p.join(tempDir.path, 'testlog', 'last_testrun.json'));
       expect(jsonFile.existsSync(), isTrue);
 
       final result = await ResetCommand.run(
@@ -94,18 +94,18 @@ void main() {
       expect(result, isTrue);
 
       // Both should be gone
-      final docDir = Directory(p.join(tempDir.path, 'doc'));
+      final docDir = Directory(p.join(tempDir.path, 'testlog'));
       final csvFiles = docDir.listSync().whereType<File>().where(
             (f) => p.basename(f.path).startsWith('baseline_'),
           );
       expect(csvFiles, isEmpty);
       expect(
-          File(p.join(tempDir.path, 'doc', 'last_testrun.json')).existsSync(),
+          File(p.join(tempDir.path, 'testlog', 'last_testrun.json')).existsSync(),
           isFalse);
     });
 
-    test('TK-RST-6: preserves non-tracking files in doc/', () async {
-      final docDir = Directory(p.join(tempDir.path, 'doc'));
+    test('TK-RST-6: preserves non-tracking files in testlog/', () async {
+      final docDir = Directory(p.join(tempDir.path, 'testlog'));
       docDir.createSync(recursive: true);
 
       // Create a non-tracking file

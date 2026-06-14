@@ -7,20 +7,29 @@ import 'package:path/path.dart' as p;
 
 import 'format_helpers.dart';
 
+/// Directory (next to each project's `doc/` folder) where testkit writes all
+/// machine-generated test artifacts: baselines and `last_testrun.json`.
+///
+/// This folder is expected to be fully gitignored — test artifacts are never
+/// versioned, and `doc/` is reserved for hand-authored documentation.
+const String trackingDirName = 'testlog';
+
 /// Returns the default output path for a baseline file.
 ///
-/// Creates a path like `<projectPath>/doc/baseline_<MMDD_HHMM>.csv`.
+/// Creates a path like `<projectPath>/testlog/baseline_<MMDD_HHMM>.csv`.
 String defaultBaselinePath(String projectPath, {DateTime? now}) {
   final ts = now ?? DateTime.now();
-  return p.join(projectPath, 'doc', 'baseline_${baselineTimestamp(ts)}.csv');
+  return p.join(
+      projectPath, trackingDirName, 'baseline_${baselineTimestamp(ts)}.csv');
 }
 
-/// Finds the most recent `baseline_*.csv` file in a project's `doc/` folder.
+/// Finds the most recent `baseline_*.csv` file in a project's `testlog/`
+/// folder.
 ///
 /// Returns the absolute path of the latest file, or null if no tracking
 /// files exist.
 String? findLatestTrackingFile(String projectPath) {
-  final docDir = Directory(p.join(projectPath, 'doc'));
+  final docDir = Directory(p.join(projectPath, trackingDirName));
   if (!docDir.existsSync()) return null;
 
   final files = docDir
@@ -39,12 +48,12 @@ String? findLatestTrackingFile(String projectPath) {
 }
 
 /// Saves raw JSON test output to `last_testrun.json` in the project's
-/// `doc/` directory (same location as baseline files).
+/// `testlog/` directory (same location as baseline files).
 ///
 /// Overwrites any existing file.
 Future<void> saveLastTestRunJson(
     String projectPath, List<String> jsonLines) async {
-  final dir = Directory(p.join(projectPath, 'doc'));
+  final dir = Directory(p.join(projectPath, trackingDirName));
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }

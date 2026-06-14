@@ -21,7 +21,8 @@ const baselineOptions = <OptionDefinition>[
   ),
   OptionDefinition.option(
     name: 'file',
-    description: 'Output file path (overrides default doc/baseline_<ts>.csv)',
+    description:
+        'Output file path (overrides default testlog/baseline_<ts>.csv)',
     valueName: 'path',
   ),
   OptionDefinition.option(
@@ -286,9 +287,10 @@ final testkitTool = ToolDefinition(
   ],
   helpFooter: '''
 Tracking File:
-  Baseline: doc/baseline_<MMDD_HHMM>.csv
+  Baseline: testlog/baseline_<MMDD_HHMM>.csv
   :test appends a result column to the most recent baseline file.
-  Raw JSON: doc/last_testrun.json
+  Raw JSON: testlog/last_testrun.json
+  (testlog/ is gitignored; doc/ holds hand-authored docs only.)
 
 Result Format:
   OK/OK (pass), X/OK (regression), X/X (known fail),

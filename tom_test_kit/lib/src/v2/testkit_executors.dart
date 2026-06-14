@@ -58,7 +58,7 @@ class BaselineExecutor extends CommandExecutor {
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
     if (args.dryRun) {
       final outputPath =
-          _getString(args, 'file') ?? 'doc/baseline_<timestamp>.csv';
+          _getString(args, 'file') ?? 'testlog/baseline_<timestamp>.csv';
       return ItemResult.success(
         path: context.path,
         name: context.name,

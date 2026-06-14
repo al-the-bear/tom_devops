@@ -139,10 +139,12 @@ testkit :basediff --output csv:results.csv       # Export as CSV
 
 ### File Location and Naming
 
-Tracking files are stored in the project's `doc/` directory:
+Tracking files are stored in the project's `testlog/` directory — a folder next
+to `doc/` that is **fully gitignored**. Test artifacts are never versioned;
+`doc/` holds hand-authored documentation only.
 
-- **Baseline CSV:** `doc/baseline_<MMDD_HHMM>.csv`
-- **Raw JSON output:** `doc/last_testrun.json` (overwritten each run)
+- **Baseline CSV:** `testlog/baseline_<MMDD_HHMM>.csv`
+- **Raw JSON output:** `testlog/last_testrun.json` (overwritten each run)
 
 When multiple baseline files exist, testkit automatically uses the most recent one (sorted alphabetically by filename, which orders by timestamp). You can override this with `--baseline-file=<path>`.
 
@@ -226,7 +228,7 @@ Comments, if provided via `-c`, appear in the column header.
 | `:flaky` | List tests with inconsistent results across runs |
 | `:crossreference` | Map tests to source files (aliases: `:crossref`, `:xref`) |
 | `:trim <n>` | Remove old runs, keeping last N (baseline always preserved) |
-| `:reset` | Delete all tracking files in doc/ |
+| `:reset` | Delete all tracking files in testlog/ |
 
 All commands support project traversal options for multi-project operation. Run `testkit help` for the overview or `testkit help <command>` for per-command details.
 
@@ -240,9 +242,9 @@ Creates a new baseline tracking file by running `dart test` and capturing all te
 
 **Process:**
 1. Runs `dart test --reporter json` to capture structured output
-2. Saves raw JSON to `doc/last_testrun.json`
+2. Saves raw JSON to `testlog/last_testrun.json`
 3. Parses test descriptions for IDs, creation dates, and expected outcomes
-4. Creates `doc/baseline_<MMDD_HHMM>.csv` with metadata columns and one result column
+4. Creates `testlog/baseline_<MMDD_HHMM>.csv` with metadata columns and one result column
 5. Sorts tests by the standard sorting order
 
 **Options:**
@@ -250,7 +252,7 @@ Creates a new baseline tracking file by running `dart test` and capturing all te
 | Option | Description |
 |--------|-------------|
 | `-c, --comment=<text>` | Short label shown in the baseline column header |
-| `--file=<path>` | Output file path (overrides default `doc/baseline_<ts>.csv`) |
+| `--file=<path>` | Output file path (overrides default `testlog/baseline_<ts>.csv`) |
 | `--test-args=<args>` | Additional arguments passed to `dart test` |
 
 **Examples:**
@@ -268,9 +270,9 @@ testkit :baseline -r                         # Baseline all subprojects
 Runs `dart test` and appends a new result column to the most recent tracking file.
 
 **Process:**
-1. Finds the most recent `baseline_*.csv` file in the project's `doc/` directory
+1. Finds the most recent `baseline_*.csv` file in the project's `testlog/` directory
 2. Runs `dart test --reporter json` to capture structured output
-3. Saves raw JSON to `doc/last_testrun.json`
+3. Saves raw JSON to `testlog/last_testrun.json`
 4. Parses results and appends a new column with timestamp header
 5. New tests (not in the tracking file) are added as new rows
 6. Missing tests (in tracking file but not in run) are marked as absent (`--`)
@@ -349,7 +351,7 @@ A regression is a test that was OK in the older run but X in the newer run. A fi
 
 **Example output:**
 ```
-  File: doc/baseline_0210_1430.csv
+  File: testlog/baseline_0210_1430.csv
   Runs: 3
   Tests: 87 (82 passed, 3 failed, 2 skipped)
 
@@ -560,7 +562,7 @@ testkit :trim 10 -r                      # Trim all subprojects
 
 ### :reset
 
-Deletes all tracking files from the project's `doc/` directory. This removes all `baseline_*.csv` files and `last_testrun.json`. Other files in `doc/` are preserved. Prompts for confirmation unless `--force` is used.
+Deletes all tracking files from the project's `testlog/` directory. This removes all `baseline_*.csv` files and `last_testrun.json`. Other files in `testlog/` are preserved. Prompts for confirmation unless `--force` is used.
 
 **Options:**
 
@@ -633,7 +635,7 @@ By default, testkit operates on **the current directory only** (non-recursive). 
 When running inside a project directory (the most common case), testkit:
 
 1. Verifies the directory has `pubspec.yaml` and `test/`
-2. Looks for the tracking file in `doc/` (the most recent `baseline_*.csv`)
+2. Looks for the tracking file in `testlog/` (the most recent `baseline_*.csv`)
 3. Runs the command on that single project
 
 ```bash
@@ -683,19 +685,19 @@ When processing multiple projects, testkit prints each project path as a header,
 
 ```
 packages/core:
-  File: doc/baseline_0210_1430.csv
+  File: testlog/baseline_0210_1430.csv
   Runs: 3
   Tests: 45 (42 passed, 3 failed)
 
 packages/utils:
-  File: doc/baseline_0210_1430.csv
+  File: testlog/baseline_0210_1430.csv
   Runs: 2
   Tests: 23 (23 passed, 0 failed)
 
 testkit: Processed 2 project(s)
 ```
 
-Each project has its own independent tracking file in its own `doc/` directory.
+Each project has its own independent tracking file in its own `testlog/` directory.
 
 ---
 

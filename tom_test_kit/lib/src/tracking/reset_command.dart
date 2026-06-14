@@ -2,10 +2,12 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import '../util/file_helpers.dart';
+
 /// Implements the `:reset` subcommand.
 ///
 /// Deletes all baseline_*.csv files and last_testrun.json in the project's
-/// doc/ directory. Prompts for confirmation unless --force is specified.
+/// testlog/ directory. Prompts for confirmation unless --force is specified.
 class ResetCommand {
   /// Runs the command for a single project.
   ///
@@ -15,9 +17,9 @@ class ResetCommand {
     bool force = false,
     bool verbose = false,
   }) async {
-    final docDir = Directory(p.join(projectPath, 'doc'));
+    final docDir = Directory(p.join(projectPath, trackingDirName));
     if (!docDir.existsSync()) {
-      print('  No doc/ directory — nothing to reset.');
+      print('  No $trackingDirName/ directory — nothing to reset.');
       return true;
     }
 

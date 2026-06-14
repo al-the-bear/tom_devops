@@ -70,7 +70,7 @@ class DiffCommand {
 
     if (full && !DiffHelper.validateLastTestRun(projectPath, tracking)) {
       stderr.writeln(
-          'Error: doc/last_testrun.json is missing or does not match '
+          'Error: testlog/last_testrun.json is missing or does not match '
           'the latest run. Re-run tests first.');
       return false;
     }

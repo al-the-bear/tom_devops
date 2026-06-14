@@ -160,7 +160,7 @@ TrackingFile createFlakyTracking() {
   return tracking;
 }
 
-/// Writes a tracking file to a temp directory in the standard doc/ location.
+/// Writes a tracking file to a temp directory in the standard testlog/ location.
 ///
 /// Returns the path to the written file.
 Future<String> writeTrackingToTemp(
@@ -168,12 +168,12 @@ Future<String> writeTrackingToTemp(
   Directory tempDir, {
   String filename = 'baseline_0210_1430.csv',
 }) async {
-  final filePath = p.join(tempDir.path, 'doc', filename);
+  final filePath = p.join(tempDir.path, 'testlog', filename);
   await tracking.write(filePath);
   return filePath;
 }
 
-/// Creates a fake last_testrun.json in the doc/ directory.
+/// Creates a fake last_testrun.json in the testlog/ directory.
 ///
 /// Contains test events for the given test descriptions with optional
 /// error information for failed tests.
@@ -181,7 +181,7 @@ Future<String> writeLastTestRunJson(
   Directory tempDir, {
   Map<String, String?> testErrors = const {},
 }) async {
-  final jsonPath = p.join(tempDir.path, 'doc', 'last_testrun.json');
+  final jsonPath = p.join(tempDir.path, 'testlog', 'last_testrun.json');
   final file = File(jsonPath);
   await file.parent.create(recursive: true);
 

@@ -10,7 +10,8 @@ void main() {
     test('TK-FIL-1: should create path with MMDD_HHMM timestamp', () {
       final fixed = DateTime(2026, 2, 10, 14, 30);
       final result = defaultBaselinePath('/project', now: fixed);
-      expect(result, equals(p.join('/project', 'doc', 'baseline_0210_1430.csv')));
+      expect(
+          result, equals(p.join('/project', 'testlog', 'baseline_0210_1430.csv')));
     });
 
     test('TK-FIL-2: should zero-pad month and day', () {
@@ -31,18 +32,18 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('TK-FIL-3: should return null when doc/ does not exist', () {
+    test('TK-FIL-3: should return null when testlog/ does not exist', () {
       expect(findLatestTrackingFile(tempDir.path), isNull);
     });
 
     test('TK-FIL-4: should return null when no baseline files exist', () {
-      Directory(p.join(tempDir.path, 'doc')).createSync();
-      File(p.join(tempDir.path, 'doc', 'readme.md')).writeAsStringSync('');
+      Directory(p.join(tempDir.path, 'testlog')).createSync();
+      File(p.join(tempDir.path, 'testlog', 'readme.md')).writeAsStringSync('');
       expect(findLatestTrackingFile(tempDir.path), isNull);
     });
 
     test('TK-FIL-5: should return the latest baseline file by name sort', () {
-      final docDir = Directory(p.join(tempDir.path, 'doc'))..createSync();
+      final docDir = Directory(p.join(tempDir.path, 'testlog'))..createSync();
       File(p.join(docDir.path, 'baseline_0210_0900.csv'))
           .writeAsStringSync('old');
       File(p.join(docDir.path, 'baseline_0210_1400.csv'))
