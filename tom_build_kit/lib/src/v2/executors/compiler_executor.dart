@@ -587,8 +587,15 @@ class CompilerExecutor extends CommandExecutor {
             shellCombined.contains('warn') ||
             shellCombined.contains('fail');
         if (args.verbose || shellFailed || shellHasSignals) {
-          if (result.stdout.isNotEmpty) stdout.write(result.stdout);
-          if (result.stderr.isNotEmpty) stderr.write(result.stderr);
+          // Cap each per-failure dump in non-verbose mode so a huge AOT error
+          // body (e.g. the umbrella `tom` build) stays readable; verbose keeps
+          // the full output since the user explicitly asked for detail.
+          if (result.stdout.isNotEmpty) {
+            stdout.write(args.verbose ? result.stdout : capOutput(result.stdout));
+          }
+          if (result.stderr.isNotEmpty) {
+            stderr.write(args.verbose ? result.stderr : capOutput(result.stderr));
+          }
         }
         return !shellFailed;
 
@@ -635,11 +642,20 @@ class CompilerExecutor extends CommandExecutor {
             scanCombined.contains('warn') ||
             scanCombined.contains('fail');
         if (args.verbose || scanFailed || scanHasSignals) {
+          // Cap each per-failure dump in non-verbose mode (see the shell case).
           if (shellScanResult.stdout.isNotEmpty) {
-            stdout.write(shellScanResult.stdout);
+            stdout.write(
+              args.verbose
+                  ? shellScanResult.stdout
+                  : capOutput(shellScanResult.stdout),
+            );
           }
           if (shellScanResult.stderr.isNotEmpty) {
-            stderr.write(shellScanResult.stderr);
+            stderr.write(
+              args.verbose
+                  ? shellScanResult.stderr
+                  : capOutput(shellScanResult.stderr),
+            );
           }
         }
         return !scanFailed;
@@ -781,6 +797,41 @@ class CompilerExecutor extends CommandExecutor {
       final fixed = '$bare.exe';
       return '$prefix${quoted ? '"$fixed"' : fixed}';
     });
+  }
+
+  /// Maximum number of lines shown from a failing command's captured output in
+  /// non-verbose mode. See [capOutput].
+  static const int maxFailureOutputLines = 50;
+
+  /// Caps a captured command-output stream to [maxLines] lines for readable
+  /// failure reporting.
+  ///
+  /// A failing AOT compile (e.g. the umbrella `tom` binary) can emit well over
+  /// a thousand error lines; printing the whole dump per failure drowns the log
+  /// (tool_run_analysis §b.5, "`tom` failure is enormous and unactionable").
+  /// When [text] has more than [maxLines] content lines, this returns the first
+  /// [maxLines] lines followed by a one-line truncation marker naming how many
+  /// lines were elided and how to see them all. When [text] fits (or is empty),
+  /// it is returned unchanged.
+  ///
+  /// A single trailing newline is not counted as a content line, so output that
+  /// is exactly [maxLines] lines plus a trailing newline is left intact.
+  ///
+  /// Pure (no I/O, no platform check) so it is unit-testable on every host.
+  static String capOutput(String text, {int maxLines = maxFailureOutputLines}) {
+    if (text.isEmpty) return text;
+    final lines = text.split('\n');
+    // split() turns a trailing newline into a final empty element; that is not
+    // a content line, so exclude it from both the count and the kept slice.
+    final content = lines.isNotEmpty && lines.last.isEmpty
+        ? lines.sublist(0, lines.length - 1)
+        : lines;
+    if (content.length <= maxLines) return text;
+    final elided = content.length - maxLines;
+    final kept = content.take(maxLines).join('\n');
+    return '$kept\n'
+        '  ... [output truncated: $elided more line(s) of ${content.length} '
+        'total; re-run with -v for the full output]\n';
   }
 
   /// Known compiler placeholder names. These are resolved when written as
