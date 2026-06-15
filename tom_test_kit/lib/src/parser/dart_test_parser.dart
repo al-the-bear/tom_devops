@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:tom_build_base/tom_build_base.dart';
+
 import '../model/test_entry.dart';
 import '../model/test_run.dart';
 import 'test_description_parser.dart';
@@ -101,6 +103,33 @@ class DartTestParser {
     '--debug',
   ];
 
+  /// Whether the `dart` process must be launched through a shell.
+  ///
+  /// On Windows the Dart SDK launcher is `dart.bat`, which `Process.start`
+  /// cannot resolve directly — it must be invoked via the shell. On POSIX
+  /// hosts no shell is needed. Both the spawn and its regression test read
+  /// this single source of truth so the Windows fix cannot drift.
+  static final bool runInShellForHost = Platform.isWindows;
+
+  /// Builds a clear, actionable error message for a failed `dart` launch.
+  ///
+  /// [error] is the object thrown by the process API — typically a
+  /// [ProcessException] when the SDK is not on `PATH`. The message points the
+  /// user at the likely cause instead of leaving testkit to exit silently.
+  static String buildLaunchError(Object error) {
+    final buffer = StringBuffer()
+      ..writeln('Error: could not launch `dart` to run tests.')
+      ..writeln('Is the Dart/Flutter SDK installed and on your PATH?');
+    if (Platform.isWindows) {
+      buffer.writeln(
+        'On Windows the launcher is `dart.bat`; testkit invokes it through '
+        'the shell, so make sure the SDK `bin` folder is on PATH.',
+      );
+    }
+    buffer.write('Underlying error: $error');
+    return buffer.toString();
+  }
+
   /// Checks whether [args] contain any forbidden options.
   ///
   /// Returns the first forbidden option found, or null if all are safe.
@@ -142,26 +171,25 @@ class DartTestParser {
       print('  In: $projectPath');
     }
 
-    final process = await Process.start(
-      'dart',
-      args,
-      workingDirectory: projectPath,
-    );
+    // Route process execution through tom_build_base so `dart`/`dart.bat`
+    // resolves on every host (runInShell on Windows) and a spawn failure
+    // surfaces a clear error instead of a swallowed exception / silent exit 0.
+    final ProcessRunResult procResult;
+    try {
+      procResult = await ProcessRunner.run(
+        'dart',
+        args,
+        workingDirectory: projectPath,
+        runInShell: runInShellForHost,
+      );
+    } on ProcessException catch (e) {
+      stderr.writeln(buildLaunchError(e));
+      return null;
+    }
 
-    final stdoutLines = <String>[];
-    final stderrLines = <String>[];
-
-    process.stdout
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((line) => stdoutLines.add(line));
-
-    process.stderr
-        .transform(utf8.decoder)
-        .transform(const LineSplitter())
-        .listen((line) => stderrLines.add(line));
-
-    final exitCode = await process.exitCode;
+    final stdoutLines = const LineSplitter().convert(procResult.stdout);
+    final stderrLines = const LineSplitter().convert(procResult.stderr);
+    final exitCode = procResult.exitCode;
 
     if (verbose && stderrLines.isNotEmpty) {
       for (final line in stderrLines) {

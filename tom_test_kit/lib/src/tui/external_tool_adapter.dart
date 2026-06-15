@@ -60,6 +60,9 @@ class ExternalToolAdapter extends TuiCommand {
       executable,
       processArgs,
       workingDirectory: projectPath,
+      // Windows: SDK launchers like `dart.bat`/`flutter.bat` only resolve
+      // through the shell.
+      runInShell: Platform.isWindows,
     );
 
     // Pipe stdout through parser

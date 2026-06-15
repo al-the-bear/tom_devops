@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:tom_test_kit/tom_test_kit.dart';
@@ -173,6 +174,35 @@ void main() {
         expect(entry.id, equals('TK-1'));
         expect(entry.description, equals('bare test'));
         expect(entry.fullDescription, equals('TK-1: bare test'));
+      });
+    });
+
+    group('process execution', () {
+      test('TK-DTP-12: runInShellForHost matches the host platform', () {
+        // The Windows Dart SDK launcher is `dart.bat`, which Process.start
+        // cannot resolve unless invoked through a shell. This guard keeps the
+        // shell decision tied to the host so the Windows fix cannot regress.
+        expect(DartTestParser.runInShellForHost, equals(Platform.isWindows));
+      });
+
+      test('TK-DTP-13: buildLaunchError is clear and actionable', () {
+        final message = DartTestParser.buildLaunchError(
+          const ProcessException('dart', ['test'], 'not found', 2),
+        );
+        // Names the executable, points at PATH, and surfaces the cause so the
+        // user gets an actionable error instead of a silent exit 0.
+        expect(message, contains('dart'));
+        expect(message.toLowerCase(), contains('path'));
+        expect(message, contains('not found'));
+      });
+
+      test('TK-DTP-14: buildLaunchError mentions dart.bat on Windows', () {
+        final message = DartTestParser.buildLaunchError(
+          const ProcessException('dart', ['test']),
+        );
+        if (Platform.isWindows) {
+          expect(message, contains('dart.bat'));
+        }
       });
     });
   });

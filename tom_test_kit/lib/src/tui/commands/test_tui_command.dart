@@ -96,6 +96,8 @@ class TestTuiCommand extends TuiCommand {
       'dart',
       dartArgs,
       workingDirectory: projectPath,
+      // Windows: the SDK launcher is `dart.bat`, only resolvable via the shell.
+      runInShell: Platform.isWindows,
     );
 
     final entries = <TestEntry>[];
