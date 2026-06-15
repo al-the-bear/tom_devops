@@ -84,6 +84,13 @@ void main(List<String> args) async {
     // Run the tool
     final result = await runner.run(normalizedArgs);
 
+    // Shared, consistent end-of-run errors/skips summary (tom_build_base).
+    // Empty for special/single-shot commands that traverse nothing.
+    final summary = result.renderRunSummary();
+    if (summary.isNotEmpty) {
+      stdout.writeln('\n$summary');
+    }
+
     // Set exit code based on result
     if (!result.success) {
       exitCode = 1;

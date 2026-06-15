@@ -183,7 +183,7 @@ class CompilerExecutor extends CommandExecutor {
     // tool_run_analysis §b.5 / §b.7.
     if (_skipsCompileWithBuildkit(projectPath)) {
       print('  ${context.name}: $compileSkippedMessage');
-      return ItemResult.success(
+      return ItemResult.skipped(
         path: projectPath,
         name: context.name,
         message: compileSkippedMessage,
