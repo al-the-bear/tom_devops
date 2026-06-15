@@ -225,6 +225,9 @@ class TestWorkspace {
   /// JSON, VS Code Test Explorer, etc.).
   Future<void> requireCleanWorkspace() async {
     print('    🔍 Checking workspace cleanliness...');
+    // Remove any `_build` left behind by a previously interrupted run before
+    // the cleanliness check — it is a test-provisioned (untracked) artifact.
+    await deprovisionBuildProject();
     final dirty = await hasUncommittedChanges();
     if (dirty.isNotEmpty) {
       // Check if ALL dirty files are known fixture files
@@ -441,6 +444,77 @@ class TestWorkspace {
   /// Path to the fixtures directory.
   String get fixturesDir => p.join(buildkitRoot, 'test', 'fixtures');
 
+  /// Checked-in source of the `_build` target project used by the integration
+  /// tests (`cleanup`, `versioner`, `compiler`, `runner`, `config_merge`,
+  /// `dependencies`, `pipeline`, ...).
+  ///
+  /// The `_build` project used to live, tracked, at the workspace root. It was
+  /// removed, so the tests are provisioned with a fresh copy from this fixture
+  /// for the duration of each test instead of depending on a real project at
+  /// the workspace root. See [provisionBuildProject].
+  String get buildProjectFixtureDir =>
+      p.join(fixturesDir, 'build_project', '_build');
+
+  /// Absolute path of the provisioned `_build` project at the workspace root.
+  String get _provisionedBuildDir => p.join(workspaceRoot, '_build');
+
+  /// Copy the checked-in `_build` fixture to `<workspaceRoot>/_build`, replacing
+  /// any existing copy so every test starts from a pristine project.
+  ///
+  /// `_build` is *not* tracked at the workspace root anymore, so `git checkout`
+  /// (used by [revertAll]) cannot restore it between tests — re-copying it here
+  /// is what guarantees a clean per-test state. The provisioned copy is removed
+  /// again by [deprovisionBuildProject].
+  Future<void> provisionBuildProject() async {
+    final source = Directory(buildProjectFixtureDir);
+    if (!source.existsSync()) {
+      throw StateError(
+        'Build project fixture not found at ${source.path}. Expected it to be '
+        'checked into test/fixtures/build_project/_build.',
+      );
+    }
+    await deprovisionBuildProject();
+    _copyDirectory(source, Directory(_provisionedBuildDir));
+    print('    🏗️  Provisioned _build project at workspace root');
+  }
+
+  /// Remove the provisioned `_build` project from the workspace root if present.
+  ///
+  /// Tests spawn child processes (`dart run`, compiled binaries) that touch
+  /// files under `_build`. On Windows those handles are released slightly after
+  /// the process exits, so an immediate recursive delete can fail with
+  /// `errno = 32` ("the file is in use by another process"). Retry with a short
+  /// backoff so the OS has a chance to release the handles before we give up.
+  Future<void> deprovisionBuildProject() async {
+    final dir = Directory(_provisionedBuildDir);
+    if (!dir.existsSync()) return;
+
+    const maxAttempts = 10;
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        dir.deleteSync(recursive: true);
+        print('    🗑️  Removed provisioned _build project');
+        return;
+      } on FileSystemException {
+        if (attempt == maxAttempts) rethrow;
+        await Future<void>.delayed(Duration(milliseconds: 100 * attempt));
+      }
+    }
+  }
+
+  /// Recursively copy [source] into [dest].
+  static void _copyDirectory(Directory source, Directory dest) {
+    dest.createSync(recursive: true);
+    for (final entity in source.listSync(recursive: false)) {
+      final newPath = p.join(dest.path, p.basename(entity.path));
+      if (entity is Directory) {
+        _copyDirectory(entity, Directory(newPath));
+      } else if (entity is File) {
+        entity.copySync(newPath);
+      }
+    }
+  }
+
   /// Install a test fixture by copying its buildkit_master.yaml
   /// into the workspace root, overwriting the real one.
   ///
@@ -460,7 +534,17 @@ class TestWorkspace {
     await masterSrc.copy(masterDst.path);
     print('    📋 Installed fixture "$fixtureName" → buildkit_master.yaml');
 
-    // Copy project-level config files if they exist
+    // Provision a fresh `_build` target project for the test. Every test that
+    // installs a fixture targets `_build`, which no longer exists tracked at the
+    // workspace root, so it is copied in from the fixture for the test duration.
+    //
+    // This must happen BEFORE the project-level config overlay below: some
+    // fixtures ship a `projects/_build/buildkit.yaml` that is copied onto the
+    // provisioned `_build`, which therefore has to exist first.
+    await provisionBuildProject();
+
+    // Copy project-level config files if they exist, overlaying them onto the
+    // just-provisioned project directories.
     final projectsDir = Directory(p.join(fixtureDir, 'projects'));
     if (projectsDir.existsSync()) {
       await for (final entity in projectsDir.list(recursive: true)) {

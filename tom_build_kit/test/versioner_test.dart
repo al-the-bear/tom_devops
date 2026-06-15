@@ -82,13 +82,16 @@ void main() {
         log.expectation('exit code 0', exitOk);
         expect(result.exitCode, 0, reason: 'versioner should exit with 0');
 
+        // ToolRunner prints the per-item ItemResult message verbatim
+        // (`  -> :versioner version file generated`). All ItemResult messages
+        // use lowercase ('listed', 'config shown', …), so match that style.
         final hasMsg = (result.stdout as String).contains(
-          'Version file generated',
+          'version file generated',
         );
-        log.expectation('stdout contains "Version file generated"', hasMsg);
+        log.expectation('stdout contains "version file generated"', hasMsg);
         expect(
           result.stdout as String,
-          contains('Version file generated'),
+          contains('version file generated'),
           reason: 'Should report successful generation',
         );
 
