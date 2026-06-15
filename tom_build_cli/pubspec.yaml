@@ -26,7 +26,8 @@ dependencies:
     path: ../../distributed/tom_process_monitor
   
   # D4rt CLI base (build CLI extends D4rt CLI)
-  tom_d4rt_dcli:
+  # >=1.1.6 carries the duplicate-export fix required for AOT compilation.
+  tom_d4rt_dcli: ^1.1.6
   tom_vscode_scripting_api:
   tom_reflection_generator:
     path: ../../reflection/tom_reflection_generator
