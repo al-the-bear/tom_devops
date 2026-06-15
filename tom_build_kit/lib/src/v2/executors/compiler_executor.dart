@@ -172,6 +172,24 @@ class CompilerExecutor extends CommandExecutor {
       );
     }
 
+    // Honour an explicit opt-out: a project can set
+    //   compiler:
+    //     skip-compile-with-buildkit: true
+    // in its buildkit.yaml to avoid being compiled by a running buildkit. This
+    // resolves the Windows self-overwrite file lock (buildkit/tom_bs cannot
+    // overwrite their own in-use .exe) — such a project is built by a bootstrap
+    // step instead. A configured skip is a SUCCESS, never a failure, so the
+    // self-lock case no longer counts against the run's exit code. See
+    // tool_run_analysis §b.5 / §b.7.
+    if (_skipsCompileWithBuildkit(projectPath)) {
+      print('  ${context.name}: $compileSkippedMessage');
+      return ItemResult.success(
+        path: projectPath,
+        name: context.name,
+        message: compileSkippedMessage,
+      );
+    }
+
     final cmdOpts = _getCmdOpts(args);
     final compileAllPlatforms = cmdOpts['all-platforms'] == true;
 
@@ -395,6 +413,46 @@ class CompilerExecutor extends CommandExecutor {
     try {
       final yaml = loadYaml(file.readAsStringSync()) as YamlMap?;
       return yaml != null && yaml['compiler'] is YamlMap;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  /// Status message reported when a project opts out of buildkit-driven
+  /// compilation via `compiler: { skip-compile-with-buildkit: true }`.
+  ///
+  /// The end-of-run summary renders it as
+  /// `<project>: compile skipped as configured in buildkit.yaml`.
+  /// See [skipCompileWithBuildkit] and tool_run_analysis §b.5 / §b.7.
+  static const String compileSkippedMessage =
+      'compile skipped as configured in buildkit.yaml';
+
+  /// Whether [buildkitYamlContent] sets `compiler.skip-compile-with-buildkit:
+  /// true`, opting the project out of being compiled by a running buildkit.
+  ///
+  /// Pure parser (no filesystem) so it is unit-testable. Only an actual YAML
+  /// boolean `true` opts out; a missing key, a non-map `compiler` section, a
+  /// non-boolean value, or malformed YAML all yield `false` (compile as usual).
+  static bool skipCompileWithBuildkit(String buildkitYamlContent) {
+    try {
+      final yaml = loadYaml(buildkitYamlContent) as YamlMap?;
+      final compiler = yaml?['compiler'];
+      if (compiler is YamlMap) {
+        return compiler['skip-compile-with-buildkit'] == true;
+      }
+    } catch (_) {
+      // Fall through to false on any parse error.
+    }
+    return false;
+  }
+
+  /// Read `[dir]/buildkit.yaml` and report whether it opts out of
+  /// buildkit-driven compilation. Missing or unreadable file → not skipped.
+  bool _skipsCompileWithBuildkit(String dir) {
+    final file = File('$dir/buildkit.yaml');
+    if (!file.existsSync()) return false;
+    try {
+      return skipCompileWithBuildkit(file.readAsStringSync());
     } catch (_) {
       return false;
     }

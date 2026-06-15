@@ -5,6 +5,13 @@ versioner:
 
 # Compiler tool configuration
 compiler:
+  # Opt out of being compiled by a running buildkit: buildkit.exe (and the
+  # `bk` hardlink) cannot be overwritten while this very process holds the
+  # file lock on Windows (the "self-overwrite file lock"). buildkit is built
+  # by the bootstrap script instead, so a buildkit-driven `:compiler` run
+  # reports this project as a configured skip rather than a failure.
+  # See tool_run_analysis.md §b.5 / §b.7.
+  skip-compile-with-buildkit: true
   compiles:
     # macOS ARM64 - compile for self + all Linux targets
     - pipeline:
