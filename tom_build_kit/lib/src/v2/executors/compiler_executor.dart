@@ -558,7 +558,16 @@ class CompilerExecutor extends CommandExecutor {
 
     switch (parsed.prefix) {
       case PipelineCommandPrefix.shell:
-        final shellCommand = parsed.body.trim();
+        var shellCommand = parsed.body.trim();
+        if (Platform.isWindows) {
+          final guarded = appendExeToCompileOutput(shellCommand);
+          if (guarded != shellCommand) {
+            if (args.verbose || args.dryRun) {
+              print('  Note: appended .exe to Windows compile output.');
+            }
+            shellCommand = guarded;
+          }
+        }
         if (args.dryRun) {
           print('  [DRY RUN] $phaseLabel: $shellCommand');
           return true;
@@ -746,6 +755,32 @@ class CompilerExecutor extends CommandExecutor {
       }
       return token;
     }).toList();
+  }
+
+  /// Ensures a `dart compile exe` command writes a `.exe`-suffixed output.
+  ///
+  /// On Windows an AOT executable must end in `.exe`; a `-o`/`--output` target
+  /// without an extension produces an extensionless binary (the stale-cruft
+  /// problem). This rewrites such a target to append `.exe`. It is **pure** (no
+  /// platform check) so it is testable on every host; callers gate it on
+  /// `Platform.isWindows`.
+  ///
+  /// Only `dart compile exe` commands are touched, and only when the output
+  /// target has no extension at all — an explicit extension (`.exe`, or any
+  /// other) is left untouched. Quoted targets are preserved.
+  static String appendExeToCompileOutput(String command) {
+    if (!RegExp(r'\bcompile\b\s+\bexe\b').hasMatch(command)) return command;
+    final regex = RegExp(r'(\s(?:-o|--output)(?:=|\s+))("[^"]*"|\S+)');
+    return command.replaceAllMapped(regex, (m) {
+      final prefix = m.group(1)!;
+      final raw = m.group(2)!;
+      final quoted =
+          raw.length >= 2 && raw.startsWith('"') && raw.endsWith('"');
+      final bare = quoted ? raw.substring(1, raw.length - 1) : raw;
+      if (p.extension(bare).isNotEmpty) return m.group(0)!;
+      final fixed = '$bare.exe';
+      return '$prefix${quoted ? '"$fixed"' : fixed}';
+    });
   }
 
   /// Known compiler placeholder names. These are resolved when written as
