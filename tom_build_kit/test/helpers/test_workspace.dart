@@ -134,7 +134,16 @@ class TestWorkspace {
   /// Submodule paths (relative to workspace root).
   List<String>? _submodulePaths;
 
+  /// In-memory snapshot of the real workspace `buildkit_master.yaml`, captured
+  /// once the workspace is verified clean. Lets [revertAll] guarantee the real
+  /// manifest is restored even if the committed HEAD copy has drifted to
+  /// fixture content (see [_guardAndSnapshotMaster]).
+  String? _masterSnapshot;
+
   TestWorkspace._({required this.workspaceRoot, required this.buildkitRoot});
+
+  /// Absolute path to the workspace master config.
+  String get masterConfigPath => p.join(workspaceRoot, 'buildkit_master.yaml');
 
   /// Discover workspace by walking up from the buildkit project.
   factory TestWorkspace() {
@@ -185,6 +194,42 @@ class TestWorkspace {
 
   /// Skip file name that marks a repo as excluded from test git operations.
   static const skipFileName = 'buildkit_skip.yaml';
+
+  /// Header that marks a `buildkit_master.yaml` as a test fixture rather than
+  /// the real workspace manifest. Fixtures begin with this comment line.
+  static const _fixtureMasterMarker = '# Test fixture:';
+
+  /// Guard against a corrupt committed master, then snapshot the real one.
+  ///
+  /// Call only when the workspace is verified clean, so the on-disk file equals
+  /// the committed HEAD copy. If that committed master is a leftover test
+  /// fixture (its content was overwritten by a test and then accidentally
+  /// committed), fail loudly: tests must never run against — or "restore" via
+  /// `git checkout` to — fixture content. Otherwise capture the real content so
+  /// [revertAll] can guarantee its restoration even under HEAD drift.
+  void _guardAndSnapshotMaster() {
+    final master = File(masterConfigPath);
+    if (!master.existsSync()) {
+      fail('buildkit_master.yaml missing at $masterConfigPath');
+    }
+    final content = master.readAsStringSync();
+    if (content.trimLeft().startsWith(_fixtureMasterMarker)) {
+      final message =
+          '\n'
+          '╔══════════════════════════════════════════════════════╗\n'
+          '║  COMMITTED buildkit_master.yaml IS A TEST FIXTURE   ║\n'
+          '╠══════════════════════════════════════════════════════╣\n'
+          '║  The workspace master manifest has been overwritten ║\n'
+          '║  with fixture content and committed. Restore the     ║\n'
+          '║  real manifest before running tests.                 ║\n'
+          '╚══════════════════════════════════════════════════════╝\n'
+          'Path: $masterConfigPath\n';
+      _writeInfraLog('master_is_fixture', message);
+      fail(message);
+    }
+    _masterSnapshot = content;
+    print('    🛡️  Snapshotted real buildkit_master.yaml');
+  }
 
   /// Files that are known to be modified by test fixtures and safe to auto-revert.
   /// Pattern matching: full path must match for buildkit_master.yaml,
@@ -247,6 +292,7 @@ class TestWorkspace {
         final stillDirty = await hasUncommittedChanges();
         if (stillDirty.isEmpty) {
           print('    ✓ Auto-revert successful — workspace is clean');
+          _guardAndSnapshotMaster();
           return;
         } else {
           print('    ❌ Auto-revert failed, some files still dirty:');
@@ -276,6 +322,7 @@ class TestWorkspace {
       fail(message);
     }
     print('    ✓ Workspace is clean');
+    _guardAndSnapshotMaster();
   }
 
   /// Write an infrastructure diagnostic message to `.test-log/`.
@@ -569,6 +616,18 @@ class TestWorkspace {
   Future<void> revertAll() async {
     print('    ↩️  Reverting workspace (git checkout -- .)...');
     await _git(['checkout', '--', '.'], workingDirectory: workspaceRoot);
+    // Defense in depth: `git checkout` restores to HEAD, so if the committed
+    // master ever drifts to fixture content the checkout alone would "restore"
+    // the wrong file. Overwrite it with the real-manifest snapshot captured at
+    // suite start to guarantee a correct, clean tree after every test.
+    final snapshot = _masterSnapshot;
+    if (snapshot != null) {
+      final master = File(masterConfigPath);
+      if (!master.existsSync() || master.readAsStringSync() != snapshot) {
+        master.writeAsStringSync(snapshot);
+        print('    🛡️  Restored real buildkit_master.yaml from snapshot');
+      }
+    }
     print('    ✓ Workspace reverted');
   }
 
