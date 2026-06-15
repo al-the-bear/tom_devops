@@ -7,10 +7,11 @@ cleanup:
 
 compiler:
   compiles:
-    # macOS ARM64 - compile for self + all Linux targets
+    # macOS ARM64 - compile for self + all Linux targets.
+    # Shell steps need the `shell` prefix; placeholders use %{...} (not ${...}).
     - commandline:
-        - mkdir -p $HOME/.tom/bin/${target-platform-vs}
-        - dart compile exe ${file} --target-os=${target-os} -o $HOME/.tom/bin/${target-platform-vs}/${file.name}
+        - shell mkdir -p $HOME/.tom/bin/%{target-platform-vs}
+        - shell dart compile exe %{file} --target-os=%{dart-target-os} --target-arch=%{dart-target-arch} -o $HOME/.tom/bin/%{target-platform-vs}/%{file.name}
       files:
         - bin/deploy.dart
         - bin/doc_scanner.dart
@@ -21,11 +22,11 @@ compiler:
         - bin/ws_prepper.dart
       targets: [darwin-arm64, linux-x64, linux-arm64, linux-armhf]
       platforms: [darwin-arm64]
-    
-    # Other platforms - compile for self only
+
+    # Other platforms - compile for self only.
     - commandline:
-        - mkdir -p $HOME/.tom/bin/${target-platform-vs}
-        - dart compile exe ${file} -o $HOME/.tom/bin/${target-platform-vs}/${file.name}
+        - shell mkdir -p $HOME/.tom/bin/%{target-platform-vs}
+        - shell dart compile exe %{file} -o $HOME/.tom/bin/%{target-platform-vs}/%{file.name}
       files:
         - bin/deploy.dart
         - bin/doc_scanner.dart
@@ -37,7 +38,7 @@ compiler:
       platforms: [darwin-x64, linux-*, win32-*]
 
   postcompile:
-    # Make binaries executable on Unix-like systems
+    # Make binaries executable on Unix-like systems.
     - commandline:
-        - chmod -R +x $HOME/.tom/bin/${current-platform-vs}/
+        - shell chmod -R +x $HOME/.tom/bin/%{current-platform-vs}/
       platforms: [macos, linux]

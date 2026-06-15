@@ -455,6 +455,7 @@ class CompilerExecutor extends CommandExecutor {
             PlatformUtils.vsCodeToDartTarget(currentPlatform),
           )
           .replaceAll(r'%{current-platform-vs}', currentPlatform);
+      _warnMisusedPlaceholders(command, sectionName);
       final success = await _executePipelineCommand(
         rawCommand: _replaceEnvVars(command),
         args: args,
@@ -515,6 +516,7 @@ class CompilerExecutor extends CommandExecutor {
         currentArch: currentArch,
         currentPlatform: currentPlatform,
       );
+      _warnMisusedPlaceholders(command, 'compile ($targetPlatform)');
       final success = await _executePipelineCommand(
         rawCommand: _replaceEnvVars(command),
         args: args,
@@ -744,6 +746,62 @@ class CompilerExecutor extends CommandExecutor {
       }
       return token;
     }).toList();
+  }
+
+  /// Known compiler placeholder names. These are resolved when written as
+  /// `%{name}` (or, for a subset, `[name]`) — never as the shell-style
+  /// `${name}`.
+  static const Set<String> knownPlaceholderNames = {
+    'file',
+    'file.path',
+    'file.name',
+    'file.basename',
+    'file.extension',
+    'file.dir',
+    'target-os',
+    'target-arch',
+    'dart-target-os',
+    'dart-target-arch',
+    'target-platform',
+    'target-platform-vs',
+    'current-os',
+    'current-arch',
+    'current-platform',
+    'current-platform-vs',
+  };
+
+  /// Detects compiler placeholders written in the wrong `${name}` shell form.
+  ///
+  /// The compiler resolves placeholders written as `%{name}` (or `[name]`),
+  /// never the shell-style `${name}`. A `${name}` naming a known compiler
+  /// placeholder is almost always a `%{}` vs `${}` mistake: the `$` would
+  /// otherwise reach the shell and typically expand to an empty string.
+  ///
+  /// Returns the misused placeholder names (without braces), in order of first
+  /// appearance and de-duplicated. An empty list means no misuse was found.
+  static List<String> detectMisusedPlaceholders(String command) {
+    final found = <String>[];
+    for (final match in RegExp(r'\$\{([^}]+)\}').allMatches(command)) {
+      final name = match.group(1)!;
+      if (knownPlaceholderNames.contains(name) && !found.contains(name)) {
+        found.add(name);
+      }
+    }
+    return found;
+  }
+
+  /// Prints an actionable hint when [command] contains misused `${...}`
+  /// placeholders, pointing at the `%{}` vs `${}` mistake.
+  void _warnMisusedPlaceholders(String command, String phaseLabel) {
+    final misused = detectMisusedPlaceholders(command);
+    if (misused.isEmpty) return;
+    final wrong = misused.map((n) => '\${$n}').join(', ');
+    final right = misused.map((n) => '%{$n}').join(', ');
+    print(
+      '  Warning [$phaseLabel]: placeholder(s) $wrong use shell-style '
+      '\${...} syntax and will NOT be resolved by the compiler — use %{...} '
+      'instead (e.g. $right).',
+    );
   }
 
   String _resolvePlaceholders(
