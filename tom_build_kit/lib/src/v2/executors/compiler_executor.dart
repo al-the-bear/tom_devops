@@ -238,10 +238,16 @@ class CompilerExecutor extends CommandExecutor {
 
     try {
       var compilationCount = 0;
+      // Human-readable descriptions of every phase/file that failed. A
+      // non-empty list at the end means the project did not build cleanly and
+      // must be reported as a failure (non-zero exit) — see tool_run_analysis
+      // §b.5. Phases continue after a failure so the operator sees every
+      // problem in one run rather than only the first.
+      final failures = <String>[];
 
       // Precompile
       for (final section in config.precompileSections) {
-        await _runCommandSection(
+        final ok = await _runCommandSection(
           section: section,
           currentPlatform: currentPlatform,
           projectPath: projectPath,
@@ -249,6 +255,7 @@ class CompilerExecutor extends CommandExecutor {
           args: args,
           placeholderCtx: placeholderCtx,
         );
+        if (!ok) failures.add('precompile');
       }
 
       // Compile
@@ -330,14 +337,18 @@ class CompilerExecutor extends CommandExecutor {
               commandTemplates: section.pipelineCommands,
               args: args,
             );
-            if (success) compilationCount++;
+            if (success) {
+              compilationCount++;
+            } else {
+              failures.add('$file ($target)');
+            }
           }
         }
       }
 
       // Postcompile
       for (final section in config.postcompileSections) {
-        await _runCommandSection(
+        final ok = await _runCommandSection(
           section: section,
           currentPlatform: currentPlatform,
           projectPath: projectPath,
@@ -345,10 +356,21 @@ class CompilerExecutor extends CommandExecutor {
           args: args,
           placeholderCtx: placeholderCtx,
         );
+        if (!ok) failures.add('postcompile');
       }
 
       if (compilationCount > 0 && args.verbose) {
         print('  Completed $compilationCount compilation(s)');
+      }
+
+      // A failed phase/file must surface as a per-item failure so the runner
+      // aggregates it into a non-zero exit code and names this project.
+      if (failures.isNotEmpty) {
+        return ItemResult.failure(
+          path: projectPath,
+          name: context.name,
+          error: 'compilation failed: ${failures.join(', ')}',
+        );
       }
 
       return ItemResult.success(

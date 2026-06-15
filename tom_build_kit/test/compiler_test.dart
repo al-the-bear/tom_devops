@@ -235,6 +235,50 @@ void main() {
       log.expectation('no unresolved placeholders', true);
     });
 
+    test('compile failure yields non-zero exit and names the project', () async {
+      log.start(
+        'CMP_FAIL01',
+        'failed compile -> non-zero exit + named project',
+      );
+      // Overlay a compiler config on _build whose only compile section runs
+      // `shell exit 1` — a deterministic, cross-platform compilation failure.
+      await ws.installFixture('compile_fail');
+
+      // No --dry-run: the failing command must actually run.
+      final result = await ws.runTool('compiler', ['--project', '_build']);
+      log.capture('compiler --project _build (failing config)', result);
+
+      final stdout = (result.stdout as String);
+
+      // Regression guard for tool_run_analysis §b.5: a real compile failure
+      // must produce a non-zero exit code (CI relies on it).
+      expect(
+        result.exitCode,
+        isNot(0),
+        reason: 'A failed compile must produce a non-zero exit code',
+      );
+      log.expectation('non-zero exit', result.exitCode != 0);
+
+      // The failing project must be named so the operator knows what broke.
+      expect(
+        stdout,
+        contains('_build'),
+        reason: 'The failing project must be named in the error output',
+      );
+      log.expectation('_build named in errors', stdout.contains('_build'));
+
+      // The run must report errors, not "Done. No errors."
+      expect(
+        stdout,
+        isNot(contains('Done. No errors.')),
+        reason: 'A failing run must not report "Done. No errors."',
+      );
+      log.expectation(
+        'no false success message',
+        !stdout.contains('Done. No errors.'),
+      );
+    });
+
     test('postcompile phase appears in dry-run', () async {
       log.start('CMP_PHS01', 'pre/postcompile phases in dry-run');
       final result = await ws.runTool('compiler', [
