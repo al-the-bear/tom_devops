@@ -1,5 +1,5 @@
 name: tom_build_common
-description: A starting point for Dart libraries or applications.
+description: Shared build types and utilities for the Tom framework build tooling.
 version: 1.0.0
 publish_to: none
 # repository: https://github.com/my_org/my_repo
