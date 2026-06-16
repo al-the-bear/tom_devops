@@ -1,5 +1,5 @@
 name: tom_github_api
-description: A starting point for Dart libraries or applications.
+description: Typed Dart client for the GitHub REST API v3 — issues, labels, comments, search and workflows.
 version: 1.0.0
 # repository: https://github.com/my_org/my_repo
 
