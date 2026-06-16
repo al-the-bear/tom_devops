@@ -1,0 +1,27 @@
+name: tom_build_kit_sample
+description: >-
+  Runnable, offline-by-default examples for the tom_build_base v2 CLI framework
+  that powers buildkit — workspace traversal, build-order sorting, project
+  nature inspection, and authoring a custom traversal tool against a fixture
+  workspace.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  # The shared CLI framework: BuildBase traversal, ToolDefinition, ToolRunner,
+  # CommandExecutor, the CliArgs parser, and the project nature types. Consumed
+  # as a hosted (pub.dev) dependency — the same source tom_build_kit uses for
+  # it. (A path dependency here would conflict with tom_build_kit's hosted
+  # reference, and source overrides are not allowed.)
+  tom_build_base: ^2.6.25
+  # The real buildkit tool, so example 07 can introspect its actual
+  # ToolDefinition (commands, options) without running any build. It is
+  # publish_to: none, so it is necessarily consumed by path.
+  tom_build_kit:
+    path: ../../tom_build_kit
+
+dev_dependencies:
+  lints: ^6.0.0

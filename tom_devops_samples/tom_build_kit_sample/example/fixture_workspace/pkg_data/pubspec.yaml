@@ -1,0 +1,12 @@
+# Fixture project — depends on pkg_core, so build order places it AFTER pkg_core
+# and BEFORE pkg_app. The dependency is what wires the topological sort; the
+# version constraint string is never resolved (no pub get runs here).
+name: pkg_data
+description: Middle library that depends on pkg_core.
+version: 0.4.0
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  pkg_core: ^1.0.0

@@ -1,0 +1,16 @@
+# Fixture project — the application at the top of the graph. It depends on
+# pkg_data (and transitively pkg_core), so build order lists it LAST.
+#
+# `publish_to: none` marks it private, which is what makes
+# DartProjectFolder.isPublishable return false for this project while the two
+# libraries below it report true.
+name: pkg_app
+description: Top-level app that depends on pkg_data; private (publish_to none).
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  pkg_data: ^0.4.0

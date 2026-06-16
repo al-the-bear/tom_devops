@@ -1,0 +1,9 @@
+# Inherits the shared devops-samples lint rules.
+include: ../analysis_options.yaml
+
+analyzer:
+  exclude:
+    # The fixture packages are pubspec-only data read by the traversal engine.
+    # They are not part of this package's source and must not be analyzed as
+    # nested packages.
+    - "example/fixture_workspace/**"

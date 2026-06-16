@@ -1,0 +1,14 @@
+# Fixture project — read only as data by tom_build_base traversal.
+#
+# It is deliberately pubspec-only (no lib/, no .dart files): nature detection
+# and build-order computation only ever read pubspec.yaml, so there is nothing
+# to resolve with `pub get` and nothing for the analyzer to flag.
+#
+# pkg_core sits at the bottom of the dependency graph — nothing in the fixture
+# depends on anything below it — so build order always lists it FIRST.
+name: pkg_core
+description: Leaf library at the bottom of the fixture dependency graph.
+version: 1.0.0
+
+environment:
+  sdk: ^3.0.0
