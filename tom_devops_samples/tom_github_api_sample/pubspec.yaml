@@ -1,0 +1,19 @@
+name: tom_github_api_sample
+description: >-
+  Runnable, offline-by-default end-to-end examples for the tom_github_api
+  GitHub REST client — the flagship Tom devops sample.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.8
+
+dependencies:
+  http: ^1.3.0
+  # Workspace sibling (not on pub.dev) — consumed by path, the same way
+  # tom_issue_kit depends on it. This is a normal dependency, not an override.
+  tom_github_api:
+    path: ../../tom_github_api
+
+dev_dependencies:
+  lints: ^6.0.0
