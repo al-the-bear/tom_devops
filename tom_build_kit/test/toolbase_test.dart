@@ -44,6 +44,9 @@ void main() {
     print('');
     print('  ── ToolBase Tests: Tear-down ──');
     await ws.verifyHeadRefs();
+    // Symmetric with requireCleanWorkspace's deprovision at suite start:
+    // remove the test-provisioned `_build` so the tree is clean post-run.
+    await ws.deprovisionBuildProject();
     print('  ── ToolBase Tests: Complete ──');
   });
 

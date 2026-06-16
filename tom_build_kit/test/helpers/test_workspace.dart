@@ -432,6 +432,10 @@ class TestWorkspace {
       await revertSubmodule(absPath);
     }
 
+    // Remove the test-provisioned `_build` so the tree is clean post-run
+    // (symmetric with requireCleanWorkspace's deprovision at suite start).
+    await deprovisionBuildProject();
+
     // Verify no commits leaked
     await verifyHeadRefs();
     print('    ✓ Tear-down protocol complete');
