@@ -1,5 +1,5 @@
 name: tom_deploy_tools
-description: A sample command-line application.
+description: Command-line front end that drives Tom framework multi-cloud deployments.
 version: 1.0.0
 publish_to: none
 # repository: https://github.com/my_org/my_repo
