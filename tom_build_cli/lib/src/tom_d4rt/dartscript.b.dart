@@ -1,6 +1,6 @@
 // D4rt Bridge - Generated file, do not edit
 // Dartscript registration for tom_build_cli
-// Generated: 2026-03-12T17:09:22.768297
+// Generated: 2026-06-16T22:00:10.728179
 
 /// D4rt Bridge Registration for tom_build_cli
 library;
@@ -8,6 +8,7 @@ library;
 import 'package:tom_d4rt/d4rt.dart';
 import 'package:tom_d4rt_dcli/dartscript.b.dart' as imported_0;
 import 'tom_build_cli_bridges.b.dart' as tom_build_cli_bridges;
+import 'relaxers.b.dart' as relaxer_factories;
 
 /// Combined bridge registration for tom_build_cli.
 class TomBuildCliBridges {
@@ -27,6 +28,11 @@ class TomBuildCliBridges {
     for (final barrel in tom_build_cli_bridges.TomBuildCliBridge.subPackageBarrels()) {
       tom_build_cli_bridges.TomBuildCliBridge.registerBridges(d4rt, barrel);
     }
+
+    // RC-2: Register generic constructor factories
+    relaxer_factories.registerGenericConstructors();
+    // GEN-079: Register relaxer wrapper factories
+    relaxer_factories.registerRelaxers();
   }
 
   /// Get import block for all modules.
