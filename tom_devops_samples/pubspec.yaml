@@ -1,0 +1,12 @@
+name: tom_devops_samples
+description: >-
+  Runnable, article-grade sample projects for the Tom framework devops
+  toolchain — one self-contained package per tool.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: ^3.10.4
+
+dev_dependencies:
+  lints: ^6.0.0

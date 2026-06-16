@@ -1,0 +1,18 @@
+# Shared analysis options for the Tom devops sample projects.
+#
+# Each sample package includes this file with:
+#   include: ../analysis_options.yaml
+#
+# It is also the analysis config for the top-level aggregator package.
+
+include: package:lints/recommended.yaml
+
+analyzer:
+  exclude:
+    - "**/*.g.dart"
+
+linter:
+  rules:
+    # Example files use numbered prefixes for ordering (e.g. 01_quick_start.dart),
+    # so the default file_names lint would flag them spuriously.
+    file_names: false
