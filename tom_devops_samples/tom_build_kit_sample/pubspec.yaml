@@ -21,7 +21,7 @@ dependencies:
   # ToolDefinition (commands, options) without running any build. It is
   # publish_to: none, so it is necessarily consumed by path.
   tom_build_kit:
-    path: ../../tom_build_kit
+    path: ../../../basics/tom_build_kit
 
 dev_dependencies:
   lints: ^6.0.0

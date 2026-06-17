@@ -39,9 +39,10 @@ default, so it is the gentlest on-ramp into the toolchain. From there, the
 - **Understand your workspace** — scan every package, derive the dependency
   build order, and regenerate the workspace metadata (`tom_build`,
   `workspace_analyzer`).
-- **Drive the whole repo from one command** — the `tom` CLI and the `buildkit`
-  orchestrator run cleanup, versioning, compilation, dependency resolution,
-  publishing and git workflows as composable pipelines.
+- **Drive the whole repo from one command** — the `tom` CLI runs cleanup,
+  versioning, compilation, dependency resolution, publishing and git workflows
+  as composable pipelines (sharing the same engine as the `buildkit`
+  orchestrator, which now lives in the [basics layer](../basics/tom_build_kit/)).
 - **Track tests over time** — capture a baseline, re-run, and diff results to
   catch regressions and confirm fixes (`testkit`).
 - **Manage issues from the terminal** — create, analyze, assign and verify
@@ -63,9 +64,11 @@ component tables so the inventory makes sense:
 - **Build framework** — the workspace analyzer (`tom_build`), the `tom` CLI
   surface (`tom_build_cli`), and the shared build types they sit on
   (`tom_build_common`). These understand the monorepo's shape and order.
-- **CLI kits** — the day-to-day developer tools: build orchestration
-  (`tom_build_kit`), test tracking (`tom_test_kit`) and issue tracking
-  (`tom_issue_kit`). Each is a standalone command driven by `tom_build_base`.
+- **CLI kits** — the day-to-day developer tools: test tracking
+  (`tom_test_kit`) and issue tracking (`tom_issue_kit`). Each is a standalone
+  command driven by `tom_build_base`. The build orchestrator itself —
+  `buildkit` (`tom_build_kit`) — now lives in the basics layer alongside its
+  framework; see [`tom_ai/basics/tom_build_kit`](../basics/tom_build_kit/).
 - **Deployment** — the multi-cloud deployment model (`tom_deploy`) and its CLI
   front end (`tom_deploy_tools`).
 - **Integrations** — third-party service clients; today the GitHub REST client
@@ -84,9 +87,9 @@ component tables so the inventory makes sense:
    │               │                  │               │               │
 ┌──┴───────────┐ ┌─┴──────────────┐ ┌─┴───────────┐ ┌─┴───────────┐ ┌─┴───────────┐
 │ Build        │ │ CLI kits       │ │ Deployment  │ │ Integrations│ │ Doc         │
-│ framework    │ │ tom_build_kit  │ │ tom_deploy  │ │ tom_github_ │ │ conversion  │
-│ tom_build    │ │ tom_test_kit   │ │ tom_deploy_ │ │  api        │ │ tom_md2latex│
-│ tom_build_cli│ │ tom_issue_kit  │ │  tools      │ │     ▲       │ │ tom_md2pdf  │
+│ framework    │ │ tom_test_kit   │ │ tom_deploy  │ │ tom_github_ │ │ conversion  │
+│ tom_build    │ │ tom_issue_kit  │ │ tom_deploy_ │ │  api        │ │ tom_md2latex│
+│ tom_build_cli│ │                │ │  tools      │ │     ▲       │ │ tom_md2pdf  │
 │ tom_build_   │ │      │         │ │             │ │     │ used  │ │             │
 │  common      │ │      └─────────┼─┼─────────────┼─┘ by issuekit │ │             │
 └──────────────┘ └────────────────┘ └─────────────┘ └─────────────┘ └─────────────┘
@@ -112,7 +115,6 @@ packages show `—`.
 
 | Package | What it is | Binary |
 | ------- | ---------- | ------ |
-| [`tom_build_kit`](tom_build_kit/) | Build orchestration with pipelines — cleanup, versioning, compile, dependencies, publish and git workflows. | `buildkit`, `findproject` |
 | [`tom_test_kit`](tom_test_kit/) | Test result tracking — baseline / test / diff workflow with an optional TUI. | `testkit` |
 | [`tom_issue_kit`](tom_issue_kit/) | Issue tracking CLI — create, analyze, assign and verify issues with test linkage. | `issuekit` |
 
@@ -145,22 +147,24 @@ override):
 
 ```yaml
 dependencies:
-  tom_build_kit: ^1.7.1
+  tom_test_kit: ^0.1.0
 ```
 
 ```bash
-dart pub add tom_build_kit
+dart pub add tom_test_kit
 ```
 
 Most tools are run as commands. Activate one and invoke it from any package in
 the workspace:
 
 ```bash
-dart pub global activate tom_build_kit
-buildkit :test          # run a tracked test pipeline across the workspace
+dart pub global activate tom_test_kit
 testkit :baseline       # capture a fresh test baseline for the current package
 issuekit :list          # list open issues for the current repository
 ```
+
+> The `buildkit` orchestrator moved to the basics layer — see its quick-start in
+> [`tom_ai/basics/tom_build_kit`](../basics/tom_build_kit/).
 
 Each package README opens with its own runnable quick-start — follow the link
 from the component tables above.
@@ -197,9 +201,6 @@ In-package guides beyond the package READMEs:
 | Workspace analyzer + tooling reference | [`tom_build/doc/tom_user_reference.md`](tom_build/doc/tom_user_reference.md) |
 | Tool specification | [`tom_build/doc/tom_tool_specification.md`](tom_build/doc/tom_tool_specification.md) |
 | `tom` CLI usage | [`tom_build_cli/doc/tom_cli_usage.md`](tom_build_cli/doc/tom_cli_usage.md) |
-| buildkit — user guide | [`tom_build_kit/doc/buildkit_user_guide.md`](tom_build_kit/doc/buildkit_user_guide.md) |
-| buildkit — tools user guide | [`tom_build_kit/doc/tools_user_guide.md`](tom_build_kit/doc/tools_user_guide.md) |
-| buildkit — git guide mode | [`tom_build_kit/doc/git_guide_mode.md`](tom_build_kit/doc/git_guide_mode.md) |
 | testkit — test tracking | [`tom_test_kit/doc/test_tracking.md`](tom_test_kit/doc/test_tracking.md) |
 | testkit — TUI | [`tom_test_kit/doc/tom_test_tui.md`](tom_test_kit/doc/tom_test_tui.md) |
 | issuekit — command reference | [`tom_issue_kit/doc/issuekit_command_reference.md`](tom_issue_kit/doc/issuekit_command_reference.md) |
@@ -222,8 +223,6 @@ tom_ai/devops/
 │   └── doc/                  # tom CLI usage
 ├── tom_build_common/         # shared build types/utilities
 │
-├── tom_build_kit/            # buildkit orchestrator + pipelines (CLI kit)
-│   └── doc/                  # buildkit + tools guides
 ├── tom_test_kit/             # testkit — baseline/test/diff tracking (CLI kit)
 │   └── doc/                  # test tracking + TUI
 ├── tom_issue_kit/            # issuekit — issue lifecycle + test linkage (CLI kit)
