@@ -1,0 +1,9 @@
+═══ RUN_CLN01: --command clean in dry-run ═══
+--- runner --dry-run --command clean (exit 0) ---
+STDOUT:
+>>> _build
+  [DRY RUN] _build: skipped clean (no build.yaml)
+  -> :runner skipped (no build.yaml)
+
+Done. No errors.
+  ✓ shows clean command

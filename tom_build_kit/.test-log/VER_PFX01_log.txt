@@ -1,0 +1,9 @@
+═══ VER_PFX01: --variable-prefix overrides project config (bug #12 fixed) ═══
+--- versioner --project _build --variable-prefix myCustom (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner version file generated
+
+Done. No errors.
+  ✓ exit code 0
+  ✓ class is MyCustomVersionInfo

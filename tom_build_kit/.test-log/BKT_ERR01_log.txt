@@ -1,0 +1,14 @@
+═══ BKT_ERR01: unknown pipeline error handling ═══
+--- buildkit --project _build nonexistent-pipeline-xyz (exit 1) ---
+STDOUT:
+No command specified.
+
+Usage: buildkit [options]
+Commands: :versioner, :bumpversion, :bumppubspec, :compiler, :runner...
+
+Use --help for more information.
+
+
+Done. No errors.
+  ✓ non-zero exit
+  ✓ has error message

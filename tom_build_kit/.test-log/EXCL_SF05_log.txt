@@ -1,0 +1,1 @@
+═══ EXCL_SF05: skip file excludes project from runner ═══

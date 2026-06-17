@@ -1,0 +1,13 @@
+═══ SEC_CMD01: pipeline rejects unknown commands ═══
+--- buildkit --project _build test-malicious (exit 255) ---
+STDERR:
+Unhandled exception:
+FormatException: Unsupported pipeline command prefix in "rm -rf /". Allowed prefixes: buildkit, shell, shell-scan, stdin, print.
+#0      ToolPipelineConfigLoader._parseSteps (package:tom_build_base/src/v2/core/pipeline_config.dart:215:11)
+#1      ToolPipelineConfigLoader._parsePipeline (package:tom_build_base/src/v2/core/pipeline_config.dart:190:13)
+#2      ToolPipelineConfigLoader.load (package:tom_build_base/src/v2/core/pipeline_config.dart:155:33)
+#3      ToolRunner._tryRunPipelineInvocation (package:tom_build_base/src/v2/core/tool_runner.dart:691:45)
+#4      ToolRunner.run (package:tom_build_base/src/v2/core/tool_runner.dart:436:37)
+<asynchronous suspension>
+#5      main (file:///C:/Code/al_the_bear/inhouse/second_wind/enterprise_flutter/tom_agent_container/tom_ai/devops/tom_build_kit/bin/buildkit.dart:31:18)
+<asynchronous suspension>

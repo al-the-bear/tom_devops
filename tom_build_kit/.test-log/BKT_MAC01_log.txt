@@ -1,0 +1,7 @@
+═══ BKT_MAC01: defines with no macros ═══
+--- buildkit :defines (exit 0) ---
+STDOUT:
+No defines found.
+
+Done. No errors.
+  ✓ shows no defines

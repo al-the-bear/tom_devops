@@ -1,0 +1,10 @@
+═══ SCR_MLN01: multi-line shell script executes all lines ═══
+--- buildkit test-multiline-shell (exit 0) ---
+STDOUT:
+[PIPELINE:shell] echo "multi-line-1"
+echo "multi-line-2"
+echo "multi-line-3"
+\"multi-line-1\"
+
+Done. No errors.
+  ✓ all three echo lines present

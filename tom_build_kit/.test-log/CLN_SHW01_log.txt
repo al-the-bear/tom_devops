@@ -1,0 +1,10 @@
+═══ CLN_SHW01: --dump-config displays cleanup config ═══
+--- cleanup --project _build --dump-config (exit 0) ---
+STDOUT:
+>>> _build
+  _build:
+    globs: **/version.versioner.dart
+  -> :cleanup config shown
+
+Done. No errors.
+  ✓ shows version.versioner.dart pattern

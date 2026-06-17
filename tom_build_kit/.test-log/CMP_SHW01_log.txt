@@ -1,0 +1,13 @@
+═══ CMP_SHW01: --dump-config displays compiler config ═══
+--- compiler --project _build --dump-config (exit 0) ---
+STDOUT:
+>>> _build
+  _build:
+    compiles: 2 sections
+      - bin/deploy.dart, bin/doc_scanner.dart, bin/docspecs.dart, bin/md2latex.dart, bin/md2pdf.dart, bin/ws_analyzer.dart, bin/ws_prepper.dart â†’ darwin-arm64, linux-x64, linux-arm64, linux-armhf
+      - bin/deploy.dart, bin/doc_scanner.dart, bin/docspecs.dart, bin/md2latex.dart, bin/md2pdf.dart, bin/ws_analyzer.dart, bin/ws_prepper.dart
+    postcompile: 1 sections
+  -> :compiler config shown
+
+Done. No errors.
+  ✓ shows compiler info

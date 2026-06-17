@@ -1,0 +1,8 @@
+═══ CFG_OVR01: project config overrides workspace ═══
+--- versioner with project override (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner version file generated
+
+Done. No errors.
+  ✓ project prefix used

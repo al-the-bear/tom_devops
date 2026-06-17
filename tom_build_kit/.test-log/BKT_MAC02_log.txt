@@ -1,0 +1,13 @@
+═══ BKT_MAC02: define and list macro ═══
+--- buildkit :define test=:versioner --list (exit 0) ---
+STDOUT:
+Added define: test: :versioner --list
+
+Done. No errors.
+--- buildkit :defines (exit 0) ---
+STDOUT:
+defines:
+  test=:versioner --list
+
+Done. No errors.
+  ✓ define listed

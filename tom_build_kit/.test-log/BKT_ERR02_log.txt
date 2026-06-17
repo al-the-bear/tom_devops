@@ -1,0 +1,10 @@
+═══ BKT_ERR02: non-existent --project error ═══
+--- buildkit --project _build/nonexistent_dir test-simple (exit 0) ---
+STDOUT:
+[PIPELINE:shell] echo "step-1-hello"
+\"step-1-hello\"
+[PIPELINE:shell] echo "step-2-world"
+\"step-2-world\"
+
+Done. No errors.
+  ✓ completes without crash

@@ -1,0 +1,14 @@
+═══ BKT_LST01: --list shows available pipelines ═══
+--- buildkit --list (exit 1) ---
+STDOUT:
+No command specified.
+
+Usage: buildkit [options]
+Commands: :versioner, :bumpversion, :bumppubspec, :compiler, :runner...
+
+Use --help for more information.
+
+
+Done. No errors.
+  ✓ non-zero exit
+  ✓ has usage info

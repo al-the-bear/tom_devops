@@ -1,0 +1,9 @@
+═══ RUN_DRY01: --dry-run shows planned command ═══
+--- runner --project _build --dry-run (exit 0) ---
+STDOUT:
+>>> _build
+  [DRY RUN] _build: skipped build (no build.yaml)
+  -> :runner skipped (no build.yaml)
+
+Done. No errors.
+  ✓ shows planned command

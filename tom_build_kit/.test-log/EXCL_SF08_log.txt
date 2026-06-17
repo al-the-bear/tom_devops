@@ -1,0 +1,2 @@
+═══ EXCL_SF08: skip file cleanup in tearDown ═══
+  ✓ skip file exists after placement

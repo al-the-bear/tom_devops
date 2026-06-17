@@ -1,0 +1,10 @@
+═══ CLN_PRO01: protected folders are never touched ═══
+--- cleanup with protected-folders (exit 0) ---
+STDOUT:
+>>> _build
+  Cleanup: deleted 1 file(s) in _build
+  -> :cleanup deleted 1 files
+
+Done. No errors.
+  ✓ protected file survives
+  ✓ unprotected file deleted

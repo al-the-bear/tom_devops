@@ -1,0 +1,152 @@
+═══ EXCL_SF03: skip file excludes project from compiler ═══
+--- compiler --list (exit 0) ---
+STDOUT:
+>>> tom_ai/ai_build/tom_ai_build
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/ai_build/tom_doc_scanner
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/ai_build/tom_doc_specs
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/ai_build/tom_flow_cli
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/ai_build/tom_specs_clitool
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/cloud/tom_provisioning_server
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/core/tom_core_bridge
+  tom_aicoretom_core_bridge
+  -> :compiler listed
+>>> tom_ai/core/tom_core_d4rt
+  tom_aicoretom_core_d4rt
+  -> :compiler listed
+>>> tom_ai/core/tom_core_flutter
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_ast_generator
+  tom_aid4rttom_ast_generator
+  -> :compiler listed
+>>> tom_ai/d4rt/tom_ast_generator/test/astgen_test_project
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_d4rt
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_d4rt_dcli
+  tom_aid4rttom_d4rt_dcli
+  -> :compiler listed
+>>> tom_ai/d4rt/tom_d4rt_dcli/example/build_suite
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_d4rt_exec
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_d4rt_flutter
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_d4rt_generator
+  tom_aid4rttom_d4rt_generator
+  -> :compiler listed
+>>> tom_ai/d4rt/tom_d4rt_test
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/d4rt/tom_dcli_exec
+  tom_aid4rttom_dcli_exec
+  -> :compiler listed
+>>> tom_ai/devops/tom_build
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_cli
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_server
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build_cli
+  tom_aidevopstom_build_cli
+  -> :compiler listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/app_c
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/main_app
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_local_index
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_null_overrides
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_cross_compile
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_build_kit
+  tom_aidevopstom_build_kit
+  -> :compiler listed
+>>> tom_ai/devops/tom_build_kit/test/fixtures/build_project/_build
+  tom_aidevopstom_build_kittestfixturesbuild_project_build
+  -> :compiler listed
+>>> tom_ai/devops/tom_deploy_tools
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_issue_kit
+  tom_aidevopstom_issue_kit
+  -> :compiler listed
+>>> tom_ai/devops/tom_md2latex
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_md2pdf
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/devops/tom_test_kit
+  tom_aidevopstom_test_kit
+  -> :compiler listed
+>>> tom_ai/distributed/tom_dist_ledger
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/distributed/tom_process_monitor
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflection_generator
+  tom_aireflectiontom_reflection_generator
+  -> :compiler listed
+>>> tom_ai/reflection/tom_reflector
+  tom_aireflectiontom_reflector
+  -> :compiler listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyzer_demo
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_analyzer
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_dart_overview
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_kernel
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_server
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_analyzer
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_dart_overview
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_kernel
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_server
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/vscode/tom_vscode_bridge
+  tom_aivscodetom_vscode_bridge
+  -> :compiler listed
+>>> tom_ai/vscode/tom_vscode_extension
+  -> :compiler skipped (no compiler config)
+>>> tom_ai/xternal/native_semaphores
+  -> :compiler skipped (no compiler config)
+>>> tom_assistant/tom_brain_access
+  -> :compiler skipped (no compiler config)
+>>> tom_assistant/tom_brain_memory
+  -> :compiler skipped (no compiler config)
+>>> tom_assistant/tom_brain_observatory
+  -> :compiler skipped (no compiler config)
+>>> tom_assistant/tom_brain_procedure
+  -> :compiler skipped (no compiler config)
+>>> tom_assistant/tom_brain_run
+  -> :compiler skipped (no compiler config)
+>>> tom_assistant/tom_brain_smoke_prototype
+  -> :compiler skipped (no compiler config)
+>>> tom_sqm/tom_sqm_server
+  -> :compiler skipped (no compiler config)
+>>> tom_uam/tom_uam_server
+  -> :compiler skipped (no compiler config)
+>>> _ai/quests/tom_brain/bench
+  -> :compiler skipped (no compiler config)
+>>> _scripts
+  -> :compiler skipped (no compiler config)
+
+Done. No errors.
+STDERR:
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping subworkspace: exclusion
+Skipping subworkspace: pipeline
+Skipping subworkspace: versioner
+Skipping - buildkit_skip.yaml found: _build
+  ✓ _build with skip file absent from list

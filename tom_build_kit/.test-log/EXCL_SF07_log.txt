@@ -1,0 +1,1 @@
+═══ EXCL_SF07: skip file in parent excludes all children ═══

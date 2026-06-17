@@ -1,0 +1,10 @@
+═══ CLN_EXC01: excludes prevent deletion ═══
+--- cleanup with excludes (exit 0) ---
+STDOUT:
+>>> _build
+  Cleanup: deleted 1 file(s) in _build
+  -> :cleanup deleted 1 files
+
+Done. No errors.
+  ✓ version.versioner.dart survives
+  ✓ test_temp.g.dart deleted

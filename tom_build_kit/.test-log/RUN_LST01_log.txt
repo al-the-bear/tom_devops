@@ -1,0 +1,395 @@
+═══ RUN_LST01: --list shows runner-eligible projects ═══
+--- runner --scan . -r --list (exit 0) ---
+STDOUT:
+>>> app_deepwork/deepwork_core
+  -> :runner skipped (no build.yaml)
+>>> app_deepwork/deepwork_ui
+  -> :runner skipped (no build.yaml)
+>>> app_webwork/webwork_app
+  -> :runner skipped (no build.yaml)
+>>> app_webwork/webwork_core
+  -> :runner skipped (no build.yaml)
+>>> app_webwork/webwork_deepwork
+  -> :runner skipped (no build.yaml)
+>>> app_webwork/webwork_documents
+  -> :runner skipped (no build.yaml)
+>>> app_webwork/webwork_integrations
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_ai
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_ai_build
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_code_specs
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_doc_scanner
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_doc_specs
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_flow_cli
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_flow_engine
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_specs_clitool
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_specs_core
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/ai_build/tom_specs_model
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_analyzer_shared
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_basics
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_basics_console
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_basics_network
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_build_base
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_chattools
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_crypto
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_markdown_merge
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_package_scanner
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/basics/tom_tools
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/cloud/tom_provisioning
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/cloud/tom_provisioning_server
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/core/tom_core_agentic
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/core/tom_core_bridge
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/core/tom_core_d4rt
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/core/tom_core_flutter
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/core/tom_core_kernel
+  tom_aicoretom_core_kernel
+  -> :runner listed
+>>> tom_ai/core/tom_core_server
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/core/tom_flutter_form_test
+  tom_aicoretom_flutter_form_test
+  -> :runner listed
+>>> tom_ai/core/tom_flutter_ui
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/core/tom_flutter_ui_test
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_ast_generator
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_ast_generator/test/astgen_test_output
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_ast_generator/test/astgen_test_project
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_ast_model
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt/example/dart_overview
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_ast
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_dcli
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_exec
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_flutter
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_flutter/test/tom_d4rt_flutter_test_app
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast/test/tom_d4rt_flutter_ast_app
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast_test
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_flutter_test
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_d4rt_generator
+  tom_aid4rttom_d4rt_generator
+  -> :runner listed
+>>> tom_ai/d4rt/tom_d4rt_test
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/d4rt/tom_dcli_exec
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build
+  tom_aidevopstom_build
+  -> :runner listed
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/core_lib
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_cli
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_server
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/utils_lib
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build/test/tom/fixtures/tomplates
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli
+  tom_aidevopstom_build_cli
+  -> :runner listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/app_c
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/lib_a
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/lib_b
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/core_lib
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/main_app
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/service_lib
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/utils_lib
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_assets
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_build_runner
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featuresproject_with_build_runner
+  -> :runner listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_docker
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_examples
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_reflection
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_tests
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/publishable_project
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_folder_listings/project_with_folders
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_local_index
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_null_overrides
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_no_overrides
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_action_override
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_cross_compile
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_mode_override
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/ws_prepper
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_common
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_kit
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_build_kit/test/fixtures/build_project/_build
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_deploy
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_deploy_tools
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_github_api
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_issue_kit
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_md2latex
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_md2pdf
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/devops/tom_test_kit
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/distributed/tom_distributed_orchestration
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/distributed/tom_distributed_orchestration_tool
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/distributed/tom_dist_ledger
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/distributed/tom_dist_ledger_tool
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/distributed/tom_process_monitor
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/distributed/tom_process_monitor_tool
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflection
+  tom_aireflectiontom_reflection
+  -> :runner listed
+>>> tom_ai/reflection/tom_reflection_generator
+  tom_aireflectiontom_reflection_generator
+  -> :runner listed
+>>> tom_ai/reflection/tom_reflection_test
+  tom_aireflectiontom_reflection_test
+  -> :runner listed
+>>> tom_ai/reflection/tom_reflector
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyzer_demo
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_analyzer
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_dart_overview
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_kernel
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_server
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_analyzer
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_dart_overview
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_kernel
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_server
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector/test/dart_overview
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/reflection/tom_reflector_model
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/vscode/tom_vscode_bridge
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/vscode/tom_vscode_scripting_api
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/native_semaphores
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/dev_packages/flutter_inappwebview_internal_annotations
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/dev_packages/generators
+  tom_aixternaltom_flutter_inappwebviewdev_packagesgenerators
+  -> :runner listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview
+  -> :runner listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview/example
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_android
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_android
+  -> :runner listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_android/example
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_ios
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_ios
+  -> :runner listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_ios/example
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_linux
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_linux/example
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_macos
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_macos
+  -> :runner listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_macos/example
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_platform_interface
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_platform_interface
+  -> :runner listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_web
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_web
+  -> :runner listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_web/example
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_windows
+  -> :runner skipped (no build.yaml)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_windows/example
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_assistant_core
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_assistant_messaging
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_assistant_server
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_assistant_ui
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_access
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_memory
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_observatory
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_observatory_web
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_procedure
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_run
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_shared
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_smoke_prototype
+  -> :runner skipped (no build.yaml)
+>>> tom_assistant/tom_brain_substrate
+  -> :runner skipped (no build.yaml)
+>>> tom_claw/tom_ts2dart/test/e2e
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_dart_editor
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_dart_editor_test
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_editors_shared
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_flow_editor
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_flow_editor_test
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_forge_app
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_forge_core
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_forge_ui
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_forge_ui_test
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_md_editor
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_md_editor_test
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_website_editor
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_website_editor_core
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_wpe_webview_test
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_yaml_editor
+  -> :runner skipped (no build.yaml)
+>>> tom_forge/tom_yaml_editor_test
+  -> :runner skipped (no build.yaml)
+>>> tom_sqm/tom_sqm_admin_client
+  -> :runner skipped (no build.yaml)
+>>> tom_sqm/tom_sqm_codespec
+  -> :runner skipped (no build.yaml)
+>>> tom_sqm/tom_sqm_customer_client
+  -> :runner skipped (no build.yaml)
+>>> tom_sqm/tom_sqm_server
+  -> :runner skipped (no build.yaml)
+>>> tom_uam/tom_uam_client
+  tom_uamtom_uam_client
+  -> :runner listed
+>>> tom_uam/tom_uam_codespec
+  -> :runner skipped (no build.yaml)
+>>> tom_uam/tom_uam_server
+  tom_uamtom_uam_server
+  -> :runner listed
+>>> tom_worktracker/tom_worktracker_app
+  -> :runner skipped (no build.yaml)
+>>> tom_worktracker/tom_worktracker_core
+  -> :runner skipped (no build.yaml)
+>>> tom_worktracker/tom_worktracker_mindmap
+  -> :runner skipped (no build.yaml)
+>>> tom_worktracker/tom_worktracker_ui
+  -> :runner skipped (no build.yaml)
+>>> _ai/quests/tom_brain/bench
+  -> :runner skipped (no build.yaml)
+>>> _build
+  -> :runner skipped (no build.yaml)
+>>> _doc/dart_reference/dart_overview
+  -> :runner skipped (no build.yaml)
+>>> _scripts
+  -> :runner skipped (no build.yaml)
+>>> _scripts/example/dcli_scripting_guide
+  -> :runner skipped (no build.yaml)
+
+Done. No errors.
+STDERR:
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping subworkspace: exclusion
+Skipping subworkspace: pipeline
+Skipping subworkspace: versioner
+  ✓ projects found

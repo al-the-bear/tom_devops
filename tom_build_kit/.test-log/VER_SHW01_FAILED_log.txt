@@ -1,0 +1,11 @@
+═══ VER_SHW01: --dump-config displays versioner config ═══
+--- versioner --project _build --dump-config (exit 0) ---
+STDOUT:
+>>> _build
+Project: _build
+  (no versioner config)
+  -> :versioner config shown
+
+Done. No errors.
+  ✓ exit code 0
+  ✗ contains variable-prefix

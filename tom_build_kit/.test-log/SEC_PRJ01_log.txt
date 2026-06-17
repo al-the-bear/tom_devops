@@ -1,0 +1,4 @@
+═══ SEC_PRJ01: --project rejects outside paths ═══
+--- versioner --project /tmp/evil_project (exit 0) ---
+STDOUT:
+Done. No errors.

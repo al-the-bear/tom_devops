@@ -1,0 +1,23 @@
+═══ DEP_NRM01: default shows normal dependencies ═══
+--- dependencies --project _build (exit 0) ---
+STDOUT:
+>>> _build
+
+_build (_build)
+  -> path: ^1.9.0
+  -> tom_basics_network: any
+  -> tom_build_cli: path: ../tom/devops/tom_build_cli
+  -> tom_build_common: path: ../tom/devops/tom_build_common
+  -> tom_d4rt: any
+  -> tom_d4rt_dcli: any
+  -> tom_d4rt_generator: any
+  -> tom_dartscript_bridges: path: ../tom/dartscript/tom_dartscript_bridges
+  -> tom_deploy_tools: path: ../tom/devops/tom_deploy_tools
+  -> tom_dist_ledger_tool: path: ../tom/xternal/tom_module_distributed/tom_dist_ledger_tool
+  -> tom_process_monitor_tool: path: ../tom/xternal/tom_module_distributed/tom_process_monitor_tool
+  -> tom_vscode_bridge: path: ../tom/xternal/tom_module_vscode/tom_vscode_bridge
+  -> :dependencies 12 dependencies
+
+Done. No errors.
+  ✓ has -> entries
+  ✓ no +> entries

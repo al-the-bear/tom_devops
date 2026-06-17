@@ -1,0 +1,9 @@
+═══ RUN_FLT01: --include-builders filters builders ═══
+--- runner --dry-run --include-builders tom_d4rt_generator (exit 0) ---
+STDOUT:
+>>> _build
+  [DRY RUN] _build: skipped build (no build.yaml)
+  -> :runner skipped (no build.yaml)
+
+Done. No errors.
+  ✓ filter acknowledged

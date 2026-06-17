@@ -1,0 +1,4 @@
+═══ SEC_SCN01: --scan rejects outside paths ═══
+--- versioner --scan /tmp -r --list (exit 0) ---
+STDOUT:
+Done. No errors.

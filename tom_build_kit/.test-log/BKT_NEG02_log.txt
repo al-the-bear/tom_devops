@@ -1,0 +1,8 @@
+═══ BKT_NEG02: :macro rejected in ineligible context ═══
+--- buildkit :macro test=value (no master yaml) (exit 1) ---
+STDOUT:
+Cannot find buildkit_master.yaml in workspace root (C:Codeal_the_bearinhousesecond_windenterprise_fluttertom_agent_container).
+Make sure you are running buildkit from inside the workspace that contains buildkit_master.yaml.
+
+Done. No errors.
+  ✓ non-zero exit

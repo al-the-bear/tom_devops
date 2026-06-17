@@ -1,0 +1,10 @@
+═══ SCR_STD01: stdin piping sends content to command ═══
+--- buildkit test-stdin (exit 0) ---
+STDOUT:
+[PIPELINE:stdin] cat
+  | Hello stdin world
+  | line two
+Hello stdin world
+line two
+
+Done. No errors.

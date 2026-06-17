@@ -1,0 +1,7 @@
+═══ CFG_DEF01: workspace defaults apply ═══
+--- versioner without project versioner config (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner skipped (no versioner config)
+
+Done. No errors.

@@ -1,0 +1,12 @@
+═══ BKT_SHL01: shell command in pipeline ═══
+--- buildkit --project devops/tom_build_kit test-shell (exit 1) ---
+STDOUT:
+No command specified.
+
+Usage: buildkit [options]
+Commands: :versioner, :bumpversion, :bumppubspec, :compiler, :runner...
+
+Use --help for more information.
+
+
+Done. No errors.

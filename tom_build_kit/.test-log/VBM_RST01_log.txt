@@ -1,0 +1,5 @@
+═══ VBM_RST01: build counter reset ═══
+--- versionbump --project _build (exit 0) ---
+STDOUT:
+Done. No errors.
+  ✗ state file exists

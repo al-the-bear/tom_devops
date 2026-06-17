@@ -1,0 +1,22 @@
+═══ CMP_PLC01: placeholder resolution ═══
+--- compiler --dry-run (placeholder check) (exit 0) ---
+STDOUT:
+>>> _build
+  Error: Unsupported command prefix in "mkdir -p C:/Users/alexi/.tom/bin/${target-platform-vs}". Use one of: shell, stdin, shell-scan, print, buildkit.
+  Error: Compilation failed for deploy (win32-x64)
+  Error: Unsupported command prefix in "mkdir -p C:/Users/alexi/.tom/bin/${target-platform-vs}". Use one of: shell, stdin, shell-scan, print, buildkit.
+  Error: Compilation failed for doc_scanner (win32-x64)
+  Error: Unsupported command prefix in "mkdir -p C:/Users/alexi/.tom/bin/${target-platform-vs}". Use one of: shell, stdin, shell-scan, print, buildkit.
+  Error: Compilation failed for docspecs (win32-x64)
+  Error: Unsupported command prefix in "mkdir -p C:/Users/alexi/.tom/bin/${target-platform-vs}". Use one of: shell, stdin, shell-scan, print, buildkit.
+  Error: Compilation failed for md2latex (win32-x64)
+  Error: Unsupported command prefix in "mkdir -p C:/Users/alexi/.tom/bin/${target-platform-vs}". Use one of: shell, stdin, shell-scan, print, buildkit.
+  Error: Compilation failed for md2pdf (win32-x64)
+  Error: Unsupported command prefix in "mkdir -p C:/Users/alexi/.tom/bin/${target-platform-vs}". Use one of: shell, stdin, shell-scan, print, buildkit.
+  Error: Compilation failed for ws_analyzer (win32-x64)
+  Error: Unsupported command prefix in "mkdir -p C:/Users/alexi/.tom/bin/${target-platform-vs}". Use one of: shell, stdin, shell-scan, print, buildkit.
+  Error: Compilation failed for ws_prepper (win32-x64)
+  -> :compiler 0 compilations
+
+Done. No errors.
+  ✓ no unresolved placeholders

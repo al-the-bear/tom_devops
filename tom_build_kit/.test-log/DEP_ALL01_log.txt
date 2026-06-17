@@ -1,0 +1,26 @@
+═══ DEP_ALL01: --all shows both types ═══
+--- dependencies --project _build --all (exit 0) ---
+STDOUT:
+>>> _build
+
+_build (_build)
+  -> path: ^1.9.0
+  -> tom_basics_network: any
+  -> tom_build_cli: path: ../tom/devops/tom_build_cli
+  -> tom_build_common: path: ../tom/devops/tom_build_common
+  -> tom_d4rt: any
+  -> tom_d4rt_dcli: any
+  -> tom_d4rt_generator: any
+  -> tom_dartscript_bridges: path: ../tom/dartscript/tom_dartscript_bridges
+  -> tom_deploy_tools: path: ../tom/devops/tom_deploy_tools
+  -> tom_dist_ledger_tool: path: ../tom/xternal/tom_module_distributed/tom_dist_ledger_tool
+  -> tom_process_monitor_tool: path: ../tom/xternal/tom_module_distributed/tom_process_monitor_tool
+  -> tom_vscode_bridge: path: ../tom/xternal/tom_module_vscode/tom_vscode_bridge
+  +> build_runner: ^2.4.14
+  +> lints: ^6.0.0
+  +> test: ^1.25.6
+  -> :dependencies 15 dependencies
+
+Done. No errors.
+  ✓ has -> entries
+  ✓ has +> entries

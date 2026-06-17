@@ -1,0 +1,9 @@
+═══ BKT_DRY02: --dry-run before pipeline (workaround) ═══
+--- buildkit --dry-run --project devops/tom_build_kit test-simple (exit 0) ---
+STDOUT:
+[PIPELINE:shell] echo "step-1-hello"
+[PIPELINE:shell] echo "step-2-world"
+
+Done. No errors.
+  ✓ has [PIPELINE:shell] markers
+  ✓ no bare echo output

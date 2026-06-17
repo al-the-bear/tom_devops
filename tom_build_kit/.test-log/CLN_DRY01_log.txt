@@ -1,0 +1,11 @@
+═══ CLN_DRY01: --dry-run lists without deleting ═══
+--- cleanup --project _build --dry-run (exit 0) ---
+STDOUT:
+>>> _build
+  [DRY RUN] Would delete 1 file(s):
+    - libsrcversion.versioner.dart
+  -> :cleanup dry-run: 1 files
+
+Done. No errors.
+  ✓ file survives
+  ✓ file listed in output

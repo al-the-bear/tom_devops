@@ -1,0 +1,25 @@
+═══ DEP_CBD01: --deep --dev combined flags ═══
+--- dependencies --project _build --deep --dev (exit 0) ---
+STDOUT:
+>>> _build
+
+_build (_build)
+  +> build_runner: ^2.4.14
+  +> lints: ^6.0.0
+  +> test: ^1.25.6
+  --- recursive tree ---
+  â”œâ”€â”€ path ^1.9.0
+  â”œâ”€â”€ tom_build_cli (path)
+  â”œâ”€â”€ tom_build_common (path)
+  â”œâ”€â”€ tom_deploy_tools (path)
+  â”œâ”€â”€ tom_dartscript_bridges (path)
+  â”œâ”€â”€ tom_d4rt 
+  â”œâ”€â”€ tom_d4rt_dcli 
+  â”œâ”€â”€ tom_d4rt_generator 
+  â”œâ”€â”€ tom_basics_network 
+  â”œâ”€â”€ tom_vscode_bridge (path)
+  â”œâ”€â”€ tom_dist_ledger_tool (path)
+  â”œâ”€â”€ tom_process_monitor_tool (path)
+  -> :dependencies 3 dependencies
+
+Done. No errors.

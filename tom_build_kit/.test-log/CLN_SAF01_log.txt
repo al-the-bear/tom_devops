@@ -1,0 +1,14 @@
+═══ CLN_SAF01: safety limit triggers abort ═══
+--- cleanup --max-files 3 with 7+ files (exit 1) ---
+STDOUT:
+>>> _build
+
+WARNING: Cleanup would delete 6 files in _build (limit: 3)
+  Use --force or --max-files=6 to proceed
+  -> :cleanup ERROR: file count 6 exceeds limit 3
+
+=== Errors ===
+  _build :cleanup â€” file count 6 exceeds limit 3
+1 error(s) in 1 project(s).
+  ✓ exit code non-zero
+  ✓ files survived

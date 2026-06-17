@@ -1,0 +1,14 @@
+═══ SCR_MLN02: multi-line shell script verbose output ═══
+--- buildkit --verbose test-multiline-shell (exit 0) ---
+STDOUT:
+[startup] Load macros + expand args: +41ms (total 41ms)
+[startup] Normalize + parse args: +3ms (total 45ms)
+[startup] Required-environment checks: skipped
+[startup] Lazy nested-tool wiring: +80ms (total 125ms)
+[startup] Inject help topics: +3ms (total 129ms)
+[PIPELINE:shell] echo "multi-line-1"
+echo "multi-line-2"
+echo "multi-line-3"
+\"multi-line-1\"
+
+Done. No errors.

@@ -1,0 +1,6 @@
+═══ VER_LST01: --list shows _build as a versioner project ═══
+--- versioner --project _build --list (exit 0) ---
+STDOUT:
+Done. No errors.
+  ✓ exit code 0
+  ✗ _build in output

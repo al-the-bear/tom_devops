@@ -1,0 +1,4 @@
+═══ DEP_ERR01: non-existent --project error ═══
+--- dependencies --project _build/nonexistent (exit 0) ---
+STDOUT:
+Done. No errors.

@@ -1,0 +1,389 @@
+═══ EXCL_BL01: versioner finds _build without exclusions ═══
+--- versioner --list (exit 0) ---
+STDOUT:
+>>> app_deepwork/deepwork_core
+  -> :versioner skipped (no versioner config)
+>>> app_deepwork/deepwork_ui
+  -> :versioner skipped (no versioner config)
+>>> app_webwork/webwork_app
+  -> :versioner skipped (no versioner config)
+>>> app_webwork/webwork_core
+  -> :versioner skipped (no versioner config)
+>>> app_webwork/webwork_deepwork
+  -> :versioner skipped (no versioner config)
+>>> app_webwork/webwork_documents
+  -> :versioner skipped (no versioner config)
+>>> app_webwork/webwork_integrations
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_ai
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_ai_build
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_code_specs
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_doc_scanner
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_doc_specs
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_flow_cli
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_flow_engine
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_specs_clitool
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_specs_core
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/ai_build/tom_specs_model
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_analyzer_shared
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_basics
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_basics_console
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_basics_network
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_build_base
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_chattools
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_crypto
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_markdown_merge
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_package_scanner
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/basics/tom_tools
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/cloud/tom_provisioning
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/cloud/tom_provisioning_server
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/core/tom_core_agentic
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/core/tom_core_bridge
+  tom_aicoretom_core_bridge
+  -> :versioner listed
+>>> tom_ai/core/tom_core_d4rt
+  tom_aicoretom_core_d4rt
+  -> :versioner listed
+>>> tom_ai/core/tom_core_flutter
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/core/tom_core_kernel
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/core/tom_core_server
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/core/tom_flutter_form_test
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/core/tom_flutter_ui
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/core/tom_flutter_ui_test
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_ast_generator
+  tom_aid4rttom_ast_generator
+  -> :versioner listed
+>>> tom_ai/d4rt/tom_ast_generator/test/astgen_test_output
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_ast_generator/test/astgen_test_project
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_ast_model
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt/example/dart_overview
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_ast
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_dcli
+  tom_aid4rttom_d4rt_dcli
+  -> :versioner listed
+>>> tom_ai/d4rt/tom_d4rt_exec
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_flutter
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_flutter/test/tom_d4rt_flutter_test_app
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast/test/tom_d4rt_flutter_ast_app
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast_test
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_flutter_test
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_d4rt_generator
+  tom_aid4rttom_d4rt_generator
+  -> :versioner listed
+>>> tom_ai/d4rt/tom_d4rt_test
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/d4rt/tom_dcli_exec
+  tom_aid4rttom_dcli_exec
+  -> :versioner listed
+>>> tom_ai/devops/tom_build
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/core_lib
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_cli
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_server
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/utils_lib
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build/test/tom/fixtures/tomplates
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli
+  tom_aidevopstom_build_cli
+  -> :versioner listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/app_c
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/lib_a
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/lib_b
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/core_lib
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/main_app
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/service_lib
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/utils_lib
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_assets
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_build_runner
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_docker
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_examples
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_reflection
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_tests
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/publishable_project
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_folder_listings/project_with_folders
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_local_index
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_null_overrides
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_no_overrides
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_action_override
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_cross_compile
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_mode_override
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_cli/test/fixtures/ws_prepper
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_common
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_build_kit
+  tom_aidevopstom_build_kit
+  -> :versioner listed
+>>> tom_ai/devops/tom_build_kit/test/fixtures/build_project/_build
+  tom_aidevopstom_build_kittestfixturesbuild_project_build
+  -> :versioner listed
+>>> tom_ai/devops/tom_deploy
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_deploy_tools
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_github_api
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_issue_kit
+  tom_aidevopstom_issue_kit
+  -> :versioner listed
+>>> tom_ai/devops/tom_md2latex
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_md2pdf
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/devops/tom_test_kit
+  tom_aidevopstom_test_kit
+  -> :versioner listed
+>>> tom_ai/distributed/tom_distributed_orchestration
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/distributed/tom_distributed_orchestration_tool
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/distributed/tom_dist_ledger
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/distributed/tom_dist_ledger_tool
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/distributed/tom_process_monitor
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/distributed/tom_process_monitor_tool
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflection
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflection_generator
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflection_test
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector
+  tom_aireflectiontom_reflector
+  -> :versioner listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyzer_demo
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_analyzer
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_dart_overview
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_kernel
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_server
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_analyzer
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_dart_overview
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_kernel
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_server
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector/test/dart_overview
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/reflection/tom_reflector_model
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/vscode/tom_vscode_bridge
+  tom_aivscodetom_vscode_bridge
+  -> :versioner listed
+>>> tom_ai/vscode/tom_vscode_scripting_api
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/native_semaphores
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/dev_packages/flutter_inappwebview_internal_annotations
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/dev_packages/generators
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview/example
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_android
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_android/example
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_ios
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_ios/example
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_linux
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_linux/example
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_macos
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_macos/example
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_platform_interface
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_web
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_web/example
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_windows
+  -> :versioner skipped (no versioner config)
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_windows/example
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_assistant_core
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_assistant_messaging
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_assistant_server
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_assistant_ui
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_access
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_memory
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_observatory
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_observatory_web
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_procedure
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_run
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_shared
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_smoke_prototype
+  -> :versioner skipped (no versioner config)
+>>> tom_assistant/tom_brain_substrate
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_dart_editor
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_dart_editor_test
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_editors_shared
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_flow_editor
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_flow_editor_test
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_forge_app
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_forge_core
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_forge_ui
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_forge_ui_test
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_md_editor
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_md_editor_test
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_website_editor
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_website_editor_core
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_wpe_webview_test
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_yaml_editor
+  -> :versioner skipped (no versioner config)
+>>> tom_forge/tom_yaml_editor_test
+  -> :versioner skipped (no versioner config)
+>>> tom_sqm/tom_sqm_admin_client
+  -> :versioner skipped (no versioner config)
+>>> tom_sqm/tom_sqm_codespec
+  -> :versioner skipped (no versioner config)
+>>> tom_sqm/tom_sqm_customer_client
+  -> :versioner skipped (no versioner config)
+>>> tom_sqm/tom_sqm_server
+  -> :versioner skipped (no versioner config)
+>>> tom_uam/tom_uam_client
+  -> :versioner skipped (no versioner config)
+>>> tom_uam/tom_uam_codespec
+  -> :versioner skipped (no versioner config)
+>>> tom_uam/tom_uam_server
+  -> :versioner skipped (no versioner config)
+>>> tom_worktracker/tom_worktracker_app
+  -> :versioner skipped (no versioner config)
+>>> tom_worktracker/tom_worktracker_core
+  -> :versioner skipped (no versioner config)
+>>> tom_worktracker/tom_worktracker_mindmap
+  -> :versioner skipped (no versioner config)
+>>> tom_worktracker/tom_worktracker_ui
+  -> :versioner skipped (no versioner config)
+>>> _ai/quests/tom_brain/bench
+  -> :versioner skipped (no versioner config)
+>>> _build
+  _build
+  -> :versioner listed
+>>> _doc/dart_reference/dart_overview
+  -> :versioner skipped (no versioner config)
+>>> _scripts
+  -> :versioner skipped (no versioner config)
+>>> _scripts/example/dcli_scripting_guide
+  -> :versioner skipped (no versioner config)
+
+Done. No errors.
+STDERR:
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping subworkspace: exclusion
+Skipping subworkspace: pipeline
+Skipping subworkspace: versioner
+  ✓ _build present in list

@@ -1,0 +1,12 @@
+═══ EXCL_BK01: buildkit excludes _build by basename ═══
+--- buildkit --verbose --exclude-projects _build :versioner --list (exit 1) ---
+STDOUT:
+[startup] Load macros + expand args: +25ms (total 25ms)
+[startup] Normalize + parse args: +3ms (total 28ms)
+[startup] Required-environment checks: skipped
+[startup] Lazy nested-tool wiring: +64ms (total 93ms)
+[startup] Inject help topics: +1ms (total 95ms)
+Unknown command: :buildkit
+
+Done. No errors.
+  ✓ /_build not in verbose output

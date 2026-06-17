@@ -1,0 +1,8 @@
+═══ CFG_CLI01: CLI args override project config ═══
+--- versioner with --variable-prefix myCustom (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner version file generated
+
+Done. No errors.
+  ✓ CLI prefix used

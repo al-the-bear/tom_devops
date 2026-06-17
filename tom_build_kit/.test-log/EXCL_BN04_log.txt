@@ -1,0 +1,551 @@
+═══ EXCL_BN04: dependencies excludes _build by basename ═══
+--- dependencies --list --exclude-projects _build (exit 0) ---
+STDOUT:
+>>> app_deepwork/deepwork_core
+  app_deepworkdeepwork_core
+  -> :dependencies listed
+>>> app_deepwork/deepwork_ui
+  app_deepworkdeepwork_ui
+  -> :dependencies listed
+>>> app_webwork/webwork_app
+  app_webworkwebwork_app
+  -> :dependencies listed
+>>> app_webwork/webwork_core
+  app_webworkwebwork_core
+  -> :dependencies listed
+>>> app_webwork/webwork_deepwork
+  app_webworkwebwork_deepwork
+  -> :dependencies listed
+>>> app_webwork/webwork_documents
+  app_webworkwebwork_documents
+  -> :dependencies listed
+>>> app_webwork/webwork_integrations
+  app_webworkwebwork_integrations
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_ai
+  tom_aiai_buildtom_ai
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_ai_build
+  tom_aiai_buildtom_ai_build
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_code_specs
+  tom_aiai_buildtom_code_specs
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_doc_scanner
+  tom_aiai_buildtom_doc_scanner
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_doc_specs
+  tom_aiai_buildtom_doc_specs
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_flow_cli
+  tom_aiai_buildtom_flow_cli
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_flow_engine
+  tom_aiai_buildtom_flow_engine
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_specs_clitool
+  tom_aiai_buildtom_specs_clitool
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_specs_core
+  tom_aiai_buildtom_specs_core
+  -> :dependencies listed
+>>> tom_ai/ai_build/tom_specs_model
+  tom_aiai_buildtom_specs_model
+  -> :dependencies listed
+>>> tom_ai/basics/tom_analyzer_shared
+  tom_aibasicstom_analyzer_shared
+  -> :dependencies listed
+>>> tom_ai/basics/tom_basics
+  tom_aibasicstom_basics
+  -> :dependencies listed
+>>> tom_ai/basics/tom_basics_console
+  tom_aibasicstom_basics_console
+  -> :dependencies listed
+>>> tom_ai/basics/tom_basics_network
+  tom_aibasicstom_basics_network
+  -> :dependencies listed
+>>> tom_ai/basics/tom_build_base
+  tom_aibasicstom_build_base
+  -> :dependencies listed
+>>> tom_ai/basics/tom_chattools
+  tom_aibasicstom_chattools
+  -> :dependencies listed
+>>> tom_ai/basics/tom_crypto
+  tom_aibasicstom_crypto
+  -> :dependencies listed
+>>> tom_ai/basics/tom_markdown_merge
+  tom_aibasicstom_markdown_merge
+  -> :dependencies listed
+>>> tom_ai/basics/tom_package_scanner
+  tom_aibasicstom_package_scanner
+  -> :dependencies listed
+>>> tom_ai/basics/tom_tools
+  tom_aibasicstom_tools
+  -> :dependencies listed
+>>> tom_ai/cloud/tom_provisioning
+  tom_aicloudtom_provisioning
+  -> :dependencies listed
+>>> tom_ai/cloud/tom_provisioning_server
+  tom_aicloudtom_provisioning_server
+  -> :dependencies listed
+>>> tom_ai/core/tom_core_agentic
+  tom_aicoretom_core_agentic
+  -> :dependencies listed
+>>> tom_ai/core/tom_core_bridge
+  tom_aicoretom_core_bridge
+  -> :dependencies listed
+>>> tom_ai/core/tom_core_d4rt
+  tom_aicoretom_core_d4rt
+  -> :dependencies listed
+>>> tom_ai/core/tom_core_flutter
+  tom_aicoretom_core_flutter
+  -> :dependencies listed
+>>> tom_ai/core/tom_core_kernel
+  tom_aicoretom_core_kernel
+  -> :dependencies listed
+>>> tom_ai/core/tom_core_server
+  tom_aicoretom_core_server
+  -> :dependencies listed
+>>> tom_ai/core/tom_flutter_form_test
+  tom_aicoretom_flutter_form_test
+  -> :dependencies listed
+>>> tom_ai/core/tom_flutter_ui
+  tom_aicoretom_flutter_ui
+  -> :dependencies listed
+>>> tom_ai/core/tom_flutter_ui_test
+  tom_aicoretom_flutter_ui_test
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_ast_generator
+  tom_aid4rttom_ast_generator
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_ast_generator/test/astgen_test_output
+  tom_aid4rttom_ast_generatortestastgen_test_output
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_ast_generator/test/astgen_test_project
+  tom_aid4rttom_ast_generatortestastgen_test_project
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_ast_model
+  tom_aid4rttom_ast_model
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt
+  tom_aid4rttom_d4rt
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt/example/dart_overview
+  tom_aid4rttom_d4rtexampledart_overview
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_ast
+  tom_aid4rttom_d4rt_ast
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_dcli
+  tom_aid4rttom_d4rt_dcli
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_exec
+  tom_aid4rttom_d4rt_exec
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_flutter
+  tom_aid4rttom_d4rt_flutter
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_flutter/test/tom_d4rt_flutter_test_app
+  tom_aid4rttom_d4rt_fluttertesttom_d4rt_flutter_test_app
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast
+  tom_aid4rttom_d4rt_flutter_ast
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast/test/tom_d4rt_flutter_ast_app
+  tom_aid4rttom_d4rt_flutter_asttesttom_d4rt_flutter_ast_app
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_flutter_ast_test
+  tom_aid4rttom_d4rt_flutter_ast_test
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_flutter_test
+  tom_aid4rttom_d4rt_flutter_test
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_generator
+  tom_aid4rttom_d4rt_generator
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_d4rt_test
+  tom_aid4rttom_d4rt_test
+  -> :dependencies listed
+>>> tom_ai/d4rt/tom_dcli_exec
+  tom_aid4rttom_dcli_exec
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build
+  tom_aidevopstom_build
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/core_lib
+  tom_aidevopstom_buildfixtureworkspacesbasic_testcore_lib
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_cli
+  tom_aidevopstom_buildfixtureworkspacesbasic_testmy_cli
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/my_server
+  tom_aidevopstom_buildfixtureworkspacesbasic_testmy_server
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build/fixture/workspaces/basic_test/utils_lib
+  tom_aidevopstom_buildfixtureworkspacesbasic_testutils_lib
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build/test/tom/fixtures/tomplates
+  tom_aidevopstom_buildtesttomfixturestomplates
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli
+  tom_aidevopstom_build_cli
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/app_c
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_build_configapp_c
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/lib_a
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_build_configlib_a
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_config/lib_b
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_build_configlib_b
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/core_lib
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_build_ordercore_lib
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/main_app
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_build_ordermain_app
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/service_lib
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_build_orderservice_lib
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_build_order/utils_lib
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_build_orderutils_lib
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_assets
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featuresproject_with_assets
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_build_runner
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featuresproject_with_build_runner
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_docker
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featuresproject_with_docker
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_examples
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featuresproject_with_examples
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_reflection
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featuresproject_with_reflection
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/project_with_tests
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featuresproject_with_tests
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_features/publishable_project
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_featurespublishable_project
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_folder_listings/project_with_folders
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_folder_listingsproject_with_folders
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_local_index
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_local_indexproject_with_local_index
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_local_index/project_with_null_overrides
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_local_indexproject_with_null_overrides
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_no_overrides
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_merge_actionsproject_no_overrides
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_action_override
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_merge_actionsproject_with_action_override
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_cross_compile
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_merge_actionsproject_with_cross_compile
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/workspace_analyzer/ws_merge_actions/project_with_mode_override
+  tom_aidevopstom_build_clitestfixturesworkspace_analyzerws_merge_actionsproject_with_mode_override
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_cli/test/fixtures/ws_prepper
+  tom_aidevopstom_build_clitestfixturesws_prepper
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_common
+  tom_aidevopstom_build_common
+  -> :dependencies listed
+>>> tom_ai/devops/tom_build_kit
+  tom_aidevopstom_build_kit
+  -> :dependencies listed
+>>> tom_ai/devops/tom_deploy
+  tom_aidevopstom_deploy
+  -> :dependencies listed
+>>> tom_ai/devops/tom_deploy_tools
+  tom_aidevopstom_deploy_tools
+  -> :dependencies listed
+>>> tom_ai/devops/tom_github_api
+  tom_aidevopstom_github_api
+  -> :dependencies listed
+>>> tom_ai/devops/tom_issue_kit
+  tom_aidevopstom_issue_kit
+  -> :dependencies listed
+>>> tom_ai/devops/tom_md2latex
+  tom_aidevopstom_md2latex
+  -> :dependencies listed
+>>> tom_ai/devops/tom_md2pdf
+  tom_aidevopstom_md2pdf
+  -> :dependencies listed
+>>> tom_ai/devops/tom_test_kit
+  tom_aidevopstom_test_kit
+  -> :dependencies listed
+>>> tom_ai/distributed/tom_distributed_orchestration
+  tom_aidistributedtom_distributed_orchestration
+  -> :dependencies listed
+>>> tom_ai/distributed/tom_distributed_orchestration_tool
+  tom_aidistributedtom_distributed_orchestration_tool
+  -> :dependencies listed
+>>> tom_ai/distributed/tom_dist_ledger
+  tom_aidistributedtom_dist_ledger
+  -> :dependencies listed
+>>> tom_ai/distributed/tom_dist_ledger_tool
+  tom_aidistributedtom_dist_ledger_tool
+  -> :dependencies listed
+>>> tom_ai/distributed/tom_process_monitor
+  tom_aidistributedtom_process_monitor
+  -> :dependencies listed
+>>> tom_ai/distributed/tom_process_monitor_tool
+  tom_aidistributedtom_process_monitor_tool
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflection
+  tom_aireflectiontom_reflection
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflection_generator
+  tom_aireflectiontom_reflection_generator
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflection_test
+  tom_aireflectiontom_reflection_test
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector
+  tom_aireflectiontom_reflector
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyzer_demo
+  tom_aireflectiontom_reflectortestbuild_examplesanalyzer_demo
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_analyzer
+  tom_aireflectiontom_reflectortestbuild_examplesanalyze_analyzer
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_dart_overview
+  tom_aireflectiontom_reflectortestbuild_examplesanalyze_dart_overview
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_kernel
+  tom_aireflectiontom_reflectortestbuild_examplesanalyze_tom_core_kernel
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/analyze_tom_core_server
+  tom_aireflectiontom_reflectortestbuild_examplesanalyze_tom_core_server
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_analyzer
+  tom_aireflectiontom_reflectortestbuild_examplesreflect_analyzer
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_dart_overview
+  tom_aireflectiontom_reflectortestbuild_examplesreflect_dart_overview
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_kernel
+  tom_aireflectiontom_reflectortestbuild_examplesreflect_tom_core_kernel
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/build_examples/reflect_tom_core_server
+  tom_aireflectiontom_reflectortestbuild_examplesreflect_tom_core_server
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector/test/dart_overview
+  tom_aireflectiontom_reflectortestdart_overview
+  -> :dependencies listed
+>>> tom_ai/reflection/tom_reflector_model
+  tom_aireflectiontom_reflector_model
+  -> :dependencies listed
+>>> tom_ai/vscode/tom_vscode_bridge
+  tom_aivscodetom_vscode_bridge
+  -> :dependencies listed
+>>> tom_ai/vscode/tom_vscode_scripting_api
+  tom_aivscodetom_vscode_scripting_api
+  -> :dependencies listed
+>>> tom_ai/xternal/native_semaphores
+  tom_aixternalnative_semaphores
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/dev_packages/flutter_inappwebview_internal_annotations
+  tom_aixternaltom_flutter_inappwebviewdev_packagesflutter_inappwebview_internal_annotations
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/dev_packages/generators
+  tom_aixternaltom_flutter_inappwebviewdev_packagesgenerators
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview/example
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebviewexample
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_android
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_android
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_android/example
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_androidexample
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_ios
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_ios
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_ios/example
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_iosexample
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_linux
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_linux
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_linux/example
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_linuxexample
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_macos
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_macos
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_macos/example
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_macosexample
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_platform_interface
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_platform_interface
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_web
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_web
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_web/example
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_webexample
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_windows
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_windows
+  -> :dependencies listed
+>>> tom_ai/xternal/tom_flutter_inappwebview/flutter_inappwebview_windows/example
+  tom_aixternaltom_flutter_inappwebviewflutter_inappwebview_windowsexample
+  -> :dependencies listed
+>>> tom_assistant/tom_assistant_core
+  tom_assistanttom_assistant_core
+  -> :dependencies listed
+>>> tom_assistant/tom_assistant_messaging
+  tom_assistanttom_assistant_messaging
+  -> :dependencies listed
+>>> tom_assistant/tom_assistant_server
+  tom_assistanttom_assistant_server
+  -> :dependencies listed
+>>> tom_assistant/tom_assistant_ui
+  tom_assistanttom_assistant_ui
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_access
+  tom_assistanttom_brain_access
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_memory
+  tom_assistanttom_brain_memory
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_observatory
+  tom_assistanttom_brain_observatory
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_observatory_web
+  tom_assistanttom_brain_observatory_web
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_procedure
+  tom_assistanttom_brain_procedure
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_run
+  tom_assistanttom_brain_run
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_shared
+  tom_assistanttom_brain_shared
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_smoke_prototype
+  tom_assistanttom_brain_smoke_prototype
+  -> :dependencies listed
+>>> tom_assistant/tom_brain_substrate
+  tom_assistanttom_brain_substrate
+  -> :dependencies listed
+>>> tom_forge/tom_dart_editor
+  tom_forgetom_dart_editor
+  -> :dependencies listed
+>>> tom_forge/tom_dart_editor_test
+  tom_forgetom_dart_editor_test
+  -> :dependencies listed
+>>> tom_forge/tom_editors_shared
+  tom_forgetom_editors_shared
+  -> :dependencies listed
+>>> tom_forge/tom_flow_editor
+  tom_forgetom_flow_editor
+  -> :dependencies listed
+>>> tom_forge/tom_flow_editor_test
+  tom_forgetom_flow_editor_test
+  -> :dependencies listed
+>>> tom_forge/tom_forge_app
+  tom_forgetom_forge_app
+  -> :dependencies listed
+>>> tom_forge/tom_forge_core
+  tom_forgetom_forge_core
+  -> :dependencies listed
+>>> tom_forge/tom_forge_ui
+  tom_forgetom_forge_ui
+  -> :dependencies listed
+>>> tom_forge/tom_forge_ui_test
+  tom_forgetom_forge_ui_test
+  -> :dependencies listed
+>>> tom_forge/tom_md_editor
+  tom_forgetom_md_editor
+  -> :dependencies listed
+>>> tom_forge/tom_md_editor_test
+  tom_forgetom_md_editor_test
+  -> :dependencies listed
+>>> tom_forge/tom_website_editor
+  tom_forgetom_website_editor
+  -> :dependencies listed
+>>> tom_forge/tom_website_editor_core
+  tom_forgetom_website_editor_core
+  -> :dependencies listed
+>>> tom_forge/tom_wpe_webview_test
+  tom_forgetom_wpe_webview_test
+  -> :dependencies listed
+>>> tom_forge/tom_yaml_editor
+  tom_forgetom_yaml_editor
+  -> :dependencies listed
+>>> tom_forge/tom_yaml_editor_test
+  tom_forgetom_yaml_editor_test
+  -> :dependencies listed
+>>> tom_sqm/tom_sqm_admin_client
+  tom_sqmtom_sqm_admin_client
+  -> :dependencies listed
+>>> tom_sqm/tom_sqm_codespec
+  tom_sqmtom_sqm_codespec
+  -> :dependencies listed
+>>> tom_sqm/tom_sqm_customer_client
+  tom_sqmtom_sqm_customer_client
+  -> :dependencies listed
+>>> tom_sqm/tom_sqm_server
+  tom_sqmtom_sqm_server
+  -> :dependencies listed
+>>> tom_uam/tom_uam_client
+  tom_uamtom_uam_client
+  -> :dependencies listed
+>>> tom_uam/tom_uam_codespec
+  tom_uamtom_uam_codespec
+  -> :dependencies listed
+>>> tom_uam/tom_uam_server
+  tom_uamtom_uam_server
+  -> :dependencies listed
+>>> tom_worktracker/tom_worktracker_app
+  tom_worktrackertom_worktracker_app
+  -> :dependencies listed
+>>> tom_worktracker/tom_worktracker_core
+  tom_worktrackertom_worktracker_core
+  -> :dependencies listed
+>>> tom_worktracker/tom_worktracker_mindmap
+  tom_worktrackertom_worktracker_mindmap
+  -> :dependencies listed
+>>> tom_worktracker/tom_worktracker_ui
+  tom_worktrackertom_worktracker_ui
+  -> :dependencies listed
+>>> _ai/quests/tom_brain/bench
+  _aiqueststom_brainbench
+  -> :dependencies listed
+>>> _doc/dart_reference/dart_overview
+  _docdart_referencedart_overview
+  -> :dependencies listed
+>>> _scripts
+  _scripts
+  -> :dependencies listed
+>>> _scripts/example/dcli_scripting_guide
+  _scriptsexampledcli_scripting_guide
+  -> :dependencies listed
+
+Done. No errors.
+STDERR:
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping - buildkit_skip.yaml found: example
+Skipping subworkspace: exclusion
+Skipping subworkspace: pipeline
+Skipping subworkspace: versioner
+  ✓ _build absent from list
+  ✓ other projects remain (found 358)

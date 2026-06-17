@@ -1,0 +1,8 @@
+═══ SCR_DRY01: multi-line shell dry-run shows preview ═══
+--- buildkit --dry-run test-multiline-shell (exit 0) ---
+STDOUT:
+[PIPELINE:shell] echo "multi-line-1"
+echo "multi-line-2"
+echo "multi-line-3"
+
+Done. No errors.

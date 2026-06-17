@@ -1,0 +1,6 @@
+═══ BKT_NEG01: :define rejected in ineligible context ═══
+--- buildkit :define test=value (no master yaml) (exit 0) ---
+STDOUT:
+Added define: test: value
+
+Done. No errors.

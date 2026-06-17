@@ -1,0 +1,15 @@
+═══ SCR_STD02: stdin piping verbose output ═══
+--- buildkit --verbose test-stdin (exit 0) ---
+STDOUT:
+[startup] Load macros + expand args: +29ms (total 29ms)
+[startup] Normalize + parse args: +2ms (total 32ms)
+[startup] Required-environment checks: skipped
+[startup] Lazy nested-tool wiring: +76ms (total 109ms)
+[startup] Inject help topics: +3ms (total 112ms)
+[PIPELINE:stdin] cat
+  | Hello stdin world
+  | line two
+Hello stdin world
+line two
+
+Done. No errors.

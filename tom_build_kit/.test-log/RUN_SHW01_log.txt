@@ -1,0 +1,9 @@
+═══ RUN_SHW01: --dump-config displays runner config ═══
+--- runner --project _build --dump-config (exit 0) ---
+STDOUT:
+>>> _build
+  _build: (no build.yaml)
+  -> :runner no build.yaml
+
+Done. No errors.
+  ✓ shows runner info

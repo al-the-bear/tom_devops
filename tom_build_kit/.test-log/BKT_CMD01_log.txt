@@ -1,0 +1,5 @@
+═══ BKT_CMD01: direct command :versioner ═══
+--- buildkit --project devops/tom_build_kit --dry-run :versioner (exit 0) ---
+STDOUT:
+Done. No errors.
+  ✓ exit code 0

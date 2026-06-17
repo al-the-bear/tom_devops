@@ -1,0 +1,15 @@
+═══ TB_DSC01: workspace root discovery from subdirectory ═══
+--- from workspace root (relative) (exit 0) ---
+STDOUT:
+>>> _build
+  _build
+  -> :versioner listed
+
+Done. No errors.
+--- from _build subdirectory (absolute) (exit 0) ---
+STDOUT:
+Done. No errors.
+STDERR:
+Because _build depends on tom_process_monitor_tool from path which doesn't exist (could not find package tom_process_monitor_tool at "..\tom\xternal\tom_module_distributed\tom_process_monitor_tool"), version solving failed.
+  ✓ from root: exit 0
+  ✓ from subdir: exit 0

@@ -1,0 +1,11 @@
+═══ CFG_MRG01: additive merge for list fields ═══
+--- cleanup with merged protected-folders (exit 0) ---
+STDOUT:
+>>> _build
+  Cleanup: deleted 1 file(s) in _build
+  -> :cleanup deleted 1 files
+
+Done. No errors.
+  ✓ custom protected survived
+  ✓ .github protected survived
+  ✓ unprotected deleted

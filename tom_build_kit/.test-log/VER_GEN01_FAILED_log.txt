@@ -1,0 +1,11 @@
+═══ VER_GEN01: --project generates version.versioner.dart with correct prefix ═══
+--- versioner --project _build (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner version file generated
+
+Done. No errors.
+  ✓ exit code 0
+  ✓ stdout contains "version file generated"
+  ✓ version.versioner.dart exists
+  ✗ class name TomToolsVersionInfo

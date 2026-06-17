@@ -1,0 +1,11 @@
+═══ VER_GIT01: --no-git overrides project config (bug #12 fixed) ═══
+--- versioner --project _build --no-git (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner version file generated
+
+Done. No errors.
+  ✓ exit code 0
+  ✓ gitCommit is empty
+  ✓ version field present
+  ✓ buildNumber field present

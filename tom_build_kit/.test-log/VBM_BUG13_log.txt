@@ -1,0 +1,41 @@
+═══ VBM_BUG13: versionbump --help works ═══
+--- versionbump --help (exit 0) ---
+STDOUT:
+[1m:bumpversion[22m
+Aliases: :bump
+
+Bump pubspec.yaml versions across projects
+
+[36m[1mUsage[22m[39m
+  buildkit [global-options] :bumpversion [options]
+
+[33m[1mCommand Options[22m[39m
+      --minor=<projects>      Projects to bump minor version (comma-separated or repeated)
+      --major=<projects>      Projects to bump major version (comma-separated or repeated)
+      --versioner             Run versioner after bumping to regenerate version files
+
+[33m[1mProject Traversal Options[22m[39m
+  -s, --scan=<path>           Starting path for scan
+  -r, --recursive             Recurse into subdirectories
+      --not-recursive         Do not recurse (overrides -r)
+      --recursion-exclude=<pattern>Patterns to skip during descent
+  -p, --project=<pattern>     Project names/IDs to include
+      --exclude-projects=<name>Project names to exclude
+  -b, --build-order           Sort by dependency order (default)
+      --exclude-dev           Exclude dev_dependencies from build-order sorting
+      --no-skip               Ignore skip markers (tom_skip.yaml, *_skip.yaml)
+
+[2m[1mCommon Options[22m[2m[22m
+  -h, --help                  Show this help
+  -v, --verbose               Verbose output
+  -n, --dry-run               Show what would be done
+
+[32m[1mExamples[22m[39m
+  buildkit :bumpversion --type=minor
+  bumpversion --set=2.0.0
+
+
+
+Done. No errors.
+  ✓ exit code 0
+  ✓ shows usage

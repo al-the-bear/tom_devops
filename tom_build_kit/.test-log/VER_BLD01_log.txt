@@ -1,0 +1,14 @@
+═══ VER_BLD01: build number increments on each run ═══
+--- versioner --project _build (run 1) (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner version file generated
+
+Done. No errors.
+--- versioner --project _build (run 2) (exit 0) ---
+STDOUT:
+>>> _build
+  -> :versioner version file generated
+
+Done. No errors.
+  ✓ build# run1=32, run2=33, diff=1

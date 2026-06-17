@@ -1,0 +1,11 @@
+═══ BKT_STD01: stdin pipeline dry-run output ═══
+--- buildkit --dry-run test-stdin (exit 0) ---
+STDOUT:
+[PIPELINE:stdin] cat
+  | Hello stdin world
+  | line two
+
+Done. No errors.
+  ✓ exits 0
+  ✓ shows stdin prefix
+  ✓ shows stdin lines

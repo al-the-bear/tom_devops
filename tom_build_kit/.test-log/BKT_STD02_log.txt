@@ -1,0 +1,12 @@
+═══ BKT_STD02: stdin pipeline actual execution ═══
+--- buildkit --project devops/tom_build_kit test-stdin (exit 0) ---
+STDOUT:
+[PIPELINE:stdin] cat
+  | Hello stdin world
+  | line two
+Hello stdin world
+line two
+
+Done. No errors.
+  ✓ exits 0
+  ✓ echoes stdin

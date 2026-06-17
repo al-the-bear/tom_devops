@@ -1,0 +1,9 @@
+═══ CLN_SAF02: --force skips safety limit ═══
+--- cleanup --max-files 3 --force (exit 0) ---
+STDOUT:
+>>> _build
+  Cleanup: deleted 6 file(s) in _build
+  -> :cleanup deleted 6 files
+
+Done. No errors.
+  ✓ files deleted

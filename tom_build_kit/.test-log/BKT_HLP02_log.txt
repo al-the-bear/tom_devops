@@ -1,0 +1,148 @@
+═══ BKT_HLP02: help pipelines shows pipeline config reference ═══
+--- buildkit help pipelines (exit 0) ---
+STDOUT:
+[1mbuildkit[22m v1.7.1
+
+[36m[1mPipeline Configuration[22m[39m
+
+  Pipelines are multi-step workflows defined in buildkit_master.yaml
+  under a pipelines: key. Each pipeline has a name and can contain
+  steps divided into three phases.
+
+â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”
+
+[32m[1mPipeline Structure[22m[39m
+
+    pipelines:
+      my-pipeline:
+        executable: true          # can be invoked directly (default: true)
+        runBefore: [other-pipe]   # pipelines to run first
+        runAfter:  [other-pipe]   # pipelines to run after
+        global-options:           # default option values
+          output: build/
+        precore:                  # setup/validation steps
+          - commands:
+              - "print Starting..."
+        core:                     # main steps
+          - commands:
+              - "shell dart pub get"
+              - "buildkit :build"
+        postcore:                 # cleanup/reporting steps
+          - commands:
+              - "print Done."
+
+  [36mPhases[39m
+
+    precore    Runs before the main work (setup, validation)
+    core       The main pipeline steps
+    postcore   Runs after the main work (cleanup, reporting)
+
+  Each phase contains a list of step groups, where each group has a
+  commands: list of command strings.
+
+[32m[1mCommand Prefixes[22m[39m
+
+  Each command string starts with a prefix that determines execution:
+
+    shell <cmd>          Run a shell command via /bin/bash -lc
+    shell-scan <cmd>     Run in each scanned project folder
+    buildkit <cmd>         Run a buildkit command (e.g. "buildkit :build")
+    stdin <cmd>          Run with multi-line stdin input
+    print <msg>          Print resolved text once
+
+  All command types support standard %{...} placeholders.
+  Run [2mbuildkit help placeholders[22m for the complete reference.
+
+  [36mShell commands:[39m
+
+    - commands:
+        - "shell dart pub get"
+      - "print Building on %{current-platform}"
+
+  [36mTool commands:[39m
+
+    - commands:
+        - "buildkit :build --release"
+        - "buildkit :versioner --bump patch"
+
+  [36mShell-scan commands (per-project):[39m
+
+    Shell-scan runs the command once per scanned project, with full
+    project-level placeholder context:
+
+    - commands:
+        - "shell-scan echo %{folder.name} at %{folder}"
+        - "shell-scan dart analyze %{folder}"
+
+  [36mStdin commands:[39m
+
+    Multi-line input piped to a shell command:
+
+    - commands:
+        - |
+          stdin cat -n
+          line one
+          line two
+
+[32m[1mPlaceholders in Pipeline Commands[22m[39m
+
+  All pipeline commands (shell, shell-scan, stdin) resolve standard
+  %{...} placeholders before execution:
+
+    %{root}               Workspace root path
+    %{folder}             Current folder (absolute)
+    %{folder.name}        Folder basename
+    %{folder.relative}    Folder path relative to workspace root
+    %{current-os}         Operating system (linux, macos, windows)
+    %{current-arch}       Architecture (x64, arm64)
+    %{current-platform}   Platform string (darwin-arm64, linux-x64, etc.)
+
+  Shell-scan commands additionally have access to nature-specific
+  placeholders (e.g. %{dart.name}, %{dart.version}, %{git.branch})
+  since they run in per-project traversal context.
+
+  Run [2mbuildkit help placeholders[22m for the full list.
+
+[32m[1mPipeline Invocation[22m[39m
+
+    buildkit <pipeline-name>                Run a named pipeline
+    buildkit <pipeline-name> --dry-run      Show commands without executing
+    buildkit --list                         List available pipelines
+
+  Pipelines are invoked by their name as a positional argument
+  (without the : prefix used for commands).
+
+[32m[1mPipeline Dependencies[22m[39m
+
+    runBefore: [setup, validate]
+    runAfter:  [report]
+
+  The framework executes dependent pipelines automatically.
+  Circular dependencies are detected and rejected.
+
+[32m[1mNested Workspaces[22m[39m
+
+  When a pipeline runs, the framework also discovers nested workspaces
+  (sub-directories containing their own buildkit_master.yaml). For each
+  nested workspace, the pipeline is delegated to a fresh buildkit process.
+
+  Global traversal options (--project, --exclude, --root) disable
+  nested-workspace delegation.
+
+[32m[1mGlobal Options[22m[39m
+
+  Pipelines can set default options via global-options:
+
+    pipelines:
+      release:
+        global-options:
+          output: dist/
+          verbose: "true"
+        core:
+          - commands:
+              - "shell dart compile exe %{file}"
+
+
+Done. No errors.
+  ✓ exits 0
+  ✓ shows pipeline config

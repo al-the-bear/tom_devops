@@ -1,0 +1,8 @@
+═══ CMP_TGT01: --targets filters platforms ═══
+--- compiler --dry-run --targets linux-x64 (exit 0) ---
+STDOUT:
+>>> _build
+  -> :compiler 0 compilations
+
+Done. No errors.
+  ✓ exit code 0

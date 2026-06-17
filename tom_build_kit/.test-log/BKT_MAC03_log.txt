@@ -1,0 +1,17 @@
+═══ BKT_MAC03: undefine removes macro ═══
+--- buildkit :define removeme=:cleanup (exit 0) ---
+STDOUT:
+Added define: removeme: :cleanup
+
+Done. No errors.
+--- buildkit :undefine removeme (exit 0) ---
+STDOUT:
+Removed define: removeme : :cleanup
+
+Done. No errors.
+--- buildkit :defines (exit 0) ---
+STDOUT:
+No defines found.
+
+Done. No errors.
+  ✓ define removed

@@ -1,0 +1,13 @@
+2026-06-15T12:20:07.907745
+
+╔══════════════════════════════════════════════════════╗
+║  WORKSPACE IS DIRTY — TESTS CANNOT RUN              ║
+╠══════════════════════════════════════════════════════╣
+║  Uncommitted changes detected:                      ║
+╚══════════════════════════════════════════════════════╝
+  M tom_ai
+
+Integration tests require a clean workspace to guarantee
+safe revert after each test. Commit or stash all changes
+before running tests.
+

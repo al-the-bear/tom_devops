@@ -1,0 +1,8 @@
+═══ VER_OVR01: --version overrides pubspec version ═══
+--- versioner --project _build --version 9.9.9 (exit 0) ---
+STDOUT:
+BuildKit 1.7.1+200.5c95ffb (2026-04-13T05:24:15.375676Z) [Dart 3.11.4]
+
+Done. No errors.
+  ✓ exit code 0
+  ✗ version = '9.9.9'

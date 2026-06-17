@@ -1,0 +1,14 @@
+═══ BKT_NEG03: pipeline name rejected in ineligible context ═══
+--- buildkit test-simple (no master yaml) (exit 1) ---
+STDOUT:
+No command specified.
+
+Usage: buildkit [options]
+Commands: :versioner, :bumpversion, :bumppubspec, :compiler, :runner...
+
+Use --help for more information.
+
+
+Done. No errors.
+  ✓ non-zero exit
+  ✓ has rejection message
