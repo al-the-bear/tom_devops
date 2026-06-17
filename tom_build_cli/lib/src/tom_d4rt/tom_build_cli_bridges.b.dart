@@ -1,6 +1,6 @@
 // D4rt Bridge - Generated file, do not edit
 // Sources: 40 files
-// Generated: 2026-06-16T22:00:10.606484
+// Generated: 2026-06-16T23:13:09.434230
 
 // ignore_for_file: unused_import, deprecated_member_use, prefer_function_declarations_over_variables, implementation_imports, sort_child_properties_last, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, invalid_use_of_protected_member, unnecessary_non_null_assertion, invalid_use_of_visible_for_testing_member, unnecessary_cast, unused_local_variable, no_leading_underscores_for_local_identifiers, prefer_is_empty, unnecessary_question_mark, unreachable_switch_case, unintended_html_in_doc_comment, empty_constructor_bodies, prefer_const_constructors_in_immutables, prefer_final_fields, unused_field, must_call_super, no_logic_in_create_state, use_key_in_widget_constructors, annotate_overrides, unnecessary_import
 
@@ -436,6 +436,50 @@ class TomBuildCliBridge {
   static List<({String source, String target, Set<String>? show, Set<String>? hide})>
   bridgeReExports() {
     return [
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/dartscript/bridge_configuration.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/dartscript/d4rt_cli_initialization.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/dartscript/d4rt_globals.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/dartscript/d4rt_instance.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/cli/argument_parser.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/cli/git_helper.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/cli/internal_commands.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/cli/tom_cli.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/cli/version_bumper.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/cli/workspace_context.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/config/config_loader.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/config/config_merger.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/config/validation.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/execution/action_executor.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/execution/command_runner.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/execution/d4rt_runner.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/execution/output_formatter.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_vscode_scripting_api/tom_vscode_scripting_api.dart', show: {'VSCodeBridgeClient', 'VSCodeBridgeResult', 'VSCodeBridgeAdapter', 'defaultVSCodeBridgePort'}, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/generation/build_order.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/generation/generator_placeholder.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/generation/master_generator.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/generation/placeholder_resolver.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/mode/mode_processor.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/mode/mode_resolver.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/template/tomplate_parser.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom/template/tomplate_processor.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tools/cli_args.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tools/pipeline.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tools/placeholder_resolver.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tools/tom_command_parser.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tools/tom_runner.dart', show: null, hide: {'runTomCli'}),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/ws_prepper/template_parser.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom_d4rt/dartscript.b.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_main.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom_d4rt/tom_d4rt_repl.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom_d4rt/version.versioner.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/tom_build_cli.dart', target: 'package:tom_build_cli/src/tom_cli_api/tom_api.dart', show: null, hide: null),
+      (source: 'package:tom_build_cli/src/dartscript/d4rt_context_provider.dart', target: 'package:tom_build_cli/src/dartscript/bridge_configuration.dart', show: {'BridgeConfiguration', 'BridgeModuleRegistry'}, hide: null),
+      (source: 'package:tom_build_cli/src/ws_prepper/ws_prepper.dart', target: 'package:tom_build_cli/src/ws_prepper/template_parser.dart', show: {'ModeBlock', 'ParsedTemplate'}, hide: null),
+      (source: 'package:tom_build_cli/src/tom_cli_api/tom_api.dart', target: 'package:tom_build_cli/src/tom/cli/tom_cli.dart', show: {'TomCliResult', 'TomCliConfig'}, hide: null),
+      (source: 'package:tom_build_cli/src/tom_cli_api/tom_api.dart', target: 'package:tom_build_cli/src/tom/execution/action_executor.dart', show: {'ActionExecutionResult'}, hide: null),
+      (source: 'package:tom_build_cli/src/tom_cli_api/tom_api.dart', target: 'package:tom_build_cli/src/tom/cli/internal_commands.dart', show: {'InternalCommandResult'}, hide: null),
     ];
   }
 
@@ -486,6 +530,11 @@ class TomBuildCliBridge {
     final typedefs = functionTypedefs();
     for (final name in typedefs) {
       interpreter.registerFunctionTypedef(name, importPath);
+    }
+
+    // GEN-107: Register library re-exports
+    for (final r in bridgeReExports()) {
+      interpreter.registerLibraryReExport(r.source, r.target, show: r.show, hide: r.hide);
     }
   }
 
