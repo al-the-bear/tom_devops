@@ -15,7 +15,7 @@ dependencies:
   # Tom packages
   tom_build:
     path: ../tom_build
-  tom_d4rt:
+  tom_d4rt: ^1.10.1
   tom_core_kernel:
     path: ../../core/tom_core_kernel
   tom_core_server:
