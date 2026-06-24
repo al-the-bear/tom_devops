@@ -1455,7 +1455,7 @@ class WorkspaceAnalyzer {
       buffer.writeln('    projectName: ${project.projectName}');
     }
     if (project.description != null) {
-      buffer.writeln('    description: "${project.description}"');
+      buffer.writeln('    description: ${_yamlDoubleQuoted(project.description!)}');
     }
 
     // === BUILD ORDERING ===
@@ -1615,7 +1615,7 @@ class WorkspaceAnalyzer {
         buffer.writeln('      ${part.name}:');
         buffer.writeln('        name: ${part.displayName}');
         if (part.description != null) {
-          buffer.writeln('        description: "${part.description}"');
+          buffer.writeln('        description: ${_yamlDoubleQuoted(part.description!)}');
         }
         if (part.sources.isNotEmpty) {
           buffer.writeln('        sources: [${part.sources.join(", ")}]');
@@ -1766,7 +1766,7 @@ class WorkspaceAnalyzer {
     buffer.writeln('$pad- name: ${module.name}');
     buffer.writeln('$pad  displayName: ${module.displayName}');
     if (module.description != null) {
-      buffer.writeln('$pad  description: "${module.description}"');
+      buffer.writeln('$pad  description: ${_yamlDoubleQuoted(module.description!)}');
     }
     if (module.sources.isNotEmpty) {
       buffer.writeln('$pad  sources: [${module.sources.join(", ")}]');
@@ -1867,6 +1867,22 @@ class WorkspaceAnalyzer {
       return '"$escaped"';
     }
     return value;
+  }
+
+  /// Wraps [value] as a double-quoted YAML scalar, always quoting and escaping
+  /// the characters that would otherwise break the scalar — most importantly
+  /// embedded `"` and `\`. Used for free-text fields (project/part/module
+  /// descriptions) that are always emitted quoted; without escaping, a
+  /// description containing a quote (e.g. `the meta-model ("reflection")`)
+  /// terminates the scalar early and produces invalid YAML.
+  String _yamlDoubleQuoted(String value) {
+    final escaped = value
+        .replaceAll('\\', '\\\\') // Escape backslashes first
+        .replaceAll('"', '\\"') // Escape double quotes
+        .replaceAll('\n', '\\n') // Escape newlines
+        .replaceAll('\r', '\\r') // Escape carriage returns
+        .replaceAll('\t', '\\t'); // Escape tabs
+    return '"$escaped"';
   }
 
   // Note: Individual project/part/module metadata files are no longer generated.
