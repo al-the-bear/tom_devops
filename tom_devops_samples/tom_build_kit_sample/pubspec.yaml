@@ -16,7 +16,7 @@ dependencies:
   # as a hosted (pub.dev) dependency — the same source tom_build_kit uses for
   # it. (A path dependency here would conflict with tom_build_kit's hosted
   # reference, and source overrides are not allowed.)
-  tom_build_base: ^2.6.25
+  tom_build_base: ">=2.6.25"
   # The real buildkit tool, so example 07 can introspect its actual
   # ToolDefinition (commands, options) without running any build. It is
   # publish_to: none, so it is necessarily consumed by path.
