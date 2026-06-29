@@ -1,0 +1,17 @@
+# Skip marker — excludes this directory (and everything below it) from every
+# Tom CLI recursive scan (buildkit, testkit, …).
+#
+# `example/fixture_workspace` is a CHECKED-IN SAMPLE FIXTURE: three pubspec-only
+# projects (pkg_core <- pkg_data <- pkg_app) used by the tom_build_kit_sample
+# examples to demonstrate project discovery and build-order computation. The
+# `^x.y.z` dependency constraints between them (and `pkg_data`'s dep on the
+# bottom leaf `pkg_core`) are read only as graph edges — they are never meant to
+# be resolved with `pub`. Without this marker a recursive `buildkit -r
+# :pubupdate` descends here and fails version solving on the non-existent
+# packages.
+#
+# The examples are unaffected: each runs against this directory as the scan ROOT
+# (see example/fixture.dart -> fixtureWorkspacePath()), and skip markers are
+# ignored at the scan root — so pkg_core/pkg_data/pkg_app are still discovered
+# there, while workspace-wide recursive runs (where this dir is non-root) skip
+# the subtree.

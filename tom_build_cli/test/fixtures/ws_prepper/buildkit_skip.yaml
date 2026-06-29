@@ -1,0 +1,13 @@
+# Skip marker — excludes this directory from every Tom CLI recursive scan
+# (buildkit, testkit, …).
+#
+# `test/fixtures/ws_prepper` is a CHECKED-IN TEST FIXTURE for the ws_prepper
+# template renderer, not a real workspace project. Its `pubspec.yaml` is a
+# rendered fixture artifact containing `@@@mode … @@@endmode` placeholder
+# syntax (and `path:`/`git:` deps on fictional `tom_core`/`tom_shared`), so it
+# can never be resolved by `dart pub upgrade`. Without this marker a recursive
+# `buildkit -r :pubupdate` descends into the fixture and fails version solving.
+#
+# The ws_prepper tests are unaffected: they read the `*.tomplate` source files
+# from this directory by exact name (see test/ws_prepper_test.dart) rather than
+# scanning for projects, and skip markers are ignored at the scan root anyway.
