@@ -19,6 +19,13 @@ void main(List<String> args) async {
   // dispatchers handle them (e.g. `issuekit help`, `issuekit version`).
   final normalizedArgs = _normalizeLegacyFlags(args);
 
+  // Run inside the shared console_markdown zone (tom_build_base) so
+  // help/version/output render consistently with buildkit and testkit.
+  await runWithConsoleMarkdown(() => _runCli(normalizedArgs));
+}
+
+/// Run the issuekit CLI flow through the v2 [ToolRunner].
+Future<void> _runCli(List<String> normalizedArgs) async {
   final preParser = CliArgParser(toolDefinition: issuekitTool);
   final preArgs = preParser.parse(normalizedArgs);
 

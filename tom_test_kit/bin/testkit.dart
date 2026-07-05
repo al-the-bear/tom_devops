@@ -24,12 +24,20 @@ void main(List<String> args) async {
   final parser = CliArgParser(toolDefinition: testkitTool);
   final cliArgs = parser.parse(normalizedArgs);
 
-  // Check for --tui mode
+  // Check for --tui mode. The TUI renders its own frames and must run OUTSIDE
+  // the console_markdown zone to avoid interfering with terminal control.
   if (cliArgs.extraOptions['tui'] == true) {
     await _runTuiMode(cliArgs);
     return;
   }
 
+  // Run the CLI inside the shared console_markdown zone (tom_build_base) so
+  // help/version/output render consistently with buildkit and issuekit.
+  await runWithConsoleMarkdown(() => _runCli(normalizedArgs));
+}
+
+/// Run the standard (non-TUI) CLI flow through the v2 [ToolRunner].
+Future<void> _runCli(List<String> normalizedArgs) async {
   // Create runner with all executors
   final runner = ToolRunner(
     tool: testkitTool,
