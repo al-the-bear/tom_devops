@@ -15,9 +15,13 @@ enum OutputFormat {
   md;
 
   /// Parses a format string (case-insensitive).
+  ///
+  /// Accepts the canonical names plus the documented aliases `text` (→ `plain`)
+  /// and `markdown` (→ `md`), matching the cross-tool output contract in
+  /// tom_build_base `doc/cli_output_formats.md`.
   static OutputFormat? tryParse(String value) {
     return switch (value.toLowerCase()) {
-      'plain' => plain,
+      'plain' || 'text' => plain,
       'csv' => csv,
       'json' => json,
       'md' || 'markdown' => md,

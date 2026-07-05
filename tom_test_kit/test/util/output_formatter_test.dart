@@ -27,6 +27,14 @@ void main() {
       expect(OutputFormat.tryParse(''), isNull);
       expect(OutputFormat.tryParse('html'), isNull);
     });
+
+    test('TK-OFMT-15: tryParse accepts the cross-tool "text" alias for plain',
+        () {
+      // AB3: text→plain matches issuekit and the shared output contract in
+      // tom_build_base doc/cli_output_formats.md.
+      expect(OutputFormat.tryParse('text'), equals(OutputFormat.plain));
+      expect(OutputFormat.tryParse('TEXT'), equals(OutputFormat.plain));
+    });
   });
 
   group('OutputSpec', () {
