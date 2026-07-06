@@ -11,7 +11,7 @@ void main() {
       final spec = OutputSpec.tryParse('json');
       expect(spec, isNotNull);
       expect(spec!.format, OutputFormat.json);
-      expect(spec.filename, isNull);
+      expect(spec.filePath, isNull);
       expect(spec.hasFile, isFalse);
     });
 
@@ -19,7 +19,7 @@ void main() {
       final spec = OutputSpec.tryParse('csv:output.csv');
       expect(spec, isNotNull);
       expect(spec!.format, OutputFormat.csv);
-      expect(spec.filename, 'output.csv');
+      expect(spec.filePath, 'output.csv');
       expect(spec.hasFile, isTrue);
     });
 
@@ -42,7 +42,7 @@ void main() {
       final spec = OutputSpec.tryParse('json:path/to:file.json');
       expect(spec, isNotNull);
       expect(spec!.format, OutputFormat.json);
-      expect(spec.filename, 'path/to:file.json');
+      expect(spec.filePath, 'path/to:file.json');
     });
   });
 

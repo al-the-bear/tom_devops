@@ -7,63 +7,16 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-/// Supported output formats.
-enum OutputFormat {
-  plain,
-  csv,
-  json,
-  md;
+import 'package:tom_build_base/tom_build_base_v2.dart'
+    show OutputFormat, OutputSpec;
 
-  /// Parses a format string (case-insensitive).
-  ///
-  /// Accepts the canonical names plus the documented aliases `text` (→ `plain`)
-  /// and `markdown` (→ `md`), matching the cross-tool output contract in
-  /// tom_build_base `doc/cli_output_formats.md`.
-  static OutputFormat? tryParse(String value) {
-    return switch (value.toLowerCase()) {
-      'plain' || 'text' => plain,
-      'csv' => csv,
-      'json' => json,
-      'md' || 'markdown' => md,
-      _ => null,
-    };
-  }
-}
-
-/// Parsed output specification from `--output <format>:<filename>`.
-class OutputSpec {
-  final OutputFormat format;
-  final String? filePath;
-
-  OutputSpec({required this.format, this.filePath});
-
-  /// Parses an output spec string.
-  ///
-  /// Formats:
-  /// - `plain` — stdout, plain text
-  /// - `csv:results.csv` — file, CSV
-  /// - `json` — stdout, JSON
-  /// - `md:report.md` — file, Markdown
-  static OutputSpec? tryParse(String value) {
-    final colonIdx = value.indexOf(':');
-    if (colonIdx == -1) {
-      // No colon — format only, stdout
-      final format = OutputFormat.tryParse(value);
-      if (format == null) return null;
-      return OutputSpec(format: format);
-    }
-
-    final formatStr = value.substring(0, colonIdx);
-    final filePath = value.substring(colonIdx + 1);
-    final format = OutputFormat.tryParse(formatStr);
-    if (format == null) return null;
-    if (filePath.isEmpty) return OutputSpec(format: format);
-    return OutputSpec(format: format, filePath: filePath);
-  }
-
-  /// Default output spec: plain to stdout.
-  static OutputSpec get defaultSpec => OutputSpec(format: OutputFormat.plain);
-}
+// `OutputFormat` and `OutputSpec` are the canonical cross-tool types owned by
+// tom_build_base (single source of truth — see its doc/cli_output_formats.md).
+// testkit historically carried its own copies; it now consolidates onto the
+// shared ones and re-exports them so existing `output_formatter.dart`
+// importers keep a single import surface.
+export 'package:tom_build_base/tom_build_base_v2.dart'
+    show OutputFormat, OutputSpec;
 
 /// A table row for diff/output formatting.
 class OutputRow {

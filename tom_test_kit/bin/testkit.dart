@@ -15,10 +15,10 @@ import 'package:tom_test_kit/src/tui/commands/baseline_tui_command.dart';
 import 'package:tom_test_kit/src/tui/commands/test_tui_command.dart';
 
 void main(List<String> args) async {
-  // Normalize non-standard -help flag to --help.
-  // Bare `help` positional is passed as-is; ToolRunner's positional dispatcher
-  // handles it (e.g. `testkit help`, `testkit help pipelines`).
-  final normalizedArgs = _normalizeLegacyHelpFlag(args);
+  // Normalize non-standard -help / -version flags via the shared tom_build_base
+  // helper (identical to what ToolRunner.run applies). Bare `help` positional is
+  // passed as-is; ToolRunner's positional dispatcher handles it.
+  final normalizedArgs = ToolRunner.normalizeArgs(args);
 
   // Parse args to check for TUI mode first
   final parser = CliArgParser(toolDefinition: testkitTool);
@@ -44,33 +44,11 @@ Future<void> _runCli(List<String> normalizedArgs) async {
     executors: createTestkitExecutors(),
   );
 
-  // Run the tool
-  final result = await runner.run(normalizedArgs);
-
-  // Shared, consistent end-of-run errors/skips summary (tom_build_base).
-  // Empty for special/single-shot commands that traverse nothing.
-  final summary = result.renderRunSummary();
-  if (summary.isNotEmpty) {
-    stdout.writeln('\n$summary');
-  }
-
-  // Set exit code based on result
-  if (!result.success) {
-    exitCode = 1;
-  }
-}
-
-/// Normalize the non-standard `-help` flag to `--help`.
-///
-/// All other args, including bare `help`, are passed through so that
-/// [ToolRunner]'s positional help dispatcher handles them.
-List<String> _normalizeLegacyHelpFlag(List<String> args) {
-  if (args.isEmpty) return args;
-  final first = args.first.trim();
-  if (first == '-help') {
-    return ['--help', ...args.skip(1)];
-  }
-  return args;
+  // Run to completion — the shared run → summary → exit-code tail lives in
+  // ToolRunner.runToCompletion (tom_build_base) so process-exit semantics stay
+  // identical across buildkit/testkit/issuekit. It writes the summary to the
+  // runner's markdown-aware output sink (we run inside runWithConsoleMarkdown).
+  await runner.runToCompletion(normalizedArgs);
 }
 
 /// Run TUI mode with the existing TUI implementation.

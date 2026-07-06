@@ -6,78 +6,16 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-/// Output format specifier.
-class OutputSpec {
-  /// Constructor.
-  const OutputSpec({
-    required this.format,
-    this.filename,
-  });
+import 'package:tom_build_base/tom_build_base_v2.dart' show OutputSpec;
 
-  /// The output format.
-  final OutputFormat format;
-
-  /// Optional filename for output redirection.
-  final String? filename;
-
-  /// Parse from a string (e.g., 'json' or 'csv:output.csv').
-  static OutputSpec? tryParse(String? spec) {
-    if (spec == null || spec.isEmpty) return null;
-
-    String formatStr;
-    String? filename;
-
-    if (spec.contains(':')) {
-      final parts = spec.split(':');
-      formatStr = parts[0];
-      filename = parts.sublist(1).join(':');
-    } else {
-      formatStr = spec;
-    }
-
-    final format = OutputFormat.tryParse(formatStr);
-    if (format == null) return null;
-
-    return OutputSpec(format: format, filename: filename);
-  }
-
-  /// Whether this spec directs output to a file.
-  bool get hasFile => filename != null && filename!.isNotEmpty;
-}
-
-/// Supported output formats.
-enum OutputFormat {
-  /// Plain text (default).
-  plain,
-
-  /// CSV (comma-separated values).
-  csv,
-
-  /// JSON.
-  json,
-
-  /// Markdown.
-  md;
-
-  /// Parse from string.
-  static OutputFormat? tryParse(String? value) {
-    if (value == null) return null;
-    switch (value.toLowerCase()) {
-      case 'plain':
-      case 'text':
-        return OutputFormat.plain;
-      case 'csv':
-        return OutputFormat.csv;
-      case 'json':
-        return OutputFormat.json;
-      case 'md':
-      case 'markdown':
-        return OutputFormat.md;
-      default:
-        return null;
-    }
-  }
-}
+// `OutputFormat` and `OutputSpec` are the canonical cross-tool types owned by
+// tom_build_base (single source of truth — see its doc/cli_output_formats.md).
+// issuekit historically carried its own copies (with a `filename` field); it
+// now consolidates onto the shared ones (whose file field is `filePath`) and
+// re-exports them so existing `output_formatter.dart` importers keep a single
+// import surface.
+export 'package:tom_build_base/tom_build_base_v2.dart'
+    show OutputFormat, OutputSpec;
 
 /// Output writer that can write to stdout or a file.
 class OutputWriter {
@@ -98,7 +36,7 @@ class OutputWriter {
     if (_sink != null) return _sink!;
 
     if (spec?.hasFile ?? false) {
-      final file = File(spec!.filename!);
+      final file = File(spec!.filePath!);
       _sink = file.openWrite();
       _needsClose = true;
     } else {

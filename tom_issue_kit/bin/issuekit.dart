@@ -14,10 +14,11 @@ import 'package:tom_issue_kit/src/v2/issuekit_executors.dart';
 import 'package:tom_issue_kit/src/v2/issuekit_tool.dart';
 
 void main(List<String> args) async {
-  // Normalize non-standard -help / -version flags to --help / --version.
+  // Normalize non-standard -help / -version flags to --help / --version via the
+  // shared tom_build_base helper (identical to what ToolRunner.run applies).
   // Bare `help` and `version` positionals are left as-is; ToolRunner's
   // dispatchers handle them (e.g. `issuekit help`, `issuekit version`).
-  final normalizedArgs = _normalizeLegacyFlags(args);
+  final normalizedArgs = ToolRunner.normalizeArgs(args);
 
   // Run inside the shared console_markdown zone (tom_build_base) so
   // help/version/output render consistently with buildkit and testkit.
@@ -29,13 +30,19 @@ Future<void> _runCli(List<String> normalizedArgs) async {
   final preParser = CliArgParser(toolDefinition: issuekitTool);
   final preArgs = preParser.parse(normalizedArgs);
 
-  // Early exit for help/version and bare 'help'/'version' positionals — must
-  // run before loading GitHub config to avoid a token-not-configured error.
+  // Early exit for help/version/completion and bare 'help'/'version'
+  // positionals — these are global, service-free modes intercepted by
+  // ToolRunner, so they must run before loading GitHub config to avoid a
+  // spurious token-not-configured error (e.g. `issuekit --completion bash`).
   final isBareHelp =
       normalizedArgs.isNotEmpty && normalizedArgs.first.trim() == 'help';
   final isBareVersion =
       normalizedArgs.isNotEmpty && normalizedArgs.first.trim() == 'version';
-  if (preArgs.help || preArgs.version || isBareHelp || isBareVersion) {
+  if (preArgs.help ||
+      preArgs.version ||
+      preArgs.completion != null ||
+      isBareHelp ||
+      isBareVersion) {
     final preRunner = ToolRunner(
       tool: issuekitTool,
       executors: const <String, CommandExecutor>{},
@@ -82,44 +89,17 @@ Future<void> _runCli(List<String> normalizedArgs) async {
   );
 
   try {
-    // Create runner with all executors
+    // Create runner with all executors and run to completion. The shared
+    // run → summary → exit-code tail lives in ToolRunner.runToCompletion
+    // (tom_build_base) so process-exit semantics stay identical across
+    // buildkit/testkit/issuekit; it writes the summary to the runner's
+    // markdown-aware output sink (we already run inside runWithConsoleMarkdown).
     final runner = ToolRunner(
       tool: issuekitTool,
       executors: createIssuekitExecutors(service: service),
     );
-
-    // Run the tool
-    final result = await runner.run(normalizedArgs);
-
-    // Shared, consistent end-of-run errors/skips summary (tom_build_base).
-    // Empty for special/single-shot commands that traverse nothing.
-    final summary = result.renderRunSummary();
-    if (summary.isNotEmpty) {
-      stdout.writeln('\n$summary');
-    }
-
-    // Set exit code based on result
-    if (!result.success) {
-      exitCode = 1;
-    }
+    await runner.runToCompletion(normalizedArgs);
   } finally {
     service.close();
   }
-}
-
-/// Normalize single-dash `-help` / `-version` flags to their double-dash form.
-///
-/// All other args, including bare `help`/`version`, are passed through as-is so
-/// that [ToolRunner]'s positional help/version dispatcher handles them
-/// (e.g. `issuekit help`, `issuekit help pipelines`, `issuekit version`).
-List<String> _normalizeLegacyFlags(List<String> args) {
-  if (args.isEmpty) return args;
-  final first = args.first.trim();
-  if (first == '-help') {
-    return ['--help', ...args.skip(1)];
-  }
-  if (first == '-version') {
-    return ['--version', ...args.skip(1)];
-  }
-  return args;
 }

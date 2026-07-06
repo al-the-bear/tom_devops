@@ -18,7 +18,6 @@ import '../tracking/runs_command.dart';
 import '../tracking/status_command.dart';
 import '../tracking/test_command.dart';
 import '../tracking/trim_command.dart';
-import '../util/output_formatter.dart';
 
 // =============================================================================
 // Helper Functions
