@@ -163,12 +163,14 @@ class TomShell {
     return outputs;
   }
 
-  /// Execute a command with piped input.
+  /// Execute a command feeding [input] to its standard input.
   ///
-  /// Environment placeholders are resolved before execution.
+  /// Returns the command's trimmed stdout. Throws [TomShellException] on a
+  /// non-zero exit code. Environment placeholders are resolved before
+  /// execution.
   ///
   /// [command] - The shell command to execute
-  /// [input] - String to pipe to stdin
+  /// [input] - String to pipe to the command's stdin
   /// [workingDir] - Optional working directory
   /// [resolveEnv] - If true (default), resolve {VAR} placeholders
   static String pipe(
@@ -181,23 +183,38 @@ class TomShell {
         ? TomEnv.resolve(command, workingDir: workingDir)
         : command;
 
-    final process = Process.runSync(
-      _shell,
-      _shellArgs(resolvedCommand),
-      workingDirectory: workingDir,
-      runInShell: false,
-    );
+    // `Process.runSync` exposes no stdin channel, so [input] is delivered by
+    // writing it to a temp file and redirecting the command's stdin from that
+    // file inside the shell invocation. The command is wrapped in a subshell
+    // so the redirection binds to the whole command — including the head of a
+    // pipeline — rather than only its last segment. Passing [input] as file
+    // data (never on the command line) keeps shell metacharacters in it inert.
+    final stdinDir = Directory.systemTemp.createTempSync('tomshell_stdin_');
+    try {
+      final stdinFile = File('${stdinDir.path}${Platform.pathSeparator}stdin')
+        ..writeAsStringSync(input);
+      final redirected = _redirectStdin(resolvedCommand, stdinFile.path);
 
-    if (process.exitCode != 0) {
-      throw TomShellException(
-        command: resolvedCommand,
-        exitCode: process.exitCode,
-        stderr: process.stderr.toString(),
-        stdout: process.stdout.toString(),
+      final process = Process.runSync(
+        _shell,
+        _shellArgs(redirected),
+        workingDirectory: workingDir,
+        runInShell: false,
       );
-    }
 
-    return process.stdout.toString().trim();
+      if (process.exitCode != 0) {
+        throw TomShellException(
+          command: resolvedCommand,
+          exitCode: process.exitCode,
+          stderr: process.stderr.toString(),
+          stdout: process.stdout.toString(),
+        );
+      }
+
+      return process.stdout.toString().trim();
+    } finally {
+      stdinDir.deleteSync(recursive: true);
+    }
   }
 
   /// Check if a command exists in PATH.
@@ -240,6 +257,19 @@ class TomShell {
       return ['/c', command];
     }
     return ['-c', command];
+  }
+
+  /// Wrap [command] so its standard input is redirected from [stdinPath].
+  ///
+  /// The command is enclosed in a subshell so the redirection applies to the
+  /// entire command (the head of a pipeline receives the input), not just its
+  /// final segment. [stdinPath] is generated under the system temp directory
+  /// and therefore contains no quote characters.
+  static String _redirectStdin(String command, String stdinPath) {
+    if (Platform.isWindows) {
+      return '($command) < "$stdinPath"';
+    }
+    return "($command) < '$stdinPath'";
   }
 }
 

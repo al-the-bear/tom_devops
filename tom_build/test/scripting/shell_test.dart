@@ -133,5 +133,43 @@ void main() {
         );
       });
     });
+
+    group('pipe', () {
+      test('feeds input to the command stdin', () {
+        final result = TomShell.pipe('cat', 'hello');
+
+        expect(result, 'hello');
+      });
+
+      test('preserves multi-line input', () {
+        final result = TomShell.pipe('cat', 'a\nb\nc');
+
+        expect(result, 'a\nb\nc');
+      });
+
+      test('binds stdin to the head of a pipeline', () {
+        // The whole command must receive the piped input, not just its last
+        // segment — `cat` reads stdin, `tr` upcases the stream.
+        final result = TomShell.pipe('cat | tr a-z A-Z', 'hello');
+
+        expect(result, 'HELLO');
+      });
+
+      test('input is data, never interpreted by the shell', () {
+        // Shell metacharacters in the input must survive verbatim (they are fed
+        // via stdin, not spliced into the command line).
+        const payload = r'$HOME `whoami` ; rm -rf /';
+        final result = TomShell.pipe('cat', payload);
+
+        expect(result, payload);
+      });
+
+      test('throws TomShellException on non-zero exit', () {
+        expect(
+          () => TomShell.pipe('cat; exit 1', 'x'),
+          throwsA(isA<TomShellException>()),
+        );
+      });
+    });
   });
 }
