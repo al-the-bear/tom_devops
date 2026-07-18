@@ -84,9 +84,16 @@ void main() {
       });
 
       test('respects working directory', () {
-        // Use a known directory instead of temp (which has /private prefix on macOS)
-        final homeDir = Platform.environment['HOME'] ?? '/';
-        final result = TomShell.run('pwd', workingDir: homeDir, quiet: true);
+        // Use a known directory instead of temp (which has /private prefix on
+        // macOS). `pwd` on POSIX and cmd's `cd` builtin on Windows both print
+        // the current directory in the platform's native path syntax — which
+        // is what `workingDir` (from the environment) is expressed in.
+        final homeDir = Platform.isWindows
+            ? (Platform.environment['USERPROFILE'] ?? r'C:\')
+            : (Platform.environment['HOME'] ?? '/');
+        final command = Platform.isWindows ? 'cd' : 'pwd';
+        final result =
+            TomShell.run(command, workingDir: homeDir, quiet: true);
 
         expect(result.trim(), equals(homeDir));
       });
@@ -135,38 +142,61 @@ void main() {
     });
 
     group('pipe', () {
-      test('feeds input to the command stdin', () {
-        final result = TomShell.pipe('cat', 'hello');
+      // cmd.exe ships neither `cat` nor `tr`, so the fixtures below select the
+      // native equivalent per platform. `findstr /r "^"` matches the start of
+      // every line, i.e. a verbatim passthrough (the POSIX `cat`); `sort` reads
+      // and orders stdin. Windows commands emit CRLF, so multi-line output is
+      // normalized before comparison.
+      final passthrough = Platform.isWindows ? 'findstr /r "^"' : 'cat';
 
-        expect(result, 'hello');
+      String norm(String value) => value.replaceAll('\r\n', '\n');
+
+      test('feeds input to the command stdin', () {
+        final result = TomShell.pipe(passthrough, 'hello');
+
+        expect(norm(result), 'hello');
       });
 
       test('preserves multi-line input', () {
-        final result = TomShell.pipe('cat', 'a\nb\nc');
+        final result = TomShell.pipe(passthrough, 'a\nb\nc');
 
-        expect(result, 'a\nb\nc');
+        expect(norm(result), 'a\nb\nc');
       });
 
       test('binds stdin to the head of a pipeline', () {
         // The whole command must receive the piped input, not just its last
-        // segment — `cat` reads stdin, `tr` upcases the stream.
-        final result = TomShell.pipe('cat | tr a-z A-Z', 'hello');
+        // segment. On POSIX `cat` reads stdin and `tr` upcases the stream; on
+        // Windows the head `sort` reads stdin and orders the lines. Either way
+        // the transforming stage sits at the head, so a correct result proves
+        // the redirect binds to the pipeline head rather than its tail.
+        if (Platform.isWindows) {
+          final result = TomShell.pipe('sort | findstr /r "^"', 'b\na\nc');
 
-        expect(result, 'HELLO');
+          expect(norm(result), 'a\nb\nc');
+        } else {
+          final result = TomShell.pipe('cat | tr a-z A-Z', 'hello');
+
+          expect(result, 'HELLO');
+        }
       });
 
       test('input is data, never interpreted by the shell', () {
         // Shell metacharacters in the input must survive verbatim (they are fed
-        // via stdin, not spliced into the command line).
-        const payload = r'$HOME `whoami` ; rm -rf /';
-        final result = TomShell.pipe('cat', payload);
+        // via stdin, not spliced into the command line). The payload is loaded
+        // with metacharacters hostile to the host shell.
+        final payload = Platform.isWindows
+            ? r'%PATH% & echo pwned | whoami'
+            : r'$HOME `whoami` ; rm -rf /';
+        final result = TomShell.pipe(passthrough, payload);
 
-        expect(result, payload);
+        expect(norm(result), payload);
       });
 
       test('throws TomShellException on non-zero exit', () {
+        final failing =
+            Platform.isWindows ? 'findstr /r "^" & exit 1' : 'cat; exit 1';
         expect(
-          () => TomShell.pipe('cat; exit 1', 'x'),
+          () => TomShell.pipe(failing, 'x'),
           throwsA(isA<TomShellException>()),
         );
       });

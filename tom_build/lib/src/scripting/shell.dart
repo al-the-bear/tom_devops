@@ -195,12 +195,14 @@ class TomShell {
         ..writeAsStringSync(input);
       final redirected = _redirectStdin(resolvedCommand, stdinFile.path);
 
-      final process = Process.runSync(
-        _shell,
-        _shellArgs(redirected),
-        workingDirectory: workingDir,
-        runInShell: false,
-      );
+      final process = Platform.isWindows
+          ? _runViaBatch(redirected, stdinDir, workingDir)
+          : Process.runSync(
+              _shell,
+              _shellArgs(redirected),
+              workingDirectory: workingDir,
+              runInShell: false,
+            );
 
       if (process.exitCode != 0) {
         throw TomShellException(
@@ -265,11 +267,39 @@ class TomShell {
   /// entire command (the head of a pipeline receives the input), not just its
   /// final segment. [stdinPath] is generated under the system temp directory
   /// and therefore contains no quote characters.
+  ///
+  /// On Windows the returned string is delivered through a batch file (see
+  /// [_runViaBatch]) rather than a `cmd /c <string>` argument: cmd.exe does not
+  /// honour the MSVCRT backslash-quote escaping that Dart applies when joining
+  /// process arguments into a Windows command line, so the double quotes around
+  /// the redirect target (and any quoted command argument) would be mangled if
+  /// passed inline.
   static String _redirectStdin(String command, String stdinPath) {
     if (Platform.isWindows) {
       return '($command) < "$stdinPath"';
     }
     return "($command) < '$stdinPath'";
+  }
+
+  /// Run a Windows [redirected] command by writing it to a batch file in
+  /// [scratchDir] and invoking `cmd /c <batch>`.
+  ///
+  /// This keeps the command text out of Dart's escaped Windows argument vector,
+  /// so cmd.exe parses the quotes and `<` redirection natively. `@echo off`
+  /// suppresses command echoing so only the command's own stdout is captured.
+  static ProcessResult _runViaBatch(
+    String redirected,
+    Directory scratchDir,
+    String? workingDir,
+  ) {
+    final batch = File('${scratchDir.path}\\tomshell_pipe.bat')
+      ..writeAsStringSync('@echo off\r\n$redirected\r\n');
+    return Process.runSync(
+      'cmd.exe',
+      ['/c', batch.path],
+      workingDirectory: workingDir,
+      runInShell: false,
+    );
   }
 }
 
