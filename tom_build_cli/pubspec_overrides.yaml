@@ -1,6 +1,2 @@
 dependency_overrides:
   dart_console: ^4.1.2
-  runtime_native_semaphores:
-    git:
-      url: https://github.com/al-the-bear/native_semaphores.git
-      ref: fork-fix
