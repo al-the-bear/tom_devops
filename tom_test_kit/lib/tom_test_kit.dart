@@ -25,6 +25,7 @@ export 'src/util/file_helpers.dart';
 export 'src/util/format_helpers.dart';
 export 'src/util/markdown_table.dart';
 export 'src/util/output_formatter.dart';
+export 'src/util/package_detection.dart';
 
 // TUI framework
 export 'src/tui/tui_command.dart';

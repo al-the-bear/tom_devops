@@ -5,6 +5,7 @@ import 'package:tom_build_base/tom_build_base.dart';
 
 import '../model/test_entry.dart';
 import '../model/test_run.dart';
+import '../util/package_detection.dart';
 import 'test_description_parser.dart';
 
 /// Parsed results from a `dart test --reporter json` run.
@@ -103,27 +104,29 @@ class DartTestParser {
     '--debug',
   ];
 
-  /// Whether the `dart` process must be launched through a shell.
+  /// Whether the test-runner process must be launched through a shell.
   ///
-  /// On Windows the Dart SDK launcher is `dart.bat`, which `Process.start`
-  /// cannot resolve directly — it must be invoked via the shell. On POSIX
-  /// hosts no shell is needed. Both the spawn and its regression test read
-  /// this single source of truth so the Windows fix cannot drift.
+  /// On Windows the SDK launchers are batch files (`dart.bat`, `flutter.bat`),
+  /// which `Process.start` cannot resolve directly — they must be invoked via
+  /// the shell. On POSIX hosts no shell is needed. Both the spawn and its
+  /// regression test read this single source of truth so the Windows fix
+  /// cannot drift.
   static final bool runInShellForHost = Platform.isWindows;
 
-  /// Builds a clear, actionable error message for a failed `dart` launch.
+  /// Builds a clear, actionable error message for a failed launch of
+  /// [executable] (`dart` or `flutter`).
   ///
   /// [error] is the object thrown by the process API — typically a
   /// [ProcessException] when the SDK is not on `PATH`. The message points the
   /// user at the likely cause instead of leaving testkit to exit silently.
-  static String buildLaunchError(Object error) {
+  static String buildLaunchError(String executable, Object error) {
     final buffer = StringBuffer()
-      ..writeln('Error: could not launch `dart` to run tests.')
+      ..writeln('Error: could not launch `$executable` to run tests.')
       ..writeln('Is the Dart/Flutter SDK installed and on your PATH?');
     if (Platform.isWindows) {
       buffer.writeln(
-        'On Windows the launcher is `dart.bat`; testkit invokes it through '
-        'the shell, so make sure the SDK `bin` folder is on PATH.',
+        'On Windows the launcher is `$executable.bat`; testkit invokes it '
+        'through the shell, so make sure the SDK `bin` folder is on PATH.',
       );
     }
     buffer.write('Underlying error: $error');
@@ -143,10 +146,16 @@ class DartTestParser {
     return null;
   }
 
-  /// Runs `dart test --reporter json` in the given directory and parses output.
+  /// Runs the test runner in the given directory and parses its JSON output.
   ///
-  /// [projectPath] is the working directory for `dart test`.
-  /// [additionalArgs] are extra arguments to pass to `dart test`.
+  /// Flutter packages (those with a Flutter SDK dependency in `pubspec.yaml`)
+  /// are run with `flutter test --reporter json`; all other packages with
+  /// `dart test --reporter json`. Both emit the identical package:test JSON
+  /// event protocol, so the parser is runner-agnostic — only the launcher
+  /// differs. See [isFlutterPackage].
+  ///
+  /// [projectPath] is the working directory for the test runner.
+  /// [additionalArgs] are extra arguments to pass after `test`.
   /// [verbose] enables diagnostic output.
   static Future<DartTestResults?> runAndParse({
     required String projectPath,
@@ -164,26 +173,30 @@ class DartTestParser {
       return null;
     }
 
+    // Flutter packages need `flutter test`; `dart test` cannot boot the
+    // Flutter test binding. Detection is by the pubspec's Flutter SDK dep.
+    final executable = isFlutterPackage(projectPath) ? 'flutter' : 'dart';
     final args = ['test', '--reporter', 'json', ...additionalArgs];
 
     if (verbose) {
-      print('  Running: dart ${args.join(' ')}');
+      print('  Running: $executable ${args.join(' ')}');
       print('  In: $projectPath');
     }
 
-    // Route process execution through tom_build_base so `dart`/`dart.bat`
-    // resolves on every host (runInShell on Windows) and a spawn failure
-    // surfaces a clear error instead of a swallowed exception / silent exit 0.
+    // Route process execution through tom_build_base so the launcher
+    // (`dart`/`dart.bat` or `flutter`/`flutter.bat`) resolves on every host
+    // (runInShell on Windows) and a spawn failure surfaces a clear error
+    // instead of a swallowed exception / silent exit 0.
     final ProcessRunResult procResult;
     try {
       procResult = await ProcessRunner.run(
-        'dart',
+        executable,
         args,
         workingDirectory: projectPath,
         runInShell: runInShellForHost,
       );
     } on ProcessException catch (e) {
-      stderr.writeln(buildLaunchError(e));
+      stderr.writeln(buildLaunchError(executable, e));
       return null;
     }
 
@@ -199,7 +212,7 @@ class DartTestParser {
 
     // Exit code 1 is OK — means tests failed, but we still have results
     if (exitCode != 0 && exitCode != 1) {
-      stderr.writeln('dart test exited with code $exitCode');
+      stderr.writeln('$executable test exited with code $exitCode');
       if (stderrLines.isNotEmpty) {
         for (final line in stderrLines) {
           stderr.writeln('  $line');

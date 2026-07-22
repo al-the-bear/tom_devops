@@ -9,7 +9,8 @@ import '../util/file_helpers.dart';
 
 /// Implements the `:baseline` subcommand.
 ///
-/// Runs `dart test` and creates a new baseline tracking file.
+/// Runs the test suite (`dart test`, or `flutter test` for Flutter packages)
+/// and creates a new baseline tracking file.
 class BaselineCommand {
   /// Runs the baseline command for a single project.
   ///

@@ -10,8 +10,8 @@ import 'baseline_command.dart';
 
 /// Implements the `:test` subcommand.
 ///
-/// Runs `dart test` and appends a new result column to the most recent
-/// tracking file.
+/// Runs the test suite (`dart test`, or `flutter test` for Flutter packages)
+/// and appends a new result column to the most recent tracking file.
 class TestCommand {
   /// Runs the test command for a single project.
   ///

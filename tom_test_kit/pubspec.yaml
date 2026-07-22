@@ -1,6 +1,6 @@
 name: tom_test_kit
-description: Test result tracking tool for Dart projects.
-version: 0.1.0
+description: Test result tracking tool for Dart and Flutter projects.
+version: 1.1.0
 publish_to: none
 
 environment:
@@ -11,6 +11,7 @@ dependencies:
   path: ^1.9.1
   tom_build_base: ">=2.6.32"
   utopia_tui: ^1.1.0
+  yaml: ^3.1.0
 
 dev_dependencies:
   lints: ^6.0.0

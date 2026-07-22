@@ -187,6 +187,7 @@ void main() {
 
       test('TK-DTP-13: buildLaunchError is clear and actionable', () {
         final message = DartTestParser.buildLaunchError(
+          'dart',
           const ProcessException('dart', ['test'], 'not found', 2),
         );
         // Names the executable, points at PATH, and surfaces the cause so the
@@ -198,10 +199,22 @@ void main() {
 
       test('TK-DTP-14: buildLaunchError mentions dart.bat on Windows', () {
         final message = DartTestParser.buildLaunchError(
+          'dart',
           const ProcessException('dart', ['test']),
         );
         if (Platform.isWindows) {
           expect(message, contains('dart.bat'));
+        }
+      });
+
+      test('TK-DTP-15: buildLaunchError names the flutter launcher', () {
+        final message = DartTestParser.buildLaunchError(
+          'flutter',
+          const ProcessException('flutter', ['test'], 'not found', 2),
+        );
+        expect(message, contains('flutter'));
+        if (Platform.isWindows) {
+          expect(message, contains('flutter.bat'));
         }
       });
     });
