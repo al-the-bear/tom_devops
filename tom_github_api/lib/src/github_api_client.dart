@@ -2,7 +2,10 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import 'api/github_contents_api.dart';
+import 'api/github_git_api.dart';
 import 'http/github_http_client.dart';
+import 'http/github_retry_policy.dart';
 import 'models/github_comment.dart';
 import 'models/github_issue.dart';
 import 'models/github_label.dart';
@@ -12,8 +15,9 @@ import 'models/github_search_result.dart';
 /// Main client for the GitHub REST API v3.
 ///
 /// Provides typed access to Issues, Labels, Comments, Search, and
-/// Workflow operations. All operations require authentication via
-/// a Personal Access Token.
+/// Workflow operations, plus repository [contents] and low-level [git] data.
+/// All operations require authentication via a Personal Access Token or an
+/// OAuth token (see `GitHubDeviceFlow`).
 ///
 /// ```dart
 /// final client = GitHubApiClient(token: 'ghp_...');
@@ -28,18 +32,39 @@ import 'models/github_search_result.dart';
 class GitHubApiClient {
   final GitHubHttpClient _http;
 
+  /// Repository contents — single-path read/write, one commit per write.
+  late final GitHubContentsApi contents = GitHubContentsApi(_http);
+
+  /// Low-level git data — refs, commits, trees and blobs. Use this, not
+  /// [contents], when several files must change in one commit.
+  late final GitHubGitApi git = GitHubGitApi(_http);
+
   GitHubApiClient({
     required String token,
     http.Client? httpClient,
     String baseUrl = 'https://api.github.com',
+    GitHubRetryPolicy retryPolicy = const GitHubRetryPolicy(),
   }) : _http = GitHubHttpClient(
           token: token,
           httpClient: httpClient ?? http.Client(),
           baseUrl: baseUrl,
+          retryPolicy: retryPolicy,
         );
 
   /// Rate limit info from the most recent API call.
   GitHubRateLimit? get lastRateLimit => _http.lastRateLimit;
+
+  /// The repository's default branch — the branch a locator falls back to
+  /// when it names none.
+  Future<String> getDefaultBranch({
+    String? repoSlug,
+    String? owner,
+    String? repo,
+  }) async {
+    final (o, r) = _parseSlug(repoSlug, owner, repo);
+    final json = await _http.get('/repos/$o/$r');
+    return json['default_branch'] as String;
+  }
 
   /// Release HTTP client resources.
   void close() => _http.close();

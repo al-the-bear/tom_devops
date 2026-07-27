@@ -31,7 +31,13 @@ void main() {
           resetEpoch: 1739350000,
         ),
       });
-      final api = GitHubApiClient(token: 'test-token', httpClient: mockClient);
+      // Backoff is exercised in test/http/retry_policy_test.dart; here we are
+      // asserting the error mapping, so waiting out the retries buys nothing.
+      final api = GitHubApiClient(
+        token: 'test-token',
+        httpClient: mockClient,
+        retryPolicy: GitHubRetryPolicy.none,
+      );
 
       expect(
         () => api.getIssue(owner: 'owner', repo: 'repo', number: 1),
@@ -109,7 +115,11 @@ void main() {
           createErrorJson(message: 'Internal Server Error'),
         ),
       });
-      final api = GitHubApiClient(token: 'test-token', httpClient: mockClient);
+      final api = GitHubApiClient(
+        token: 'test-token',
+        httpClient: mockClient,
+        retryPolicy: GitHubRetryPolicy.none,
+      );
 
       expect(
         () => api.getIssue(owner: 'owner', repo: 'repo', number: 1),

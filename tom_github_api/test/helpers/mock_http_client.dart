@@ -13,12 +13,34 @@ import 'package:http/testing.dart' as http_testing;
 ///   ),
 /// });
 /// ```
+/// [onRequest] sees every request before its response is chosen — the only way
+/// to assert on what was *sent*, which for the git data API (tree entries,
+/// commit parents, ref updates) is the whole point of the test.
+/// [sequences] answers the same key differently on successive calls, which is
+/// what a retry or a compare-and-swap race looks like from the client side. The
+/// last element repeats once the list is exhausted.
 http.Client createMockClient(
   Map<String, MockResponse> responses, {
   MockResponse? defaultResponse,
+  void Function(http.Request request)? onRequest,
+  Map<String, List<MockResponse>>? sequences,
 }) {
+  final calls = <String, int>{};
   return http_testing.MockClient((request) async {
+    onRequest?.call(request);
     final key = '${request.method} ${request.url.path}';
+
+    final sequence = sequences?[key];
+    if (sequence != null && sequence.isNotEmpty) {
+      final index = calls[key] ?? 0;
+      calls[key] = index + 1;
+      final mock = sequence[index.clamp(0, sequence.length - 1)];
+      return http.Response(
+        mock.body is String ? mock.body as String : jsonEncode(mock.body),
+        mock.statusCode,
+        headers: mock.headers,
+      );
+    }
 
     // Try exact match first
     var mock = responses[key];
