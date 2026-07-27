@@ -4,6 +4,14 @@ import 'github_user.dart';
 /// A GitHub Issue (used for both issues and test entries).
 class GitHubIssue {
   final int number;
+
+  /// The GraphQL global node id (`node_id` in REST responses).
+  ///
+  /// Nullable because the REST API omits it from some abbreviated payloads and
+  /// because a hand-built issue in a test has no reason to invent one. It is
+  /// required by the GraphQL-only operations — issue transfer is the one this
+  /// package uses.
+  final String? nodeId;
   final String title;
   final String? body;
   final String state;
@@ -18,6 +26,7 @@ class GitHubIssue {
 
   const GitHubIssue({
     required this.number,
+    this.nodeId,
     required this.title,
     this.body,
     required this.state,
@@ -34,6 +43,7 @@ class GitHubIssue {
   factory GitHubIssue.fromJson(Map<String, dynamic> json) {
     return GitHubIssue(
       number: json['number'] as int,
+      nodeId: json['node_id'] as String?,
       title: json['title'] as String,
       body: json['body'] as String?,
       state: json['state'] as String,
@@ -58,6 +68,7 @@ class GitHubIssue {
 
   Map<String, dynamic> toJson() => {
         'number': number,
+        if (nodeId != null) 'node_id': nodeId,
         'title': title,
         if (body != null) 'body': body,
         'state': state,
