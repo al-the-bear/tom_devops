@@ -84,6 +84,19 @@ class GitHubGitApi {
         ),
       );
 
+  /// Deletes [ref] (`heads/scratch-1`).
+  ///
+  /// Deleting a branch is how a caller that *created* one disposes of it, so
+  /// this completes [createRef] rather than standing on its own. The commits
+  /// it pointed at survive until garbage collection, which is why this is a
+  /// safe cleanup operation and not a destructive one.
+  Future<void> deleteRef({
+    required String owner,
+    required String repo,
+    required String ref,
+  }) =>
+      _http.delete('/repos/$owner/$repo/git/refs/$ref');
+
   // --- Commits ----------------------------------------------------------
 
   Future<GitHubGitCommit> getCommit({
