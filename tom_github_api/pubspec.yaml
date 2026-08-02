@@ -1,6 +1,6 @@
 name: tom_github_api
-description: Typed Dart client for the GitHub REST API v3 — issues, labels, comments, search, workflows, repository contents and the low-level git data API.
-version: 1.1.0
+description: Typed Dart client for the GitHub REST API v3 — issues, labels, comments, search, workflows, repositories, repository contents and the low-level git data API.
+version: 1.2.0
 # repository: https://github.com/my_org/my_repo
 
 environment:

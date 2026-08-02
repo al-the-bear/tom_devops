@@ -11,6 +11,7 @@ import 'models/github_comment.dart';
 import 'models/github_issue.dart';
 import 'models/github_label.dart';
 import 'models/github_rate_limit.dart';
+import 'models/github_repository.dart';
 import 'models/github_search_result.dart';
 
 /// Main client for the GitHub REST API v3.
@@ -55,17 +56,32 @@ class GitHubApiClient {
   /// Rate limit info from the most recent API call.
   GitHubRateLimit? get lastRateLimit => _http.lastRateLimit;
 
+  /// The repository itself.
+  ///
+  /// GitHub answers a request for a **renamed** repository's old name by
+  /// redirecting, so a call that succeeds does not establish that the name you
+  /// asked for is the name the repository has. Compare
+  /// [GitHubRepository.fullName] against what you asked for when that
+  /// distinction matters — as it does for anything that records a repository
+  /// name durably.
+  Future<GitHubRepository> getRepository({
+    String? repoSlug,
+    String? owner,
+    String? repo,
+  }) async {
+    final (o, r) = _parseSlug(repoSlug, owner, repo);
+    return GitHubRepository.fromJson(await _http.get('/repos/$o/$r'));
+  }
+
   /// The repository's default branch — the branch a locator falls back to
   /// when it names none.
   Future<String> getDefaultBranch({
     String? repoSlug,
     String? owner,
     String? repo,
-  }) async {
-    final (o, r) = _parseSlug(repoSlug, owner, repo);
-    final json = await _http.get('/repos/$o/$r');
-    return json['default_branch'] as String;
-  }
+  }) async =>
+      (await getRepository(repoSlug: repoSlug, owner: owner, repo: repo))
+          .defaultBranch;
 
   /// Release HTTP client resources.
   void close() => _http.close();
@@ -248,19 +264,9 @@ class GitHubApiClient {
     String? repoSlug,
     String? owner,
     String? repo,
-  }) async {
-    final (o, r) = _parseSlug(repoSlug, owner, repo);
-    final json = await _http.get('/repos/$o/$r');
-    final id = json['node_id'];
-    if (id is! String) {
-      throw GitHubException(
-        statusCode: 200,
-        message: 'Repository $o/$r carries no node_id',
-        responseBody: json,
-      );
-    }
-    return id;
-  }
+  }) async =>
+      (await getRepository(repoSlug: repoSlug, owner: owner, repo: repo))
+          .nodeId;
 
   /// List issues with optional filters. Returns a single page.
   Future<List<GitHubIssue>> listIssues({

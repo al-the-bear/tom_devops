@@ -7,8 +7,11 @@
 A self-contained, **offline-by-default** tour of
 [`tom_github_api`](../../tom_github_api/) — the typed Dart client for the
 GitHub REST API v3. Seven runnable, one-concept-per-file examples cover the
-whole surface the client actually implements: **authentication, issues, labels,
-comments, search, workflow dispatch, and the error / rate-limit model.**
+client's **issue-tracking surface**: **authentication, issues, labels,
+comments, search, workflow dispatch, and the error / rate-limit model.** The
+client also carries a repository / contents / git-data surface that this sample
+deliberately does not tour — see [the API surface at a
+glance](#the-api-surface-at-a-glance).
 
 Every example runs with no network and no token because the client takes an
 injectable `http.Client`, and these samples inject an in-memory fake. The same
@@ -33,6 +36,7 @@ code talks to live GitHub by swapping that one argument out — see
   - [06 — Workflows](#06--workflows)
   - [07 — Errors and rate limits](#07--errors-and-rate-limits)
 - [The API surface at a glance](#the-api-surface-at-a-glance)
+  - [What this sample does not tour](#what-this-sample-does-not-tour)
 - [The error taxonomy](#the-error-taxonomy)
 - [Rate limits](#rate-limits)
 - [How the offline fake works](#how-the-offline-fake-works)
@@ -284,8 +288,8 @@ print('Rate limit remaining: ${rl.remaining}/${rl.limit}');
 
 ## The API surface at a glance
 
-`tom_github_api` is deliberately scoped to the operations `tom_issue_kit` and
-`tom_test_kit` need. The full method set demonstrated above:
+The method set demonstrated above — the issue-tracking surface `tom_issue_kit`
+and `tom_test_kit` need:
 
 | Area | Methods |
 | ---- | ------- |
@@ -304,6 +308,30 @@ Every repository-scoped method addresses the target either with
 
 The typed models returned by these methods: `GitHubIssue`, `GitHubLabel`,
 `GitHubComment`, `GitHubUser`, `GitHubSearchResult`, and `GitHubRateLimit`.
+
+### What this sample does not tour
+
+The client also implements a **repository / contents / git-data** surface, used
+by storage backends rather than by issue tooling. It is out of scope here
+because it is a different kind of program — a git-object graph, not a
+conversation — and would double the sample's size without teaching anything
+about the client's shape:
+
+| Area | Methods |
+| ---- | ------- |
+| **Repositories** | `getRepository`, `getDefaultBranch`, `getRepositoryNodeId` |
+| **Contents** (`client.contents`) | `readFile`, `writeFile`, `deleteFile`, `stat`, `listDirectory` |
+| **Git data** (`client.git`) | `getRef`, `getRefConditional`, `createRef`, `updateRef`, `deleteRef`, `getCommit`, `createCommit`, `getTree`, `getTreeOrNull`, `createTree`, `createBlob`, `getBlob` |
+
+One of those deserves a warning even though it is not demonstrated.
+`getRepository` returns a `GitHubRepository` whose `fullName` is the name the
+repository has **today** — which need not be the name you asked for, because
+GitHub answers a request for a renamed repository's old name by redirecting.
+A call that merely *succeeds* therefore does not establish that the name you
+hold is live. Compare `repo.fullName` against the slug you passed whenever a
+repository name is recorded durably. See
+[`tom_github_api/README.md`](../../tom_github_api/README.md) for the full
+reference.
 
 ---
 

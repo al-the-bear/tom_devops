@@ -20,5 +20,6 @@ export 'src/models/github_git_objects.dart';
 export 'src/models/github_issue.dart';
 export 'src/models/github_label.dart';
 export 'src/models/github_rate_limit.dart';
+export 'src/models/github_repository.dart';
 export 'src/models/github_search_result.dart';
 export 'src/models/github_user.dart';

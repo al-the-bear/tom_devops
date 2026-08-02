@@ -27,7 +27,7 @@ not re-implement request signing, JSON parsing, pagination and error mapping.
 
 | Concern | What the library does |
 | ------- | --------------------- |
-| **Typed surface** | Every response becomes a Dart model (`GitHubIssue`, `GitHubLabel`, `GitHubComment`, `GitHubUser`, `GitHubRateLimit`, `GitHubSearchResult`) — no raw maps leak to callers. |
+| **Typed surface** | Every response becomes a Dart model (`GitHubIssue`, `GitHubLabel`, `GitHubComment`, `GitHubUser`, `GitHubRateLimit`, `GitHubSearchResult`, `GitHubRepository`, `GitHubContentEntry`, `GitHubGitRef`) — no raw maps leak to callers. |
 | **Authentication** | Resolves a Personal Access Token from an explicit argument, the `GITHUB_TOKEN` environment variable, or `~/.tom/github_token` (in that order). |
 | **Pagination** | `listAll…` methods follow GitHub's `Link` header to fetch every page; single-page `list…` methods expose `perPage`/`page` for manual control. |
 | **Rate limiting** | Every response updates `lastRateLimit`; a 403 with `x-ratelimit-remaining: 0` is raised as a dedicated `GitHubRateLimitException`. |
@@ -38,10 +38,12 @@ The library is **standalone** — it has no dependency on `tom_build_base`,
 
 ### What it does *not* cover
 
-The surface is intentionally scoped to what the kits use. It does **not**
-implement repository, pull-request or release endpoints. If a kit grows a need
-for one of those, the endpoint is added here first (with tests) — never worked
-around in the consumer.
+The surface is intentionally scoped to what its consumers use. It does **not**
+implement pull-request or release endpoints, and of the repository endpoints it
+implements only the read that identifies a repository (`getRepository` and the
+two accessors over it). If a consumer grows a need for one of those, the
+endpoint is added here first (with tests) — never worked around in the
+consumer.
 
 ---
 
@@ -76,6 +78,31 @@ only one).
 | **Comments** | `addComment`, `listComments` (single page), `listAllComments` (all pages) |
 | **Search** | `searchIssues` (GitHub search syntax) |
 | **Workflows** | `dispatchWorkflow` (trigger a GitHub Actions `workflow_dispatch`) |
+| **Repositories** | `getRepository`, `getDefaultBranch`, `getRepositoryNodeId` |
+| **Contents** (`client.contents`) | `readFile`, `writeFile`, `deleteFile`, `stat`, `listDirectory` |
+| **Git data** (`client.git`) | `getRef`, `getRefConditional`, `createRef`, `updateRef`, `deleteRef`, `getCommit`, `createCommit`, `getTree`, `getTreeOrNull`, `createTree`, `createBlob`, `getBlob` |
+
+#### A repository name is not a repository identity
+
+`getRepository` returns a `GitHubRepository` whose `fullName` is the name the
+repository has **today**. That need not be the name you asked for: GitHub keeps
+a redirect from a repository's pre-rename name, so a request for a stale name
+returns **200** and answers with the current name. A call that merely
+*succeeds* therefore establishes nothing about the name you hold — and the
+redirect stops working the day somebody creates a new repository under the
+freed-up name, at which point the stale reference silently retargets to
+somebody else's repository.
+
+```dart
+final repo = await client.getRepository(repoSlug: recorded);
+if (repo.fullName != recorded) {
+  // `recorded` survives only as a rename redirect.
+}
+```
+
+Compare the two whenever a repository name is stored durably. `id` is the
+rename-stable identity when you need to ask whether two names are the same
+repository.
 
 ### Cross-cutting
 
