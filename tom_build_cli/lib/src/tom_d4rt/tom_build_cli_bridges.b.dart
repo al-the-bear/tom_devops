@@ -1,8 +1,8 @@
 // D4rt Bridge - Generated file, do not edit
 // Sources: 40 files
-// Generated: 2026-06-17T18:45:41.295686
+// Generated: 2026-08-03T11:40:10.870476
 
-// ignore_for_file: unused_import, deprecated_member_use, prefer_function_declarations_over_variables, implementation_imports, sort_child_properties_last, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, invalid_use_of_protected_member, unnecessary_non_null_assertion, invalid_use_of_visible_for_testing_member, unnecessary_cast, unused_local_variable, no_leading_underscores_for_local_identifiers, prefer_is_empty, unnecessary_question_mark, unreachable_switch_case, unintended_html_in_doc_comment, empty_constructor_bodies, prefer_const_constructors_in_immutables, prefer_final_fields, unused_field, must_call_super, no_logic_in_create_state, use_key_in_widget_constructors, annotate_overrides, unnecessary_import
+// ignore_for_file: unused_import, deprecated_member_use, prefer_function_declarations_over_variables, implementation_imports, sort_child_properties_last, non_constant_identifier_names, avoid_function_literals_in_foreach_calls, invalid_use_of_protected_member, unnecessary_non_null_assertion, invalid_use_of_visible_for_testing_member, unnecessary_cast, unused_local_variable, no_leading_underscores_for_local_identifiers, prefer_is_empty, unnecessary_question_mark, unreachable_switch_case, unintended_html_in_doc_comment, empty_constructor_bodies, prefer_const_constructors_in_immutables, prefer_final_fields, unused_field, must_call_super, no_logic_in_create_state, use_key_in_widget_constructors, annotate_overrides, non_const_argument_for_const_parameter, unnecessary_import
 
 import 'package:tom_d4rt/d4rt.dart';
 import 'package:tom_d4rt/tom_d4rt.dart';
@@ -61,6 +61,10 @@ import 'package:tom_d4rt_dcli/tom_d4rt_dcli.dart' as $aux_tom_d4rt_dcli;
 /// Bridge class for tom_build_cli module.
 class TomBuildCliBridge {
   /// Returns all bridge class definitions.
+  ///
+  /// Eager — building every class. Prefer [bridgeClassThunks] +
+  /// [bridgeClassTypes] for lazy registration (Step #17); this remains
+  /// for diagnostics and callers that need the full list.
   static List<BridgedClass> bridgeClasses() {
     return [
       _createBridgeConfigurationBridge(),
@@ -165,6 +169,225 @@ class TomBuildCliBridge {
       _createTomWorkspaceBridge(),
       _createTomProjectBridge(),
     ];
+  }
+
+  /// Returns deferred factory thunks keyed by class name.
+  ///
+  /// Each thunk builds one class's [BridgedClass] on demand. Plugs into
+  /// the interpreter's lazy registry via [registerBridges] (Step #17).
+  static Map<String, BridgedClass Function()> bridgeClassThunks() {
+    return {
+      'BridgeConfiguration': _createBridgeConfigurationBridge,
+      'BridgeModuleRegistry': _createBridgeModuleRegistryBridge,
+      'D4rtContextProvider': _createD4rtContextProviderBridge,
+      'ActionContextProvider': _createActionContextProviderBridge,
+      'TemplateContextProvider': _createTemplateContextProviderBridge,
+      'StandaloneContextProvider': _createStandaloneContextProviderBridge,
+      'CompositeContextProvider': _createCompositeContextProviderBridge,
+      'D4rtContextProviderDefaults': _createD4rtContextProviderDefaultsBridge,
+      'D4rtGlobals': _createD4rtGlobalsBridge,
+      'D4rtInstance': _createD4rtInstanceBridge,
+      'ActionD4rtContext': _createActionD4rtContextBridge,
+      'ParsedArguments': _createParsedArgumentsBridge,
+      'ActionInvocation': _createActionInvocationBridge,
+      'ArgumentParser': _createArgumentParserBridge,
+      'GitHelper': _createGitHelperBridge,
+      'InternalCommands': _createInternalCommandsBridge,
+      'InternalCommandInfo': _createInternalCommandInfoBridge,
+      'InternalCommandConfig': _createInternalCommandConfigBridge,
+      'InternalCommandResult': _createInternalCommandResultBridge,
+      'InternalCommandExecutor': _createInternalCommandExecutorBridge,
+      'ActionCounterManager': _createActionCounterManagerBridge,
+      'TomCliConfig': _createTomCliConfigBridge,
+      'TomCliResult': _createTomCliResultBridge,
+      'TomCli': _createTomCliBridge,
+      'VersionBumper': _createVersionBumperBridge,
+      'VersionBumpResult': _createVersionBumpResultBridge,
+      'WorkspaceDiscoveryResult': _createWorkspaceDiscoveryResultBridge,
+      'WorkspaceContext': _createWorkspaceContextBridge,
+      'MasterGenerationSummary': _createMasterGenerationSummaryBridge,
+      'WorkspaceContextException': _createWorkspaceContextExceptionBridge,
+      'ConfigLoader': _createConfigLoaderBridge,
+      'ConfigLoadException': _createConfigLoadExceptionBridge,
+      'ConfigMerger': _createConfigMergerBridge,
+      'ValidationResult': _createValidationResultBridge,
+      'ConfigValidationError': _createConfigValidationErrorBridge,
+      'ConfigValidator': _createConfigValidatorBridge,
+      'ActionExecutorConfig': _createActionExecutorConfigBridge,
+      'ActionExecutionResult': _createActionExecutionResultBridge,
+      'ActionExecutor': _createActionExecutorBridge,
+      'CommandResult': _createCommandResultBridge,
+      'CommandRunner': _createCommandRunnerBridge,
+      'D4rtResult': _createD4rtResultBridge,
+      'D4rtRunnerConfig': _createD4rtRunnerConfigBridge,
+      'D4rtRunner': _createD4rtRunnerBridge,
+      'AnsiColors': _createAnsiColorsBridge,
+      'OutputFormatterConfig': _createOutputFormatterConfigBridge,
+      'ErrorMessage': _createErrorMessageBridge,
+      'ProgressIndicator': _createProgressIndicatorBridge,
+      'OutputFormatter': _createOutputFormatterBridge,
+      'BuildOrderProject': _createBuildOrderProjectBridge,
+      'BuildOrderResult': _createBuildOrderResultBridge,
+      'CircularDependencyException': _createCircularDependencyExceptionBridge,
+      'BuildOrderCalculator': _createBuildOrderCalculatorBridge,
+      'GeneratorResult': _createGeneratorResultBridge,
+      'GeneratorResolutionException': _createGeneratorResolutionExceptionBridge,
+      'GeneratorPlaceholderResolver': _createGeneratorPlaceholderResolverBridge,
+      'MasterGeneratorConfig': _createMasterGeneratorConfigBridge,
+      'MasterGenerationResult': _createMasterGenerationResultBridge,
+      'MasterGenerator': _createMasterGeneratorBridge,
+      'PlaceholderResult': _createPlaceholderResultBridge,
+      'GeneratorPlaceholderException': _createGeneratorPlaceholderExceptionBridge,
+      'PlaceholderResolver': _createPlaceholderResolverBridge,
+      'ModeProcessor': _createModeProcessorBridge,
+      'ModeResolver': _createModeResolverBridge,
+      'ResolvedModes': _createResolvedModesBridge,
+      'TomplateParser': _createTomplateParserBridge,
+      'TomplateFile': _createTomplateFileBridge,
+      'PlaceholderInfo': _createPlaceholderInfoBridge,
+      'TomplateProcessor': _createTomplateProcessorBridge,
+      'TomplateResult': _createTomplateResultBridge,
+      'PlaceholderResolutionException': _createPlaceholderResolutionExceptionBridge,
+      'ToolPrefix': _createToolPrefixBridge,
+      'CliArgs': _createCliArgsBridge,
+      'PipelineDefinition': _createPipelineDefinitionBridge,
+      'PipelineResult': _createPipelineResultBridge,
+      'PipelineLoader': _createPipelineLoaderBridge,
+      'PipelineRunner': _createPipelineRunnerBridge,
+      'PackageInfo': _createPackageInfoBridge,
+      'TomPlaceholderResolver': _createTomPlaceholderResolverBridge,
+      'ParsedCommand': _createParsedCommandBridge,
+      'ParsedTomCommand': _createParsedTomCommandBridge,
+      'TomCommandParser': _createTomCommandParserBridge,
+      'TomRunResult': _createTomRunResultBridge,
+      'TomRunResults': _createTomRunResultsBridge,
+      'TomRunner': _createTomRunnerBridge,
+      'TemplateParser': _createTemplateParserBridge,
+      'ParsedTemplate': _createParsedTemplateBridge,
+      'TemplateSegment': _createTemplateSegmentBridge,
+      'TextSegment': _createTextSegmentBridge,
+      'ModeBlockGroup': _createModeBlockGroupBridge,
+      'ModeBlock': _createModeBlockBridge,
+      'WsPrepper': _createWsPrepperBridge,
+      'WsPrepperOptions': _createWsPrepperOptionsBridge,
+      'WsPrepperResult': _createWsPrepperResultBridge,
+      'PreparedTemplate': _createPreparedTemplateBridge,
+      'WsPrepperError': _createWsPrepperErrorBridge,
+      'TomD4rtRepl': _createTomD4rtReplBridge,
+      'TomVersionInfo': _createTomVersionInfoBridge,
+      'Tom': _createTomBridge,
+      'TomWorkspace': _createTomWorkspaceBridge,
+      'TomProject': _createTomProjectBridge,
+    };
+  }
+
+  /// Returns native [Type]s keyed by class name, parallel to
+  /// [bridgeClassThunks] (Step #17). Used to register the native-type
+  /// lookup thunk without building the BridgedClass.
+  static Map<String, Type> bridgeClassTypes() {
+    return {
+      'BridgeConfiguration': $tom_build_cli_1.BridgeConfiguration,
+      'BridgeModuleRegistry': $tom_build_cli_1.BridgeModuleRegistry,
+      'D4rtContextProvider': $tom_build_cli_3.D4rtContextProvider,
+      'ActionContextProvider': $tom_build_cli_3.ActionContextProvider,
+      'TemplateContextProvider': $tom_build_cli_3.TemplateContextProvider,
+      'StandaloneContextProvider': $tom_build_cli_3.StandaloneContextProvider,
+      'CompositeContextProvider': $tom_build_cli_3.CompositeContextProvider,
+      'D4rtContextProviderDefaults': $tom_build_cli_3.D4rtContextProviderDefaults,
+      'D4rtGlobals': $tom_build_cli_4.D4rtGlobals,
+      'D4rtInstance': $tom_build_cli_5.D4rtInstance,
+      'ActionD4rtContext': $tom_build_cli_5.ActionD4rtContext,
+      'ParsedArguments': $tom_build_cli_6.ParsedArguments,
+      'ActionInvocation': $tom_build_cli_6.ActionInvocation,
+      'ArgumentParser': $tom_build_cli_6.ArgumentParser,
+      'GitHelper': $tom_build_cli_7.GitHelper,
+      'InternalCommands': $tom_build_cli_8.InternalCommands,
+      'InternalCommandInfo': $tom_build_cli_8.InternalCommandInfo,
+      'InternalCommandConfig': $tom_build_cli_8.InternalCommandConfig,
+      'InternalCommandResult': $tom_build_cli_8.InternalCommandResult,
+      'InternalCommandExecutor': $tom_build_cli_8.InternalCommandExecutor,
+      'ActionCounterManager': $tom_build_cli_8.ActionCounterManager,
+      'TomCliConfig': $tom_build_cli_9.TomCliConfig,
+      'TomCliResult': $tom_build_cli_9.TomCliResult,
+      'TomCli': $tom_build_cli_9.TomCli,
+      'VersionBumper': $tom_build_cli_10.VersionBumper,
+      'VersionBumpResult': $tom_build_cli_10.VersionBumpResult,
+      'WorkspaceDiscoveryResult': $tom_build_cli_11.WorkspaceDiscoveryResult,
+      'WorkspaceContext': $tom_build_cli_11.WorkspaceContext,
+      'MasterGenerationSummary': $tom_build_cli_11.MasterGenerationSummary,
+      'WorkspaceContextException': $tom_build_cli_11.WorkspaceContextException,
+      'ConfigLoader': $tom_build_cli_12.ConfigLoader,
+      'ConfigLoadException': $tom_build_cli_12.ConfigLoadException,
+      'ConfigMerger': $tom_build_cli_13.ConfigMerger,
+      'ValidationResult': $tom_build_cli_14.ValidationResult,
+      'ConfigValidationError': $tom_build_cli_14.ConfigValidationError,
+      'ConfigValidator': $tom_build_cli_14.ConfigValidator,
+      'ActionExecutorConfig': $tom_build_cli_15.ActionExecutorConfig,
+      'ActionExecutionResult': $tom_build_cli_15.ActionExecutionResult,
+      'ActionExecutor': $tom_build_cli_15.ActionExecutor,
+      'CommandResult': $tom_build_cli_16.CommandResult,
+      'CommandRunner': $tom_build_cli_16.CommandRunner,
+      'D4rtResult': $tom_build_cli_17.D4rtResult,
+      'D4rtRunnerConfig': $tom_build_cli_17.D4rtRunnerConfig,
+      'D4rtRunner': $tom_build_cli_17.D4rtRunner,
+      'AnsiColors': $tom_build_cli_18.AnsiColors,
+      'OutputFormatterConfig': $tom_build_cli_18.OutputFormatterConfig,
+      'ErrorMessage': $tom_build_cli_18.ErrorMessage,
+      'ProgressIndicator': $tom_build_cli_18.ProgressIndicator,
+      'OutputFormatter': $tom_build_cli_18.OutputFormatter,
+      'BuildOrderProject': $tom_build_cli_19.BuildOrderProject,
+      'BuildOrderResult': $tom_build_cli_19.BuildOrderResult,
+      'CircularDependencyException': $tom_build_cli_19.CircularDependencyException,
+      'BuildOrderCalculator': $tom_build_cli_19.BuildOrderCalculator,
+      'GeneratorResult': $tom_build_cli_20.GeneratorResult,
+      'GeneratorResolutionException': $tom_build_cli_20.GeneratorResolutionException,
+      'GeneratorPlaceholderResolver': $tom_build_cli_20.GeneratorPlaceholderResolver,
+      'MasterGeneratorConfig': $tom_build_cli_21.MasterGeneratorConfig,
+      'MasterGenerationResult': $tom_build_cli_21.MasterGenerationResult,
+      'MasterGenerator': $tom_build_cli_21.MasterGenerator,
+      'PlaceholderResult': $tom_build_cli_22.PlaceholderResult,
+      'GeneratorPlaceholderException': $tom_build_cli_22.GeneratorPlaceholderException,
+      'PlaceholderResolver': $tom_build_cli_22.PlaceholderResolver,
+      'ModeProcessor': $tom_build_cli_23.ModeProcessor,
+      'ModeResolver': $tom_build_cli_24.ModeResolver,
+      'ResolvedModes': $tom_build_cli_24.ResolvedModes,
+      'TomplateParser': $tom_build_cli_25.TomplateParser,
+      'TomplateFile': $tom_build_cli_25.TomplateFile,
+      'PlaceholderInfo': $tom_build_cli_25.PlaceholderInfo,
+      'TomplateProcessor': $tom_build_cli_26.TomplateProcessor,
+      'TomplateResult': $tom_build_cli_26.TomplateResult,
+      'PlaceholderResolutionException': $tom_build_cli_26.PlaceholderResolutionException,
+      'ToolPrefix': $tom_build_cli_31.ToolPrefix,
+      'CliArgs': $tom_build_cli_31.CliArgs,
+      'PipelineDefinition': $tom_build_cli_32.PipelineDefinition,
+      'PipelineResult': $tom_build_cli_32.PipelineResult,
+      'PipelineLoader': $tom_build_cli_32.PipelineLoader,
+      'PipelineRunner': $tom_build_cli_32.PipelineRunner,
+      'PackageInfo': $tom_build_cli_33.PackageInfo,
+      'TomPlaceholderResolver': $tom_build_cli_33.TomPlaceholderResolver,
+      'ParsedCommand': $tom_build_cli_34.ParsedCommand,
+      'ParsedTomCommand': $tom_build_cli_34.ParsedTomCommand,
+      'TomCommandParser': $tom_build_cli_34.TomCommandParser,
+      'TomRunResult': $tom_build_cli_35.TomRunResult,
+      'TomRunResults': $tom_build_cli_35.TomRunResults,
+      'TomRunner': $tom_build_cli_35.TomRunner,
+      'TemplateParser': $tom_build_cli_36.TemplateParser,
+      'ParsedTemplate': $tom_build_cli_36.ParsedTemplate,
+      'TemplateSegment': $tom_build_cli_36.TemplateSegment,
+      'TextSegment': $tom_build_cli_36.TextSegment,
+      'ModeBlockGroup': $tom_build_cli_36.ModeBlockGroup,
+      'ModeBlock': $tom_build_cli_36.ModeBlock,
+      'WsPrepper': $tom_build_cli_37.WsPrepper,
+      'WsPrepperOptions': $tom_build_cli_37.WsPrepperOptions,
+      'WsPrepperResult': $tom_build_cli_37.WsPrepperResult,
+      'PreparedTemplate': $tom_build_cli_37.PreparedTemplate,
+      'WsPrepperError': $tom_build_cli_37.WsPrepperError,
+      'TomD4rtRepl': $tom_build_cli_29.TomD4rtRepl,
+      'TomVersionInfo': $tom_build_cli_30.TomVersionInfo,
+      'Tom': $tom_build_cli_27.Tom,
+      'TomWorkspace': $tom_build_1.TomWorkspace,
+      'TomProject': $tom_build_1.TomProject,
+    };
   }
 
   /// Returns a map of class names to their canonical source URIs.
@@ -283,7 +506,7 @@ class TomBuildCliBridge {
   /// Fed to `BridgedClass.registerSupertypes` so interpreted subclasses
   /// of bridged classes pass `is`/subtype checks against bridged
   /// ancestors and the interface-proxy supertype walk resolves up the
-  /// chain (MCI#1 / A1).
+  /// chain.
   static Map<String, List<String>> classSupertypes() {
     return {
       'ActionContextProvider': ['D4rtContextProvider', 'D4rtContextProviderDefaults'],
@@ -488,14 +711,23 @@ class TomBuildCliBridge {
   /// [importPath] is the package import path that D4rt scripts will use
   /// to access these classes (e.g., 'package:tom_build/tom.dart').
   static void registerBridges(D4rt interpreter, String importPath) {
-    // Register bridged classes with source URIs for deduplication
-    final classes = bridgeClasses();
+    // Step #17 — register deferred factory thunks (not pre-built
+    // BridgedClass objects): a script touching N of the M classes
+    // materializes ≈N (each thunk builds its class on first resolve).
+    final classThunks = bridgeClassThunks();
+    final classTypes = bridgeClassTypes();
     final classSources = classSourceUris();
-    for (final bridge in classes) {
-      interpreter.registerBridgedClass(bridge, importPath, sourceUri: classSources[bridge.name]);
+    for (final entry in classThunks.entries) {
+      interpreter.registerBridgedClassLazy(
+        entry.key,
+        classTypes[entry.key]!,
+        entry.value,
+        importPath,
+        sourceUri: classSources[entry.key],
+      );
     }
 
-    // MCI#1 / A1: Register the flattened native supertype table so
+    // Register the flattened native supertype table so
     // interpreted subclasses pass subtype checks against bridged
     // ancestors. Idempotent — safe to call per barrel.
     BridgedClass.registerSupertypes(classSupertypes());
