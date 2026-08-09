@@ -63,6 +63,69 @@ void main() {
       api.close();
     });
 
+    test(
+        'GH-ERR-3b: a secondary rate limit is its own exception, not an '
+        'authorization failure [0809]', () async {
+      // The headers are byte-for-byte an authorization failure — the primary
+      // quota is untouched — so the body message is the only signal. Calling
+      // it `GitHubAuthException` sent a caller looking at its token for
+      // something that was in fact "you are going too fast".
+      final mockClient = createMockClient({
+        'POST /repos/owner/repo/issues': MockResponse.withRateLimit(
+          403,
+          createErrorJson(
+            message: 'You have exceeded a secondary rate limit. '
+                'Please wait a few minutes before trying again.',
+          ),
+          remaining: 4321,
+        ),
+      });
+      final api = GitHubApiClient(
+        token: 'test-token',
+        httpClient: mockClient,
+        retryPolicy: GitHubRetryPolicy.none,
+      );
+      addTearDown(api.close);
+
+      await expectLater(
+        api.createIssue(owner: 'owner', repo: 'repo', title: 't'),
+        throwsA(isA<GitHubSecondaryRateLimitException>()
+            .having((e) => e.blockedFromContentCreation, 'blocked', isFalse)),
+      );
+    });
+
+    test(
+        'GH-ERR-3c: the content-creation block is distinguished from the '
+        'ordinary secondary limit [0809]', () async {
+      // Measured: the ordinary limit clears in about a minute, while the
+      // abuse-detection block was still in force fifteen minutes later. A
+      // caller that cannot tell them apart either gives up too early on the
+      // first or waits pointlessly on the second.
+      final mockClient = createMockClient({
+        'POST /repos/owner/repo/issues': MockResponse.withRateLimit(
+          403,
+          createErrorJson(
+            message: 'You have exceeded a secondary rate limit and have been '
+                'temporarily blocked from content creation. Please retry your '
+                'request again later.',
+          ),
+          remaining: 4321,
+        ),
+      });
+      final api = GitHubApiClient(
+        token: 'test-token',
+        httpClient: mockClient,
+        retryPolicy: GitHubRetryPolicy.none,
+      );
+      addTearDown(api.close);
+
+      await expectLater(
+        api.createIssue(owner: 'owner', repo: 'repo', title: 't'),
+        throwsA(isA<GitHubSecondaryRateLimitException>()
+            .having((e) => e.blockedFromContentCreation, 'blocked', isTrue)),
+      );
+    });
+
     test('GH-ERR-4: 404 throws GitHubNotFoundException [2026-02-13 10:00]', () async {
       final mockClient = createMockClient({
         'GET /repos/owner/repo/issues/999': MockResponse(

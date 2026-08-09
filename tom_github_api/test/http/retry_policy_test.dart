@@ -8,8 +8,40 @@ import '../helpers/mock_http_client.dart';
 int _resetIn(Duration offset) =>
     (DateTime.now().toUtc().add(offset).millisecondsSinceEpoch / 1000).round();
 
-http.Response _response(int status, Map<String, String> headers) =>
-    http.Response('{}', status, headers: headers);
+http.Response _response(int status, Map<String, String> headers,
+        {String body = '{}'}) =>
+    http.Response(body, status, headers: headers);
+
+/// The body GitHub sends when a *secondary* rate limit trips. The message is
+/// the only signal: the headers are indistinguishable from an authorization
+/// failure, because the primary quota is untouched.
+const _secondaryBody = '{"message":"You have exceeded a secondary rate limit. '
+    'Please wait a few minutes before trying again.",'
+    '"documentation_url":"https://docs.github.com/rest/overview/'
+    'rate-limits-for-the-rest-api"}';
+
+/// A client whose issue-creation endpoint always succeeds, so the only thing
+/// left to observe is what it asked to wait for.
+GitHubApiClient _issueClient(
+  List<Duration> slept, {
+  Duration interval = const Duration(seconds: 1),
+}) =>
+    GitHubApiClient(
+      token: 'test',
+      httpClient: createMockClient({
+        'POST /repos/o/r/issues': MockResponse(201, {
+          'number': 7,
+          'title': 'Webwork section',
+          'state': 'open',
+          'user': {'login': 'webwork', 'id': 1},
+          'created_at': '2026-08-09T09:00:00Z',
+          'updated_at': '2026-08-09T09:00:00Z',
+          'html_url': 'https://github.com/o/r/issues/7',
+        }),
+      }),
+      retryPolicy: GitHubRetryPolicy(sleep: (d) async => slept.add(d)),
+      minMutativeInterval: interval,
+    );
 
 void main() {
   group('GitHubRetryPolicy.delayFor', () {
@@ -42,6 +74,105 @@ void main() {
         1,
       );
       expect(delay, isNull);
+    });
+
+    test('backs off on a secondary rate limit that sends no retry-after', () {
+      // The case a large issue flush actually meets. GitHub's secondary limits
+      // (~80 content-creating requests/minute) frequently answer without a
+      // `retry-after`, and the headers are then identical to an authorization
+      // failure — so without reading the body this is a refusal, and D11 §7.3
+      // propagates a refusal instead of waiting it out.
+      expect(
+        policy.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321'},
+              body: _secondaryBody),
+          1,
+        ),
+        const Duration(seconds: 60),
+      );
+      expect(
+        policy.delayFor(
+          _response(429, {'x-ratelimit-remaining': '4321'},
+              body: _secondaryBody),
+          2,
+        ),
+        const Duration(seconds: 120),
+      );
+    });
+
+    test('prefers an explicit retry-after over the secondary default', () {
+      expect(
+        policy.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321', 'retry-after': '5'},
+              body: _secondaryBody),
+          1,
+        ),
+        const Duration(seconds: 5),
+      );
+    });
+
+    test('waits a secondary limit out past the general maxDelay ceiling', () {
+      // 60 s doubling reaches 240 s on the third attempt — past `maxDelay`,
+      // but a secondary limit has a ceiling of its own. The two situations are
+      // not alike: a primary reset an hour out is something the caller may want
+      // to hear about, whereas a secondary limit clears on its own and there is
+      // nothing better to do than wait. Measured against a real repository, a
+      // 50-section create-flush was still blocked after the three minutes the
+      // general ceiling allowed, and the flush failed for want of patience.
+      expect(
+        policy.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321'},
+              body: _secondaryBody),
+          3,
+        ),
+        const Duration(seconds: 240),
+      );
+    });
+
+    test('gives up once a secondary wait passes maxSecondaryDelay', () {
+      const impatient =
+          GitHubRetryPolicy(maxSecondaryDelay: Duration(minutes: 2));
+      expect(
+        impatient.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321'},
+              body: _secondaryBody),
+          3,
+        ),
+        isNull,
+      );
+    });
+
+    test('does not wait out a content-creation block — waiting is futile', () {
+      // Two different 403s hide behind the same "secondary rate limit"
+      // wording. The ordinary one clears in about a minute and is worth
+      // waiting for. The abuse-detection block — "temporarily blocked from
+      // content creation" — was measured still in force fifteen minutes after
+      // an unpaced burst earned it, so spending the whole seven-minute
+      // secondary budget on it only delays the refusal the caller is going to
+      // get anyway. D11 §7.3 journals the work; the user is better told now.
+      expect(
+        policy.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321'},
+              body: '{"message":"You have exceeded a secondary rate limit and '
+                  'have been temporarily blocked from content creation. '
+                  'Please retry your request again later."}'),
+          1,
+        ),
+        isNull,
+      );
+    });
+
+    test('reads the secondary signal out of a non-JSON body too', () {
+      // GitHub occasionally answers with an HTML error page. Parsing the body
+      // as JSON first would turn the one recoverable case into a refusal.
+      expect(
+        policy.delayFor(
+          _response(403, const {},
+              body: '<html>You have exceeded a secondary rate limit.</html>'),
+          1,
+        ),
+        const Duration(seconds: 60),
+      );
     });
 
     test('backs off exponentially on 5xx', () {
@@ -103,6 +234,117 @@ void main() {
       final ref = await client.git.getRef(owner: 'o', repo: 'r', ref: 'heads/main');
       expect(ref.sha, 'abc123');
       expect(slept, [const Duration(seconds: 1)]);
+    });
+
+    test('waits out a secondary rate limit on the *issues* endpoints', () async {
+      // The retry lives on the one `_send` every verb funnels through, so it
+      // covers the issues API exactly as it covers git data. Asserted rather
+      // than assumed because the two are reached through different API
+      // objects, and "the retry policy only governs git data" is a plausible
+      // enough reading of the code to be worth closing.
+      final slept = <Duration>[];
+      final client = GitHubApiClient(
+        token: 'test',
+        httpClient: createMockClient(
+          const {},
+          sequences: {
+            'POST /repos/o/r/issues': [
+              MockResponse(
+                403,
+                {'message': 'You have exceeded a secondary rate limit.'},
+                headers: const {'x-ratelimit-remaining': '4321'},
+              ),
+              MockResponse(201, {
+                'number': 7,
+                'title': 'Webwork section',
+                'state': 'open',
+                'user': {'login': 'webwork', 'id': 1},
+                'created_at': '2026-08-09T09:00:00Z',
+                'updated_at': '2026-08-09T09:00:00Z',
+                'html_url': 'https://github.com/o/r/issues/7',
+              }),
+            ],
+          },
+        ),
+        retryPolicy: GitHubRetryPolicy(sleep: (d) async => slept.add(d)),
+      );
+      addTearDown(client.close);
+
+      final issue =
+          await client.createIssue(owner: 'o', repo: 'r', title: 'Webwork section');
+      expect(issue.number, 7);
+      expect(slept, [const Duration(seconds: 60)]);
+    });
+
+    test('paces successive mutations by minMutativeInterval', () async {
+      // GitHub's own guidance, and the cheapest way to avoid the secondary
+      // limit that a create-flush otherwise earns: at least a second between
+      // content-changing requests. Asserted on the *requested* wait rather
+      // than on elapsed time — the injected sleep does not advance the clock,
+      // which is exactly why each of the three POSTs asks for its own gap.
+      final slept = <Duration>[];
+      final client = _issueClient(slept);
+      addTearDown(client.close);
+
+      for (var i = 0; i < 3; i++) {
+        await client.createIssue(owner: 'o', repo: 'r', title: 'section $i');
+      }
+
+      expect(slept, hasLength(2));
+      for (final wait in slept) {
+        expect(wait.inMilliseconds, inInclusiveRange(900, 1000));
+      }
+    });
+
+    test('serialises mutations started in the same tick', () async {
+      // The other half of GitHub's rule — "and do not make them concurrently".
+      // Three unawaited creates that raced would each find no previous
+      // mutation and so ask for no gap at all; queued, the second and third
+      // each pay one. The sleep count is the observable difference.
+      final slept = <Duration>[];
+      final client = _issueClient(slept);
+      addTearDown(client.close);
+
+      await Future.wait([
+        for (var i = 0; i < 3; i++)
+          client.createIssue(owner: 'o', repo: 'r', title: 'section $i'),
+      ]);
+
+      expect(slept, hasLength(2));
+    });
+
+    test('does not pace reads — only mutations earn the secondary limit',
+        () async {
+      final slept = <Duration>[];
+      final client = GitHubApiClient(
+        token: 'test',
+        httpClient: createMockClient({
+          'GET /repos/o/r/git/ref/heads/main': MockResponse(200, {
+            'ref': 'refs/heads/main',
+            'object': {'sha': 'abc123'},
+          }),
+        }),
+        retryPolicy: GitHubRetryPolicy(sleep: (d) async => slept.add(d)),
+      );
+      addTearDown(client.close);
+
+      for (var i = 0; i < 3; i++) {
+        await client.git.getRef(owner: 'o', repo: 'r', ref: 'heads/main');
+      }
+
+      expect(slept, isEmpty);
+    });
+
+    test('Duration.zero disables the pacing entirely', () async {
+      final slept = <Duration>[];
+      final client = _issueClient(slept, interval: Duration.zero);
+      addTearDown(client.close);
+
+      for (var i = 0; i < 3; i++) {
+        await client.createIssue(owner: 'o', repo: 'r', title: 'section $i');
+      }
+
+      expect(slept, isEmpty);
     });
 
     test('surfaces the error once the policy stops retrying', () async {

@@ -41,16 +41,23 @@ class GitHubApiClient {
   /// [contents], when several files must change in one commit.
   late final GitHubGitApi git = GitHubGitApi(_http);
 
+  /// [minMutativeInterval] is the smallest gap this client leaves between two
+  /// content-changing requests; it also serialises them. See
+  /// [GitHubHttpClient.minMutativeInterval] — the short version is that it is
+  /// GitHub's own rule, and that observing it is what keeps a large flush from
+  /// earning a secondary-limit block it then has to wait out.
   GitHubApiClient({
     required String token,
     http.Client? httpClient,
     String baseUrl = 'https://api.github.com',
     GitHubRetryPolicy retryPolicy = const GitHubRetryPolicy(),
+    Duration minMutativeInterval = const Duration(seconds: 1),
   }) : _http = GitHubHttpClient(
           token: token,
           httpClient: httpClient ?? http.Client(),
           baseUrl: baseUrl,
           retryPolicy: retryPolicy,
+          minMutativeInterval: minMutativeInterval,
         );
 
   /// Rate limit info from the most recent API call.
