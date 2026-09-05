@@ -88,6 +88,8 @@ class GitHubException implements Exception {
           documentationUrl: docUrl,
           responseBody: body,
           kind: kind,
+          retryAfter:
+              GitHubSecondaryRateLimitException.retryAfterOf(headers),
         );
       }
     }
@@ -178,12 +180,24 @@ class GitHubValidationException extends GitHubException {
 /// not "you may not do this".
 ///
 /// Separate from [GitHubRateLimitException] because the primary quota is
-/// untouched: there is no reset time to wait for, and the recovery is
-/// different. Separate from [GitHubAuthException] because a caller told its
-/// token was refused will go and check the token, which is the one thing that
-/// is not wrong here.
+/// untouched: the wait is stated differently when it is stated at all, and the
+/// recovery is different. Separate from [GitHubAuthException] because a caller
+/// told its token was refused will go and check the token, which is the one
+/// thing that is not wrong here.
 class GitHubSecondaryRateLimitException extends GitHubException {
   final GitHubSecondaryLimitKind kind;
+
+  /// The wait GitHub asked for in `Retry-After`, or null when it asked for
+  /// none.
+  ///
+  /// Null is a real answer and not a missing one: GitHub states this header on
+  /// some secondary refusals and omits it on others, and the difference matters
+  /// to a caller. A stated wait is the backend's own instruction and is obeyed;
+  /// an absent one leaves the caller to choose a wait of its own, which it may
+  /// then describe as its own choice rather than as GitHub's. Nothing is
+  /// invented here to spare callers that distinction — a fabricated instruction
+  /// is indistinguishable from a real one exactly where it does the most harm.
+  final Duration? retryAfter;
 
   const GitHubSecondaryRateLimitException({
     required super.statusCode,
@@ -191,7 +205,25 @@ class GitHubSecondaryRateLimitException extends GitHubException {
     super.documentationUrl,
     super.responseBody,
     required this.kind,
+    this.retryAfter,
   });
+
+  /// The `Retry-After` wait in [headers], or null when there is none.
+  ///
+  /// Seconds only. RFC 9110 also permits an HTTP-date, but GitHub sends
+  /// seconds, and a date misread as a second count would produce a wait of
+  /// absurd length from a response that looked ordinary. Treating an
+  /// unrecognised value as absent falls back to the caller's own conservative
+  /// wait, which is wrong by minutes rather than by years.
+  ///
+  /// Shared by [GitHubException.fromResponse] and [GitHubRetryPolicy] so the
+  /// in-request retry and the exception a caller finally sees cannot disagree
+  /// about how long GitHub asked them to wait.
+  static Duration? retryAfterOf(Map<String, String>? headers) {
+    final seconds = int.tryParse(headers?['retry-after'] ?? '');
+    if (seconds == null || seconds < 0) return null;
+    return Duration(seconds: seconds);
+  }
 
   /// Whether GitHub's abuse detection has blocked content creation outright,
   /// rather than merely throttling it. Measured: the throttle clears in about
@@ -202,7 +234,9 @@ class GitHubSecondaryRateLimitException extends GitHubException {
 
   @override
   String toString() => 'GitHubSecondaryRateLimitException($statusCode): '
-      '$message${blockedFromContentCreation ? ' [content creation blocked]' : ''}';
+      '$message'
+      '${retryAfter == null ? '' : ' [retry after ${retryAfter!.inSeconds}s]'}'
+      '${blockedFromContentCreation ? ' [content creation blocked]' : ''}';
 }
 
 /// 403 Rate Limit Exceeded.

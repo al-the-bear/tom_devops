@@ -43,9 +43,20 @@ GitHubApiClient _issueClient(
       minMutativeInterval: interval,
     );
 
+/// A pinned jitter sample. `0` adds nothing, so a wait comes out exactly as
+/// the policy chose it.
+double _noJitter() => 0;
+
+/// The largest sample the source can return, so a spread is at its widest.
+double _fullJitter() => 1;
+
 void main() {
   group('GitHubRetryPolicy.delayFor', () {
-    const policy = GitHubRetryPolicy();
+    // Jitter off, so each test below asserts the wait it is *about* rather
+    // than that wait plus a random spread. Which wait is chosen and how far it
+    // is then spread are two claims, and mixing them would leave neither
+    // provable; the spread has its own group at the end of this file.
+    const policy = GitHubRetryPolicy(jitter: _noJitter);
 
     test('waits until reset when the primary rate limit is exhausted', () {
       final delay = policy.delayFor(
@@ -266,7 +277,10 @@ void main() {
             ],
           },
         ),
-        retryPolicy: GitHubRetryPolicy(sleep: (d) async => slept.add(d)),
+        retryPolicy: GitHubRetryPolicy(
+          jitter: _noJitter,
+          sleep: (d) async => slept.add(d),
+        ),
       );
       addTearDown(client.close);
 
@@ -364,6 +378,122 @@ void main() {
       expect(
         () => client.git.getRef(owner: 'o', repo: 'r', ref: 'heads/main'),
         throwsA(isA<GitHubException>()),
+      );
+    });
+  });
+
+  group('secondary-limit jitter', () {
+    const spread = GitHubRetryPolicy(jitter: _fullJitter);
+
+    test('spreads a secondary backoff so a fleet does not retry in lockstep',
+        () {
+      // A secondary limit is the one failure several clients meet at the same
+      // instant for the same reason — it is earned by the account's aggregate
+      // request rate. Identical inputs then produce identical waits, and the
+      // synchronised retry re-earns the limit with the same burst that earned
+      // it. At the widest sample the 60 s backoff becomes 75 s; what matters is
+      // that two clients drawing different samples land at different instants.
+      expect(
+        spread.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321'},
+              body: _secondaryBody),
+          1,
+        ),
+        const Duration(seconds: 75),
+      );
+    });
+
+    test('spreads a retry-after too — GitHub states it to every client alike',
+        () {
+      expect(
+        spread.delayFor(
+          _response(429, {'x-ratelimit-remaining': '4321', 'retry-after': '20'}),
+          1,
+        ),
+        const Duration(seconds: 25),
+      );
+    });
+
+    test('never shortens a wait, at any sample', () {
+      // The waits jitter is applied to are floors, not estimates: a
+      // `Retry-After` is GitHub's own instruction, and the fallback backoff is
+      // already the shortest wait believed to clear the limit. A jitter that
+      // subtracted would move clients to *before* the limit lifts — turning
+      // de-synchronisation into a guaranteed second refusal for every client it
+      // moved earlier.
+      const unjittered = GitHubRetryPolicy(jitter: _noJitter);
+      for (final sample in [0.0, 0.01, 0.5, 0.99, 1.0]) {
+        final policy = GitHubRetryPolicy(jitter: () => sample);
+        for (var attempt = 1; attempt <= 3; attempt++) {
+          final base = unjittered.delayFor(
+            _response(403, {'x-ratelimit-remaining': '4321'},
+                body: _secondaryBody),
+            attempt,
+          );
+          final spreadDelay = policy.delayFor(
+            _response(403, {'x-ratelimit-remaining': '4321'},
+                body: _secondaryBody),
+            attempt,
+          );
+          expect(spreadDelay, isNotNull);
+          expect(spreadDelay!, greaterThanOrEqualTo(base!));
+        }
+      }
+    });
+
+    test('clamps a spread that overshoots the ceiling rather than refusing it',
+        () {
+      // The ceiling has already been consulted about the unspread wait, so a
+      // spread that overshoots means "wait the maximum" — never "give up on a
+      // wait that was acceptable a line ago". 240 s is inside a 250 s ceiling;
+      // spread it and it would reach 300 s.
+      const tight = GitHubRetryPolicy(
+        jitter: _fullJitter,
+        maxSecondaryDelay: Duration(seconds: 250),
+      );
+      expect(
+        tight.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321'},
+              body: _secondaryBody),
+          3,
+        ),
+        const Duration(seconds: 250),
+      );
+    });
+
+    test('leaves the primary limit alone — its reset is a fact, not a guess',
+        () {
+      // Jitter exists for a wait that is a guess about a shared resource. A
+      // primary reset is a stated instant after which quota genuinely exists,
+      // so every client arriving at it together is harmless — and spreading it
+      // would only make each of them wait longer than GitHub asked.
+      final delay = spread.delayFor(
+        _response(403, {
+          'x-ratelimit-remaining': '0',
+          'x-ratelimit-reset': '${_resetIn(const Duration(seconds: 30))}',
+        }),
+        1,
+      );
+      expect(delay, isNotNull);
+      expect(delay!.inSeconds, inInclusiveRange(25, 31));
+    });
+
+    test('leaves transient 5xx backoff alone', () {
+      // A 5xx is one server's problem, not the account's rate — clients that
+      // meet it meet it independently, so there is no lockstep to break.
+      expect(spread.delayFor(_response(500, {}), 1), const Duration(seconds: 1));
+      expect(spread.delayFor(_response(503, {}), 3), const Duration(seconds: 4));
+    });
+
+    test('jitterFraction: 0 disables the spread entirely', () {
+      const none = GitHubRetryPolicy(jitterFraction: 0, jitter: _fullJitter);
+      expect(
+        none.delayFor(
+          _response(403, {'x-ratelimit-remaining': '4321'},
+              body: _secondaryBody),
+          1,
+        ),
+        const Duration(seconds: 60),
       );
     });
   });
