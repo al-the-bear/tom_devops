@@ -8,6 +8,8 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
+import '../scan_exclusions.dart';
+
 /// Configuration options for the workspace analyzer.
 class AnalyzerOptions {
   /// Whether to include test projects (those starting with 'zom_').
@@ -374,14 +376,7 @@ class WorkspaceAnalyzer {
         final dirPath = entity.path;
         final dirName = path.basename(dirPath);
 
-        // Skip hidden directories and common non-project folders
-        if (dirName.startsWith('.') ||
-            dirName == 'build' ||
-            dirName == 'node_modules' ||
-            dirName == 'out' ||
-            dirName == 'dist') {
-          continue;
-        }
+        if (isScanExcludedDirectory(dirName)) continue;
 
         // Skip test projects if not included
         if (!_shouldIncludeProject(dirName)) {
@@ -474,14 +469,7 @@ class WorkspaceAnalyzer {
         final dirPath = entity.path;
         final dirName = path.basename(dirPath);
 
-        // Skip hidden directories and common non-project folders
-        if (dirName.startsWith('.') ||
-            dirName == 'build' ||
-            dirName == 'node_modules' ||
-            dirName == 'out' ||
-            dirName == 'dist') {
-          continue;
-        }
+        if (isScanExcludedDirectory(dirName)) continue;
 
         // Skip test projects if not included
         if (!_shouldIncludeProject(dirName)) {
@@ -1129,10 +1117,7 @@ class WorkspaceAnalyzer {
     await for (final entity in moduleDir.list()) {
       if (entity is Directory) {
         final subfolderName = path.basename(entity.path);
-        if (subfolderName.startsWith('.') || 
-            subfolderName == 'node_modules' ||
-            subfolderName == 'out' ||
-            subfolderName == 'dist') continue;
+        if (isScanExcludedDirectory(subfolderName)) continue;
 
         final subfolder = await _analyzeModuleForExtension(entity.path, subfolderName, extension);
         subfolders.add(subfolder);
@@ -1172,10 +1157,7 @@ class WorkspaceAnalyzer {
     await for (final entity in srcDir.list()) {
       if (entity is Directory) {
         final partName = path.basename(entity.path);
-        if (partName.startsWith('.') || 
-            partName == 'node_modules' ||
-            partName == 'out' ||
-            partName == 'dist') continue;
+        if (isScanExcludedDirectory(partName)) continue;
 
         final part = await _analyzePartForExtension(entity.path, partName, '.ts');
         project.parts.add(part);
@@ -1208,9 +1190,7 @@ class WorkspaceAnalyzer {
     await for (final entity in srcDir.list()) {
       if (entity is Directory) {
         final partName = path.basename(entity.path);
-        if (partName.startsWith('.') || 
-            partName == 'node_modules' ||
-            partName == 'dist') continue;
+        if (isScanExcludedDirectory(partName)) continue;
 
         final part = await _analyzePartForExtension(entity.path, partName, '.js');
         project.parts.add(part);
@@ -1290,10 +1270,7 @@ class WorkspaceAnalyzer {
     await for (final entity in partDir.list()) {
       if (entity is Directory) {
         final moduleName = path.basename(entity.path);
-        if (moduleName.startsWith('.') ||
-            moduleName == 'node_modules' ||
-            moduleName == 'out' ||
-            moduleName == 'dist') continue;
+        if (isScanExcludedDirectory(moduleName)) continue;
 
         final module = await _analyzeModuleForExtension(entity.path, moduleName, extension);
         part.modules.add(module);

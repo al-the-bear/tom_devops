@@ -19,6 +19,7 @@ library;
 // ANALYZER
 // =============================================================================
 export 'src/analyzer/workspace_analyzer.dart';
+export 'src/scan_exclusions.dart';
 
 // =============================================================================
 // REFLECTION GENERATOR

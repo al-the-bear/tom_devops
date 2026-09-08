@@ -88,7 +88,8 @@ are resolved as workspace members.
 
 | Capability | Description |
 | ---------- | ----------- |
-| Project discovery | Recursively scans the workspace, skipping ignored folders, and identifies every Dart/Flutter project. |
+| Project discovery | Recursively scans the workspace and identifies every Dart/Flutter project. |
+| Scan exclusions | Never descends into generated output (`build`, `out`, `dist`, `node_modules`), hidden directories, or the workspace scratch directory `ztmp`. The set is `scanExcludedDirectories` in `lib/src/scan_exclusions.dart` — one list, asked by every scan site. |
 | Nature detection | Classifies each project (package, Flutter app, server, CLI tool, test project). |
 | Build-order resolution | Derives a dependency-respecting build order across all projects. |
 | Capability flags | Records which projects have tests, examples, reflection, build_runner, docker, assets. |

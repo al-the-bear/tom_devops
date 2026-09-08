@@ -12,6 +12,8 @@ import 'package:yaml/yaml.dart';
 
 import 'file_object_model.dart';
 
+import '../../scan_exclusions.dart';
+
 /// Parses a workspace directory and returns a [TomMaster] representing
 /// the complete workspace structure.
 class WorkspaceParser {
@@ -73,11 +75,11 @@ class WorkspaceParser {
       if (entity is Directory) {
         final dirName = p.basename(entity.path);
         
-        // Skip hidden directories and common non-project folders
-        if (dirName.startsWith('.') || 
+        // Generated output and scratch are excluded by the shared rule; this
+        // parser additionally skips `_`-prefixed folders (`_ai`, `_doc`) and
+        // `docs`, which are documentation rather than source.
+        if (isScanExcludedDirectory(dirName) ||
             dirName.startsWith('_') ||
-            dirName == 'node_modules' ||
-            dirName == 'build' ||
             dirName == 'docs') {
           continue;
         }
