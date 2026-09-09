@@ -4,6 +4,13 @@
 > Distributed under the terms in this package's license — see
 > [LICENSE](LICENSE).
 
+> **Status: placeholder.** This package is still the skeleton `dart create`
+> emits — `lib/tom_deploy_tools.dart` is a three-line `calculate()` stub and
+> `bin/tom_deploy_tools.dart` prints `Hello world`. No `deploykit` command is
+> built from it, and it has been removed from the workspace tool table
+> (`_copilot_guidelines/tool_dependencies.md`, "Retired tools"). The description
+> below is the intent, not the state.
+
 Command-line front end that drives Tom framework multi-cloud deployments.
 
 > **Status: reserved package.** `tom_deploy_tools` is the *intended* home for the
