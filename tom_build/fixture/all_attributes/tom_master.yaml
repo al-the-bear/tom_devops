@@ -164,6 +164,18 @@ projects:
     description: Second project
     build-after:
       - project_a
+    # DIFFERS from the workspace block above (macos-arm64, not linux-x64), so
+    # toYamlCompact must keep it. This is what makes the round-trip test's
+    # compaction tolerance load-bearing rather than a blanket key exemption:
+    # a writer that dropped `cross-compilation` unconditionally would lose this
+    # one, and the test would fail on it.
+    cross-compilation:
+      all-targets:
+        - macos-arm64
+      build-on:
+        macos-arm64:
+          targets:
+            - macos-arm64
     features:
       publishable: false
     pubspec-yaml:

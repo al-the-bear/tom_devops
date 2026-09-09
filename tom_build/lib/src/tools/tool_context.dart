@@ -367,13 +367,24 @@ class ToolContext {
     _instance = null;
   }
 
-  /// Finds the workspace root by looking for `.tom_metadata` directory.
+  /// Finds the workspace root by walking up for the metadata **file**.
+  ///
+  /// The test is the file, not the `.tom_metadata` directory. A directory is
+  /// not evidence of a workspace root: tools write their own state into one, so
+  /// a package can carry a `.tom_metadata/` holding nothing but a
+  /// `workspace_state.yaml`. `tom_build` itself does, from February — and that
+  /// stopped this walk four levels below the real root, after which [load]
+  /// reported the manifest missing and told the caller to run the analyzer
+  /// against a directory that is not a workspace. `test/scripting/
+  /// workspace_test.dart` failed in `setUpAll` for exactly that reason.
   static String _findWorkspaceRoot() {
     var current = Directory.current.path;
 
-    // Walk up the directory tree looking for .tom_metadata
     while (current.isNotEmpty && current != '/') {
-      if (Directory(path.join(current, '.tom_metadata')).existsSync()) {
+      final metadata = File(
+        path.join(current, '.tom_metadata', 'tom_master.yaml'),
+      );
+      if (metadata.existsSync()) {
         return current;
       }
       current = path.dirname(current);

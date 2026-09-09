@@ -164,6 +164,13 @@ projects:
       - project_a
     features:
       publishable: false
+    cross-compilation:
+      all-targets:
+        - macos-arm64
+      build-on:
+        macos-arm64:
+          targets:
+            - macos-arm64
     pubspec-yaml:
       name: project_b
       version: 2.0.0
