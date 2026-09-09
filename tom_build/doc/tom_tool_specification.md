@@ -2120,7 +2120,16 @@ This section defines the Dart class structure for parsing and accessing configur
 2. **Nullable Fields:** Optional fields are nullable
 3. **Factory Constructors:** Classes provide `fromYaml(Map<String, dynamic>)` factory constructors
 4. **Serialization:** Classes provide `toYaml()` methods for round-trip serialization
-5. **Custom Tags:** Unrecognized YAML keys are preserved in `customTags` maps
+5. **Compaction is lossy, deliberately:** `TomProject.toYamlCompact()` omits a
+   project's `cross-compilation`, `<mode>-mode-definitions` and `actions` when
+   they equal the workspace's, and the read does **not** put them back — a
+   project whose block was compacted away comes back with that field `null`.
+   Only the master document is written this way, so `toYaml()` round-trips
+   exactly and `TomMaster.toYaml()` round-trips *modulo* that compaction. The
+   asymmetry is the contract, not a defect;
+   `test/file_structure/all_attributes_test.dart` states it, tolerating an
+   omission only where the project's value really did equal the workspace's.
+6. **Custom Tags:** Unrecognized YAML keys are preserved in `customTags` maps
 
 ### 8.2 Core Types
 
