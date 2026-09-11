@@ -20,7 +20,7 @@ dart test          # full suite (authoritative)
 testkit :test      # tracked run against the latest baseline
 ```
 
-The authoritative total below (**213 passing**) is the count reported by
+The authoritative total below (**215 passing**) is the count reported by
 `dart test`. Per-file counts are the tests executed from each suite; test IDs
 follow the `TK-<AREA>-<n>` convention (e.g. `TK-MDT-1`), which is the stable
 handle for regression tracking.
@@ -46,7 +46,7 @@ handle for regression tracking.
 | 13 | [`:reset` command](#13-reset-command) | 6 | 6✅ | `tracking/reset_command_test.dart` | `TK-RST` |
 | 14 | [`:runs` command](#14-runs-command) | 5 | 5✅ | `tracking/runs_command_test.dart` | `TK-RUNS` |
 | 15 | [`:status` command](#15-status-command) | 5 | 5✅ | `tracking/status_command_test.dart` | `TK-STAT` |
-| 16 | [`:test` and `:baseline` commands](#16-test-and-baseline-commands) | 16 | 16✅ | `tracking/test_command_test.dart` | `TK-TST` |
+| 16 | [`:test` and `:baseline` commands](#16-test-and-baseline-commands) | 18 | 18✅ | `tracking/test_command_test.dart` | `TK-TST` |
 | 17 | [`:trim` command](#17-trim-command) | 8 | 8✅ | `tracking/trim_command_test.dart` | `TK-TRIM` |
 | 18 | [File helpers](#18-file-helpers) | 5 | 5✅ | `util/file_helpers_test.dart` | `TK-FIL` |
 | 19 | [Format helpers](#19-format-helpers) | 7 | 7✅ | `util/format_helpers_test.dart` | `TK-FMT` |
@@ -54,7 +54,7 @@ handle for regression tracking.
 | 21 | [Output formatter](#21-output-formatter) | 15 | 15✅ | `util/output_formatter_test.dart` | `TK-OFMT` |
 | 22 | [v2 CLI tool wiring](#22-v2-cli-tool-wiring) | 3 | 3✅ | `v2/testkit_tool_test.dart` | `TK-CLI` |
 | 23 | [Package detection](#23-package-detection) | 9 | 9✅ | `util/package_detection_test.dart` | `TK-PKG` |
-| — | **Total** | **213** | **213✅** | | |
+| — | **Total** | **215** | **215✅** | | |
 
 ---
 
@@ -368,7 +368,8 @@ Summarizes the current pass/fail/skip status of the latest run.
 
 End-to-end `:test` and `:baseline` flows against real temporary projects: run
 `dart test`, parse output, write a baseline or append a result column — and
-refuse to record a run in which no test ran or a test file failed to load.
+refuse to record a run in which no test ran or a test file failed to load, or
+whose locked packages the pub cache cannot supply.
 
 **How to test:** `dart test test/tracking/test_command_test.dart`.
 
@@ -390,6 +391,8 @@ refuse to record a run in which no test ran or a test file failed to load.
 | TK-TST-14 | :baseline fails and writes nothing when --test-args select no test | ✅ | `dart test --name 'TK-TST-14'` |
 | TK-TST-15 | :test fails and adds no column when every test file fails to load | ✅ | `dart test --name 'TK-TST-15'` |
 | TK-TST-16 | :test records the tests that ran but fails when a file failed to load | ✅ | `dart test --name 'TK-TST-16'` |
+| TK-TST-17 | :baseline fails naming the packages when the pub cache cannot supply what the project locked | ✅ | `dart test --name 'TK-TST-17'` |
+| TK-TST-18 | a project whose locked packages are all present runs normally | ✅ | `dart test --name 'TK-TST-18'` |
 
 ## 17. `:trim` command
 

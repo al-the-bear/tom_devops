@@ -25,6 +25,8 @@ class TestCommand {
   ///   (X/OK, OK/X).
   /// [noUpdate] if true, runs tests and prints summary without updating
   ///   baseline.
+  /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
+  ///   pass their own so they never depend on the host's cache.
   ///
   /// Returns true on success, false on failure — including a run in which no
   /// test ran (nothing is recorded) or a test file failed to load (the tests
@@ -39,6 +41,7 @@ class TestCommand {
     bool failedOnly = false,
     bool mismatchedOnly = false,
     bool noUpdate = false,
+    String? pubCachePath,
   }) async {
     // Find the tracking file
     final filePath = trackingFilePath ?? findLatestTrackingFile(projectPath);
@@ -53,6 +56,7 @@ class TestCommand {
           testArgs: testArgs,
           verbose: verbose,
           comment: comment,
+          pubCachePath: pubCachePath,
         );
       }
       stderr.writeln(
@@ -107,6 +111,7 @@ class TestCommand {
       projectPath: projectPath,
       additionalArgs: effectiveTestArgs,
       verbose: verbose,
+      pubCachePath: pubCachePath,
     );
 
     if (results == null) {

@@ -1,3 +1,17 @@
+## 1.1.2
+
+- **A locked package the pub cache cannot supply now stops the run and names
+  it** (scd8_aicx). It is not a resolution error: the lock is satisfiable, so
+  `dart pub get` reports success, and the failure arrives later as `Error:
+  Undefined name '<Symbol>'` at every use site — which points at the file using
+  the symbol and reads as an API renamed upstream. `:test` and `:baseline` now
+  stat every hosted lock entry before launching the runner
+  (`PubCacheIntegrity`, tom_build_base 2.9.0) and stop with the package, the
+  path the cache should hold it at, and the repair.
+  - `tom_build_base` floor raised to `>=2.9.0`.
+  - `BaselineCommand.run` / `TestCommand.run` take `pubCachePath`, so a test
+    can point the pre-flight at its own cache.
+
 ## 1.1.1
 
 - **A run that measured nothing is no longer a green run** (scd7_aicx).

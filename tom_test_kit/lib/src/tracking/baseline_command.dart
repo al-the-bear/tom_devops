@@ -18,6 +18,8 @@ class BaselineCommand {
   /// [outputPath] overrides the default output location.
   /// [testArgs] are additional arguments passed to `dart test`.
   /// [verbose] enables diagnostic output.
+  /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
+  /// pass their own so they never depend on the host's cache.
   ///
   /// Returns true on success, false on failure — including a run in which no
   /// test ran or a test file failed to load, for which nothing is written.
@@ -27,12 +29,14 @@ class BaselineCommand {
     List<String> testArgs = const [],
     bool verbose = false,
     String? comment,
+    String? pubCachePath,
   }) async {
     // Run dart test
     final results = await DartTestParser.runAndParse(
       projectPath: projectPath,
       additionalArgs: testArgs,
       verbose: verbose,
+      pubCachePath: pubCachePath,
     );
 
     if (results == null) {

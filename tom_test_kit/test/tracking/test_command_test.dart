@@ -4,7 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:tom_test_kit/tom_test_kit.dart';
 
-/// Test IDs: TK-TST-1 through TK-TST-16
+/// Test IDs: TK-TST-1 through TK-TST-18
 ///
 /// Integration tests for TestCommand that create real Dart projects
 /// and run actual `dart test` commands.
@@ -459,6 +459,61 @@ dev_dependencies:
             TrackingFile.load(findLatestTrackingFile(tempDir.path)!);
         expect(tracking!.runs, hasLength(2),
             reason: 'the tests that did run are real results');
+      },
+    );
+
+    // scd8_aicx: a locked package missing from the pub cache produces no
+    // resolution error — `dart pub get` reports success because the lock is
+    // satisfiable — and the run fails much later with `Undefined name` at
+    // every use site, which reads as an upstream rename. The gate names the
+    // package instead, before the runner starts.
+    test(
+      'TK-TST-17: :baseline fails naming the packages when the pub cache '
+      'cannot supply what the project locked',
+      () async {
+        // The project resolves for real, so `dart test` would run and pass:
+        // only the pre-flight is pointed at an empty cache, which is what
+        // makes this test about the pre-flight and nothing else.
+        await createTestProject(
+          tempDir,
+          tests: [TestSpec('TK-A: simple test', shouldPass: true)],
+        );
+        final emptyCache =
+            Directory.systemTemp.createTempSync('tk_empty_cache_');
+
+        try {
+          final result = await BaselineCommand.run(
+            projectPath: tempDir.path,
+            pubCachePath: emptyCache.path,
+          );
+
+          expect(result, isFalse);
+          expect(
+            trackingFiles(tempDir),
+            isEmpty,
+            reason: 'nothing was measured, so nothing may be written',
+          );
+        } finally {
+          try {
+            emptyCache.deleteSync(recursive: true);
+          } catch (_) {}
+        }
+      },
+    );
+
+    test(
+      'TK-TST-18: a project whose locked packages are all present runs '
+      'normally',
+      () async {
+        // Anti-vacuity: the pre-flight must not fail a healthy project. This
+        // one resolves for real, so its lock and the real cache agree.
+        await createTestProject(
+          tempDir,
+          tests: [TestSpec('TK-A: simple test', shouldPass: true)],
+        );
+
+        expect(await BaselineCommand.run(projectPath: tempDir.path), isTrue);
+        expect(trackingFiles(tempDir), isNotEmpty);
       },
     );
   });

@@ -219,7 +219,24 @@ class DartTestParser {
     required String projectPath,
     List<String> additionalArgs = const [],
     bool verbose = false,
+    String? pubCachePath,
   }) async {
+    // scd8_aicx: a locked package the pub cache cannot supply is not a
+    // resolution error — the lock is satisfiable, so `dart pub get` reports
+    // success — and the run fails later with `Undefined name` at every use
+    // site, which reads as an upstream rename. One stat per dependency names
+    // the package instead, before anything compiles.
+    final cacheProblems = PubCacheIntegrity.checkProject(
+      projectPath: projectPath,
+      pubCachePath: pubCachePath,
+    );
+    if (cacheProblems.isNotEmpty) {
+      stderr.writeln(
+        PubCacheIntegrity.describe(cacheProblems, projectPath: projectPath),
+      );
+      return null;
+    }
+
     // Validate that additional args don't contain forbidden options
     final forbidden = findForbiddenArg(additionalArgs);
     if (forbidden != null) {

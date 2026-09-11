@@ -241,11 +241,19 @@ All commands support project traversal options for multi-project operation. Run 
 Creates a new baseline tracking file by running `dart test` and capturing all test results. This becomes the reference point for comparing future test runs.
 
 **Process:**
-1. Runs `dart test --reporter json` to capture structured output
-2. Saves raw JSON to `testlog/last_testrun.json`
-3. Parses test descriptions for IDs, creation dates, and expected outcomes
-4. Creates `testlog/baseline_<MMDD_HHMM>.csv` with metadata columns and one result column
-5. Sorts tests by the standard sorting order
+1. Checks that the pub cache can supply every package the project has locked,
+   and stops naming them if it cannot (see below)
+2. Runs `dart test --reporter json` to capture structured output
+3. Saves raw JSON to `testlog/last_testrun.json`
+4. Parses test descriptions for IDs, creation dates, and expected outcomes
+5. Creates `testlog/baseline_<MMDD_HHMM>.csv` with metadata columns and one result column
+6. Sorts tests by the standard sorting order
+
+**A locked package the pub cache cannot supply stops the run.** It is not a
+resolution error — `dart pub get` reports success, because the lock is
+satisfiable — so without this check it arrives as `Undefined name` at every use
+site and reads as an API renamed upstream. testkit stats every hosted lock entry
+first and names what is missing, with the path and the repair.
 
 **A run that measured nothing writes no baseline.** If no test ran, or a test
 file failed to load (an import that does not resolve, a compile error), the
@@ -279,12 +287,13 @@ Runs `dart test` and appends a new result column to the most recent tracking fil
 
 **Process:**
 1. Finds the most recent `baseline_*.csv` file in the project's `testlog/` directory
-2. Runs `dart test --reporter json` to capture structured output
-3. Saves raw JSON to `testlog/last_testrun.json`
-4. Parses results and appends a new column with timestamp header
-5. New tests (not in the tracking file) are added as new rows
-6. Missing tests (in tracking file but not in run) are marked as absent (`--`)
-7. Re-sorts rows by the standard sorting order based on the latest results
+2. Checks that the pub cache can supply every package the project has locked
+3. Runs `dart test --reporter json` to capture structured output
+4. Saves raw JSON to `testlog/last_testrun.json`
+5. Parses results and appends a new column with timestamp header
+6. New tests (not in the tracking file) are added as new rows
+7. Missing tests (in tracking file but not in run) are marked as absent (`--`)
+8. Re-sorts rows by the standard sorting order based on the latest results
 
 **Runs that cannot be trusted fail.** A run in which no test ran records no
 column and exits non-zero. A run in which a test file failed to load records
