@@ -19,7 +19,8 @@ class BaselineCommand {
   /// [testArgs] are additional arguments passed to `dart test`.
   /// [verbose] enables diagnostic output.
   ///
-  /// Returns true on success, false on failure.
+  /// Returns true on success, false on failure — including a run in which no
+  /// test ran or a test file failed to load, for which nothing is written.
   static Future<bool> run({
     required String projectPath,
     String? outputPath,
@@ -41,6 +42,15 @@ class BaselineCommand {
 
     // Save raw JSON output for inspection
     await saveLastTestRunJson(projectPath, results.rawJsonLines);
+
+    // A baseline is the reference every later run is compared with. One that
+    // is empty, or missing a file that did not load, would pass that loss on
+    // to each of them as "not in baseline" — so none is written.
+    final problem = results.runProblem;
+    if (problem != null) {
+      stderr.writeln('[$projectPath] Baseline not written. $problem');
+      return false;
+    }
 
     // Create baseline run (copy results into a run marked as baseline)
     final baselineRun = TestRun(

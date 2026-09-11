@@ -26,7 +26,9 @@ class TestCommand {
   /// [noUpdate] if true, runs tests and prints summary without updating
   ///   baseline.
   ///
-  /// Returns true on success, false on failure.
+  /// Returns true on success, false on failure — including a run in which no
+  /// test ran (nothing is recorded) or a test file failed to load (the tests
+  /// that ran are recorded, and the run still fails).
   static Future<bool> run({
     required String projectPath,
     String? trackingFilePath,
@@ -115,6 +117,15 @@ class TestCommand {
     // Save raw JSON output for inspection
     await saveLastTestRunJson(projectPath, results.rawJsonLines);
 
+    // A run in which no test ran records nothing: a column of absent results
+    // would read as every test having vanished rather than as a run that
+    // never happened.
+    final problem = results.runProblem;
+    if (results.totalTests == 0) {
+      stderr.writeln('[$projectPath] No run recorded. $problem');
+      return false;
+    }
+
     // Add comment to the run if specified
     if (comment != null) {
       results.run.comment = comment;
@@ -128,7 +139,7 @@ class TestCommand {
         'Failed ${summary.failedCount}${summary.expectedFail > 0 ? ' (${summary.expectedFail} expected)' : ''} '
         'Skipped ${summary.skippedCount}',
       );
-      return true;
+      return _reportProblem(projectPath, problem);
     }
 
     // Add new run
@@ -147,7 +158,15 @@ class TestCommand {
       '${results.skippedTests > 0 ? ', ${results.skippedTests} skipped' : ''})',
     );
 
-    return true;
+    return _reportProblem(projectPath, problem);
+  }
+
+  /// Fails a run that was recorded but is incomplete — a test file that did
+  /// not load is missing from it — after its real results have been kept.
+  static bool _reportProblem(String projectPath, String? problem) {
+    if (problem == null) return true;
+    stderr.writeln('[$projectPath] $problem');
+    return false;
   }
 
   /// Returns test names that should be re-run based on filter criteria.

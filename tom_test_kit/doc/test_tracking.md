@@ -247,6 +247,14 @@ Creates a new baseline tracking file by running `dart test` and capturing all te
 4. Creates `testlog/baseline_<MMDD_HHMM>.csv` with metadata columns and one result column
 5. Sorts tests by the standard sorting order
 
+**A run that measured nothing writes no baseline.** If no test ran, or a test
+file failed to load (an import that does not resolve, a compile error), the
+command writes no CSV, prints why — the files that failed to load with the
+runner's error, or the exit code and the text `dart test` printed — and exits
+non-zero. A baseline is what every later run is compared with; one that is
+empty, or silently missing a file's tests, would carry that loss into every
+comparison after it. The raw output is still saved to `testlog/last_testrun.json`.
+
 **Options:**
 
 | Option | Description |
@@ -277,6 +285,13 @@ Runs `dart test` and appends a new result column to the most recent tracking fil
 5. New tests (not in the tracking file) are added as new rows
 6. Missing tests (in tracking file but not in run) are marked as absent (`--`)
 7. Re-sorts rows by the standard sorting order based on the latest results
+
+**Runs that cannot be trusted fail.** A run in which no test ran records no
+column and exits non-zero. A run in which a test file failed to load records
+the tests that did run — their results are real — then names the file that did
+not load and exits non-zero, so its missing tests are never mistaken for a
+smaller suite. Failing tests are results, not errors: they are recorded as `X`
+and do not change the exit code.
 
 **Options:**
 

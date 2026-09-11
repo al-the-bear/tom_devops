@@ -2,13 +2,14 @@
 
 ## Overview
 
-Tom Test Kit uses standard `dart test` unit tests. Tests validate the parsing, formatting, and model logic that underpins the tracking workflow. Integration tests that run `dart test` as a subprocess are not included here — they belong in end-to-end test suites.
+Tom Test Kit uses standard `dart test` tests. Most validate the parsing, formatting, and model logic that underpins the tracking workflow in-process. The `:test` / `:baseline` suite (`test/tracking/test_command_test.dart`, `TK-TST`) is the exception: it builds real throwaway packages in a temporary directory and runs `dart test` on them, because what it pins — how the commands react to what the runner actually does — cannot be faked faithfully.
 
 ## Test Strategy
 
-- **Unit tests only** — All tests run in-process with no external dependencies
+- **In-process by default** — model, parser, util and command tests run with no external dependencies
 - **No file-system access** in model/parser/util tests — use string fixtures
 - **File-system tests** (file_helpers) use temporary directories
+- **Runner behaviour is tested against the real runner** — a case about exit codes, load failures or filters builds a package in `Directory.systemTemp` (never inside the workspace tree, where an ancestor package config hijacks resolution) and runs `BaselineCommand` / `TestCommand` on it. A test file importing a package that does not exist is the way to make a file fail to load. Pin the parsing half of the same behaviour with a `TK-DTP` case over hand-written JSON events, so a failure points at the layer that broke
 - **Arrange-Act-Assert** structure in every test
 - **One concept per test** — each test validates a single behavior
 
@@ -22,7 +23,8 @@ Test files mirror the source structure under `test/`:
 | `test/model/test_run_test.dart` | `lib/src/model/test_run.dart` | TestRun, TestResult, resultSortPriority, formatResultCell, SortableTestEntry |
 | `test/model/tracking_file_test.dart` | `lib/src/model/tracking_file.dart` | TrackingFile round-trip (write → load), addRun, sortedEntries |
 | `test/parser/test_description_parser_test.dart` | `lib/src/parser/test_description_parser.dart` | Parsing IDs, dates, expectations from descriptions |
-| `test/parser/dart_test_parser_test.dart` | `lib/src/parser/dart_test_parser.dart` | Parsing JSON output from dart test |
+| `test/parser/dart_test_parser_test.dart` | `lib/src/parser/dart_test_parser.dart` | Parsing JSON output from dart test; load failures, `runProblem`, `describeRunnerExit` |
+| `test/tracking/test_command_test.dart` | `lib/src/tracking/{test,baseline}_command.dart` | `:test` / `:baseline` against real temporary packages, incl. runs that must not be recorded |
 | `test/tui/tui_command_test.dart` | `lib/src/tui/tui_command.dart` | TuiCommandSink event delivery, TuiCommandResult |
 | `test/tui/tui_command_registry_test.dart` | `lib/src/tui/tui_command_registry.dart` | Command/module registration, lookup, menu labels |
 | `test/tui/tui_output_parser_test.dart` | `lib/src/tui/tui_output_parser.dart` | Protocol and passthrough line parsing |
@@ -49,7 +51,9 @@ Test IDs use the format: `TK-<CATEGORY>-<number>`
 | Test run model | `RUN` | `TestRun`, `TestResult`, sort priority, formatting |
 | Tracking file | `TRK` | `TrackingFile` round-trip, merge, sort |
 | Description parser | `TDP` | `TestDescriptionParser.parse` |
-| Dart test parser | `DTP` | `DartTestParser.parseJsonOutput` |
+| Dart test parser | `DTP` | `DartTestParser.parseJsonOutput`, `runProblem`, `describeRunnerExit` |
+| Test / baseline commands | `TST` | `TestCommand.run`, `BaselineCommand.run` against real packages |
+| Package detection | `PKG` | `pubspecDeclaresFlutterSdk`, `isFlutterPackage` |
 | TUI command | `TCD` | `TuiCommand`, `TuiCommandSink`, `TuiCommandEvent`, `TuiCommandResult` |
 | TUI registry | `TRG` | `TuiCommandRegistry` registration, lookup, menu labels |
 | TUI output parser | `TOP` | `TuiProtocolParser`, `PassthroughParser` line parsing |

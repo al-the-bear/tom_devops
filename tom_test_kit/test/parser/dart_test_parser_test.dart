@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:tom_test_kit/tom_test_kit.dart';
 
-/// Test IDs: TK-DTP-1 through TK-DTP-11
+/// Test IDs: TK-DTP-1 through TK-DTP-24
 void main() {
   group('DartTestParser', () {
     group('parseJsonOutput', () {
@@ -216,6 +216,168 @@ void main() {
         if (Platform.isWindows) {
           expect(message, contains('flutter.bat'));
         }
+      });
+    });
+
+    // A run that measured nothing must never read as a green run. These pin
+    // how the parser tells the ways a run can come back empty apart.
+    group('runs that cannot be recorded', () {
+      /// The events `dart test --reporter json` emits for a test file whose
+      /// imports cannot be resolved, reduced to the fields the parser reads.
+      List<Map<String, dynamic>> failedLoad(int id, String path) => [
+            _suiteEvent(id, path),
+            _testStartEvent(id + 100, 'loading $path',
+                suiteId: id, groupIds: []),
+            {
+              'type': 'error',
+              'testID': id + 100,
+              'error': 'Failed to load "$path":\n'
+                  "Couldn't resolve the package 'does_not_exist' in "
+                  "'package:does_not_exist/x.dart'.",
+              'stackTrace': 'package:test_core/... VMPlatform._compileToKernel',
+              'isFailure': false,
+            },
+            _testDoneEvent(id + 100, result: 'error'),
+          ];
+
+      test(
+          'TK-DTP-16: a test file that fails to load is a load failure, '
+          'not a test and not nothing', () {
+        final results = DartTestParser.parseJsonOutput(
+          _makeJsonLines(failedLoad(0, 'test/a_test.dart')),
+        );
+
+        expect(results.totalTests, equals(0));
+        expect(results.loadFailures, hasLength(1));
+        expect(results.loadFailures.single.suitePath, 'test/a_test.dart');
+        expect(
+          results.loadFailures.single.message,
+          contains("Couldn't resolve the package 'does_not_exist'"),
+        );
+        expect(
+          results.loadFailures.single.message,
+          isNot(contains('VMPlatform')),
+          reason: 'the message is the error, not its stack trace',
+        );
+      });
+
+      test('TK-DTP-17: a file that loaded records no load failure', () {
+        final results = DartTestParser.parseJsonOutput(_makeJsonLines([
+          _suiteEvent(0, 'test/my_test.dart'),
+          _testStartEvent(1, 'loading test/my_test.dart',
+              suiteId: 0, groupIds: []),
+          _testDoneEvent(1, result: 'success', hidden: true),
+          _testStartEvent(2, 'real test', suiteId: 0, groupIds: []),
+          _testDoneEvent(2, result: 'success'),
+        ]));
+
+        expect(results.loadFailures, isEmpty);
+        expect(results.runProblem, isNull);
+      });
+
+      test(
+          'TK-DTP-18: a run whose tests all failed still has no problem — '
+          'failing tests are results', () {
+        final results = DartTestParser.parseJsonOutput(_makeJsonLines([
+          _suiteEvent(0, 'test/my_test.dart'),
+          _testStartEvent(1, 'broken', suiteId: 0, groupIds: []),
+          _testDoneEvent(1, result: 'failure'),
+        ]));
+
+        expect(results.runProblem, isNull);
+      });
+
+      test(
+          'TK-DTP-19: zero tests because every file failed to load says so '
+          'and names the file', () {
+        final results = DartTestParser.parseJsonOutput(
+          _makeJsonLines(failedLoad(0, 'test/a_test.dart')),
+        );
+
+        final problem = results.runProblem;
+        expect(problem, isNotNull);
+        expect(problem, contains('No test ran'));
+        expect(problem, contains('failed to load'));
+        expect(problem, contains('test/a_test.dart'));
+        expect(problem, contains("Couldn't resolve the package"));
+      });
+
+      test(
+          'TK-DTP-20: zero tests with nothing failing to load is still a '
+          'problem, not an empty success', () {
+        final results = DartTestParser.parseJsonOutput(const []);
+
+        final problem = results.runProblem;
+        expect(problem, isNotNull);
+        expect(problem, contains('No test ran'));
+        expect(problem, isNot(contains('failed to load')));
+      });
+
+      test(
+          'TK-DTP-21: one file failing to load while another runs names the '
+          'missing file', () {
+        final results = DartTestParser.parseJsonOutput(_makeJsonLines([
+          ...failedLoad(0, 'test/broken_test.dart'),
+          _suiteEvent(1, 'test/fine_test.dart'),
+          _testStartEvent(2, 'fine', suiteId: 1, groupIds: []),
+          _testDoneEvent(2, result: 'success'),
+        ]));
+
+        expect(results.totalTests, equals(1));
+        final problem = results.runProblem;
+        expect(problem, isNotNull);
+        expect(problem, contains('test/broken_test.dart'));
+        expect(problem, contains('missing from this run'));
+      });
+
+      test(
+          'TK-DTP-22: exit code 79 is reported as "no tests matched", with '
+          "the runner's own line", () {
+        final message = DartTestParser.describeRunnerExit(
+          executable: 'dart',
+          exitCode: 79,
+          stdoutLines: [
+            '{"type":"start"}',
+            'No tests match regular expression "nomatch".',
+          ],
+          stderrLines: const [],
+        );
+
+        expect(message, contains('79'));
+        expect(message.toLowerCase(), contains('no tests'));
+        expect(message, contains('No tests match regular expression'));
+        expect(message, isNot(contains('"type"')),
+            reason: 'JSON protocol events are not diagnostics');
+      });
+
+      test(
+          'TK-DTP-23: any other early exit carries its code and the text the '
+          'runner printed on stdout and stderr', () {
+        final message = DartTestParser.describeRunnerExit(
+          executable: 'dart',
+          exitCode: 65,
+          stdoutLines: ['Because fb depends on missing_pkg ... failed.'],
+          stderrLines: ['stderr detail'],
+        );
+
+        expect(message, contains('65'));
+        expect(message, contains('Because fb depends on missing_pkg'));
+        expect(message, contains('stderr detail'));
+      });
+
+      test(
+          'TK-DTP-24: a line the runner printed on both stdout and stderr is '
+          'reported once', () {
+        // Pub prints a failed resolution to both streams.
+        const said = 'Because fb depends on missing_pkg ... failed.';
+        final message = DartTestParser.describeRunnerExit(
+          executable: 'dart',
+          exitCode: 65,
+          stdoutLines: [said],
+          stderrLines: [said],
+        );
+
+        expect(said.allMatches(message).length, 1);
       });
     });
   });

@@ -4,7 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:tom_test_kit/tom_test_kit.dart';
 
-/// Test IDs: TK-TST-1 through TK-TST-10
+/// Test IDs: TK-TST-1 through TK-TST-16
 ///
 /// Integration tests for TestCommand that create real Dart projects
 /// and run actual `dart test` commands.
@@ -24,6 +24,7 @@ void main() {
     Future<void> createTestProject(
       Directory dir, {
       List<TestSpec> tests = const [],
+      Map<String, String> extraTestFiles = const {},
     }) async {
       // Create pubspec.yaml
       final pubspec = File(p.join(dir.path, 'pubspec.yaml'));
@@ -61,6 +62,10 @@ dev_dependencies:
 
       testContent.writeln('}');
       await testFile.writeAsString(testContent.toString());
+
+      for (final extra in extraTestFiles.entries) {
+        await File(p.join(testDir.path, extra.key)).writeAsString(extra.value);
+      }
 
       // Run dart pub get
       final result = await Process.run('dart', [
@@ -316,6 +321,146 @@ dev_dependencies:
       final lastRun = tracking!.runs.last;
       expect(lastRun.comment, equals('bugfix run'));
     });
+
+    // A run that measured nothing is not a green run, and must not become the
+    // reference the next run is compared with. The broken file imports a
+    // package that does not exist: `dart test` then exits 1 — the same code as
+    // a run with failing tests — having run no test at all.
+    const unloadable = "import 'package:test/test.dart';\n"
+        "import 'package:does_not_exist/missing.dart';\n"
+        'void main() {\n'
+        "  test('TK-Z: never runs', () {});\n"
+        '}\n';
+
+    List<File> trackingFiles(Directory dir) {
+      final testlog = Directory(p.join(dir.path, 'testlog'));
+      if (!testlog.existsSync()) return const [];
+      return testlog
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.csv'))
+          .toList();
+    }
+
+    test(
+      'TK-TST-11: :baseline fails and writes nothing when every test file '
+      'fails to load',
+      () async {
+        await createTestProject(tempDir);
+        await File(
+          p.join(tempDir.path, 'test', 'sample_test.dart'),
+        ).writeAsString(unloadable);
+
+        final result = await BaselineCommand.run(projectPath: tempDir.path);
+
+        expect(result, isFalse);
+        expect(trackingFiles(tempDir), isEmpty,
+            reason: 'an empty baseline is worse than none');
+      },
+    );
+
+    test(
+      'TK-TST-12: :baseline fails and writes nothing when one of two test '
+      'files fails to load',
+      () async {
+        await createTestProject(
+          tempDir,
+          tests: [TestSpec('TK-A: loads fine', shouldPass: true)],
+          extraTestFiles: {'broken_test.dart': unloadable},
+        );
+
+        final result = await BaselineCommand.run(projectPath: tempDir.path);
+
+        expect(result, isFalse);
+        expect(trackingFiles(tempDir), isEmpty,
+            reason: 'a baseline missing a whole file is not a reference');
+      },
+    );
+
+    test(
+      'TK-TST-13: :baseline fails and writes nothing when the package cannot '
+      'resolve its dependencies',
+      () async {
+        await createTestProject(
+          tempDir,
+          tests: [TestSpec('TK-A: simple test', shouldPass: true)],
+        );
+        await File(p.join(tempDir.path, 'pubspec.yaml')).writeAsString(
+          'dependencies:\n  missing_pkg:\n    path: ../nowhere\n',
+          mode: FileMode.append,
+        );
+
+        final result = await BaselineCommand.run(projectPath: tempDir.path);
+
+        expect(result, isFalse);
+        expect(trackingFiles(tempDir), isEmpty);
+      },
+    );
+
+    test(
+      'TK-TST-14: :baseline fails and writes nothing when --test-args select '
+      'no test',
+      () async {
+        await createTestProject(
+          tempDir,
+          tests: [TestSpec('TK-A: simple test', shouldPass: true)],
+        );
+
+        final result = await BaselineCommand.run(
+          projectPath: tempDir.path,
+          testArgs: ['--name', 'matches-nothing'],
+        );
+
+        expect(result, isFalse);
+        expect(trackingFiles(tempDir), isEmpty);
+      },
+    );
+
+    test(
+      'TK-TST-15: :test fails and adds no column when every test file fails '
+      'to load',
+      () async {
+        await createTestProject(
+          tempDir,
+          tests: [TestSpec('TK-A: simple test', shouldPass: true)],
+        );
+        expect(await BaselineCommand.run(projectPath: tempDir.path), isTrue);
+        await File(
+          p.join(tempDir.path, 'test', 'sample_test.dart'),
+        ).writeAsString(unloadable);
+
+        final result = await TestCommand.run(projectPath: tempDir.path);
+
+        expect(result, isFalse);
+        final tracking =
+            TrackingFile.load(findLatestTrackingFile(tempDir.path)!);
+        expect(tracking!.runs, hasLength(1),
+            reason: 'a column of nothing would read as every test absent');
+      },
+    );
+
+    test(
+      'TK-TST-16: :test records the tests that ran but fails when a file '
+      'failed to load',
+      () async {
+        await createTestProject(
+          tempDir,
+          tests: [TestSpec('TK-A: loads fine', shouldPass: true)],
+        );
+        expect(await BaselineCommand.run(projectPath: tempDir.path), isTrue);
+        await File(
+          p.join(tempDir.path, 'test', 'broken_test.dart'),
+        ).writeAsString(unloadable);
+
+        final result = await TestCommand.run(projectPath: tempDir.path);
+
+        expect(result, isFalse);
+        final tracking =
+            TrackingFile.load(findLatestTrackingFile(tempDir.path)!);
+        expect(tracking!.runs, hasLength(2),
+            reason: 'the tests that did run are real results');
+      },
+    );
   });
 }
 

@@ -20,7 +20,7 @@ dart test          # full suite (authoritative)
 testkit :test      # tracked run against the latest baseline
 ```
 
-The authoritative total below (**188 passing**) is the count reported by
+The authoritative total below (**213 passing**) is the count reported by
 `dart test`. Per-file counts are the tests executed from each suite; test IDs
 follow the `TK-<AREA>-<n>` convention (e.g. `TK-MDT-1`), which is the stable
 handle for regression tracking.
@@ -34,7 +34,7 @@ handle for regression tracking.
 | 1 | [Test entry model](#1-test-entry-model) | 10 | 10✅ | `model/test_entry_test.dart` | `TK-ENT` |
 | 2 | [Test run model](#2-test-run-model) | 14 | 14✅ | `model/test_run_test.dart` | `TK-RUN` |
 | 3 | [Tracking file model](#3-tracking-file-model) | 9 | 9✅ | `model/tracking_file_test.dart` | `TK-TRK` |
-| 4 | [Dart test-output parser](#4-dart-test-output-parser) | 14 | 14✅ | `parser/dart_test_parser_test.dart` | `TK-DTP` |
+| 4 | [Dart test-output parser](#4-dart-test-output-parser) | 24 | 24✅ | `parser/dart_test_parser_test.dart` | `TK-DTP` |
 | 5 | [Test-description parser](#5-test-description-parser) | 10 | 10✅ | `parser/test_description_parser_test.dart` | `TK-TDP` |
 | 6 | [`:basediff` command](#6-basediff-command) | 7 | 7✅ | `tracking/basediff_command_test.dart` | `TK-BDIF` |
 | 7 | [`:crossref` command](#7-crossref-command) | 5 | 5✅ | `tracking/crossref_command_test.dart` | `TK-XREF` |
@@ -46,14 +46,15 @@ handle for regression tracking.
 | 13 | [`:reset` command](#13-reset-command) | 6 | 6✅ | `tracking/reset_command_test.dart` | `TK-RST` |
 | 14 | [`:runs` command](#14-runs-command) | 5 | 5✅ | `tracking/runs_command_test.dart` | `TK-RUNS` |
 | 15 | [`:status` command](#15-status-command) | 5 | 5✅ | `tracking/status_command_test.dart` | `TK-STAT` |
-| 16 | [`:test` command](#16-test-command) | 10 | 10✅ | `tracking/test_command_test.dart` | `TK-TST` |
+| 16 | [`:test` and `:baseline` commands](#16-test-and-baseline-commands) | 16 | 16✅ | `tracking/test_command_test.dart` | `TK-TST` |
 | 17 | [`:trim` command](#17-trim-command) | 8 | 8✅ | `tracking/trim_command_test.dart` | `TK-TRIM` |
 | 18 | [File helpers](#18-file-helpers) | 5 | 5✅ | `util/file_helpers_test.dart` | `TK-FIL` |
 | 19 | [Format helpers](#19-format-helpers) | 7 | 7✅ | `util/format_helpers_test.dart` | `TK-FMT` |
 | 20 | [Markdown table parser](#20-markdown-table-parser) | 21 | 21✅ | `util/markdown_table_test.dart` | `TK-MDT` |
 | 21 | [Output formatter](#21-output-formatter) | 15 | 15✅ | `util/output_formatter_test.dart` | `TK-OFMT` |
 | 22 | [v2 CLI tool wiring](#22-v2-cli-tool-wiring) | 3 | 3✅ | `v2/testkit_tool_test.dart` | `TK-CLI` |
-| — | **Total** | **188** | **188✅** | | |
+| 23 | [Package detection](#23-package-detection) | 9 | 9✅ | `util/package_detection_test.dart` | `TK-PKG` |
+| — | **Total** | **213** | **213✅** | | |
 
 ---
 
@@ -131,7 +132,10 @@ formatting, and row ordering.
 **Test file:** `test/parser/dart_test_parser_test.dart` — **ID prefix `TK-DTP`**
 
 Parses `dart test` JSON output into `TestRun`/`TestEntry` models, including
-passed/failed/skipped classification and description extraction.
+passed/failed/skipped classification and description extraction — and tells
+apart the ways a run can come back empty: a test file that failed to load (a
+`LoadFailure`), a run that collected no test (`runProblem`), and a runner that
+exited before reporting results (`describeRunnerExit`).
 
 **How to test:** `dart test test/parser/dart_test_parser_test.dart`.
 
@@ -151,6 +155,16 @@ passed/failed/skipped classification and description extraction.
 | TK-DTP-12 | runInShellForHost matches the host platform | ✅ | `dart test --name 'TK-DTP-12'` |
 | TK-DTP-13 | buildLaunchError is clear and actionable | ✅ | `dart test --name 'TK-DTP-13'` |
 | TK-DTP-14 | buildLaunchError mentions dart.bat on Windows | ✅ | `dart test --name 'TK-DTP-14'` |
+| TK-DTP-15 | buildLaunchError names the flutter launcher | ✅ | `dart test --name 'TK-DTP-15'` |
+| TK-DTP-16 | a test file that fails to load is a load failure, not a test and not nothing | ✅ | `dart test --name 'TK-DTP-16'` |
+| TK-DTP-17 | a file that loaded records no load failure | ✅ | `dart test --name 'TK-DTP-17'` |
+| TK-DTP-18 | a run whose tests all failed still has no problem — failing tests are results | ✅ | `dart test --name 'TK-DTP-18'` |
+| TK-DTP-19 | zero tests because every file failed to load says so and names the file | ✅ | `dart test --name 'TK-DTP-19'` |
+| TK-DTP-20 | zero tests with nothing failing to load is still a problem, not an empty success | ✅ | `dart test --name 'TK-DTP-20'` |
+| TK-DTP-21 | one file failing to load while another runs names the missing file | ✅ | `dart test --name 'TK-DTP-21'` |
+| TK-DTP-22 | exit code 79 is reported as "no tests matched", with the runner's own line | ✅ | `dart test --name 'TK-DTP-22'` |
+| TK-DTP-23 | any other early exit carries its code and the text the runner printed on stdout and stderr | ✅ | `dart test --name 'TK-DTP-23'` |
+| TK-DTP-24 | a line the runner printed on both stdout and stderr is reported once | ✅ | `dart test --name 'TK-DTP-24'` |
 
 ## 5. Test-description parser
 
@@ -348,12 +362,13 @@ Summarizes the current pass/fail/skip status of the latest run.
 | TK-STAT-4 | returns true with verbose flag | ✅ | `dart test --name 'TK-STAT-4'` |
 | TK-STAT-5 | returns true for tracking with no runs | ✅ | `dart test --name 'TK-STAT-5'` |
 
-## 16. `:test` command
+## 16. `:test` and `:baseline` commands
 
 **Test file:** `test/tracking/test_command_test.dart` — **ID prefix `TK-TST`**
 
-End-to-end `:test` flow: run `dart test`, parse output, append a result column
-to the latest baseline.
+End-to-end `:test` and `:baseline` flows against real temporary projects: run
+`dart test`, parse output, write a baseline or append a result column — and
+refuse to record a run in which no test ran or a test file failed to load.
 
 **How to test:** `dart test test/tracking/test_command_test.dart`.
 
@@ -369,6 +384,12 @@ to the latest baseline.
 | TK-TST-8 | --failed filters to only failed tests from last run | ✅ | `dart test --name 'TK-TST-8'` |
 | TK-TST-9 | respects --test-args for filtering | ✅ | `dart test --name 'TK-TST-9'` |
 | TK-TST-10 | adds comment to run when specified | ✅ | `dart test --name 'TK-TST-10'` |
+| TK-TST-11 | :baseline fails and writes nothing when every test file fails to load | ✅ | `dart test --name 'TK-TST-11'` |
+| TK-TST-12 | :baseline fails and writes nothing when one of two test files fails to load | ✅ | `dart test --name 'TK-TST-12'` |
+| TK-TST-13 | :baseline fails and writes nothing when the package cannot resolve its dependencies | ✅ | `dart test --name 'TK-TST-13'` |
+| TK-TST-14 | :baseline fails and writes nothing when --test-args select no test | ✅ | `dart test --name 'TK-TST-14'` |
+| TK-TST-15 | :test fails and adds no column when every test file fails to load | ✅ | `dart test --name 'TK-TST-15'` |
+| TK-TST-16 | :test records the tests that ran but fails when a file failed to load | ✅ | `dart test --name 'TK-TST-16'` |
 
 ## 17. `:trim` command
 
@@ -499,3 +520,24 @@ help/version) built on `tom_build_base`.
 | TK-CLI-1 | Tool has correct name and mode | ✅ | `dart test --name 'TK-CLI-1'` |
 | TK-CLI-2 | Tool has expected commands | ✅ | `dart test --name 'TK-CLI-2'` |
 | TK-CLI-NEG01 | Tool definition does not register macro/define | ✅ | `dart test --name 'TK-CLI-NEG01'` |
+
+## 23. Package detection
+
+**Test file:** `test/util/package_detection_test.dart` — **ID prefix `TK-PKG`**
+
+Decides whether a project is run with `flutter test` or `dart test`, from the
+Flutter SDK dependency in its `pubspec.yaml`.
+
+**How to test:** `dart test test/util/package_detection_test.dart`.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-PKG-1 | detects a Flutter SDK dependency | ✅ | `dart test --name 'TK-PKG-1'` |
+| TK-PKG-2 | a plain Dart package is not a Flutter package | ✅ | `dart test --name 'TK-PKG-2'` |
+| TK-PKG-3 | no dependencies block is not a Flutter package | ✅ | `dart test --name 'TK-PKG-3'` |
+| TK-PKG-4 | flutter as a hosted (non-sdk) dep does not count | ✅ | `dart test --name 'TK-PKG-4'` |
+| TK-PKG-5 | flutter_test in dev_dependencies alone does not count | ✅ | `dart test --name 'TK-PKG-5'` |
+| TK-PKG-6 | non-map input returns false | ✅ | `dart test --name 'TK-PKG-6'` |
+| TK-PKG-7 | reads a Flutter pubspec from disk | ✅ | `dart test --name 'TK-PKG-7'` |
+| TK-PKG-8 | reads a plain Dart pubspec from disk | ✅ | `dart test --name 'TK-PKG-8'` |
+| TK-PKG-9 | missing pubspec falls back to false | ✅ | `dart test --name 'TK-PKG-9'` |
