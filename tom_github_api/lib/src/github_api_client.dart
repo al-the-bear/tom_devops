@@ -90,6 +90,52 @@ class GitHubApiClient {
       (await getRepository(repoSlug: repoSlug, owner: owner, repo: repo))
           .defaultBranch;
 
+  /// Creates a repository owned by the **authenticated user**.
+  ///
+  /// The name says `user` because the endpoint does: `POST /user/repos` has no
+  /// owner parameter, so the token's own account is the owner and nothing else
+  /// can be. Creating one inside an organization is a different endpoint
+  /// (`POST /orgs/{org}/repos`) with a different permission model, and giving
+  /// this method an optional `org:` would let a caller ask for something it
+  /// cannot do.
+  ///
+  /// [autoInit] false leaves the repository with **no commits and therefore no
+  /// refs**, which is the state GitHub refuses every git-data write against —
+  /// the state a first-run bootstrap has to survive, and the reason this method
+  /// exists at all.
+  ///
+  /// Permission: a fine-grained PAT needs Administration: write; a **classic**
+  /// PAT needs `repo`. Note that `repo` alone does *not* carry deletion — see
+  /// [deleteRepository].
+  Future<GitHubRepository> createUserRepository({
+    required String name,
+    String? description,
+    bool private = true,
+    bool autoInit = false,
+  }) async =>
+      GitHubRepository.fromJson(await _http.post('/user/repos', body: {
+        'name': name,
+        if (description != null) 'description': description,
+        'private': private,
+        'auto_init': autoInit,
+      }));
+
+  /// Deletes a repository. **Irreversible.**
+  ///
+  /// Permission: a fine-grained PAT needs Administration: write; a **classic**
+  /// PAT needs the separate `delete_repo` scope, which `repo` does not imply.
+  /// That asymmetry is worth knowing before you automate a create: a classic
+  /// token carrying only `repo` will create a throwaway repository quite
+  /// happily and then fail to remove it.
+  Future<void> deleteRepository({
+    String? repoSlug,
+    String? owner,
+    String? repo,
+  }) async {
+    final (o, r) = _parseSlug(repoSlug, owner, repo);
+    await _http.delete('/repos/$o/$r');
+  }
+
   /// Release HTTP client resources.
   void close() => _http.close();
 
