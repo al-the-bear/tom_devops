@@ -162,7 +162,10 @@ void main() {
           {
             'PUT /repos/o/r/contents/doc.webwork.kdbx': MockResponse(201, {
               'content': {'sha': 'blob-sha'},
-              'commit': {'sha': 'commit-sha'},
+              'commit': {
+                'sha': 'commit-sha',
+                'tree': {'sha': 'tree-sha'},
+              },
             }),
           },
           onRequest: (r) => seen = r,
@@ -186,6 +189,10 @@ void main() {
       expect(body['branch'], 'main');
       expect(result.contentSha, 'blob-sha');
       expect(result.commitSha, 'commit-sha');
+      // The tree is read as well as the commit: a caller that has just moved a
+      // branch through this endpoint can then describe the state it created
+      // without reading the ref back.
+      expect(result.treeSha, 'tree-sha');
     });
 
     test('sends the prior blob sha when overwriting — the per-path CAS',
@@ -197,7 +204,10 @@ void main() {
           {
             'PUT /repos/o/r/contents/doc.webwork.kdbx': MockResponse(200, {
               'content': {'sha': 'blob-2'},
-              'commit': {'sha': 'commit-2'},
+              'commit': {
+                'sha': 'commit-2',
+                'tree': {'sha': 'tree-2'},
+              },
             }),
           },
           onRequest: (r) => seen = r,
@@ -248,7 +258,10 @@ void main() {
         httpClient: createMockClient(
           {
             'DELETE /repos/o/r/contents/doc.webwork.kdbx': MockResponse(200, {
-              'commit': {'sha': 'commit-del'},
+              'commit': {
+                'sha': 'commit-del',
+                'tree': {'sha': 'tree-del'},
+              },
             }),
           },
           onRequest: (r) => seen = r,
@@ -268,6 +281,7 @@ void main() {
       expect(seen.method, 'DELETE');
       expect(body['sha'], 'blob-1');
       expect(result.commitSha, 'commit-del');
+      expect(result.treeSha, 'tree-del');
       expect(result.contentSha, isNull);
     });
   });

@@ -61,16 +61,27 @@ class GitHubContentWriteResult {
   /// The sha of the commit the write created.
   final String commitSha;
 
+  /// The sha of the tree that commit points at.
+  ///
+  /// Carried because a caller that has just moved a branch through this
+  /// endpoint knows the resulting commit *and* the tree beneath it, and a
+  /// caller that knows both need not go and read the ref back — which matters
+  /// precisely when it cannot trust the read, GitHub serving ref reads from
+  /// replicas with no read-after-write guarantee.
+  final String treeSha;
+
   const GitHubContentWriteResult({
     required this.contentSha,
     required this.commitSha,
+    required this.treeSha,
   });
 
-  factory GitHubContentWriteResult.fromJson(Map<String, dynamic> json) =>
-      GitHubContentWriteResult(
-        contentSha:
-            (json['content'] as Map<String, dynamic>?)?['sha'] as String?,
-        commitSha:
-            (json['commit'] as Map<String, dynamic>)['sha'] as String,
-      );
+  factory GitHubContentWriteResult.fromJson(Map<String, dynamic> json) {
+    final commit = json['commit'] as Map<String, dynamic>;
+    return GitHubContentWriteResult(
+      contentSha: (json['content'] as Map<String, dynamic>?)?['sha'] as String?,
+      commitSha: commit['sha'] as String,
+      treeSha: (commit['tree'] as Map<String, dynamic>)['sha'] as String,
+    );
+  }
 }
