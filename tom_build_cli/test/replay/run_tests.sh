@@ -47,7 +47,10 @@ done
 echo ""
 
 # Run D4rt tests with Tom (compatibility)
-D4RT_TEST_DIR="/Users/alexiskyaw/Desktop/Code/tom2/dartscript/tom_dartscript_bridges/test/replay"
+# sce54: overridable, and empty by default. The path that stood here named a
+# `Code/tom2` workspace that no longer exists, so the `-d` guard below has
+# skipped this block on every machine since.
+D4RT_TEST_DIR="${D4RT_TEST_DIR:-}"
 if [ -d "$D4RT_TEST_DIR" ]; then
     echo "Running D4rt tests with Tom (compatibility)..."
     for test_file in "$D4RT_TEST_DIR"/*.d4rt; do
@@ -71,7 +74,7 @@ if [ -d "$D4RT_TEST_DIR" ]; then
 fi
 
 # Run DCli tests with Tom (compatibility)
-DCLI_TEST_DIR="/Users/alexiskyaw/Desktop/Code/tom2/xternal/tom_module_d4rt/tom_d4rt_dcli/test/replay"
+DCLI_TEST_DIR="${DCLI_TEST_DIR:-}"
 if [ -d "$DCLI_TEST_DIR" ]; then
     echo "Running DCli tests with Tom (compatibility)..."
     for test_file in "$DCLI_TEST_DIR"/*.dcli; do
