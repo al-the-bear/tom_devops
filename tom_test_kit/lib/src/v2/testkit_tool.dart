@@ -258,7 +258,9 @@ final testkitTool = ToolDefinition(
     gitTraversal: false,
     recursiveScan: true,
     interactiveMode: true, // TUI mode
-    dryRun: false,
+    // Implemented: the baseline, test, trim and reset executors each return
+    // a `[DRY RUN] Would ...` preview instead of writing.
+    dryRun: true,
     jsonOutput: false,
     verbose: true,
   ),

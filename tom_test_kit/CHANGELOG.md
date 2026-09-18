@@ -1,3 +1,17 @@
+## 1.2.0
+
+### Fixed — testkit declared it had no dry-run mode, while implementing one
+
+`NavigationFeatures.dryRun` was false, but the baseline, test, trim and reset
+executors each return a `[DRY RUN] Would ...` preview instead of writing. The
+declaration was wrong.
+
+That became load-bearing in tom_build_base 2.12.0, which refuses `-n` for a
+tool declaring `dryRun: false`. With the old declaration, `testkit -n :test`
+would have been rejected instead of reporting what it would do.
+
+Requires tom_build_base >=2.12.0.
+
 ## 1.1.2
 
 - **A locked package the pub cache cannot supply now stops the run and names

@@ -725,7 +725,9 @@ final issuekitTool = ToolDefinition(
     gitTraversal: false,
     recursiveScan: true,
     interactiveMode: false,
-    dryRun: false,
+    // Implemented: every executor checks `args.dryRun` and returns a
+    // preview instead of writing.
+    dryRun: true,
     jsonOutput: false,
     verbose: true,
   ),
