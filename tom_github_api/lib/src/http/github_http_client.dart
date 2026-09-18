@@ -41,6 +41,9 @@ class GitHubHttpClient {
 
   GitHubRateLimit? _lastRateLimit;
 
+  int _requests = 0;
+  int _notModified = 0;
+
   /// Completes when the mutative request currently in flight has finished.
   /// Chained rather than flagged, so overlapping callers queue instead of
   /// racing.
@@ -60,6 +63,34 @@ class GitHubHttpClient {
 
   /// Rate limit info from the most recent response.
   GitHubRateLimit? get lastRateLimit => _lastRateLimit;
+
+  /// How many HTTP requests THIS client has issued, and how many came back
+  /// `304 Not Modified`.
+  ///
+  /// Per client instance, deliberately. The obvious alternative — reading the
+  /// rate-limit counter [lastRateLimit] reports — is a per-TOKEN number, so
+  /// two suites sharing a token (or one suite running its files concurrently,
+  /// which `dart test` does by default) read each other's traffic and a
+  /// "this cost nothing" assertion becomes a race. Counting here is the only
+  /// place the question "how much did MY client spend" has an answer.
+  ///
+  /// [requests] counts requests ISSUED, so a retried request counts twice.
+  /// That is the truthful number for a cost question: the retry was a second
+  /// round trip whatever the first one's status was.
+  ///
+  /// [notModified] is what makes the cheapness assertable without touching a
+  /// quota counter at all: GitHub does not charge a conditional request that
+  /// it answers `304`, so `requests == notModified` over a stretch of polling
+  /// *is* "this polling was free", stated in terms this client can observe.
+  ({int requests, int notModified}) get requestCounts =>
+      (requests: _requests, notModified: _notModified);
+
+  /// Zero both counters — for a test that wants to measure one stretch of
+  /// traffic rather than everything since construction.
+  void resetRequestCounts() {
+    _requests = 0;
+    _notModified = 0;
+  }
 
   Map<String, String> get _headers => {
         'Authorization': 'Bearer $_token',
@@ -239,6 +270,11 @@ class GitHubHttpClient {
     while (true) {
       attempt++;
       final response = await issue();
+      // Counted here rather than at the call sites because this is the one
+      // place every request passes through — mutations included, since
+      // `_sendMutation` delegates here once it has waited its turn.
+      _requests++;
+      if (response.statusCode == 304) _notModified++;
       _updateRateLimit(response.headers);
       if (response.statusCode < 400) return response;
       final delay = _retry.delayFor(response, attempt);

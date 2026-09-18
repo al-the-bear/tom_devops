@@ -63,6 +63,14 @@ class GitHubApiClient {
   /// Rate limit info from the most recent API call.
   GitHubRateLimit? get lastRateLimit => _http.lastRateLimit;
 
+  /// This client's own request tally — see
+  /// [GitHubHttpClient.requestCounts] for why it is per instance rather than
+  /// read off the per-token rate-limit counter.
+  ({int requests, int notModified}) get requestCounts => _http.requestCounts;
+
+  /// Zero the tally, to measure one stretch of traffic.
+  void resetRequestCounts() => _http.resetRequestCounts();
+
   /// The repository itself.
   ///
   /// GitHub answers a request for a **renamed** repository's old name by
