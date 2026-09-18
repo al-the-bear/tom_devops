@@ -23,28 +23,41 @@ import '../tracking/trim_command.dart';
 // Helper Functions
 // =============================================================================
 
-/// Parse test-args from CLI args.
-List<String> _parseTestArgs(CliArgs args) {
-  final testArgsStr = args.extraOptions['test-args'] as String?;
+/// The options that apply to [command], written in EITHER position.
+///
+/// An option written after the command name lands in `commandArgs`, not
+/// `extraOptions`. Reading only the latter dropped every option in the form
+/// the help text and CLAUDE.md document — `testkit :baseline
+/// --test-args="--name x"` ran the whole suite. `CliArgs.optionsFor`
+/// (tom_build_base 2.13.0) merges both, per-command winning.
+Map<String, dynamic> _optionsFor(
+  CliArgs args,
+  String command, {
+  List<String> aliases = const [],
+}) => args.optionsFor(command, aliases: aliases);
+
+/// Parse test-args from the resolved options.
+List<String> _parseTestArgs(Map<String, dynamic> opts) {
+  final testArgsStr = opts['test-args'] as String?;
   if (testArgsStr == null) return const [];
   return testArgsStr.split(' ');
 }
 
-/// Get output spec from CLI args.
-OutputSpec? _parseOutputSpec(CliArgs args) {
-  final outputStr = args.extraOptions['output'] as String?;
+/// Get output spec from the resolved options.
+OutputSpec? _parseOutputSpec(Map<String, dynamic> opts) {
+  final outputStr = opts['output'] as String?;
   if (outputStr == null) return null;
   return OutputSpec.tryParse(outputStr);
 }
 
-/// Get boolean flag from extra options.
-bool _getFlag(CliArgs args, String name) {
-  return args.extraOptions[name] == true;
+/// Get boolean flag from the resolved options.
+bool _getFlag(Map<String, dynamic> opts, String name) {
+  return opts[name] == true;
 }
 
-/// Get string option from extra options.
-String? _getString(CliArgs args, String name) {
-  return args.extraOptions[name] as String?;
+/// Get string option from the resolved options.
+String? _getString(Map<String, dynamic> opts, String name) {
+  return opts[name] as String?;
 }
 
 // =============================================================================
@@ -55,9 +68,10 @@ String? _getString(CliArgs args, String name) {
 class BaselineExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'baseline');
     if (args.dryRun) {
       final outputPath =
-          _getString(args, 'file') ?? 'testlog/baseline_<timestamp>.csv';
+          _getString(cmdOpts, 'file') ?? 'testlog/baseline_<timestamp>.csv';
       return ItemResult.success(
         path: context.path,
         name: context.name,
@@ -67,10 +81,10 @@ class BaselineExecutor extends CommandExecutor {
 
     final success = await BaselineCommand.run(
       projectPath: context.path,
-      outputPath: _getString(args, 'file'),
-      testArgs: _parseTestArgs(args),
+      outputPath: _getString(cmdOpts, 'file'),
+      testArgs: _parseTestArgs(cmdOpts),
       verbose: args.verbose,
-      comment: _getString(args, 'comment'),
+      comment: _getString(cmdOpts, 'comment'),
     );
 
     return success
@@ -91,13 +105,14 @@ class BaselineExecutor extends CommandExecutor {
 class TestExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'test');
     if (args.dryRun) {
       final opts = <String>[];
-      if (_getFlag(args, 'baseline')) opts.add('--baseline');
-      if (_getFlag(args, 'failed')) opts.add('--failed');
-      if (_getFlag(args, 'mismatched')) opts.add('--mismatched');
-      if (_getFlag(args, 'no-update')) opts.add('--no-update');
-      final testArgs = _parseTestArgs(args);
+      if (_getFlag(cmdOpts, 'baseline')) opts.add('--baseline');
+      if (_getFlag(cmdOpts, 'failed')) opts.add('--failed');
+      if (_getFlag(cmdOpts, 'mismatched')) opts.add('--mismatched');
+      if (_getFlag(cmdOpts, 'no-update')) opts.add('--no-update');
+      final testArgs = _parseTestArgs(cmdOpts);
       if (testArgs.isNotEmpty) opts.add('--test-args="${testArgs.join(' ')}"');
       return ItemResult.success(
         path: context.path,
@@ -110,14 +125,14 @@ class TestExecutor extends CommandExecutor {
 
     final success = await TestCommand.run(
       projectPath: context.path,
-      trackingFilePath: _getString(args, 'file'),
-      testArgs: _parseTestArgs(args),
+      trackingFilePath: _getString(cmdOpts, 'file'),
+      testArgs: _parseTestArgs(cmdOpts),
       verbose: args.verbose,
-      createBaseline: _getFlag(args, 'baseline'),
-      comment: _getString(args, 'comment'),
-      failedOnly: _getFlag(args, 'failed'),
-      mismatchedOnly: _getFlag(args, 'mismatched'),
-      noUpdate: _getFlag(args, 'no-update'),
+      createBaseline: _getFlag(cmdOpts, 'baseline'),
+      comment: _getString(cmdOpts, 'comment'),
+      failedOnly: _getFlag(cmdOpts, 'failed'),
+      mismatchedOnly: _getFlag(cmdOpts, 'mismatched'),
+      noUpdate: _getFlag(cmdOpts, 'no-update'),
     );
 
     return success
@@ -138,10 +153,11 @@ class TestExecutor extends CommandExecutor {
 class RunsExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'runs');
     final success = await RunsCommand.run(
       projectPath: context.path,
-      baselineFile: _getString(args, 'baseline-file'),
-      output: _parseOutputSpec(args),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
+      output: _parseOutputSpec(cmdOpts),
       verbose: args.verbose,
     );
 
@@ -159,9 +175,10 @@ class RunsExecutor extends CommandExecutor {
 class StatusExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'status');
     final success = await StatusCommand.run(
       projectPath: context.path,
-      baselineFile: _getString(args, 'baseline-file'),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
       verbose: args.verbose,
     );
 
@@ -179,12 +196,13 @@ class StatusExecutor extends CommandExecutor {
 class BaseDiffExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'basediff');
     final success = await BaseDiffCommand.run(
       projectPath: context.path,
-      baselineFile: _getString(args, 'baseline-file'),
-      output: _parseOutputSpec(args),
-      full: _getFlag(args, 'full'),
-      reportPath: _getString(args, 'report'),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
+      output: _parseOutputSpec(cmdOpts),
+      full: _getFlag(cmdOpts, 'full'),
+      reportPath: _getString(cmdOpts, 'report'),
       verbose: args.verbose,
     );
 
@@ -202,12 +220,13 @@ class BaseDiffExecutor extends CommandExecutor {
 class LastDiffExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'lastdiff');
     final success = await LastDiffCommand.run(
       projectPath: context.path,
-      baselineFile: _getString(args, 'baseline-file'),
-      output: _parseOutputSpec(args),
-      full: _getFlag(args, 'full'),
-      reportPath: _getString(args, 'report'),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
+      output: _parseOutputSpec(cmdOpts),
+      full: _getFlag(cmdOpts, 'full'),
+      reportPath: _getString(cmdOpts, 'report'),
       verbose: args.verbose,
     );
 
@@ -227,13 +246,14 @@ class LastDiffExecutor extends CommandExecutor {
 class DiffExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'diff');
     final success = await DiffCommand.run(
       projectPath: context.path,
       timestamps: args.positionalArgs,
-      baselineFile: _getString(args, 'baseline-file'),
-      output: _parseOutputSpec(args),
-      full: _getFlag(args, 'full'),
-      reportPath: _getString(args, 'report'),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
+      output: _parseOutputSpec(cmdOpts),
+      full: _getFlag(cmdOpts, 'full'),
+      reportPath: _getString(cmdOpts, 'report'),
       verbose: args.verbose,
     );
 
@@ -253,6 +273,7 @@ class DiffExecutor extends CommandExecutor {
 class HistoryExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'history');
     if (args.positionalArgs.isEmpty) {
       return ItemResult.failure(
         path: context.path,
@@ -264,8 +285,8 @@ class HistoryExecutor extends CommandExecutor {
     final success = await HistoryCommand.run(
       projectPath: context.path,
       searchTerm: args.positionalArgs.join(' '),
-      baselineFile: _getString(args, 'baseline-file'),
-      output: _parseOutputSpec(args),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
+      output: _parseOutputSpec(cmdOpts),
       verbose: args.verbose,
     );
 
@@ -283,10 +304,11 @@ class HistoryExecutor extends CommandExecutor {
 class FlakyExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'flaky');
     final success = await FlakyCommand.run(
       projectPath: context.path,
-      baselineFile: _getString(args, 'baseline-file'),
-      output: _parseOutputSpec(args),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
+      output: _parseOutputSpec(cmdOpts),
       verbose: args.verbose,
     );
 
@@ -304,10 +326,11 @@ class FlakyExecutor extends CommandExecutor {
 class CrossReferenceExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'crossreference', aliases: const ['crossref', 'xref']);
     final success = await CrossReferenceCommand.run(
       projectPath: context.path,
-      baselineFile: _getString(args, 'baseline-file'),
-      output: _parseOutputSpec(args),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
+      output: _parseOutputSpec(cmdOpts),
       verbose: args.verbose,
     );
 
@@ -331,6 +354,7 @@ class CrossReferenceExecutor extends CommandExecutor {
 class TrimExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final cmdOpts = _optionsFor(args, 'trim');
     if (args.positionalArgs.isEmpty) {
       return ItemResult.failure(
         path: context.path,
@@ -360,7 +384,7 @@ class TrimExecutor extends CommandExecutor {
     final success = await TrimCommand.run(
       projectPath: context.path,
       keepCount: keepCount,
-      baselineFile: _getString(args, 'baseline-file'),
+      baselineFile: _getString(cmdOpts, 'baseline-file'),
       force: args.force,
       verbose: args.verbose,
     );

@@ -1,3 +1,27 @@
+## 1.3.0
+
+### Fixed — an option written after the command name is no longer ignored
+
+Every testkit option is declared on its commands, so writing one after the
+command name — the form `CLAUDE.md` documents (`testkit :test
+--test-args="..."`) and testkit's own help prints (`testkit :baseline
+--test-args="--tags e2e"`) — routed it into `commandArgs`, which no executor
+read. `testkit :baseline --test-args="--name nomatch"` ran the WHOLE suite and
+reported on tests the caller never asked about; `-c label` lost the label.
+Placed before the command, both worked. So the documented form was the broken
+one, and the regression gate reported a false green.
+
+The four option helpers now take the resolved options rather than `CliArgs`,
+and each executor resolves its own command's options once with
+`CliArgs.optionsFor` (tom_build_base 2.13.0), which merges both positions with
+the per-command value winning.
+
+Verified end to end: `testkit :baseline --test-args="--name zzz_nomatch"` now
+launches `dart test --reporter json --name zzz_nomatch` and exits 79 having
+selected no test, and `:baseline -c label` reaches the CSV column header.
+
+Requires tom_build_base >=2.13.0.
+
 ## 1.2.0
 
 ### Fixed — testkit declared it had no dry-run mode, while implementing one
