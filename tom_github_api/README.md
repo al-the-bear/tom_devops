@@ -109,7 +109,8 @@ repository.
 | Capability | Where |
 | ---------- | ----- |
 | Token resolution | `GitHubAuth.resolveToken` / `resolveTokenOrThrow` |
-| Rate-limit snapshot | `GitHubApiClient.lastRateLimit` → `GitHubRateLimit` |
+| Rate-limit snapshot | `GitHubApiClient.lastRateLimit` → `GitHubRateLimit` (per **token**) |
+| Own request tally | `GitHubApiClient.requestCounts` → `(requests, notModified)` (per **client**) |
 | Typed errors | `GitHubException` + four subtypes |
 | Pull-request filtering | `listIssues` / `listAllIssues` drop entries that carry a `pull_request` field, so you get issues only |
 | Custom base URL | `GitHubApiClient(baseUrl: …)` for GitHub Enterprise |
@@ -344,6 +345,19 @@ final rl = client.lastRateLimit;
 if (rl != null && rl.remaining < 10) {
   print('Slow down — ${rl.remaining} calls left until ${rl.resetAt}');
 }
+
+// What THIS client has spent. `lastRateLimit` is a per-TOKEN figure, so two
+// clients sharing a token read each other's traffic through it; `requestCounts`
+// is per instance, which is the scope "how much did my client spend" actually
+// has. `requests` counts round trips, so a retry counts twice.
+client.resetRequestCounts();
+await client.listAllIssues(owner: 'o', repo: 'r');
+final spent = client.requestCounts;
+
+// GitHub does not charge a conditional request it answers 304, so over a
+// stretch of polling `requests == notModified` *is* "this cost no quota" —
+// observable without reading a quota counter at all.
+print('${spent.requests} requests, ${spent.notModified} of them free');
 ```
 
 ### Testing against a mock transport
@@ -391,7 +405,7 @@ built from JSON via `fromJson` factories.
 
 | Type | Role |
 | ---- | ---- |
-| `GitHubApiClient` | Public client — all issue / label / comment / search / workflow operations; `lastRateLimit`; `close()`. |
+| `GitHubApiClient` | Public client — all issue / label / comment / search / workflow operations; `lastRateLimit`; `requestCounts` / `resetRequestCounts()`; `close()`. |
 | `GitHubAuth` | Static token resolver (`resolveToken`, `resolveTokenOrThrow`); throws `GitHubAuthError` when no token is found. |
 | `GitHubException` | Base API exception (`statusCode`, `message`, `documentationUrl`, `responseBody`); `fromResponse` factory picks the subtype. |
 | `GitHubNotFoundException` | 404. |
