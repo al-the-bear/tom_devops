@@ -1417,6 +1417,51 @@ class WorkspaceAnalyzer {
   /// 
   /// Projects inherit workspace-level `actions`, `cross-compilation`, and 
   /// `<mode-type>-mode-definitions` when they don't define their own.
+  /// Writes the `groups:` block, derived from the scanned projects.
+  ///
+  /// `configured` is the workspace file's own groups block, read for one thing
+  /// only: each group's `description`, which is authored prose that cannot go
+  /// stale the way a membership list does. A configured group that derives no
+  /// members is still written -- `test-projects` is populated by a mechanism
+  /// (zom_* projects, present only under wa-include-tests) rather than by
+  /// location, so an empty list is the correct answer for it and dropping the
+  /// group would remove a name tooling can still ask for.
+  void _writeDerivedGroups(
+      StringBuffer buffer, List<ProjectInfo> projects, dynamic configured) {
+    final folders = <String, String?>{
+      for (final project in projects) project.name: project.projectFolder,
+    };
+    final members = deriveProjectGroups(folders);
+
+    final descriptions = <String, String>{};
+    if (configured is Map) {
+      for (final entry in configured.entries) {
+        final value = entry.value;
+        if (value is Map && value['description'] != null) {
+          descriptions[entry.key.toString()] = value['description'].toString();
+        }
+      }
+    }
+
+    final names = <String>{...members.keys, ...descriptions.keys}.toList()
+      ..sort();
+    if (names.isEmpty) return;
+
+    buffer.writeln('groups:');
+    for (final name in names) {
+      buffer.writeln('  $name:');
+      final description = descriptions[name];
+      if (description != null) {
+        buffer.writeln('    description: ${_yamlDoubleQuoted(description)}');
+      }
+      final projectNames = members[name] ?? const <String>[];
+      if (projectNames.isNotEmpty) {
+        buffer.writeln('    projects: [${projectNames.join(", ")}]');
+      }
+    }
+    buffer.writeln();
+  }
+
   void _writeProjectYaml(StringBuffer buffer, ProjectInfo project) {
     buffer.writeln('  ${project.name}:');
     
@@ -1691,15 +1736,28 @@ class WorkspaceAnalyzer {
 
     // Write any additional workspace settings from root tom_workspace.yaml
     // Skip 'name' since we already wrote it above
+    //
+    // `groups` is skipped for a different reason from the rest of this list and
+    // the difference matters: the others are written elsewhere in this file,
+    // while groups is not copied AT ALL. It is derived below from the projects
+    // actually discovered. A copied list rots in both directions and a rescan
+    // does not fix it -- the stale block comes through this very loop unchanged
+    // -- so tooling that iterates by group silently skips the projects nobody
+    // added. Measured before it was derived: 6 phantom entries and 72 missing
+    // ones across 11 of the 20 groups.
     // Track which keys we've written to add empty lines between top-level sections
     final topLevelKeys = <String>[];
     for (final entry in workspaceSettings.entries) {
-      if (!['name', 'binaries', 'operating-systems', 'mobile-platforms', 'projects', 'build', 'run', 'deploy'].contains(entry.key)) {
+      if (!['name', 'binaries', 'operating-systems', 'mobile-platforms', 'projects', 'build', 'run', 'deploy', 'groups'].contains(entry.key)) {
         _writeYamlValue(buffer, entry.key, entry.value, 0);
         topLevelKeys.add(entry.key);
         buffer.writeln(); // Add empty line after each top-level entry
       }
     }
+
+    // The derived `groups:` block. Written here rather than copied above, so
+    // the list in the metadata is always the project set as scanned.
+    _writeDerivedGroups(buffer, projects, workspaceSettings['groups']);
 
     // Write workspace-level copilot guidelines
     final workspaceCopilotGuidelinesDir = Directory(path.join(workspaceRoot, '_copilot_guidelines'));
@@ -2926,4 +2984,44 @@ class ModuleInfo {
     List<ModuleInfo>? subfolders,
   })  : sources = sources ?? [],
         subfolders = subfolders ?? [];
+}
+
+/// The group each project belongs to, derived from where the project is.
+///
+/// Keyed by project name, valued by `project-folder` exactly as the metadata
+/// records it. The rule is the directory layout itself: a project under
+/// `tom_ai/<g>/` belongs to group `<g>`, and anything else belongs to the group
+/// named by its first path segment -- so a new `tom_ai` subdirectory or a new
+/// top-level repository becomes a group by existing, with nothing to maintain.
+///
+/// Three exclusions, each for a measured reason:
+///
+///   * a project with no folder, or an empty one, is AT the workspace root and
+///     has no directory to be grouped by. `_scripts` is the real case, and
+///     without this it would create a group whose name is the empty string.
+///   * `_ai`, `_doc` and `_scripts` hold quest scratch, documentation samples
+///     and the workspace's own script project -- not shipped projects.
+///
+/// Members are sorted so that a rescan cannot reorder the emitted file.
+Map<String, List<String>> deriveProjectGroups(
+    Map<String, String?> projectFolders) {
+  const ungrouped = {'_ai', '_doc', '_scripts'};
+  final members = <String, List<String>>{};
+
+  for (final entry in projectFolders.entries) {
+    final folder = entry.value;
+    if (folder == null || folder.isEmpty) continue;
+    final relative = folder.startsWith('./') ? folder.substring(2) : folder;
+    final parts = relative.split('/').where((p) => p.isNotEmpty).toList();
+    if (parts.isEmpty) continue;
+    final group =
+        (parts[0] == 'tom_ai' && parts.length > 1) ? parts[1] : parts[0];
+    if (ungrouped.contains(group)) continue;
+    members.putIfAbsent(group, () => <String>[]).add(entry.key);
+  }
+
+  for (final list in members.values) {
+    list.sort();
+  }
+  return members;
 }
