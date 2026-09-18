@@ -258,7 +258,7 @@ class D4rtInstance {
     // Execute with imports to make them available for eval()
     interpreter.execute(
       source: '''
-import 'package:tom_build/tom.dart';
+import 'package:tom_build/tom_build.dart';
 
 void main() {
   // Imports are now available for subsequent eval() calls

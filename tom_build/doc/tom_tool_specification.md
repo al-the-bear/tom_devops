@@ -1420,7 +1420,7 @@ commands:
 ```yaml
 custom-script: |
   $D4S
-  import 'package:tom_build/tom.dart';
+  import 'package:tom_build/tom_build.dart';
   
   void main() {
     final count = tom.projectInfo.values
@@ -1497,7 +1497,7 @@ The Tom CLI uses two placeholder syntaxes: bracket syntax for generation-time re
 # Multiline D4rt script (void, for side effects)
 custom-script: |
   $D4S
-  import 'package:tom_build/tom.dart';
+  import 'package:tom_build/tom_build.dart';
   
   void main() {
     for (final name in tom.projectInfo.keys) {
@@ -3559,7 +3559,7 @@ d4rt:
   enabled: true
 
   # Import path for bridged classes (automatically imported in scripts)
-  import-path: package:tom_build/tom.dart
+  import-path: package:tom_build/tom_build.dart
 
   # Script search paths (relative to workspace root)
   script-paths:
@@ -3650,7 +3650,7 @@ scripts:
 Script file example (`tom_scripts/lib/custom_build.dart`):
 
 ```dart
-import 'package:tom_build/tom.dart';
+import 'package:tom_build/tom_build.dart';
 
 void main() {
   // Access workspace context
@@ -3674,7 +3674,7 @@ void main() {
 Programmatic D4rt usage in Dart code:
 
 ```dart
-import 'package:tom_build/tom.dart';
+import 'package:tom_build/tom_build.dart';
 
 // Create instance with workspace context
 final d4rt = D4rtInstance.create(
@@ -3692,7 +3692,7 @@ final count = await d4rt.evaluate('tom.projectInfo.length');
 
 // Execute script content
 await d4rt.executeScript('''
-import 'package:tom_build/tom.dart';
+import 'package:tom_build/tom_build.dart';
 
 void main() {
   print('Workspace: \${tom.workspace.name}');

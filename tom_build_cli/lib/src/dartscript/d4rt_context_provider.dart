@@ -54,7 +54,7 @@ abstract interface class D4rtContextProvider {
   /// Get the import path for bridged classes.
   ///
   /// This is automatically imported in D4rt scripts.
-  /// Defaults to 'package:tom_build/tom.dart'.
+  /// Defaults to 'package:tom_build/tom_build.dart'.
   String get importPath;
 
   /// Get the bridge configuration for additional bridges.
@@ -92,7 +92,7 @@ abstract interface class D4rtContextProvider {
 /// Mixin providing default implementations for [D4rtContextProvider].
 mixin D4rtContextProviderDefaults implements D4rtContextProvider {
   @override
-  String get importPath => 'package:tom_build/tom.dart';
+  String get importPath => 'package:tom_build/tom_build.dart';
 
   @override
   BridgeConfiguration? getBridgeConfiguration() => null;
@@ -293,7 +293,7 @@ class StandaloneContextProvider
     BridgeConfiguration? bridgeConfiguration,
     String? importPath,
   })  : _bridgeConfiguration = bridgeConfiguration,
-        _importPath = importPath ?? 'package:tom_build/tom.dart';
+        _importPath = importPath ?? 'package:tom_build/tom_build.dart';
 
   @override
   Map<String, dynamic> getContext() => customContext;

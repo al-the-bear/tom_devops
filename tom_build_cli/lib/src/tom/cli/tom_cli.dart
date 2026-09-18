@@ -616,7 +616,7 @@ class TomCli {
 /// This is the main entry point for the `tom` command.
 /// Usage from bin/tom.dart:
 /// ```dart
-/// import 'package:tom_build/src/tom/cli/tom_cli.dart';
+/// import 'package:tom_build_cli/tom_build_cli.dart';
 ///
 /// void main(List<String> args) async {
 ///   final exitCode = await runTomCli(args);

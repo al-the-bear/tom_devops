@@ -6,7 +6,7 @@
 /// ## Usage in D4rt Scripts
 ///
 /// ```dart
-/// import 'package:tom_build/tom.dart';
+/// import 'package:tom_build/tom_build.dart';
 ///
 /// void main() {
 ///   // Access workspace configuration
@@ -44,7 +44,7 @@ import 'file_object_model/file_object_model.dart';
 ///
 /// **In D4rt scripts:**
 /// ```dart
-/// import 'package:tom_build/tom.dart';
+/// import 'package:tom_build/tom_build.dart';
 ///
 /// // Access workspace
 /// final wsName = tom.workspace.name;

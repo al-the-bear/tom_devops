@@ -319,7 +319,7 @@ run: "$D4{scripts/deploy.dart}"
 ```yaml
 custom: |
   $D4{
-  import 'package:tom_build/tom.dart';
+  import 'package:tom_build/tom_build.dart';
   void main() {
     print('Projects: ${tom.projectInfo.length}');
   }
