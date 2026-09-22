@@ -64,6 +64,18 @@ class GitHubHttpClient {
   /// Rate limit info from the most recent response.
   GitHubRateLimit? get lastRateLimit => _lastRateLimit;
 
+  GitHubRateLimit? _lastGraphQlRateLimit;
+
+  /// The **points** budget the last GraphQL reply reported, or null if this
+  /// client has made none.
+  ///
+  /// Separate from [lastRateLimit] because they are different currencies — see
+  /// `_updateRateLimit`. A caller that wants the *cost of one document* reads
+  /// `GitHubGraphQlResponse.cost` instead; this is what the account has left,
+  /// and it is the only reading available for a mutation, since GitHub's
+  /// `rateLimit` field does not exist on `Mutation`.
+  GitHubRateLimit? get lastGraphQlRateLimit => _lastGraphQlRateLimit;
+
   /// How many HTTP requests THIS client has issued, and how many came back
   /// `304 Not Modified`.
   ///
@@ -275,7 +287,7 @@ class GitHubHttpClient {
       // `_sendMutation` delegates here once it has waited its turn.
       _requests++;
       if (response.statusCode == 304) _notModified++;
-      _updateRateLimit(response.headers);
+      _updateRateLimit(response);
       if (response.statusCode < 400) return response;
       final delay = _retry.delayFor(response, attempt);
       if (delay == null) return response;
@@ -369,9 +381,25 @@ class GitHubHttpClient {
     );
   }
 
-  void _updateRateLimit(Map<String, String> headers) {
-    if (headers.containsKey('x-ratelimit-limit')) {
-      _lastRateLimit = GitHubRateLimit.fromHeaders(headers);
+  /// Records the budget the response reported, **in its own currency**.
+  ///
+  /// REST and GraphQL both answer `x-ratelimit-*`, and they do not mean the
+  /// same thing: REST bills 5000 **requests** an hour, GraphQL bills 5000
+  /// **points**, where one point covers roughly a hundred nodes. One field for
+  /// both would let a REST caller read a GraphQL reply's points as requests
+  /// and conclude the account had spent far less than it had — silently, and
+  /// only after a GraphQL call had happened to run in between.
+  ///
+  /// Routed on the request's own URL rather than on a flag threaded down from
+  /// the call site, so a future GraphQL caller cannot forget to set it.
+  void _updateRateLimit(http.Response response) {
+    final headers = response.headers;
+    if (!headers.containsKey('x-ratelimit-limit')) return;
+    final limit = GitHubRateLimit.fromHeaders(headers);
+    if (response.request?.url.path.endsWith('/graphql') ?? false) {
+      _lastGraphQlRateLimit = limit;
+    } else {
+      _lastRateLimit = limit;
     }
   }
 }

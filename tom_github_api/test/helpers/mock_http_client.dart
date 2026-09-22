@@ -19,6 +19,12 @@ import 'package:http/testing.dart' as http_testing;
 /// [sequences] answers the same key differently on successive calls, which is
 /// what a retry or a compare-and-swap race looks like from the client side. The
 /// last element repeats once the list is exhausted.
+///
+/// Every response carries its `request`, as a real one does. `BaseClient` sets
+/// it in production, so a mock that omitted it was not merely thinner — it was
+/// **unfaithful**, and it hid behaviour that reads the field: the client routes
+/// a reply's rate-limit budget by the URL it came from, because REST and
+/// GraphQL answer the same headers in different currencies (woneprpc78).
 http.Client createMockClient(
   Map<String, MockResponse> responses, {
   MockResponse? defaultResponse,
@@ -39,6 +45,7 @@ http.Client createMockClient(
         mock.body is String ? mock.body as String : jsonEncode(mock.body),
         mock.statusCode,
         headers: mock.headers,
+        request: request,
       );
     }
 
@@ -70,6 +77,7 @@ http.Client createMockClient(
       mock.body is String ? mock.body as String : jsonEncode(mock.body),
       mock.statusCode,
       headers: mock.headers,
+      request: request,
     );
   });
 }

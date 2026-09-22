@@ -9,6 +9,7 @@ import 'http/github_http_client.dart';
 import 'http/github_retry_policy.dart';
 import 'models/github_comment.dart';
 import 'models/github_issue.dart';
+import 'models/github_graphql.dart';
 import 'models/github_label.dart';
 import 'models/github_rate_limit.dart';
 import 'models/github_repository.dart';
@@ -62,6 +63,15 @@ class GitHubApiClient {
 
   /// Rate limit info from the most recent API call.
   GitHubRateLimit? get lastRateLimit => _http.lastRateLimit;
+
+  /// The **points** budget the last GraphQL reply reported (woneprpc78).
+  ///
+  /// A second field rather than a wider one, because REST and GraphQL bill in
+  /// different currencies — 5000 requests an hour against 5000 points, where
+  /// one point covers roughly a hundred nodes. Folding them together would let
+  /// a REST caller read a GraphQL reply's points as requests, and only after a
+  /// GraphQL call had happened to run in between.
+  GitHubRateLimit? get lastGraphQlRateLimit => _http.lastGraphQlRateLimit;
 
   /// This client's own request tally — see
   /// [GitHubHttpClient.requestCounts] for why it is per instance rather than
@@ -263,6 +273,60 @@ class GitHubApiClient {
   /// issue number, and **labels that do not exist in the target are dropped**,
   /// while the body is copied verbatim. Any scheme that keys an issue by its
   /// number or by a label alone does not survive it.
+  // --- GraphQL ---
+
+  /// Posts a GraphQL document and returns what came back (woneprpc78).
+  ///
+  /// The REST surface cannot reach everything GitHub offers — Projects v2 is
+  /// GraphQL-only, REST Projects classic having been sunset on 2025-04-01 — so
+  /// this is an entry point rather than a convenience. Before it, the only
+  /// GraphQL in this client was the private post behind [transferIssue], and
+  /// every other caller in the workspace stood up a second `http.Client`: a
+  /// second place handling auth, retries and the rate-limit headers.
+  ///
+  /// **Field-scoped errors are returned, not thrown.** GitHub answers `200`
+  /// for all three error classes, and a `NOT_FOUND` on one field leaves every
+  /// sibling resolved (wire-measured by `woneprpb22`); throwing would discard
+  /// the half that worked. A caller reads
+  /// [GitHubGraphQlResponse.fieldErrors] and decides.
+  ///
+  /// **A query-fatal error throws.** When nothing resolved — GitHub omits the
+  /// `data` key altogether for `INSUFFICIENT_SCOPES`, the measured case, and
+  /// answers it null when the root field itself failed — there is nothing to
+  /// return, and handing back a response whose `data` is null would leave
+  /// every caller to re-derive the distinction that `path` already makes.
+  ///
+  /// [expectErrors] is deliberately **not** a parameter. A flag that suppresses
+  /// errors is a flag somebody sets once and forgets, and the shape above
+  /// already gives a caller both halves: partial data with its errors beside
+  /// it, or a throw when there is no data at all.
+  Future<GitHubGraphQlResponse> graphql(
+    String query, {
+    Map<String, dynamic>? variables,
+    String? operationName,
+  }) async {
+    final json = await _http.post('/graphql', body: {
+      'query': query,
+      if (variables != null) 'variables': variables,
+      if (operationName != null) 'operationName': operationName,
+    });
+    final response = GitHubGraphQlResponse.fromJson(json);
+    if (response.data == null) {
+      throw GitHubGraphQlException(
+        // `200` is not a placeholder: GraphQL reports every one of these over
+        // a successful HTTP response, and recording the transport status
+        // honestly keeps the field meaning "what GitHub answered".
+        statusCode: 200,
+        message: response.errors.isEmpty
+            ? 'GraphQL returned no data and no errors'
+            : 'GraphQL query failed: ${response.errors.join('; ')}',
+        errors: response.errors,
+        responseBody: json,
+      );
+    }
+    return response;
+  }
+
   Future<int> transferIssue({
     String? repoSlug,
     String? owner,
@@ -290,31 +354,37 @@ class GitHubApiClient {
       repo: targetRepo,
     );
 
-    final json = await _http.post('/graphql', body: {
-      'query': 'mutation(\$issueId: ID!, \$repositoryId: ID!) {'
-          ' transferIssue(input: {issueId: \$issueId,'
-          ' repositoryId: \$repositoryId}) {'
-          ' issue { number } } }',
-      'variables': {'issueId': issueId, 'repositoryId': targetId},
-    });
-    final errors = json['errors'];
-    if (errors is List && errors.isNotEmpty) {
+    // Through the public entry point, so this method is a caller of the same
+    // surface every other GraphQL consumer uses rather than the one place
+    // that knew how to post one.
+    final response = await graphql(
+      'mutation(\$issueId: ID!, \$repositoryId: ID!) {'
+      ' transferIssue(input: {issueId: \$issueId,'
+      ' repositoryId: \$repositoryId}) {'
+      ' issue { number } } }',
+      variables: {'issueId': issueId, 'repositoryId': targetId},
+    );
+    // Any error at all is fatal *to a transfer*, field-scoped or not: the
+    // mutation has exactly one field, so a failure of it is a failure of the
+    // document however GitHub chose to report it.
+    if (response.hasErrors) {
       throw GitHubException(
         statusCode: 200,
-        message: 'Transfer of $o/$r#$number to $targetRepoSlug failed: $errors',
-        responseBody: json,
+        message: 'Transfer of $o/$r#$number to $targetRepoSlug failed: '
+            '${response.errors.join('; ')}',
+        responseBody: response.data,
       );
     }
-    final data = json['data'] as Map<String, dynamic>?;
-    final transferred = (data?['transferIssue'] as Map<String, dynamic>?)?[
-        'issue'] as Map<String, dynamic>?;
+    final transferred =
+        (response.data?['transferIssue'] as Map<String, dynamic>?)?['issue']
+            as Map<String, dynamic>?;
     final newNumber = transferred?['number'];
     if (newNumber is! int) {
       throw GitHubException(
         statusCode: 200,
         message: 'Transfer of $o/$r#$number to $targetRepoSlug returned no '
             'new issue number',
-        responseBody: json,
+        responseBody: response.data,
       );
     }
     return newNumber;

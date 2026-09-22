@@ -38,11 +38,17 @@ Map<String, dynamic> createIssueJson({
   DateTime? updatedAt,
   DateTime? closedAt,
   int comments = 0,
+  String? nodeId,
 }) {
   final now = DateTime.utc(2026, 2, 12, 10, 0, 0);
   return {
     'number': number,
     'title': title,
+    // Emitted only when asked for, so every existing caller is unchanged.
+    // `GitHubIssue.nodeId` is the GraphQL handle a transfer needs, and no
+    // fixture produced one — which is why the only tests that exercised it
+    // built their payloads by hand.
+    if (nodeId != null) 'node_id': nodeId,
     if (body != null) 'body': body,
     'state': state,
     'labels': labels ?? [testLabelNewJson, testLabelHighJson],

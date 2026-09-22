@@ -135,6 +135,35 @@ class GitHubException implements Exception {
 }
 
 /// 404 Not Found.
+/// A GraphQL document that resolved **nothing** (woneprpc78).
+///
+/// Raised only for the query-fatal class — GitHub omitted the `data` key
+/// altogether, which `woneprpb22` measured for `INSUFFICIENT_SCOPES`. A
+/// field-scoped failure is **not** this: its siblings resolved, so it comes
+/// back inside a `GitHubGraphQlResponse` for the caller to read.
+///
+/// [statusCode] is `200` and that is not a placeholder. GraphQL reports every
+/// error class over a successful HTTP response, so the field keeps meaning
+/// "what GitHub answered" and the diagnosis lives in [errors].
+class GitHubGraphQlException extends GitHubException {
+  /// The `errors` array as it arrived, already parsed.
+  ///
+  /// Typed as `List<Object>` rather than as the model's own class so this file
+  /// stays free of an import that would point from the exceptions back at the
+  /// models; every element *is* a `GitHubGraphQlError`, and a caller that
+  /// wants the fields casts one. The alternative — moving the exception in
+  /// beside the model — would put one exception somewhere no reader looks for
+  /// exceptions.
+  final List<Object> errors;
+
+  const GitHubGraphQlException({
+    required super.statusCode,
+    required super.message,
+    required this.errors,
+    super.responseBody,
+  });
+}
+
 class GitHubNotFoundException extends GitHubException {
   const GitHubNotFoundException({
     required super.statusCode,
