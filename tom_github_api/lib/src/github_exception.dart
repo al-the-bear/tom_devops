@@ -21,8 +21,11 @@ enum GitHubSecondaryLimitKind {
   throttled,
 
   /// "…and have been temporarily blocked from content creation." The
-  /// abuse-detection block, measured still in force fifteen minutes after an
-  /// unpaced burst earned it. Not something a flush can wait out.
+  /// abuse-detection block. How long it holds depends on what the client does
+  /// next: still in force fifteen minutes after an unpaced burst that kept
+  /// sending; cleared in 70–113 seconds, three runs out of three, for a client
+  /// that stopped at the first refusal. Issue and comment writes meet it;
+  /// git-data writes were measured to go through while it held.
   blocked;
 
   /// Classifies a raw response body.
