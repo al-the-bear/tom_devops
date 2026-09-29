@@ -38,7 +38,7 @@ dev_dependencies:
   test: ^1.25.6
   # Floor 1.17.0: test/bridges_fresh_test.dart calls `checkBridgeFreshness`,
   # which first ships in 1.17.0.
-  tom_d4rt_generator: ">=1.17.0"
+  tom_d4rt_generator: ">=1.28.0"
   tom_build_kit:
     path: ../../basics/tom_build_kit
 
