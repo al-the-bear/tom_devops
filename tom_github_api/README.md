@@ -40,8 +40,9 @@ The library is **standalone** — it has no dependency on `tom_build_base`,
 
 The surface is intentionally scoped to what its consumers use. It does **not**
 implement pull-request or release endpoints, and of the repository endpoints it
-implements only the read that identifies a repository (`getRepository` and the
-two accessors over it). If a consumer grows a need for one of those, the
+implements the read that identifies a repository (`getRepository` and the two
+accessors over it) and creating and deleting a user's repository. If a
+consumer grows a need for one of those, the
 endpoint is added here first (with tests) — never worked around in the
 consumer.
 
@@ -49,14 +50,25 @@ consumer.
 
 ## Installation
 
-`tom_github_api` is a standalone library; add it as a normal dependency. Do
-**not** reach it with a `path:` override from a consumer — depend on the
-published version and bump the constraint when the API grows.
+`tom_github_api` is a standalone library. It has not been published to
+pub.dev, so a consumer inside this workspace takes it by path:
 
 ```yaml
 dependencies:
-  tom_github_api: ^1.0.0
+  tom_github_api:
+    path: ../tom_github_api
 ```
+
+### Versions and the changelog
+
+- **A change to the public API adds a line to the top entry of
+  [`CHANGELOG.md`](CHANGELOG.md).** That entry is the version `pubspec.yaml`
+  names, and it stays open until that version is published.
+- **A feature commit does not bump the version.** The version moves when a
+  version is published: the publish closes the top entry, and the next change
+  opens a new one with the next number.
+- The pubspec version and the top changelog entry are the same number. A test
+  holds them together.
 
 ```dart
 import 'package:tom_github_api/tom_github_api.dart';
@@ -462,14 +474,15 @@ it, it calls `http`, and it depends on nothing else in the workspace.
 
 ## Status
 
-- **Version:** 1.0.0
+- **Version:** 1.3.0, not published. See [`CHANGELOG.md`](CHANGELOG.md).
 - **SDK:** Dart `^3.10.8`
 - **Runtime dependencies:** `http: ^1.3.0` (only).
-- **Surface:** Issues, Labels, Comments, Search, Workflow dispatch, token auth,
-  rate-limit tracking, typed exceptions. (No repo / pull-request / release
-  endpoints — added on demand.)
-- **Tests:** 57 (mock-transport unit suite) + opt-in live-API integration checks
-  under `tool/`.
+- **Surface:** Issues, Labels, Comments, Search, Workflow dispatch, the git
+  data and contents APIs, repository read / create / delete, GraphQL, token
+  and device-flow auth, rate-limit tracking and retry, typed exceptions. (No
+  pull-request / release endpoints — added on demand.)
+- **Tests:** 139 (mock-transport unit suite) + opt-in live-API integration
+  checks under `tool/`.
 
 ---
 

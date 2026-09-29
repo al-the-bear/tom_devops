@@ -1,3 +1,11 @@
+# Changelog
+
+No version of this package has been published to pub.dev. The version numbers
+below are the ones `pubspec.yaml` has carried, and each entry lists what landed
+while the pubspec carried that number. The top entry is the version the first
+publish will carry, and it is still open: a change to the public API adds a
+line to it.
+
 ## 1.3.0
 
 ### Added
@@ -59,6 +67,67 @@
   `BaseClient` does in production. It was not merely thinner but
   **unfaithful**, and it hid behaviour that reads the field.
 
+### Documentation
+
+- `GitHubSecondaryRateLimitException` states the measured duration of a
+  content-creation block. It said a block was "not something a flush can wait
+  out", from one measurement of a client that kept sending; a client that
+  stops at the first refusal saw it clear in about two minutes.
+
+## 1.2.0
+
+### Added
+
+- **`GitHubApiClient.getRepository`** and the `GitHubRepository` model. GitHub
+  answers a request for a renamed repository's old name with 200 and the
+  repository's current `fullName`, so comparing the two is the only way to
+  tell a live name from a stale one. `getDefaultBranch` and
+  `getRepositoryNodeId` read through the same call.
+- **`createUserRepository`** and **`deleteRepository`**. The create takes
+  `autoInit`, because a repository with no commits refuses every git-data
+  write.
+- **`GitHubApiClient.requestCounts`** — requests issued by this client
+  instance, and separately the ones answered `304`. `lastRateLimit` is a
+  per-token figure, so two clients sharing a token read each other's traffic
+  through it. A conditional request answered `304` is not charged, so
+  `requests == notModified` over a stretch of polling states that the polling
+  was free.
+- **A secondary rate limit is classified.** `GitHubSecondaryRateLimitException`
+  tells the points throttle from the content-creation block. Both leave the
+  primary quota untouched, so only the response body separates them.
+- **`GitHubSecondaryRateLimitException.retryAfter`** — the `Retry-After` GitHub
+  sent, and null when it sent none.
+- **Mutations are paced.** `minMutativeInterval` spaces writes, which is what
+  GitHub asks of a client that creates content.
+- **`GitHubRetryPolicy.jittered`**, public and static: an additive spread
+  clamped to a ceiling, for a caller that schedules its own waits.
+
+### Changed
+
+- `GitHubRetryPolicy` prefers a stated `Retry-After` over its own exponential
+  backoff for a secondary limit, and spreads both by jitter. An account-wide
+  limit trips every client of the account at once.
+- **Breaking:** `GitHubContentWriteResult.treeSha` is a required field. A
+  contents write answers with the tree it created, and the model dropped it.
+
+## 1.1.0
+
+### Added
+
+- **`GitHubApiClient.git`** — the git data API: blobs, trees (recursive),
+  commits, refs, and a conditional ref read, so polling an unchanged branch
+  costs no quota. It is what lets a caller land several files as one commit.
+- **`git.deleteRef`**, so a caller that creates a branch can remove it.
+- **`GitHubApiClient.contents`** — the repository contents API, for reading and
+  writing a single file.
+- **`GitHubDeviceFlow`** — OAuth device authorization, so access can be granted
+  without pasting a token.
+- **`GitHubRetryPolicy`** — tells a primary rate limit, a secondary rate limit
+  and a server error apart, and waits accordingly.
+- **`updateComment`**, **`deleteComment`** and **`transferIssue`**.
+  `GitHubIssue` carries the fields the transfer reads back.
+
 ## 1.0.0
 
-- Initial version.
+- Issues, labels, comments, search and workflow dispatch over token
+  authentication, with rate-limit tracking and typed exceptions.
