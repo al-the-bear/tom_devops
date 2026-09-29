@@ -87,7 +87,7 @@ class NewIssueExecutor extends CommandExecutor {
       return const ToolResult.failure('Missing required argument: title');
     }
     final title = args.positionalArgs.first;
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('new');
 
     if (args.dryRun) {
       final severity = opts['severity'] as String? ?? 'normal';
@@ -173,7 +173,7 @@ class EditIssueExecutor extends CommandExecutor {
         'Missing required argument: issue number',
       );
     }
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('edit');
 
     if (args.dryRun) {
       final fields = <String>[];
@@ -260,7 +260,7 @@ class AnalyzeExecutor extends CommandExecutor {
         'Missing required argument: issue number',
       );
     }
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('analyze');
 
     if (args.dryRun) {
       final project = opts['project'] as String?;
@@ -343,7 +343,7 @@ class AssignExecutor extends CommandExecutor {
         'Missing required argument: issue number',
       );
     }
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('assign');
     final project = opts['project'] as String?;
     if (project == null) {
       return const ToolResult.failure('Missing required option: --project');
@@ -571,7 +571,7 @@ class ResolveExecutor extends CommandExecutor {
         'Missing required argument: issue number',
       );
     }
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('resolve');
 
     if (args.dryRun) {
       return ToolResult(
@@ -720,7 +720,7 @@ class ReopenExecutor extends CommandExecutor {
     try {
       final reopened = await service.reopenIssue(
         issueNumber,
-        note: args.extraOptions['note'] as String?,
+        note: args.optionsFor('reopen')['note'] as String?,
       );
       return ToolResult(
         success: true,
@@ -766,7 +766,7 @@ class ListExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('list');
 
     try {
       final issues = await service.listIssues(
@@ -957,7 +957,7 @@ class SearchExecutor extends CommandExecutor {
       return const ToolResult.failure('Missing required argument: query');
     }
     final query = args.positionalArgs.first;
-    final repo = args.extraOptions['repo'] as String? ?? 'issues';
+    final repo = args.optionsFor('search')['repo'] as String? ?? 'issues';
 
     try {
       final result = await service.searchIssues(query: query, repo: repo);
@@ -995,7 +995,7 @@ class ScanExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
     final issueNumber = _parseIssueNumber(args);
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('scan');
     final missingTests = opts['missing-tests'] == true;
 
     List<TestIdMatch> matches;
@@ -1146,7 +1146,7 @@ class PromoteExecutor extends CommandExecutor {
       );
     }
     final testId = args.positionalArgs.first;
-    final issueNumber = args.extraOptions['issue'] as int?;
+    final issueNumber = args.optionsFor('promote')['issue'] as int?;
     if (issueNumber == null) {
       return ItemResult.failure(
         path: context.path,
@@ -1220,7 +1220,7 @@ class ValidateExecutor extends CommandExecutor {
       );
     }
 
-    final fix = args.extraOptions['fix'] == true;
+    final fix = args.optionsFor('validate')['fix'] == true;
     final dryRun = args.dryRun;
     final errors = <String>[];
     final warnings = <String>[];
@@ -1394,7 +1394,7 @@ class LinkExecutor extends CommandExecutor {
         'Missing required argument: issue number',
       );
     }
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('link');
     final testId = opts['test-id'] as String?;
     if (testId == null) {
       return const ToolResult.failure('Missing required option: --test-id');
@@ -1461,7 +1461,7 @@ class SyncExecutor extends CommandExecutor {
 
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('sync');
     final autoApply = opts['auto'] == true;
     final dryRun = args.dryRun;
 
@@ -1688,7 +1688,7 @@ class ExportExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('export');
 
     try {
       final issues = await service.exportIssues(
@@ -1745,7 +1745,7 @@ class ImportExecutor extends CommandExecutor {
       return const ToolResult.failure('Missing required argument: file path');
     }
     final filePath = args.positionalArgs.first;
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('import');
     final dryRun = args.dryRun || opts['dry-run'] == true;
 
     try {
@@ -1825,7 +1825,7 @@ class InitExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('init');
     final repo = opts['repo'] as String? ?? 'both';
     final force = opts['force'] == true;
 
@@ -1887,7 +1887,7 @@ class SnapshotExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final opts = args.extraOptions;
+    final opts = args.optionsFor('snapshot');
     final issuesOnly = opts['issues-only'] == true;
     final testsOnly = opts['tests-only'] == true;
 
@@ -1956,7 +1956,7 @@ class RunTestsExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final wait = args.extraOptions['wait'] == true;
+    final wait = args.optionsFor('run-tests')['wait'] == true;
 
     if (args.dryRun) {
       return ToolResult(
