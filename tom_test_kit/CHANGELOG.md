@@ -20,6 +20,14 @@ Verified end to end: `testkit :baseline --test-args="--name zzz_nomatch"` now
 launches `dart test --reporter json --name zzz_nomatch` and exits 79 having
 selected no test, and `:baseline -c label` reaches the CSV column header.
 
+The same defect made `testkit :test --baseline` refuse with the very message
+that recommends it ("No tracking file found. Run :baseline first, or use
+--baseline to create one."). It now creates the baseline and reports the run.
+`test/v2/test_baseline_flag_test.dart` parses real command lines through the
+tool definition and drives the executor, in both option positions — the seam
+no earlier test crossed, since each called `TestCommand.run` with
+`createBaseline` already set.
+
 Requires tom_build_base >=2.13.0.
 
 ## 1.2.0
