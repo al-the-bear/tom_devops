@@ -87,7 +87,7 @@ only one).
 | ----- | ------- |
 | **Issues** | `createIssue`, `getIssue`, `updateIssue`, `closeIssue`, `reopenIssue`, `listIssues` (single page), `listAllIssues` (all pages) |
 | **Labels** | `createLabel`, `listLabels`, `updateLabel`, `deleteLabel`, `addLabelsToIssue`, `removeLabelFromIssue` |
-| **Comments** | `addComment`, `listComments` (single page), `listAllComments` (all pages) |
+| **Comments** | `addComment`, `listComments` (single page), `listAllComments` (all pages), `listAllCommentsConditional` (`If-None-Match`; a `304` is unmodified and uncharged) |
 | **Search** | `searchIssues` (GitHub search syntax) |
 | **Workflows** | `dispatchWorkflow` (trigger a GitHub Actions `workflow_dispatch`) |
 | **Repositories** | `getRepository`, `getDefaultBranch`, `getRepositoryNodeId` |
