@@ -34,6 +34,15 @@ class GitHubHttpClient {
   /// minutes of backoff. Backing off is the recovery; pacing is what makes the
   /// recovery rare.
   ///
+  /// **A GraphQL query is paced exactly like a mutation, by decision.** GraphQL
+  /// tunnels reads over POST, so the verb cannot tell them apart, and this
+  /// client does not try: sniffing the document trusts a string the caller
+  /// writes, and a caller-declared flag is one more argument to get wrong —
+  /// either mistake under-paces a mutation, which earns a block that outlasts
+  /// minutes of backoff, while an over-paced query is only slow. A
+  /// GraphQL-only caller therefore budgets one call per second.
+  /// `test/client/graphql_pacing_test.dart` holds both sides.
+  ///
   /// `Duration.zero` disables both the spacing and the serialisation — for a
   /// test, or for a caller that has a better idea of the budget than this
   /// client does.
