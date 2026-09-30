@@ -7,6 +7,7 @@ import 'api/github_git_api.dart';
 import 'github_exception.dart';
 import 'http/github_http_client.dart';
 import 'http/github_retry_policy.dart';
+import 'models/github_conditional.dart';
 import 'models/github_comment.dart';
 import 'models/github_issue.dart';
 import 'models/github_graphql.dart';
@@ -699,6 +700,43 @@ class GitHubApiClient {
     }
 
     return allComments;
+  }
+
+  /// Fetch ALL comments for an issue, **conditionally**.
+  ///
+  /// `If-None-Match` on the first page: a `304` witnesses the thread itself —
+  /// which the issue's `updated_at` cannot, since editing a comment does not
+  /// bump it — and GitHub does not charge a `304` against the quota. The
+  /// entity tag returned is the **first page's**, and it is returned only for
+  /// a thread that fits in one page: a tag over page one says nothing about
+  /// a comment on page two, so a thread with a `next` link comes back with
+  /// `etag: null` and is re-read in full next time.
+  Future<GitHubConditional<List<GitHubComment>>> listAllCommentsConditional({
+    String? repoSlug,
+    String? owner,
+    String? repo,
+    required int issueNumber,
+    String? ifNoneMatch,
+  }) async {
+    final (o, r) = _parseSlug(repoSlug, owner, repo);
+    final first = await _http.getConditionalList(
+      '/repos/$o/$r/issues/$issueNumber/comments',
+      queryParams: {'per_page': '100'},
+      ifNoneMatch: ifNoneMatch,
+    );
+    if (first.notModified) return GitHubConditional.unmodified(etag: ifNoneMatch);
+    final allComments = <GitHubComment>[
+      ...first.value!.cast<Map<String, dynamic>>().map(GitHubComment.fromJson),
+    ];
+    // The Link header is not on the conditional result, so a thread past one
+    // page is walked the way [listAllComments] walks it — and is not tagged.
+    if (allComments.length < 100) {
+      return GitHubConditional.modified(allComments, etag: first.etag);
+    }
+    return GitHubConditional.modified(
+      await listAllComments(owner: o, repo: r, issueNumber: issueNumber),
+      etag: null,
+    );
   }
 
   // ===================================================================

@@ -242,6 +242,31 @@ class GitHubHttpClient {
     );
   }
 
+  /// Conditional JSON GET of an **array** endpoint (a comment thread, a
+  /// label list). The object form above decodes a map and would refuse a
+  /// list; this is the same request with the other decoding, and the same
+  /// `304` accounting.
+  Future<GitHubConditional<List<dynamic>>> getConditionalList(
+    String path, {
+    Map<String, String>? queryParams,
+    String? ifNoneMatch,
+  }) async {
+    final uri = _buildUri(path, queryParams);
+    final headers = {
+      ..._headers,
+      if (ifNoneMatch != null) 'If-None-Match': ifNoneMatch,
+    };
+    final response = await _send(() => _httpClient.get(uri, headers: headers));
+    if (response.statusCode == 304) {
+      return GitHubConditional.unmodified(etag: ifNoneMatch);
+    }
+    _checkForErrors(response);
+    return GitHubConditional.modified(
+      jsonDecode(response.body) as List<dynamic>,
+      etag: response.headers['etag'],
+    );
+  }
+
   /// GET the response body as bytes, without JSON decoding.
   ///
   /// [accept] defaults to [rawMediaType] so file content comes back verbatim;

@@ -10,6 +10,7 @@ line to it.
 
 ### Added
 
+- `GitHubHttpClient.getConditionalList` — the array form of the conditional GET (`If-None-Match`, `304` reported as unmodified and counted), beside the object form. `GitHubApiClient.listAllCommentsConditional` reads a whole comment thread conditionally; the entity tag is the first page's and is returned only for a thread that fits in one page.
 - **A public GraphQL entry point** — `GitHubApiClient.graphql(query,
   {variables, operationName})`. The client had posted GraphQL since
   `transferIssue` landed, through a private `_http.post('/graphql', …)` that
