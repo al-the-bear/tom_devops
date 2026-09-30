@@ -1,6 +1,8 @@
 /// `getConditionalList` — the array form of the conditional GET, with the
 /// same `304` accounting. A comment thread is a list, and the object form
 /// refuses one.
+library;
+
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;

@@ -10,6 +10,8 @@ line to it.
 
 ### Added
 
+- `createWebhook` / `deleteWebhook` and the `GitHubWebhook` model — the last REST calls a live suite made through an `http.Client` of its own. An inactive hook's creation is how a suite asks whether GitHub accepts an event on a repository; the `422` arrives as a `GitHubException`.
+- `GitHubApiClient.credential()` and the `GitHubCredential` model — the token's login, class (classic or fine-grained, read off the presence of `x-oauth-scopes`) and a classic token's scopes, from one `GET /user`. The fine-grained branch is stated as unverified: no fleet host has held one.
 - `GitHubHttpClient.getConditionalList` — the array form of the conditional GET (`If-None-Match`, `304` reported as unmodified and counted), beside the object form. `GitHubApiClient.listAllCommentsConditional` reads a whole comment thread conditionally; the entity tag is the first page's and is returned only for a thread that fits in one page.
 - **A public GraphQL entry point** — `GitHubApiClient.graphql(query,
   {variables, operationName})`. The client had posted GraphQL since

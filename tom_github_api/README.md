@@ -89,7 +89,9 @@ only one).
 | **Labels** | `createLabel`, `listLabels`, `updateLabel`, `deleteLabel`, `addLabelsToIssue`, `removeLabelFromIssue` |
 | **Comments** | `addComment`, `listComments` (single page), `listAllComments` (all pages), `listAllCommentsConditional` (`If-None-Match`; a `304` is unmodified and uncharged) |
 | **Search** | `searchIssues` (GitHub search syntax) |
+| **Credential** | `credential()` — the token's login, class (classic / fine-grained by the presence of `x-oauth-scopes`) and scopes, from one `GET /user` |
 | **Workflows** | `dispatchWorkflow` (trigger a GitHub Actions `workflow_dispatch`) |
+| **Webhooks** | `createWebhook`, `deleteWebhook` |
 | **Repositories** | `getRepository`, `getDefaultBranch`, `getRepositoryNodeId` |
 | **Contents** (`client.contents`) | `readFile`, `writeFile`, `deleteFile`, `stat`, `listDirectory` |
 | **Git data** (`client.git`) | `getRef`, `getRefConditional`, `createRef`, `updateRef`, `deleteRef`, `getCommit`, `createCommit`, `getTree`, `getTreeOrNull`, `createTree`, `createBlob`, `getBlob` |

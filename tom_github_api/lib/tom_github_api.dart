@@ -23,4 +23,6 @@ export 'src/models/github_label.dart';
 export 'src/models/github_rate_limit.dart';
 export 'src/models/github_repository.dart';
 export 'src/models/github_search_result.dart';
+export 'src/models/github_credential.dart';
 export 'src/models/github_user.dart';
+export 'src/models/github_webhook.dart';

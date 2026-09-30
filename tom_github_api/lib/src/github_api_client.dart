@@ -8,6 +8,8 @@ import 'github_exception.dart';
 import 'http/github_http_client.dart';
 import 'http/github_retry_policy.dart';
 import 'models/github_conditional.dart';
+import 'models/github_credential.dart';
+import 'models/github_webhook.dart';
 import 'models/github_comment.dart';
 import 'models/github_issue.dart';
 import 'models/github_graphql.dart';
@@ -737,6 +739,60 @@ class GitHubApiClient {
       await listAllComments(owner: o, repo: r, issueNumber: issueNumber),
       etag: null,
     );
+  }
+
+  /// What this client's token is: the login it authenticates as, its class
+  /// (classic or fine-grained), and a classic token's scopes — read from
+  /// `GET /user`'s body and its `x-oauth-scopes` header in one request.
+  ///
+  /// The credential *class* is load-bearing for the live suites (a branch
+  /// refuses a classic PAT carrying `repo`; a probe skips without `project`),
+  /// and until this existed every one of them stood up an `http.Client` of its
+  /// own to read one response header. The parsing is an API fact and lives
+  /// here; what a consumer refuses on the strength of it is its own policy.
+  /// See [GitHubCredential] for the unverified fine-grained branch.
+  Future<GitHubCredential> credential() async {
+    final response = await _http.getRaw('/user');
+    final body = jsonDecode(response.body) as Map<String, dynamic>;
+    return GitHubCredential.fromHeaders(
+      response.headers,
+      login: body['login'] as String,
+    );
+  }
+
+  /// Creates a repository webhook. A hook created **inactive** is never
+  /// called, which makes creation itself the cheapest way to ask whether
+  /// GitHub accepts an event on a repository: it answers at creation time,
+  /// `201` or `422`, and the `422` arrives as a [GitHubException] carrying
+  /// GitHub's own words.
+  Future<GitHubWebhook> createWebhook({
+    String? repoSlug,
+    String? owner,
+    String? repo,
+    required String url,
+    required List<String> events,
+    bool active = true,
+    String contentType = 'json',
+  }) async {
+    final (o, r) = _parseSlug(repoSlug, owner, repo);
+    final json = await _http.post('/repos/$o/$r/hooks', body: {
+      'name': 'web',
+      'active': active,
+      'events': events,
+      'config': {'url': url, 'content_type': contentType},
+    });
+    return GitHubWebhook.fromJson(json);
+  }
+
+  /// Deletes a repository webhook by id.
+  Future<void> deleteWebhook({
+    String? repoSlug,
+    String? owner,
+    String? repo,
+    required int id,
+  }) async {
+    final (o, r) = _parseSlug(repoSlug, owner, repo);
+    await _http.delete('/repos/$o/$r/hooks/$id');
   }
 
   // ===================================================================
