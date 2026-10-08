@@ -6,13 +6,13 @@ This index lists all documentation files in the workspace related to Tom CLI, wo
 
 | Document | Location | Description |
 |----------|----------|-------------|
-| **tom_user_reference.md** | [doc/tom_user_reference.md](../../doc/tom_user_reference.md) | Complete, authoritative reference for Tom CLI usage, commands, placeholders, and action definitions |
+| **tom_user_reference.md** | [doc/tom_user_reference.md](doc/tom_user_reference.md) | Complete, authoritative reference for Tom CLI usage, commands, placeholders, and action definitions |
 
 ## Tom CLI Usage
 
 | Document | Location | Description |
 |----------|----------|-------------|
-| tom_cli_usage.md | [tom_build_tools/doc/tom_cli_usage.md](../tom_build_tools/doc/tom_cli_usage.md) | Tom CLI command structure, internal commands, options |
+| tom_cli_usage.md | [tom_build_tools/doc/tom_cli_usage.md](../tom_build_cli/doc/tom_cli_usage.md) | Tom CLI command structure, internal commands, options |
 
 ## Placeholder and D4rt Documentation
 
@@ -24,34 +24,32 @@ This index lists all documentation files in the workspace related to Tom CLI, wo
 
 | Document | Location | Status |
 |----------|----------|--------|
-| workspace_build.md | [doc/build_tools_old/userguides/workspace_build.md](../../doc/build_tools_old/userguides/workspace_build.md) | Legacy - may be outdated |
-| workspace_metadata.md | [doc/build_tools_old/userguides/workspace_metadata.md](../../doc/build_tools_old/userguides/workspace_metadata.md) | Legacy - may be outdated |
-| ws_analyzer.md | [doc/build_tools_old/userguides/ws_analyzer.md](../../doc/build_tools_old/userguides/ws_analyzer.md) | Legacy - may be outdated |
-| ws_prepper.md | [doc/build_tools_old/userguides/ws_prepper.md](../../doc/build_tools_old/userguides/ws_prepper.md) | Legacy - may be outdated |
-| workspace_analyzer_implementation.md | [doc/build_tools_old/implementation/workspace_analyzer_implementation.md](../../doc/build_tools_old/implementation/workspace_analyzer_implementation.md) | Legacy - may be outdated |
-| mode_switcher_implementation.md | [doc/build_tools_old/implementation/mode_switcher_implementation.md](../../doc/build_tools_old/implementation/mode_switcher_implementation.md) | Legacy - may be outdated |
+| workspace_build.md | [doc/build_tools_old/userguides/workspace_build.md](../../../_doc/build_tools_old/userguides/workspace_build.md) | Legacy - may be outdated |
+| workspace_metadata.md | [doc/build_tools_old/userguides/workspace_metadata.md](../../../_doc/build_tools_old/userguides/workspace_metadata.md) | Legacy - may be outdated |
+| ws_analyzer.md | [doc/build_tools_old/userguides/ws_analyzer.md](../../../_doc/build_tools_old/userguides/ws_analyzer.md) | Legacy - may be outdated |
+| ws_prepper.md | [doc/build_tools_old/userguides/ws_prepper.md](../../../_doc/build_tools_old/userguides/ws_prepper.md) | Legacy - may be outdated |
+| workspace_analyzer_implementation.md | [doc/build_tools_old/implementation/workspace_analyzer_implementation.md](../../../_doc/build_tools_old/implementation/workspace_analyzer_implementation.md) | Legacy - may be outdated |
+| mode_switcher_implementation.md | [doc/build_tools_old/implementation/mode_switcher_implementation.md](../../../_doc/build_tools_old/implementation/mode_switcher_implementation.md) | Legacy - may be outdated |
 
 ## Project README Files
 
 | Document | Location | Description |
 |----------|----------|-------------|
 | tom_build README | [tom_build/README.md](./README.md) | Package README - needs content |
-| tom_build_tools README | [tom_build_tools/README.md](../tom_build_tools/README.md) | Tom Build Tools overview |
 
 ## VS Code Integration
 
 | Document | Location | Description |
 |----------|----------|-------------|
-| VS Code Bridge USER_GUIDE | [tom_vscode_bridge/doc/USER_GUIDE.md](../tom_vscode_bridge/doc/USER_GUIDE.md) | VS Code Bridge user guide |
-| Extension USER_GUIDE | [tom_vscode_extension/doc/USER_GUIDE.md](../tom_vscode_extension/doc/USER_GUIDE.md) | VS Code extension user guide |
-| Extension Commands | [tom_vscode_extension/doc/extension_commands.md](../tom_vscode_extension/doc/extension_commands.md) | Available VS Code commands |
+| VS Code Bridge USER_GUIDE | [tom_vscode_bridge/doc/USER_GUIDE.md](../../vscode/tom_vscode_bridge/doc/USER_GUIDE.md) | VS Code Bridge user guide |
+| Extension USER_GUIDE | [tom_vscode_extension/doc/USER_GUIDE.md](../../vscode/tom_vscode_extension/doc/user_guide.md) | VS Code extension user guide |
 
 ## Quest Documentation
 
 | Document | Location | Description |
 |----------|----------|-------------|
-| cli_dartbridge overview | [_ai/quests/cli_dartbridge/overview.cli_dartbridge.md](../../_ai/quests/cli_dartbridge/overview.cli_dartbridge.md) | CLI to VS Code Bridge quest |
-| tom_cli quest | [_ai/quests/tom_cli/](../../_ai/quests/tom_cli/) | Tom CLI implementation quest |
+| cli_dartbridge overview | [_ai/quests/cli_dartbridge/overview.cli_dartbridge.md](../../../_ai/quests/cli_dartbridge/overview.cli_dartbridge.md) | CLI to VS Code Bridge quest |
+| tom_cli quest | [_ai/quests/tom_cli/](../../../_ai/quests/tom_cli/) | Tom CLI implementation quest |
 
 ## Document Priorities
 

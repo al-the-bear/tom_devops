@@ -1,6 +1,6 @@
 # Tom CLI Usage Documentation
 
-> **Note:** This is supplementary documentation. The authoritative reference is [doc/tom_user_reference.md](../../doc/tom_user_reference.md).
+> **Note:** This is supplementary documentation. The authoritative reference is [doc/tom_user_reference.md](../../tom_build/doc/tom_user_reference.md).
 
 The Tom CLI (`tom`) is the primary tool for managing and building Tom workspaces.
 
@@ -113,4 +113,4 @@ tom :vscode script.dart                 # Run via VS Code bridge
 
 ---
 
-*See [doc/tom_user_reference.md](../../doc/tom_user_reference.md) for complete reference.*
+*See [doc/tom_user_reference.md](../../tom_build/doc/tom_user_reference.md) for complete reference.*

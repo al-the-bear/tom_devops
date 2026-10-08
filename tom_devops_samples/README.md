@@ -26,10 +26,10 @@ project lands.
 | - | ------ | ------------ |
 | 1 | [`tom_github_api_sample`](tom_github_api_sample/) *(flagship)* | The [`tom_github_api`](../tom_github_api/) REST client end to end: token auth, listing/creating issues, labels, comments, search, and workflow dispatch — offline by default via a mock transport, with opt-in live mode. |
 | 2 | [`tom_build_kit_sample`](tom_build_kit_sample/) *(planned)* | Authoring a small build tool / pipeline with [`buildkit`](../tom_build_kit/) against a fixture workspace. |
-| 3 | [`tom_test_kit_sample`](tom_test_kit_sample/) *(planned)* | The baseline → test → diff tracking workflow of [`testkit`](../tom_test_kit/) on a small fixture project. |
-| 4 | [`tom_issue_kit_sample`](tom_issue_kit_sample/) *(planned)* | The issue create / analyze / verify flow of [`issuekit`](../tom_issue_kit/) against a mock backend. |
-| 5 | [`tom_md2pdf_sample`](tom_md2pdf_sample/) *(planned)* | Converting Markdown to PDF with [`md2pdf`](../tom_md2pdf/) and to LaTeX/PDF with [`md2latex`](../tom_md2latex/). |
-| 6 | [`tom_deploy_sample`](tom_deploy_sample/) *(planned)* | Modelling a deployment with [`tom_deploy`](../tom_deploy/) / [`tom_deploy_tools`](../tom_deploy_tools/) against a local target. |
+| 3 | `tom_test_kit_sample` *(planned)* | The baseline → test → diff tracking workflow of [`testkit`](../tom_test_kit/) on a small fixture project. |
+| 4 | `tom_issue_kit_sample` *(planned)* | The issue create / analyze / verify flow of [`issuekit`](../tom_issue_kit/) against a mock backend. |
+| 5 | `tom_md2pdf_sample` *(planned)* | Converting Markdown to PDF with [`md2pdf`](../tom_md2pdf/) and to LaTeX/PDF with [`md2latex`](../tom_md2latex/). |
+| 6 | `tom_deploy_sample` *(planned)* | Modelling a deployment with [`tom_deploy`](../tom_deploy/) / [`tom_deploy_tools`](../tom_deploy_tools/) against a local target. |
 
 > Sample 1 (`tom_github_api_sample`) is the confirmed flagship; samples 2–6 are
 > planned and their links are forward references until each sample project is

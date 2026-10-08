@@ -1,6 +1,6 @@
 # Tom Placeholders & D4rt Guide
 
-> **Note:** For a concise syntax reference, see [doc/tom_user_reference.md](../../doc/tom_user_reference.md). This guide provides detailed implementation information.
+> **Note:** For a concise syntax reference, see [doc/tom_user_reference.md](tom_user_reference.md). This guide provides detailed implementation information.
 
 This guide covers the Tom Build placeholder resolution and D4rt script execution systems. These systems work together to provide dynamic string substitution and script execution within the Tom workspace.
 
@@ -776,6 +776,5 @@ d4rt.evaluateSync(
 
 ## Related Documentation
 
-- [D4rt Usage Guide](_copilot_guidelines/d4rt/d4rt_usage_guide.md) - Low-level D4rt patterns
-- [D4rt BridgedClass Guidelines](_copilot_guidelines/d4rt/d4rt_bridgedclass_guidelines.md) - Creating bridges
-- [Scripting Helpers API](doc/api/api_summary_scripting.md) - Shell, Fs, Pth, etc.
+- [D4rt Usage Guide](../../../../_copilot_guidelines/d4rt/d4rt_usage_guide.md) - Low-level D4rt patterns
+- [D4rt BridgedClass Guidelines](../../../../_copilot_guidelines/d4rt/d4rt_bridgedclass_guidelines.md) - Creating bridges

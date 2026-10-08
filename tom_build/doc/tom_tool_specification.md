@@ -266,8 +266,6 @@ skip-types: { $remove: [flutter_app] }
 
 The deep merge implementation is in the `little_things` module of `tom_core_kernel`. This implementation handles standard deep merge operations and should be extended to support the list operations (`$append`, `$prepend`, `$replace`, `$remove`) specified above.
 
-See [_ai/replies/260113_merging_and_classes.md](../../_ai/replies/260113_merging_and_classes.md) for architectural guidance on using Maps during generation vs Object Model during execution.
-
 **Implementation Verification:**
 
 - [ ] Deep merge with recursive map handling
@@ -345,7 +343,7 @@ workspace-modes:
 4. `action-mode-configuration.default` must define a value for each mode type in `mode-types`
 5. Every mode name referenced in `action-mode-configuration` must be a valid mode defined in the corresponding `<mode-type>-modes` block
 
-All consistency checks are performed after configuration files are fully assembled but **before** any commands or actions are executed. If validation fails, Tom aborts with clear error messages. For VS Code linting integration, see [workspace_metadata_linting.md](workspace_metadata_linting.md).
+All consistency checks are performed after configuration files are fully assembled but **before** any commands or actions are executed. If validation fails, Tom aborts with clear error messages. For VS Code linting integration, see [workspace_metadata_linting.md](../../../../_doc/build_tools_old/userguides/workspace_metadata_linting.md).
 
 #### 3.2.5 actions Structure
 
@@ -1812,7 +1810,7 @@ Internal commands (prefixed with `:`) can be chained with actions on the command
 
 **Implementation Location:** These tools are implemented in `tom_build_tools` and `tom_reflection_generator` projects.
 
-**Linting:** Configuration file linting is provided via a VS Code extension, not a CLI command. See [workspace_metadata_linting.md](workspace_metadata_linting.md) for extension development details.
+**Linting:** Configuration file linting is provided via a VS Code extension, not a CLI command. See [workspace_metadata_linting.md](../../../../_doc/build_tools_old/userguides/workspace_metadata_linting.md) for extension development details.
 
 **Meta-Commands:**
 
@@ -2089,7 +2087,7 @@ Detection rules should be implemented in separate Dart files for extensibility.
 
 ### 7.3 Source Structure Discovery
 
-For Dart projects, see [project_structure.md](../../_copilot_guidelines/project_structure.md) for detailed source structure patterns.
+For Dart projects, see [project_structure.md](../../../../_copilot_guidelines/project_structure.md) for detailed source structure patterns.
 
 **Implementation Reference:** The current implementation for Dart projects is in `tom_build/lib/src/analyzer/workspace_analyzer.dart`. This logic handles:
 
@@ -3788,9 +3786,8 @@ Shell.run('npm install', environment: {'NODE_ENV': 'production'});
 
 **Testing Guidelines:**
 
-- For general unit testing patterns, see [_copilot_guidelines/unit_tests.md](../../_copilot_guidelines/unit_tests.md)
-- For test file creation rules, see [_copilot_guidelines/tests.md](../../_copilot_guidelines/tests.md)
-- For build tools testing with `zom_` test projects, see [_copilot_guidelines/tests_buildtools.md](../../_copilot_guidelines/tests_buildtools.md)
+- For general unit testing patterns, see [_copilot_guidelines/unit_tests.md](../../../../_copilot_guidelines/dart/unit_tests.md)
+- For build tools testing with `zom_` test projects, see [_copilot_guidelines/tests_buildtools.md](../../../../_copilot_guidelines/dart/tests_buildtools.md)
 
 ### Unit Tests Required
 
@@ -3820,4 +3817,4 @@ Shell.run('npm install', environment: {'NODE_ENV': 'production'});
 
 ### Test Workspace Setup
 
-Use `zom_` prefixed test projects for build tools testing. See [_copilot_guidelines/tests_buildtools.md](../../_copilot_guidelines/tests_buildtools.md) for complete guidelines on test project setup and naming conventions.
+Use `zom_` prefixed test projects for build tools testing. See [_copilot_guidelines/tests_buildtools.md](../../../../_copilot_guidelines/dart/tests_buildtools.md) for complete guidelines on test project setup and naming conventions.

@@ -2204,7 +2204,7 @@ issuekit :verify 42 -i "tom_d4rt" -i "tom_build_kit"
 
 - [Issue Tracking — Concept and Workflow](issue_tracking.md) — Architecture, design principles, full conceptual documentation
 - [Test Tracking — Concept and Workflow](../../tom_test_kit/doc/test_tracking.md) — Testkit workflow and commands
-- [CLI Tools Navigation Guide](../../tom_build_base/doc/cli_tools_navigation.md) — Standard navigation options
-- [Build Base User Guide](../../tom_build_base/doc/build_base_user_guide.md) — Configuration and project discovery
+- [CLI Tools Navigation Guide](../../../basics/tom_build_base/doc/cli_tools_navigation.md) — Standard navigation options
+- [Build Base User Guide](../../../basics/tom_build_base/doc/build_base_user_guide.md) — Configuration and project discovery
 
 [TOC](#table-of-contents) | [Intro](#introduction) | [Commands](#commands)

@@ -181,10 +181,10 @@ each. Ordered from first contact to advanced toolchain use:
 | - | ------ | ------------ |
 | 1 | [`tom_github_api_sample`](tom_devops_samples/tom_github_api_sample/) | The GitHub REST client end to end: auth, issues, repos, PRs, releases (offline by default). |
 | 2 | [`tom_build_kit_sample`](tom_devops_samples/tom_build_kit_sample/) | Authoring a small build tool / pipeline with buildkit against a fixture workspace. |
-| 3 | [`tom_test_kit_sample`](tom_devops_samples/tom_test_kit_sample/) | The baseline → test → diff tracking workflow on a small fixture project. |
-| 4 | [`tom_issue_kit_sample`](tom_devops_samples/tom_issue_kit_sample/) | The issue create / analyze / verify flow against a mock backend. |
-| 5 | [`tom_md2pdf_sample`](tom_devops_samples/tom_md2pdf_sample/) | Converting Markdown to PDF (md2pdf) and LaTeX/PDF (md2latex). |
-| 6 | [`tom_deploy_sample`](tom_devops_samples/tom_deploy_sample/) | Modelling a deployment with `tom_deploy` / `tom_deploy_tools` against a local target. |
+| 3 | `tom_test_kit_sample` *(planned)* | The baseline → test → diff tracking workflow on a small fixture project. |
+| 4 | `tom_issue_kit_sample` *(planned)* | The issue create / analyze / verify flow against a mock backend. |
+| 5 | `tom_md2pdf_sample` *(planned)* | Converting Markdown to PDF (md2pdf) and LaTeX/PDF (md2latex). |
+| 6 | `tom_deploy_sample` *(planned)* | Modelling a deployment with `tom_deploy` / `tom_deploy_tools` against a local target. |
 
 > Sample 1 (`tom_github_api_sample`) is the confirmed flagship; samples 2–6 are
 > planned and their links are forward references until each sample project

@@ -753,5 +753,5 @@ testkit version                  # Show version information
 
 ## Related Documentation
 
-- [CLI Tools Navigation Guide](../../tom_build_base/doc/cli_tools_navigation.md) — Standard navigation options
-- [Build Base User Guide](../../tom_build_base/doc/build_base_user_guide.md) — Configuration and project discovery
+- [CLI Tools Navigation Guide](../../../basics/tom_build_base/doc/cli_tools_navigation.md) — Standard navigation options
+- [Build Base User Guide](../../../basics/tom_build_base/doc/build_base_user_guide.md) — Configuration and project discovery

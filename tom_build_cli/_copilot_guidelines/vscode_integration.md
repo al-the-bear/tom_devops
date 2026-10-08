@@ -695,8 +695,6 @@ This document focused on:
 - Passing data bidirectionally
 - Complete working examples
 
-For installation and setup instructions, see [tom_ai_build_vscode_integration.md](../../tom_vscode_extension/tom_ai_build_vscode_integration.md).
-
 
 ### Using Language Model API
 

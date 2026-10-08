@@ -77,4 +77,4 @@ final output = 'ls -la'.toList();
 
 ## Related Packages
 
-- [`tom_build_base`](../../tom_build_base/_copilot_guidelines/) — Provides CLI navigation infrastructure
+- [`tom_build_base`](../../../basics/tom_build_base/_copilot_guidelines/) — Provides CLI navigation infrastructure
