@@ -2,7 +2,7 @@
 ///
 /// Configuration:
 ///   - GITHUB_TEST_TOKEN: Personal access token with repo scope
-///   - GITHUB_TEST_REPO: Repository slug (default: al-the-bear/tom_github_api_test)
+///   - GITHUB_TEST_REPO: Repository slug (default: al-the-bear-automated/tom_github_api_test)
 ///
 /// Run: dart run tool/api_integration_test.dart
 library;
@@ -13,7 +13,7 @@ import 'package:tom_github_api/tom_github_api.dart';
 
 // Configuration
 final _token = Platform.environment['GITHUB_TEST_TOKEN'] ?? '';
-final _repo = Platform.environment['GITHUB_TEST_REPO'] ?? 'al-the-bear/tom_github_api_test';
+final _repo = Platform.environment['GITHUB_TEST_REPO'] ?? 'al-the-bear-automated/tom_github_api_test';
 
 // Test state
 int _passCount = 0;

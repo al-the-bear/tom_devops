@@ -109,13 +109,13 @@ Integration tests run against the **real GitHub API** to verify end-to-end funct
 | Environment Variable | Purpose | Default |
 |---------------------|---------|---------|
 | `GITHUB_TEST_TOKEN` | Personal access token | (required) |
-| `GITHUB_TEST_REPO` | Test repository slug | `al-the-bear/tom_github_api_test` |
+| `GITHUB_TEST_REPO` | Test repository slug | `al-the-bear-automated/tom_github_api_test` |
 
 **How configuration works in code:**
 
 ```dart
 final _token = Platform.environment['GITHUB_TEST_TOKEN'] ?? '';
-final _repo = Platform.environment['GITHUB_TEST_REPO'] ?? 'al-the-bear/tom_github_api_test';
+final _repo = Platform.environment['GITHUB_TEST_REPO'] ?? 'al-the-bear-automated/tom_github_api_test';
 ```
 
 - `GITHUB_TEST_TOKEN`: If not set, returns empty string → test exits with error
@@ -124,7 +124,7 @@ final _repo = Platform.environment['GITHUB_TEST_REPO'] ?? 'al-the-bear/tom_githu
 **Usage examples:**
 
 ```bash
-# Uses your token + default repo (al-the-bear/tom_github_api_test)
+# Uses your token + default repo (al-the-bear-automated/tom_github_api_test)
 dart run tool/api_integration_test.dart
 
 # Uses your token + custom repo
@@ -137,7 +137,7 @@ The test token needs these permissions:
 
 ### Test Repository
 
-The default test repository is `al-the-bear/tom_github_api_test`. This is a dedicated repository for API testing — tests create/modify/delete issues and labels here.
+The default test repository is `al-the-bear-automated/tom_github_api_test`. This is a dedicated repository for API testing — tests create/modify/delete issues and labels here.
 
 **For other developers:** Set `GITHUB_TEST_REPO` to your own test repository.
 
@@ -210,7 +210,7 @@ Unit tests can run in CI without credentials. Integration tests require:
 ```yaml
 env:
   GITHUB_TEST_TOKEN: ${{ secrets.GITHUB_TEST_TOKEN }}
-  GITHUB_TEST_REPO: al-the-bear/tom_github_api_test
+  GITHUB_TEST_REPO: al-the-bear-automated/tom_github_api_test
 ```
 
 Consider rate limits when running integration tests frequently (5000 requests/hour for authenticated users).

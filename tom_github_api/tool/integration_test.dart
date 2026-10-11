@@ -8,7 +8,7 @@ import 'dart:io';
 import 'package:tom_github_api/tom_github_api.dart';
 
 final _token = Platform.environment['GITHUB_TEST_TOKEN'] ?? '';
-const _repo = 'al-the-bear/tom_github_api_test';
+const _repo = 'al-the-bear-automated/tom_github_api_test';
 
 void main() async {
   print('=== tom_github_api Integration Test ===\n');
