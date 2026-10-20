@@ -10,6 +10,7 @@ line to it.
 
 ### Added
 
+- **`package:tom_github_api/testing.dart`** — `FakeGitHubServer`, an in-memory GitHub (git data with content-addressed objects and the non-fast-forward refusal, contents, issues, labels, comments, search with lagging indexes) behind an `http.Client`, and the canned `rateLimited`, `secondaryRateLimited`, `serverError` and `unauthorized` responses. It was test support of the Webwork app and is now the shared test double for any caller of this client; a separate entry point, so the client links no test double. Adds `crypto` as a dependency.
 - `createWebhook` / `deleteWebhook` and the `GitHubWebhook` model — the last REST calls a live suite made through an `http.Client` of its own. An inactive hook's creation is how a suite asks whether GitHub accepts an event on a repository; the `422` arrives as a `GitHubException`.
 - `GitHubApiClient.credential()` and the `GitHubCredential` model — the token's login, class (classic or fine-grained, read off the presence of `x-oauth-scopes`) and a classic token's scopes, from one `GET /user`. The fine-grained branch is stated as unverified: no fleet host has held one.
 - `GitHubHttpClient.getConditionalList` — the array form of the conditional GET (`If-None-Match`, `304` reported as unmodified and counted), beside the object form. `GitHubApiClient.listAllCommentsConditional` reads a whole comment thread conditionally; the entity tag is the first page's and is returned only for a thread that fits in one page.

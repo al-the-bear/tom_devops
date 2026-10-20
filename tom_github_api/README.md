@@ -32,6 +32,7 @@ not re-implement request signing, JSON parsing, pagination and error mapping.
 | **Pagination** | `listAll…` methods follow GitHub's `Link` header to fetch every page; single-page `list…` methods expose `perPage`/`page` for manual control. |
 | **Rate limiting** | Every response updates `lastRateLimit`; a 403 with `x-ratelimit-remaining: 0` is raised as a dedicated `GitHubRateLimitException`. |
 | **Structured errors** | HTTP failures map to typed exceptions (`GitHubNotFoundException`, `GitHubAuthException`, `GitHubValidationException`, `GitHubRateLimitException`) instead of bare status codes. |
+| **Testing** | `package:tom_github_api/testing.dart` is an in-memory GitHub — git data, contents and issues — for callers' tests. |
 
 The library is **standalone** — it has no dependency on `tom_build_base`,
 `tom_issue_kit` or `tom_test_kit`; the dependency arrow points the other way.
@@ -385,8 +386,52 @@ final client = GitHubApiClient(
 );
 ```
 
-This is how the package's own 57-test suite runs — see
+This is how the package's own suite runs — see
 [`test/helpers/mock_http_client.dart`](test/helpers/mock_http_client.dart).
+
+### Testing against an in-memory GitHub
+
+A canned transport answers what a test told it to. A caller that does more than
+one request — commits through the git data API, or keeps an issue in step with a
+store — needs a GitHub that behaves. `package:tom_github_api/testing.dart`
+provides one: `FakeGitHubServer`.
+
+```dart
+import 'package:tom_github_api/testing.dart';
+import 'package:tom_github_api/tom_github_api.dart';
+
+final server = FakeGitHubServer();
+server.commitFiles('acme/notes', {'README.md': 'hello'});
+final client = GitHubApiClient(
+  token: 'test',
+  httpClient: server.client,
+  baseUrl: FakeGitHubServer.baseUrl,
+);
+```
+
+What it reproduces, because a caller that ignored it would pass against a
+looser fake and fail against GitHub:
+
+- **Git objects are content-addressed** — blobs, trees and commits hash as git
+  hashes them, so equal content has one sha and a subtree sha changes exactly
+  when something under it changes.
+- **A ref update that is not a fast-forward is refused** with `422`, the
+  compare-and-swap a multi-file commit relies on.
+  `FakeGitHubServer.beforeRefUpdate` lands a competing commit inside a writer's
+  read-modify-write window.
+- **Conditional reads are free** — an unchanged ref or list answers `304`, and
+  `notModifiedCount` says how many did.
+- **Issues**: bodies have no compare-and-swap (`beforeIssueUpdate`); transfer
+  drops labels the target lacks; the list and search indexes lag the issue and
+  each other (`indexLag`, `searchIndexExcludes`, `searchIncomplete`); labels
+  longer than GitHub's 50 characters are refused.
+- **Failures**: `canned` queues responses for the next requests —
+  `rateLimited`, `secondaryRateLimited`, `serverError`, `unauthorized` — and
+  `contentCreationBlocked` refuses issue and comment writes while serving
+  everything else, the shape GitHub gives a content-creation block.
+
+It is its own entry point so that nothing importing the client links a test
+double; import it from tests only.
 
 ---
 
