@@ -996,13 +996,25 @@ class FakeGitHubServer {
     return _json(404, {'message': 'Not Found'});
   }
 
-  /// `repo:<slug> "<phrase>" in:body` — the one search shape the fake serves.
+  /// `repo:<slug> is:issue "<phrase>" in:body` — the one search shape the
+  /// fake serves.
+  ///
+  /// A query naming neither `is:issue` nor `is:pull-request` is refused with
+  /// the 422 GitHub answers it with (observed 2026-10-20), so a caller that
+  /// leaves the qualifier out fails here rather than only against GitHub.
   ///
   /// Substring matching, not GitHub's tokenizer: the fake must be at least as
   /// permissive as the real thing, because the store *verifies* every hit
   /// against the marker anyway and a fake that were stricter would hide the
   /// case where that verification matters.
   http.Response _searchIssues(String query, {int? perPage, int page = 1}) {
+    final terms =
+        query.replaceAll(RegExp(r'"[^"]*"'), ' ').split(RegExp(r'\s+'));
+    if (!terms.contains('is:issue') && !terms.contains('is:pull-request')) {
+      return _json(422, {
+        'message': "Query must include 'is:issue' or 'is:pull-request'",
+      });
+    }
     String? slug;
     final phrases = <String>[];
     final quoted = RegExp(r'"([^"]*)"');

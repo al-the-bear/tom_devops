@@ -136,6 +136,23 @@ void main() {
       expect(listed.map((i) => i.number), [created.number]);
       expect(server.repo('o/r').issues[created.number]!.author, server.actor);
     });
+
+    test('FAKEGH-I2: an issue search names is:issue, or it is refused as '
+        'GitHub refuses it', () async {
+      final server = FakeGitHubServer()..repo('o/r');
+      final client = _client(server);
+      await client.createIssue(
+          repoSlug: 'o/r', title: 'Marked', body: 'marker-1 here');
+
+      await expectLater(
+        client.searchIssues(query: 'repo:o/r "marker-1" in:body'),
+        throwsA(isA<GitHubException>()
+            .having((e) => e.statusCode, 'statusCode', 422)),
+      );
+      final found = await client.searchIssues(
+          query: 'repo:o/r is:issue "marker-1" in:body');
+      expect(found.totalCount, 1);
+    });
   });
 
   group('FAKEGH-C canned responses', () {
