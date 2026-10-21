@@ -130,6 +130,7 @@ packages show `—`.
 | Package | What it is | Binary |
 | ------- | ---------- | ------ |
 | [`tom_github_api`](tom_github_api/) | Typed GitHub REST client — auth, issues, repos, pull requests, releases; backs `issuekit`. | — |
+| [`tom_test_support`](tom_test_support/) | Test support for any Tom package's suite — repository and workspace roots found by landmark, the Dart CLI a test may spawn, a wait for a network-backed action, the live-GitHub credential contract. A dev dependency only. | — |
 
 ### Doc conversion
 
@@ -233,6 +234,7 @@ tom_ai/devops/
 │
 ├── tom_github_api/           # GitHub REST client (backs issuekit)
 │   └── doc/                  # GitHub API specification
+├── tom_test_support/         # test support: roots, Dart CLI, network wait, live-GitHub gate
 │
 ├── tom_md2latex/             # Markdown → LaTeX → PDF converter
 ├── tom_md2pdf/               # Markdown → PDF converter (htmltopdfwidgets)
