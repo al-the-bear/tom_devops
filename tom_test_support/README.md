@@ -2,7 +2,8 @@
 
 Test support any Tom package's suite can use: the repository and workspace
 roots found by landmark, the Dart CLI a test may spawn, a wait for a
-network-backed action, and the live-GitHub credential contract.
+network-backed action, the live-GitHub credential contract, and a disposable
+Gitea in Docker for live git suites.
 
 License: BSD-3-Clause.
 
@@ -24,7 +25,8 @@ for the web; nothing here runs in a browser.
 | `dart_cli.dart` | `tomDartCli`, `requireTomDartCli`: the Dart CLI a test may spawn, located rather than taken from the runner. Under `flutter test` the runner is `flutter_tester`, which either never exits or answers wrongly; a test gets something named `dart`, or a failure naming the runner (`tomMissingDartReason`). |
 | `pump_until.dart` | `tomPumpUntil`: ask a condition, let real time pass, pump a frame, until the condition holds or `TomPumpUntilTimeout` reports what was waited for and what the screen held. `pumpAndSettle` cannot wait for a load that finishes in real time while a progress indicator keeps scheduling frames. Framework-free; the `WidgetTester` binding is `tom_reusable_ui`'s. |
 | `github_live.dart` | The live-GitHub contract. A live suite runs only on **two** variables — `GITHUB_TEST_TOKEN` (it *may* reach the account) and `TOM_LIVE` (it should do so *now*) — so a credentialed `dart test` skips every live suite at once: `TomGitHubLiveConfig.fromEnvironment`, `tomLiveSkipTitle`, `tomLiveSkipReason`. A classic token carrying `repo` reaches every repository the account can, so a suite that writes refuses one unless `TOM_ALLOW_WIDE_TOKEN` is set (`tomGitHubCredentialRefusal`); creating and deleting repositories needs a token of its own (`GITHUB_TEST_ADMIN_TOKEN`, `tomGitHubRepoAdminRefusal`); a suite that deliberately earns a secondary rate limit needs `TOM_EARN_SECONDARY_LIMIT`. The credential's class is `tom_github_api`'s reading (`GitHubCredential`); the policy over it is here (`TomGitHubCredentialClass`). |
-| `tom_test_support.dart` | All four. |
+| `gitea.dart` | `TomGiteaServer`: a disposable Gitea in Docker for a live git suite — `start` runs a container, makes an admin user, an access token and an initialised repository (`repositoryUrl`), `stop` removes it; `available` says whether `docker` answers, so a suite can skip without it. Gated by the suite on `TOM_LIVE` like the GitHub suites. |
+| `tom_test_support.dart` | All five. |
 
 No token is held in a printable form: a `TomGitHubLiveConfig` prints its
 repositories and `<withheld>`, and every sentence the contract writes names a

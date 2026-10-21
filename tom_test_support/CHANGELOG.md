@@ -7,3 +7,4 @@
   (`dart_cli.dart`).
 - A framework-free wait for a network-backed action (`pump_until.dart`).
 - The live-GitHub credential contract (`github_live.dart`).
+- A disposable Gitea in Docker for live git suites (`gitea.dart`).

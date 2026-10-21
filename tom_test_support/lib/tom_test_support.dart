@@ -6,6 +6,7 @@
 library;
 
 export 'dart_cli.dart';
+export 'gitea.dart';
 export 'github_live.dart';
 export 'pump_until.dart';
 export 'roots.dart';
