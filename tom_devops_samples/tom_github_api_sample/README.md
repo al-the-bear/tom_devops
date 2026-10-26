@@ -5,7 +5,7 @@
 > license — see [`../../LICENSE.md`](../../LICENSE.md).
 
 A self-contained, **offline-by-default** tour of
-[`tom_github_api`](../../tom_github_api/) — the typed Dart client for the
+[`tom_github_api`](../../../basics/tom_github_api/) — the typed Dart client for the
 GitHub REST API v3. Seven runnable, one-concept-per-file examples cover the
 client's **issue-tracking surface**: **authentication, issues, labels,
 comments, search, workflow dispatch, and the error / rate-limit model.** The
@@ -18,7 +18,7 @@ injectable `http.Client`, and these samples inject an in-memory fake. The same
 code talks to live GitHub by swapping that one argument out — see
 [Going live](#going-live).
 
-- Tool manual (the reference): [`tom_github_api/README.md`](../../tom_github_api/README.md)
+- Tool manual (the reference): [`tom_github_api/README.md`](../../../basics/tom_github_api/README.md)
 - Samples index (all devops samples): [`../README.md`](../README.md)
 
 ---
@@ -330,7 +330,7 @@ GitHub answers a request for a renamed repository's old name by redirecting.
 A call that merely *succeeds* therefore does not establish that the name you
 hold is live. Compare `repo.fullName` against the slug you passed whenever a
 repository name is recorded durably. See
-[`tom_github_api/README.md`](../../tom_github_api/README.md) for the full
+[`tom_github_api/README.md`](../../../basics/tom_github_api/README.md) for the full
 reference.
 
 ---
@@ -461,6 +461,6 @@ dependency on an unpublished workspace package, not an override.
 
 | Link | What's there |
 | ---- | ------------ |
-| [`tom_github_api/README.md`](../../tom_github_api/README.md) | The client's own reference manual — every method, model, and option. |
+| [`tom_github_api/README.md`](../../../basics/tom_github_api/README.md) | The client's own reference manual — every method, model, and option. |
 | [`../README.md`](../README.md) | The Tom devops samples index and learning path. |
 | [Tom DevOps map](../../README.md) | The repository-level index for the whole devops toolchain. |

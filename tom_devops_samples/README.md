@@ -11,7 +11,7 @@ This folder is the **canonical home** for user-facing, runnable samples of the
 package demonstrating one tool end to end, with one-concept-per-file examples
 (inline `// expected output`), its own `example/run_all_examples.dart`, and an
 article-grade README. The per-tool manuals live in each tool's own README (e.g.
-[`tom_github_api`](../tom_github_api/), [`tom_build_kit`](../tom_build_kit/));
+[`tom_github_api`](../../basics/tom_github_api/), [`tom_build_kit`](../tom_build_kit/));
 this tree is where you go to *run* something.
 
 ---
@@ -24,7 +24,7 @@ project lands.
 
 | # | Sample | Demonstrates |
 | - | ------ | ------------ |
-| 1 | [`tom_github_api_sample`](tom_github_api_sample/) *(flagship)* | The [`tom_github_api`](../tom_github_api/) REST client end to end: token auth, listing/creating issues, labels, comments, search, and workflow dispatch — offline by default via a mock transport, with opt-in live mode. |
+| 1 | [`tom_github_api_sample`](tom_github_api_sample/) *(flagship)* | The [`tom_github_api`](../../basics/tom_github_api/) REST client end to end: token auth, listing/creating issues, labels, comments, search, and workflow dispatch — offline by default via a mock transport, with opt-in live mode. |
 | 2 | [`tom_build_kit_sample`](tom_build_kit_sample/) *(planned)* | Authoring a small build tool / pipeline with [`buildkit`](../tom_build_kit/) against a fixture workspace. |
 | 3 | `tom_test_kit_sample` *(planned)* | The baseline → test → diff tracking workflow of [`testkit`](../tom_test_kit/) on a small fixture project. |
 | 4 | `tom_issue_kit_sample` *(planned)* | The issue create / analyze / verify flow of [`issuekit`](../tom_issue_kit/) against a mock backend. |

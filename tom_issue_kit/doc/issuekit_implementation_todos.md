@@ -205,7 +205,7 @@ Phase 7: Automation             ← Phase 1 (workflow dispatch), Phase 3-6
 
 ## Current Focus
 
-**Phase 1: tom_github_api** — See [github_api_specification.md](../../tom_github_api/doc/github_api_specification.md) for the detailed API specification.
+**Phase 1: tom_github_api** — See [github_api_specification.md](../../../basics/tom_github_api/doc/github_api_specification.md) for the detailed API specification.
 
 ---
 

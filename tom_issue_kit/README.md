@@ -13,7 +13,7 @@ results — so an issue cannot be called *resolved* until the test that reproduc
 it actually passes.
 
 It is one of the Tom CLI kits, built on [`tom_build_base`](../../basics/tom_build_base/)
-(the v2 CLI framework) and [`tom_github_api`](../tom_github_api/) (the GitHub
+(the v2 CLI framework) and [`tom_github_api`](../../basics/tom_github_api/) (the GitHub
 REST client).
 
 ---
@@ -334,7 +334,7 @@ GitHub trackers through `tom_github_api`.
 
 | Package | Relationship |
 | ------- | ------------ |
-| [`tom_github_api`](../tom_github_api/) | The GitHub REST client `issuekit` uses for all tracker operations. |
+| [`tom_github_api`](../../basics/tom_github_api/) | The GitHub REST client `issuekit` uses for all tracker operations. |
 | [`tom_build_base`](../../basics/tom_build_base/) | The shared v2 CLI framework (arg parsing, help, traversal, run summary). |
 | [`tom_test_kit`](../tom_test_kit/) | The `testkit` CLI — produces the test results `issuekit :sync` consumes. |
 | [`tom_build_kit`](../tom_build_kit/) | The `buildkit` orchestrator — the sibling build kit. |

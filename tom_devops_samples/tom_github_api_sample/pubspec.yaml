@@ -13,7 +13,7 @@ dependencies:
   # Workspace sibling (not on pub.dev) — consumed by path, the same way
   # tom_issue_kit depends on it. This is a normal dependency, not an override.
   tom_github_api:
-    path: ../../tom_github_api
+    path: ../../../basics/tom_github_api
 
 dev_dependencies:
   lints: ^6.0.0

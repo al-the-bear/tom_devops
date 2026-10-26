@@ -27,9 +27,11 @@ is just the index.
 ## New here?
 
 Start with the **[`tom_github_api_sample`](tom_devops_samples/tom_github_api_sample/)**
-project — it walks the GitHub REST client end to end (authenticate, list and
-create issues, read repos, list pull requests and releases) and runs offline by
-default, so it is the gentlest on-ramp into the toolchain. From there, the
+project — it walks the GitHub API client
+([`tom_github_api`](../basics/tom_github_api/), in the basics layer) end to end
+(authenticate, list and create issues, read repos, list pull requests and
+releases) and runs offline by default, so it is the gentlest on-ramp into the
+toolchain. From there, the
 [samples learning path](#samples-learning-path) takes you tool by tool.
 
 ---
@@ -47,8 +49,9 @@ default, so it is the gentlest on-ramp into the toolchain. From there, the
   catch regressions and confirm fixes (`testkit`).
 - **Manage issues from the terminal** — create, analyze, assign and verify
   issues, linking them to the tests that prove them fixed (`issuekit`).
-- **Talk to GitHub** — a typed REST client for issues, repos, pull requests and
-  releases (`tom_github_api`), the backbone of `issuekit`.
+- **Talk to GitHub** — `issuekit` and the samples use the typed GitHub API
+  client [`tom_github_api`](../basics/tom_github_api/), which lives in the
+  basics layer beside git in pure Dart ([`tom_git`](../basics/tom_git/)).
 - **Ship to the cloud** — model and execute multi-target deployments
   (`tom_deploy`, `tom_deploy_tools`).
 - **Turn Markdown into documents** — convert Markdown to LaTeX/PDF
@@ -71,8 +74,9 @@ component tables so the inventory makes sense:
   framework; see [`tom_ai/basics/tom_build_kit`](../basics/tom_build_kit/).
 - **Deployment** — the multi-cloud deployment model (`tom_deploy`) and its CLI
   front end (`tom_deploy_tools`).
-- **Integrations** — third-party service clients; today the GitHub REST client
-  (`tom_github_api`) that `issuekit` builds on.
+- **Test support** — `tom_test_support`, the dev dependency other packages'
+  suites share. The GitHub API client that `issuekit` builds on is a runtime
+  library and lives in the [basics layer](../basics/tom_github_api/).
 - **Doc conversion** — Markdown-to-document converters (`tom_md2latex`,
   `tom_md2pdf`) used to produce reference PDFs from the workspace's docs.
 
@@ -86,12 +90,12 @@ component tables so the inventory makes sense:
    ┌───────────────┬──────────────────┼───────────────┬───────────────┐
    │               │                  │               │               │
 ┌──┴───────────┐ ┌─┴──────────────┐ ┌─┴───────────┐ ┌─┴───────────┐ ┌─┴───────────┐
-│ Build        │ │ CLI kits       │ │ Deployment  │ │ Integrations│ │ Doc         │
-│ framework    │ │ tom_test_kit   │ │ tom_deploy  │ │ tom_github_ │ │ conversion  │
-│ tom_build    │ │ tom_issue_kit  │ │ tom_deploy_ │ │  api        │ │ tom_md2latex│
-│ tom_build_cli│ │                │ │  tools      │ │     ▲       │ │ tom_md2pdf  │
-│ tom_build_   │ │      │         │ │             │ │     │ used  │ │             │
-│  common      │ │      └─────────┼─┼─────────────┼─┘ by issuekit │ │             │
+│ Build        │ │ CLI kits       │ │ Deployment  │ │ Test support│ │ Doc         │
+│ framework    │ │ tom_test_kit   │ │ tom_deploy  │ │ tom_test_   │ │ conversion  │
+│ tom_build    │ │ tom_issue_kit  │ │ tom_deploy_ │ │  support    │ │ tom_md2latex│
+│ tom_build_cli│ │                │ │  tools      │ │             │ │ tom_md2pdf  │
+│ tom_build_   │ │                │ │             │ │             │ │             │
+│  common      │ │                │ │             │ │             │ │             │
 └──────────────┘ └────────────────┘ └─────────────┘ └─────────────┘ └─────────────┘
 ```
 
@@ -125,12 +129,10 @@ packages show `—`.
 | [`tom_deploy`](tom_deploy/) | Multi-cloud deployment model for server and web applications. | — |
 | [`tom_deploy_tools`](tom_deploy_tools/) | Command-line front end that drives `tom_deploy` deployments. | `tom_deploy_tools` |
 
-### Integrations
+### Test support
 
 | Package | What it is | Binary |
 | ------- | ---------- | ------ |
-| [`tom_github_api`](tom_github_api/) | Typed GitHub REST client — auth, issues, repos, pull requests, releases; backs `issuekit`. | — |
-| [`tom_git`](tom_git/) | Git in pure Dart — objects, packs, smart HTTP fetch and push — to clone, commit and push with no git binary; backs `tom_core_storage`'s git backend. BSD-3. | — |
 | [`tom_test_support`](tom_test_support/) | Test support for any Tom package's suite — repository and workspace roots found by landmark, the Dart CLI a test may spawn, a wait for a network-backed action, the live-GitHub credential contract, a disposable Gitea in Docker. A dev dependency only. | — |
 
 ### Doc conversion
@@ -207,7 +209,6 @@ In-package guides beyond the package READMEs:
 | testkit — TUI | [`tom_test_kit/doc/tom_test_tui.md`](tom_test_kit/doc/tom_test_tui.md) |
 | issuekit — command reference | [`tom_issue_kit/doc/issuekit_command_reference.md`](tom_issue_kit/doc/issuekit_command_reference.md) |
 | issuekit — issue tracking | [`tom_issue_kit/doc/issue_tracking.md`](tom_issue_kit/doc/issue_tracking.md) |
-| GitHub API specification | [`tom_github_api/doc/github_api_specification.md`](tom_github_api/doc/github_api_specification.md) |
 
 ---
 
@@ -233,9 +234,6 @@ tom_ai/devops/
 ├── tom_deploy/               # multi-cloud deployment model
 ├── tom_deploy_tools/         # tom_deploy_tools CLI front end
 │
-├── tom_github_api/           # GitHub REST client (backs issuekit)
-│   └── doc/                  # GitHub API specification
-├── tom_git/                  # git in pure Dart: objects, packs, smart HTTP (no git binary)
 ├── tom_test_support/         # test support: roots, Dart CLI, network wait, live-GitHub gate, Gitea
 │
 ├── tom_md2latex/             # Markdown → LaTeX → PDF converter
