@@ -61,7 +61,7 @@ toolchain. From there, the
 
 ## How the packages fit together
 
-Tom DevOps splits into five concern areas. Read this framing before the
+Tom DevOps splits into four concern areas. Read this framing before the
 component tables so the inventory makes sense:
 
 - **Build framework** — the workspace analyzer (`tom_build`), the `tom` CLI
@@ -74,9 +74,6 @@ component tables so the inventory makes sense:
   framework; see [`tom_ai/basics/tom_build_kit`](../basics/tom_build_kit/).
 - **Deployment** — the multi-cloud deployment model (`tom_deploy`) and its CLI
   front end (`tom_deploy_tools`).
-- **Test support** — `tom_test_support`, the dev dependency other packages'
-  suites share. The GitHub API client that `issuekit` builds on is a runtime
-  library and lives in the [basics layer](../basics/tom_github_api/).
 - **Doc conversion** — Markdown-to-document converters (`tom_md2latex`,
   `tom_md2pdf`) used to produce reference PDFs from the workspace's docs.
 
@@ -87,16 +84,16 @@ component tables so the inventory makes sense:
                     │   traversal, pipelines, config    │
                     └─────────────────┬─────────────────┘
                                       │ every tool builds on it
-   ┌───────────────┬──────────────────┼───────────────┬───────────────┐
-   │               │                  │               │               │
-┌──┴───────────┐ ┌─┴──────────────┐ ┌─┴───────────┐ ┌─┴───────────┐ ┌─┴───────────┐
-│ Build        │ │ CLI kits       │ │ Deployment  │ │ Test support│ │ Doc         │
-│ framework    │ │ tom_test_kit   │ │ tom_deploy  │ │ tom_test_   │ │ conversion  │
-│ tom_build    │ │ tom_issue_kit  │ │ tom_deploy_ │ │  support    │ │ tom_md2latex│
-│ tom_build_cli│ │                │ │  tools      │ │             │ │ tom_md2pdf  │
-│ tom_build_   │ │                │ │             │ │             │ │             │
-│  common      │ │                │ │             │ │             │ │             │
-└──────────────┘ └────────────────┘ └─────────────┘ └─────────────┘ └─────────────┘
+        ┌─────────────────┬───────────┼────┬───────────────┐
+        │                 │                │               │
+┌───────┴──────┐ ┌────────┴───────┐ ┌──────┴──────┐ ┌──────┴──────┐
+│ Build        │ │ CLI kits       │ │ Deployment  │ │ Doc         │
+│ framework    │ │ tom_test_kit   │ │ tom_deploy  │ │ conversion  │
+│ tom_build    │ │ tom_issue_kit  │ │ tom_deploy_ │ │ tom_md2latex│
+│ tom_build_cli│ │                │ │  tools      │ │ tom_md2pdf  │
+│ tom_build_   │ │                │ │             │ │             │
+│  common      │ │                │ │             │ │             │
+└──────────────┘ └────────────────┘ └─────────────┘ └─────────────┘
 ```
 
 ---
@@ -128,12 +125,6 @@ packages show `—`.
 | ------- | ---------- | ------ |
 | [`tom_deploy`](tom_deploy/) | Multi-cloud deployment model for server and web applications. | — |
 | [`tom_deploy_tools`](tom_deploy_tools/) | Command-line front end that drives `tom_deploy` deployments. | `tom_deploy_tools` |
-
-### Test support
-
-| Package | What it is | Binary |
-| ------- | ---------- | ------ |
-| [`tom_test_support`](tom_test_support/) | Test support for any Tom package's suite — repository and workspace roots found by landmark, the Dart CLI a test may spawn, a wait for a network-backed action, the live-GitHub credential contract, a disposable Gitea in Docker. A dev dependency only. | — |
 
 ### Doc conversion
 
@@ -233,8 +224,6 @@ tom_ai/devops/
 │
 ├── tom_deploy/               # multi-cloud deployment model
 ├── tom_deploy_tools/         # tom_deploy_tools CLI front end
-│
-├── tom_test_support/         # test support: roots, Dart CLI, network wait, live-GitHub gate, Gitea
 │
 ├── tom_md2latex/             # Markdown → LaTeX → PDF converter
 ├── tom_md2pdf/               # Markdown → PDF converter (htmltopdfwidgets)
