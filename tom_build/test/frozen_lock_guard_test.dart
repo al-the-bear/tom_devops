@@ -68,7 +68,7 @@ const Map<String, String> _frozenLockExceptions = <String, String>{
   // (analyzer ^10) and on tom_build_kit, published only on analyzer ^14, so
   // `pub upgrade` cannot move its lock. Unfreezes when the d4rt repo is on
   // analyzer ^14 (d4rt vstdm3_akex-d4rt-repo-to-analyzer-14).
-  'tom_build_cli': 'build_tom vsbcl1_akct-build-cli-does-not-resolve',
+  'tom_build_cli': 'build_tom aft_cli-1_akfb-vsbcl1-build-cli-does-not-resolve',
 };
 
 /// A range of cached versions of one package that no lock here can take.
