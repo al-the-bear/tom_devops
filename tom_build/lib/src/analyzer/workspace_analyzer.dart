@@ -303,6 +303,32 @@ class WorkspaceAnalyzer {
     'python',
   };
 
+  /// Whether a project of [projectType] runs the workspace action
+  /// [actionName] defined by [actionDef] (its tom_workspace.yaml map).
+  ///
+  /// A project whose own tom_project.yaml defines the action
+  /// ([projectActions]) always runs it: that is how a project opts in to an
+  /// action its type is filtered out of. Otherwise `skip-types` and
+  /// `applies-to-types` decide.
+  static bool runsAction(
+    String actionName,
+    Object? actionDef, {
+    required String projectType,
+    Map? projectActions,
+  }) {
+    if (projectActions != null && projectActions.containsKey(actionName)) {
+      return true;
+    }
+    if (actionDef is! Map) return true;
+    final skipTypes = actionDef['skip-types'];
+    if (skipTypes is List && skipTypes.contains(projectType)) return false;
+    final appliesToTypes = actionDef['applies-to-types'];
+    if (appliesToTypes is List && !appliesToTypes.contains(projectType)) {
+      return false;
+    }
+    return true;
+  }
+
   /// Every project type the analyzer assigns.
   static const Set<String> projectTypes = {
     ...dartProjectTypes,
@@ -847,32 +873,35 @@ class WorkspaceAnalyzer {
   }
 
   /// Detects the specific type of Dart project.
+  /// A Flutter app depends on the Flutter SDK and has `lib/main.dart`; a
+  /// Flutter library is a `dart_package`. A Dart package with `bin/` and
+  /// `lib/` is a `dart_console`.
   String _detectDartProjectType(String projectPath) {
+    if (_dependsOnFlutter(projectPath)) {
+      return File(path.join(projectPath, 'lib', 'main.dart')).existsSync()
+          ? 'flutter_app'
+          : 'dart_package';
+    }
     final hasBin = Directory(path.join(projectPath, 'bin')).existsSync();
     final hasLib = Directory(path.join(projectPath, 'lib')).existsSync();
-    final hasLibSrc = Directory(path.join(projectPath, 'lib', 'src')).existsSync();
+    return hasBin && hasLib ? 'dart_console' : 'dart_package';
+  }
 
-    // Check for Flutter
-    final pubspecFile = File(path.join(projectPath, 'pubspec.yaml'));
-    bool hasFlutterDependency = false;
-    if (pubspecFile.existsSync()) {
-      final content = pubspecFile.readAsStringSync();
-      hasFlutterDependency = content.contains('sdk: flutter') ||
-          content.contains("sdk: 'flutter'") ||
-          content.contains('sdk: "flutter"');
+  /// Whether pubspec.yaml lists the Flutter SDK under `dependencies` (a
+  /// `flutter_test` dev dependency alone does not count).
+  static bool _dependsOnFlutter(String projectPath) {
+    final file = File(path.join(projectPath, 'pubspec.yaml'));
+    if (!file.existsSync()) return false;
+    try {
+      final pubspec = loadYaml(file.readAsStringSync());
+      final dependencies = pubspec is Map ? pubspec['dependencies'] : null;
+      final flutter = dependencies is Map ? dependencies['flutter'] : null;
+      return flutter is Map && flutter['sdk'] == 'flutter';
+    } on YamlException {
+      // An unparsable pubspec (e.g. one holding tomplate syntax) is read as
+      // plain Dart, as the rest of the analyzer reads it.
+      return false;
     }
-
-    if (hasBin && hasLib) {
-      return 'dart_console';
-    } else if (hasLibSrc) {
-      return 'dart_package';
-    } else if (hasLib && !hasBin && hasFlutterDependency) {
-      return 'flutter_app';
-    } else if (hasLib && !hasBin) {
-      return 'dart_package';
-    }
-
-    return 'dart_package';
   }
 
   /// Analyzes a project to discover parts and modules.
@@ -1450,19 +1479,16 @@ class WorkspaceAnalyzer {
     
     // Determine which projects to skip for this action
     final actionDef = actions is Map ? actions[actionName] : null;
-    final skipTypes = actionDef is Map ? (actionDef['skip-types'] as List?)?.cast<String>() : null;
-    final appliesToTypes = actionDef is Map ? (actionDef['applies-to-types'] as List?)?.cast<String>() : null;
     
     // Filter projects for this action
-    final actionProjects = projects.where((project) {
-      if (skipTypes != null && skipTypes.contains(project.type)) {
-        return false;
-      }
-      if (appliesToTypes != null && !appliesToTypes.contains(project.type)) {
-        return false;
-      }
-      return true;
-    }).toList();
+    final actionProjects = projects
+        .where((project) => runsAction(
+              actionName,
+              actionDef,
+              projectType: project.type,
+              projectActions: project.localIndexEntries['actions'] as Map?,
+            ))
+        .toList();
     
     // Write projects with full details
     buffer.writeln('projects:');

@@ -1,3 +1,14 @@
+## 1.0.5
+
+- **`WorkspaceAnalyzer.runsAction`:** a project whose tom_project.yaml
+  defines an action runs it even when the workspace action's `skip-types` /
+  `applies-to-types` leave its type out; `tom_master_<action>.yaml` uses it.
+- **Flutter app detection:** `flutter_app` is a package that depends on the
+  Flutter SDK (under `dependencies`, read from the parsed pubspec) and has
+  `lib/main.dart`. Apps with a `lib/src/` were typed `dart_package`, Flutter
+  libraries and packages with only a `flutter_test` dev dependency
+  `flutter_app`.
+
 ## 1.0.4
 
 - **Project type families as constants:** `WorkspaceAnalyzer.dartProjectTypes`,

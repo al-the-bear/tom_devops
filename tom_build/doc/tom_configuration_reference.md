@@ -163,8 +163,8 @@ An action is a map. Its named keys are:
 | --- | ---- | ----------- |
 | `name` | `String` | Defaults to the action's key |
 | `description` | `String` | |
-| `skip-types` | `List<String>` | Project types the action does not run for |
-| `applies-to-types` | `List<String>` | Project types the action runs for exclusively |
+| `skip-types` | `List<String>` | Project types the action does not run for, unless the project defines the action itself |
+| `applies-to-types` | `List<String>` | Project types the action runs for exclusively, unless the project defines the action itself |
 | `default` | `ActionConfig` | The commands for every project type without its own entry |
 
 Every other key is a project type id (e.g. `flutter_app`) whose `ActionConfig` replaces `default` for projects of that type. It must be a map.
@@ -178,7 +178,7 @@ The project type ids are the ones the workspace analyzer assigns (`WorkspaceAnal
 | Java | `java` | `pom.xml`, `build.gradle(.kts)` |
 | JavaScript / TypeScript | `vscode_extension`, `node_cli`, `typescript_node`, `typescript_react`, `typescript_vue`, `typescript`, `javascript_react`, `javascript_vue`, `javascript` | `package.json` |
 
-The families are checked in that order. A folder is a project exactly when one of them matches. A `pyproject.toml` that only configures tools (ruff, pytest) does not make a folder a Python project.
+The families are checked in that order. A folder is a project exactly when one of them matches. A `pyproject.toml` that only configures tools (ruff, pytest) does not make a folder a Python project. Within Dart, `flutter_app` means a package that depends on the Flutter SDK (under `dependencies`) and has `lib/main.dart`; a Flutter library is a `dart_package`. A package with `bin/` and `lib/` is a `dart_console`, and every other package is a `dart_package`.
 
 The workspace's `test` action runs a project's whole test suite with the runner of its family. Dart (the default) uses `testkit --nested :test --baseline`, which runs `dart test` or `flutter test` for the one project, records the run in its `testlog/` tracking file and creates the baseline on the first run. JavaScript/TypeScript projects use `npm test`, and Java and Python projects use their `./run_tests.sh`. Tag selection stays with each package's `dart_test.yaml`; a project that needs other arguments overrides `actions.test` in its `tom_project.yaml` (e.g. `testkit --nested :test --baseline --test-args="--exclude-tags db"`).
 
@@ -192,6 +192,26 @@ The workspace's build actions:
 | `bin_release` | `buildkit --nested :compiler` | Not applied |
 
 buildkit runs the single project in the current folder (`--nested`). Each step does only what the project's `buildkit.yaml` configures and skips itself otherwise. `:runner` needs a `build.yaml`, and `:compiler` compiles the executables of the `compiler:` section for the targets listed there (native and cross compilation). A TypeScript package whose build script is not named `build` overrides `actions.build` in its `tom_project.yaml`, as `tom_vscode_shared` does with `npm run compile`.
+
+The workspace's run actions:
+
+| Action | Default | Other types |
+| ------ | ------- | ----------- |
+| `run` | Flutter apps: `flutter run` (debug, hot reload) | JavaScript/TypeScript: `npm run start --if-present`; `dart_package`, `dart_console`, `vscode_extension`, Java and Python: skipped |
+| `watch` | Dart and Flutter: `buildkit --nested :runner --command=watch` (build_runner watch; needs a `build.yaml`) | JavaScript/TypeScript: `npm run watch --if-present`; Java and Python: skipped |
+
+Development mode is the `local` environment and execution these actions select in `action-mode-configuration`.
+
+**A project's own action wins over the type filter.** `skip-types` and `applies-to-types` decide which projects run a workspace action, except that a project whose `tom_project.yaml` defines the action always runs it (`WorkspaceAnalyzer.runsAction`). That is how a console package opts in to `run`:
+
+```yaml
+# tom_project.yaml of a server sample
+actions:
+  run:
+    default:
+      commands:
+        - dart run bin/server.dart
+```
 
 An **ActionConfig** holds `pre-commands`, `commands` and `post-commands`, each a list of commands. Any other key is a custom tag, carried into `tom_master*.yaml`.
 
