@@ -1,6 +1,6 @@
 name: tom_build
 description: Build tools and workspace analyzer for the Tom framework.
-version: 1.0.1
+version: 1.0.2
 publish_to: none
 
 environment:
@@ -39,3 +39,4 @@ dev_dependencies:
   # Hosted, lower bound only: pub takes the analyzer-10 line (1.8.x) while
   # flutter or tom_d4rt hold analyzer below 14, and 1.9+ once they move.
   tom_reflection_generator: ">=1.8.2"
+  json_schema: ^5.2.2

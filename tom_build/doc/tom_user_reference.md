@@ -15,7 +15,7 @@ tom [<global-params>] :<action> [<action-params>] ...    # All projects
 ### Naming Conventions
 
 | Type | Format | Example |
-|------|--------|---------|
+| ------ | -------- | --------- |
 | Arguments | No dash, positional | `my_project`, `build` |
 | Parameters | Single dash + value | `-name=value` |
 | Options | Single/double dash, boolean | `-verbose`, `--dry-run` |
@@ -34,7 +34,7 @@ tom --verbose -environment=prod :deploy # With global params
 ## 2. Internal Commands
 
 | Command | Prefix | Description |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | `:analyze` | `wa-` | Generate `tom_master*.yaml` files |
 | `:generate-bridges` | `gb-` | Generate D4rt BridgedClass implementations |
 | `:generate-reflection` | `gr-` | Run reflection generator |
@@ -69,31 +69,13 @@ tom :vscode -code="print('hello')"          # Inline code via VS Code
 tom :vscode -port=9743 -file=script.dart    # Custom port
 ```
 
-## 4. Placeholders
-
-Placeholders are resolved at runtime (before command execution) or generation time.
-
-| Syntax | Description | Example |
-|--------|-------------|---------|
-| `$VAL{path}` | Config value lookup | `$VAL{project.name}` |
-| `$VAL{path:-default}` | Lookup with default | `$VAL{project.missing:-default}` |
-| `$ENV{NAME}` | Environment variable | `$ENV{HOME}` |
-| `$ENV{NAME:-default}` | Env var with default | `$ENV{API_KEY:-dev_key}` |
-| `$D4{expr}` | D4rt expression | `$D4{version.major + 1}` |
-| `$D4S{file.dart}` | D4rt script execution | `$D4S{scripts/my_script.dart}` |
-| `$GEN{pattern}` | Generator pattern | `$GEN{projects.*.name;,}` |
-| `[[VAR]]` | Generation-time Env Var | `[[HOME]]` |
-| `[{path}]` | Generation-time Lookup | `[{packages.tom_core.version}]` |
-
-**Note:** For advanced D4rt usage (multiline scripts, methods), see [tom_build/doc/placeholders_d4rt_guide.md](placeholders_d4rt_guide.md).
-
 ---
 
-## 5. D4rt Integration
+## 3. Configuration Files
 
 ### 3.1 tom_workspace.yaml
 
-Located at workspace root. Defines workspace-wide settings.
+Located at workspace root. Defines workspace-wide settings. Every key of both files is listed in the [Tom Configuration Reference](tom_configuration_reference.md).
 
 ```yaml
 # Imports (merged in order)
@@ -117,10 +99,10 @@ workspace-modes:
 actions:
   build:
     skip-types: [flutter_app]           # OR applies-to-types (not both)
-    pre-build: [echo "Starting..."]     # Pre-hook (once)
-    post-build: [echo "Done"]           # Post-hook (once)
     default:
+      pre-commands: [echo "Starting..."]
       commands: [dart analyze, dart test]
+      post-commands: [echo "Done"]
     dart_package:
       commands: [dart pub get, dart analyze]
 
@@ -220,27 +202,36 @@ environment-mode-definitions:
 
 - **Maps:** Deep-merged recursively
 - **Scalars:** Later overrides earlier
-- **Lists:** Replaced entirely (use operators for control)
+- **Lists:** Replaced entirely
 
-**List operators:**
-
-```yaml
-items: { $replace: [new] }    # Replace list
-items: { $append: [more] }    # Append to list
-items: { $prepend: [first] }  # Prepend to list
-items: { $remove: [unwanted]} # Remove from list
-```
+The specification's list operators (`$replace`, `$append`, `$prepend`, `$remove`) and per-action `pre-<action>` / `post-<action>` hooks are not implemented yet; see [Tom Configuration Reference §5](tom_configuration_reference.md#5-specified-but-not-read).
 
 ---
 
 ## 4. Placeholders
+
+Placeholders are resolved at runtime (before command execution) or generation time.
+
+| Syntax | Description | Example |
+| -------- | ------------- | --------- |
+| `$VAL{path}` | Config value lookup | `$VAL{project.name}` |
+| `$VAL{path:-default}` | Lookup with default | `$VAL{project.missing:-default}` |
+| `$ENV{NAME}` | Environment variable | `$ENV{HOME}` |
+| `$ENV{NAME:-default}` | Env var with default | `$ENV{API_KEY:-dev_key}` |
+| `$D4{expr}` | D4rt expression | `$D4{version.major + 1}` |
+| `$D4S{file.dart}` | D4rt script execution | `$D4S{scripts/my_script.dart}` |
+| `$GEN{pattern}` | Generator pattern | `$GEN{projects.*.name;,}` |
+| `[[VAR]]` | Generation-time Env Var | `[[HOME]]` |
+| `[{path}]` | Generation-time Lookup | `[{packages.tom_core.version}]` |
+
+**Note:** For advanced D4rt usage (multiline scripts, methods), see [tom_build/doc/placeholders_d4rt_guide.md](placeholders_d4rt_guide.md).
 
 Tom processes configuration through three phases, each with its own placeholder types:
 
 ### 4.1 Processing Phases
 
 | Phase | When | Placeholders Resolved | Description |
-|-------|------|----------------------|-------------|
+| ------- | ------ | ---------------------- | ------------- |
 | **Generation** | Writing tom_master*.yaml | `[[...]]`, `[{...}]` | YAML file construction |
 | **Runtime** | After loading, before commands | `$VAL{...}`, `$ENV{...}`, `$D4{...}`, `$VSCODE{...}`, `$GEN{...}`, `[[...]]`, `[{...}]` | Placeholder replacement |
 | **Execution** | Commands run one by one | Shell: `$ENV`/`${ENV}` (shell expansion) | `tom:`, `vscode:`, `dartscript:`, shell, reflection |
@@ -250,11 +241,12 @@ Tom processes configuration through three phases, each with its own placeholder 
 Resolved during tom_master*.yaml construction (and also at runtime):
 
 | Type | Syntax | Description |
-|------|--------|-------------|
+| ------ | -------- | ------------- |
 | Environment | `[[VAR]]` or `[[VAR:-default]]` | Environment variable |
 | Data Path | `[{path.to.value}]` or `[{path:-default}]` | Config value lookup |
 
 **Example usage:**
+
 ```yaml
 # Resolved at generation time AND runtime
 cloud:
@@ -270,7 +262,7 @@ version: "[{deps.path}]"
 These placeholders are resolved after configuration loading, either when preparing the action or immediately before executing a command.
 
 | Type | Syntax | Resolution Phase | Description |
-|------|--------|------------------|-------------|
+| ------ | -------- | ------------------ | ------------- |
 | Value Reference | `$VAL{key.path:-default}` | Runtime (Pre-Action) | Config value from workspace/project YAML |
 | Generator | `$GEN{path.*.field;sep}` | Runtime (Pre-Action) | Generate list from tom_master*.yaml data |
 | Environment | `$ENV{NAME:-default}` | Execution Time | Environment variable (resolved before command run) |
@@ -280,7 +272,7 @@ These placeholders are resolved after configuration loading, either when prepari
 Execute D4rt locally via the Tom CLI D4rt instance. These are resolved at **Execution Time** by the Action Runner.
 
 | Type | Syntax | Detection |
-|------|--------|----------|
+| ------ | -------- | ---------- |
 | Expression | `$D4{expression}` | Default (no special markers) |
 | Script file | `$D4{file.dart}` | Detected by `.dart` suffix |
 | Multiline script | `$D4{\n<code>}` | Detected by leading newline |
@@ -293,7 +285,7 @@ Execute D4rt locally via the Tom CLI D4rt instance. These are resolved at **Exec
 Execute D4rt in VS Code's VS Code Bridge (port 9742 default). Resolved at **Execution Time**.
 
 | Type | Syntax | Detection |
-|------|--------|----------|
+| ------ | -------- | ---------- |
 | Expression | `$VSCODE{expression}` | Default (no special markers) |
 | Script file | `$VSCODE{file.dart}` | Detected by `.dart` suffix |
 | Multiline script | `$VSCODE{\n<code>}` | Detected by leading newline |
@@ -306,16 +298,19 @@ Execute D4rt in VS Code's VS Code Bridge (port 9742 default). Resolved at **Exec
 ### 4.6 D4rt Placeholder Examples
 
 **Inline expression:**
+
 ```yaml
 value: "$D4{projectInfo.length}"
 ```
 
 **Script file:**
+
 ```yaml
 run: "$D4{scripts/deploy.dart}"
 ```
 
 **Multiline script (void):**
+
 ```yaml
 custom: |
   $D4{
@@ -327,6 +322,7 @@ custom: |
 ```
 
 **Multiline method (returns value):**
+
 ```yaml
 count: |
   $D4{
@@ -356,7 +352,7 @@ core: "$GEN{projects.[type=dart_package,name=^tom_.*$].name;-}"
 
 **Filter syntax:** `[attr=value,attr2=^regex$]` (all must match)
 
-### 4.7 Escaping
+### 4.8 Escaping
 
 ```yaml
 literal: \$VAL{not.resolved}    # Preserved as $VAL{...}
@@ -381,7 +377,7 @@ commands:
 Execute Dart code locally via D4rt:
 
 | Format | Example |
-|--------|---------|
+| -------- | --------- |
 | Script file | `dartscript: path/to/script.dart` |
 | Script file (custom port) | `dartscript:9743: script.dart` |
 | Inline code | `dartscript: print('Hello')` |
@@ -409,7 +405,7 @@ commands:
 Execute Dart code via VS Code's VS Code Bridge (port 9742 default):
 
 | Format | Example |
-|--------|--------|
+| -------- | -------- |
 | Script file | `vscode: path/to/script.dart` |
 | Script file (custom port) | `vscode:9743: script.dart` |
 | Inline code | `vscode: print('Hello')` |
@@ -456,7 +452,7 @@ The global `tom` object provides access to workspace and project data:
 **Context Objects Summary:**
 
 | Object | Type | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `tom` | `TomContext` | Global context with workspace and project access |
 | `tom.workspace` | `TomWorkspace` | Workspace configuration from `tom_workspace.yaml` |
 | `tom.project` | `TomProject?` | Current project (null for pre/post-action) |
@@ -472,7 +468,7 @@ The global `tom` object provides access to workspace and project data:
 
 **`tom` Object Model:**
 
-```
+```text
 tom                          # TomContext - global context object
 ├── workspace                # TomWorkspace - workspace configuration
 │   ├── name                 # Workspace name
@@ -504,7 +500,7 @@ tom                          # TomContext - global context object
 **Context by Execution Phase:**
 
 | Phase | `tom.project` | Description |
-|-------|---------------|-------------|
+| ------- | --------------- | ------------- |
 | Pre-action commands | `null` | Workspace-level, no specific project |
 | Per-project commands | `TomProject` | Set to current project being processed |
 | Post-action commands | `null` | Workspace-level, no specific project |
@@ -524,7 +520,7 @@ VS Code bridge scripts have access to VS Code APIs, **not** the `tom` context:
 **Context Objects Summary:**
 
 | Object | Type | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `vscode` | `VSCode` | Main VS Code API access object |
 | `window` | `VSCodeWindow` | Shortcut to `VSCode.window` |
 | `workspace` | `VSCodeWorkspace` | Shortcut to `VSCode.workspace` |
@@ -537,7 +533,7 @@ VS Code bridge scripts have access to VS Code APIs, **not** the `tom` context:
 **Available APIs:**
 
 | Object | Type | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `VSCode.window` | `VSCodeWindow` | Window API (showMessage, activeEditor, etc.) |
 | `VSCode.workspace` | `VSCodeWorkspace` | Workspace API (folders, configuration, etc.) |
 | `VSCode.commands` | `VSCodeCommands` | Command execution |
@@ -560,16 +556,18 @@ VS Code bridge scripts have access to VS Code APIs, **not** the `tom` context:
 D4rt scripts (local) have access to helper classes for system interaction.
 
 **`Env` Class:**
+
 | Method | Description |
-|--------|-------------|
+| -------- | ------------- |
 | `Env.get(name, [default])` | Get environment variable |
 | `Env.resolve(str)` | Resolve `{VAR}` and `{VAR:default}` placeholders |
 | `Env.expand(str)` | Expand `$VAR` and `${VAR}` placeholders |
 | `Env.expandWithDefaults(str)` | Expand like shell with `${VAR:-default}` support |
 
 **`Shell` Class:**
+
 | Method | Description |
-|--------|-------------|
+| -------- | ------------- |
 | `Shell.run(cmd)` | Execute command and return stdout (throws on error) |
 | `Shell.exec(cmd)` | Execute and return exit code |
 | `Shell.runAll([cmds])` | Run sequence of commands |
@@ -610,7 +608,7 @@ if (buildAction != null) {
 **ActionDef Structure:**
 
 | Field | Type | Description |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | `name` | `String` | Action name (e.g., 'build', 'test') |
 | `description` | `String?` | Optional description |
 | `skipTypes` | `List<String>?` | Project types to skip |
@@ -621,7 +619,7 @@ if (buildAction != null) {
 **ActionConfig Structure:**
 
 | Field | Type | Description |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | `preCommands` | `List<String>?` | Commands run once before all projects |
 | `commands` | `List<String>` | Commands run per project |
 | `postCommands` | `List<String>?` | Commands run once after all projects |
@@ -690,7 +688,7 @@ Both generate `file.ext` with mode blocks and placeholders resolved.
 ## 8. Generated Files
 
 | File | Location | Purpose |
-|------|----------|---------|
+| ------ | ---------- | --------- |
 | `tom_master.yaml` | `.tom_metadata/` | Generic master for tooling |
 | `tom_master_<action>.yaml` | `.tom_metadata/` | Action-specific config |
 | `tom_master_<action>_<mode>.yaml` | `.tom_metadata/` | Mode-variant config |

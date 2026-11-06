@@ -438,7 +438,7 @@ The package is organised around the four concerns introduced above. The
 analyzer is the producer; everything else either reads what it produced or
 operates alongside it.
 
-```
+```text
                          tom_workspace.yaml
                          tom_project.yaml (per project)
                                  │
@@ -491,7 +491,7 @@ operates alongside it.
 analysis engine the devops toolchain is built on, while staying free of any
 dependency on the CLI layer itself.
 
-```
+```text
               tom CLI · buildkit · testkit · issuekit   (tom_build_cli + kits)
                                  │ read metadata via
                                  ▼
@@ -519,6 +519,7 @@ In-package guides under [`doc/`](doc/):
 | Document | What's there |
 | -------- | ------------ |
 | [`doc/tom_user_reference.md`](doc/tom_user_reference.md) | Quick reference for the Tom workspace build tool — the everyday command surface. |
+| [`doc/tom_configuration_reference.md`](doc/tom_configuration_reference.md) | Every key of `tom_workspace.yaml` and `tom_project.yaml`, their readers and JSON Schemas. |
 | [`doc/tom_tool_specification.md`](doc/tom_tool_specification.md) | Comprehensive specification of the Tom CLI build and management model. |
 | [`doc/placeholders_d4rt_guide.md`](doc/placeholders_d4rt_guide.md) | The placeholder syntax and D4rt scripting integration, with implementation detail. |
 | [`doc/restructuring.md`](doc/restructuring.md) | Package-restructuring analysis and rationale for the current module layout. |

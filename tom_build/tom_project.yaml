@@ -4,6 +4,6 @@ description: >-
   Workspace build tool
 
 executables:
-  - name: tom
-    path: bin/tom.dart
+  - source: bin/workspace_analyzer.dart
+    output: workspace_analyzer
 license: BSD-3-Clause

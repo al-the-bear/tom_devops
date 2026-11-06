@@ -228,25 +228,29 @@ class TomWorkspace {
     this.customTags = const {},
   });
 
+  /// The top-level keys of tom_workspace.yaml this model reads. Besides
+  /// these, every `<mode-type>-mode-definitions` key is read; all other keys
+  /// are custom tags. `.tom/json-schema/tom_build/tom_workspace.schema.json`
+  /// declares exactly these keys (pinned by test/config/config_schema_test.dart).
+  static const Set<String> knownKeys = {
+    'name',
+    'binaries',
+    'operating-systems',
+    'mobile-platforms',
+    'imports',
+    'workspace-modes',
+    'cross-compilation',
+    'groups',
+    'project-types',
+    'actions',
+    'pipelines',
+    'project-info',
+    'deps',
+    'deps-dev',
+    'version-settings',
+  };
+
   factory TomWorkspace.fromYaml(Map<String, dynamic> yaml) {
-    // Known keys to extract
-    final knownKeys = {
-      'name',
-      'binaries',
-      'operating-systems',
-      'mobile-platforms',
-      'imports',
-      'workspace-modes',
-      'cross-compilation',
-      'groups',
-      'project-types',
-      'actions',
-      'pipelines',
-      'project-info',
-      'deps',
-      'deps-dev',
-      'version-settings',
-    };
 
     // Mode definition keys
     final modeDefKeys = <String>{};
@@ -506,27 +510,34 @@ class TomProject {
     this.customTags = const {},
   });
 
+  /// The top-level keys of tom_project.yaml this model reads. Besides these,
+  /// every `<mode-type>-mode-definitions` key and every metadata key
+  /// (`*-yaml`, `*-json`) is read; all other keys are custom tags.
+  /// `.tom/json-schema/tom_build/tom_project.schema.json` declares these keys
+  /// plus the ones other tools read (pinned by
+  /// test/config/config_schema_test.dart).
+  static const Set<String> knownKeys = {
+    'name',
+    'type',
+    'description',
+    'binaries',
+    'build-after',
+    'action-order',
+    'features',
+    'actions',
+    'cross-compilation',
+    'package-module',
+    'parts',
+    'tests',
+    'examples',
+    'docs',
+    'copilot-guidelines',
+    'binary-files',
+    'executables',
+    'action-mode-definitions',
+  };
+
   factory TomProject.fromYaml(String name, Map<String, dynamic> yaml, {Map<String, ActionDef>? defaultActions}) {
-    // Known keys
-    final knownKeys = {
-      'name',
-      'type',
-      'description',
-      'binaries',
-      'build-after',
-      'action-order',
-      'features',
-      'actions',
-      'cross-compilation',
-      'package-module',
-      'parts',
-      'tests',
-      'examples',
-      'docs',
-      'copilot-guidelines',
-      'executables',
-      'action-mode-definitions',
-    };
 
     // Mode definition keys
     final modeDefKeys = <String>{};

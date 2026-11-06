@@ -116,26 +116,7 @@ Tom CLI is a workspace build and management tool that:
 
 #### 3.2.1 Complete Field Reference
 
-| Field | Type | Required | Default | Description |
-| ----- | ---- | -------- | ------- | ----------- |
-| `imports` | `List<String>` | No | `[]` | YAML files to merge (later overrides earlier) |
-| `workspace-modes` | `WorkspaceModes` | No | — | Mode definitions and action-mode-configuration |
-| `project-types` | `Map<String, ProjectTypeDef>` | No | Built-in | Project type definitions with metadata files |
-| `actions` | `Map<String, ActionDef>` | Yes | — | Action definitions with commands |
-| `binaries` | `String` | No | `bin/` | Binary output folder |
-| `cross-compilation` | `CrossCompilation` | No | — | Cross-compilation targets and build-on rules |
-| `groups` | `Map<String, GroupDef>` | No | `{}` | Project groupings with overrides |
-| `environment-mode-definitions` | `Map<String, EnvironmentModeDef>` | No | — | Environment mode configurations |
-| `execution-mode-definitions` | `Map<String, ExecutionModeDef>` | No | — | Execution mode configurations |
-| `deployment-mode-definitions` | `Map<String, DeploymentModeDef>` | No | — | Deployment mode configurations |
-| `cloud-provider-mode-definitions` | `Map<String, CloudProviderModeDef>` | No | — | Cloud provider configurations |
-| `publishing-mode-definitions` | `Map<String, PublishingModeDef>` | No | — | Publishing/release configurations |
-| `project-info` | `Map<String, ProjectInfo>` | No | `{}` | Per-project default settings |
-| `deps` | `Map<String, String>` | No | `{}` | Dependency version constraints |
-| `deps-dev` | `Map<String, String>` | No | `{}` | Dev dependency versions |
-| `version-settings` | `VersionSettings` | No | — | Version management settings |
-| `pipelines` | `Map<String, Pipeline>` | No | `{}` | Pipeline definitions |
-| `<custom-tag>` | `Any` | No | — | Any additional tags are passed through to tom_master*.yaml |
+Every key of `tom_workspace.yaml`, with type, default and reader, is listed in the [Tom Configuration Reference](tom_configuration_reference.md) §2; the JSON Schema is `.tom/json-schema/tom_build/tom_workspace.schema.json`. That reference also lists which of the features specified here are not read yet (§5).
 
 **Note on Custom Tags:** Users may add any additional top-level tags to `tom_workspace.yaml`. These will be included in the generated `tom_master*.yaml` files and can be referenced in placeholders and scripts.
 
@@ -518,29 +499,13 @@ This enables minimal configuration for simple projects while allowing full custo
 
 #### 3.3.1 Complete Field Reference
 
-**Parity with tom_workspace.yaml:** Most fields that appear in `tom_workspace.yaml` can also be specified at project level to override workspace defaults. This enables flexible project-specific customization.
+**Parity with tom_workspace.yaml:** Most fields that appear in `tom_workspace.yaml` can also be specified at project level to override workspace defaults.
 
 **Mode Definitions:** The `workspace-modes:` section in `tom_workspace.yaml` declares which mode types exist. Any mode type declared there may have a corresponding `<mode-type>-mode-definitions` section in `tom_project.yaml`. These project-level definitions are **completely optional** and override workspace defaults when present.
 
-| Field | Type | Required | Default | Description |
-| ----- | ---- | -------- | ------- | ----------- |
-| `build-after` | `List<String>` | No | `[]` | Default build dependencies |
-| `action-order` | `Map<String, List>` | No | `{}` | Action-specific ordering |
-| `features` | `Map<String, bool>` | No | Auto | Feature flag overrides |
-| `actions` | `Map<String, ActionDef>` | No | `{}` | Action overrides (same structure as workspace) |
-| `binaries` | `String` | No | Inherit | Binary output folder |
-| `executables` | `List<ExecutableDef>` | No | Auto | Source files to compile |
-| `cross-compilation` | `CrossCompilation` | No | Inherit | Cross-compilation overrides |
-| `environment-mode-definitions` | `Map<String, EnvironmentModeDef>` | No | `{}` | Environment mode overrides |
-| `execution-mode-definitions` | `Map<String, ExecutionModeDef>` | No | `{}` | Execution mode overrides |
-| `deployment-mode-definitions` | `Map<String, DeploymentModeDef>` | No | `{}` | Deployment mode overrides |
-| `cloud-provider-mode-definitions` | `Map<String, CloudProviderModeDef>` | No | `{}` | Cloud provider overrides |
-| `publishing-mode-definitions` | `Map<String, PublishingModeDef>` | No | `{}` | Publishing mode overrides |
-| `action-mode-definitions` | `Map<String, ActionModeDef>` | No | `{}` | Per-action mode overrides |
-| `<metadata-key>` | `Map<String, dynamic>` | No | Auto | Parsed metadata file content (e.g., `pubspec-yaml`) |
-| `<custom-tag>` | `Any` | No | — | Any additional tags are passed through |
+Every key of `tom_project.yaml`, with type, default and reader, is listed in the [Tom Configuration Reference](tom_configuration_reference.md) §3; the JSON Schema is `.tom/json-schema/tom_build/tom_project.schema.json`.
 
-**Note on Custom Tags:** Users may add any additional tags beyond those listed above. These are not a special section called "custom-settings" but simply any additional YAML tags that will be included in the generated `tom_master*.yaml` files and can be referenced in placeholders and scripts. This applies to both `tom_workspace.yaml` and `tom_project.yaml`.
+**Note on Custom Tags:** Users may add any additional tags beyond those the reference lists. These are not a special section called "custom-settings" but simply any additional YAML tags that will be included in the generated `tom_master*.yaml` files and can be referenced in placeholders and scripts. This applies to both `tom_workspace.yaml` and `tom_project.yaml`.
 
 **Note on Mode Definitions:** Project-level `<mode-type>-mode-definitions` deep-merge with workspace-level definitions. The project values override workspace defaults for matching keys.
 
@@ -1198,7 +1163,7 @@ With resolved mode settings from Step 2:
 **Important Merge Note:** For `actions`, `<mode-type>-mode-definitions`, and `cross-compilation`, merging happens at the **first level within each section** - individual entries are **replaced**, not deep-merged:
 
 | Section | Merge Level | Example |
-|---------|-------------|---------|
+| ------- | ----------- | ------- |
 | `actions` | `actions.<action>` | If project defines `actions.build`, it completely replaces workspace `actions.build`. Other actions (test, deploy, etc.) are inherited from workspace. |
 | `<mode-type>-mode-definitions` | `<mode-type>-mode-definitions.<mode>` | If project defines `deployment-mode-definitions.aws`, it completely replaces workspace `deployment-mode-definitions.aws`. Other modes (none, kubernetes, etc.) are inherited. |
 | `cross-compilation` | `cross-compilation.build-on.<target>` | If project defines `cross-compilation.build-on.darwin-arm64`, it replaces that target's config. **Exception:** `all-targets` is always taken from workspace and cannot be overridden at project level. |
