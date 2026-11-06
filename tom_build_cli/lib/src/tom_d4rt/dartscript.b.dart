@@ -1,6 +1,6 @@
 // D4rt Bridge - Generated file, do not edit
 // Dartscript registration for tom_build_cli
-// Generated: 2026-09-18T00:29:11.971081 by tom_d4rt_generator 1.26.0
+// Generated: 2026-11-06T21:57:33.476939 by tom_d4rt_generator 1.53.0
 
 /// D4rt Bridge Registration for tom_build_cli
 library;
@@ -25,7 +25,8 @@ class TomBuildCliBridges {
       'package:tom_build_cli/tom_build_cli.dart',
     );
     // Register under sub-package barrels for direct imports
-    for (final barrel in tom_build_cli_bridges.TomBuildCliBridge.subPackageBarrels()) {
+    for (final barrel
+        in tom_build_cli_bridges.TomBuildCliBridge.subPackageBarrels()) {
       tom_build_cli_bridges.TomBuildCliBridge.registerBridges(d4rt, barrel);
     }
 
