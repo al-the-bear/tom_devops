@@ -32,9 +32,11 @@
 // WHAT THIS REPO HAD, measured 2026-11-06 on mbp and cleared by the sweep that
 // added this file (build_tom frozenlocks_aivu): 16 frozen resolutions across
 // 5 packages. `pub upgrade` in tom_build, tom_issue_kit, tom_test_kit and
-// tom_devops_samples/tom_build_kit_sample moved every one it could; what is
-// left is named below with its owner. tom_build_cli builds the `tom` binary
-// and tom_test_kit builds `testkit`, so the binaries on a developer's PATH are
+// tom_devops_samples/tom_build_kit_sample moved every one it could;
+// tom_build_cli, which did not resolve at all until the d4rt stack moved to
+// analyzer 14 and tom_build_kit to dcli 10, followed on the same day. Nothing
+// is exempted or held back now. tom_build_cli builds the `tom` binary and
+// tom_test_kit builds `testkit`, so the binaries on a developer's PATH are
 // compiled from these resolutions.
 //
 // WHY IT LIVES HERE. tom_build is the repo's library every tool package builds
@@ -63,13 +65,11 @@ const _ownedPrefix = 'tom_';
 /// it. AN EXCEPTION WITHOUT AN OWNER IS A LEAK: if you add one and cannot name
 /// who unfreezes it, find that out first. FL-3 fails once an entry stops
 /// describing a frozen lock.
-const Map<String, String> _frozenLockExceptions = <String, String>{
-  // Does not resolve at all: it depends on tom_d4rt and tom_d4rt_generator
-  // (analyzer ^10) and on tom_build_kit, published only on analyzer ^14, so
-  // `pub upgrade` cannot move its lock. Unfreezes when the d4rt repo is on
-  // analyzer ^14 (d4rt vstdm3_akex-d4rt-repo-to-analyzer-14).
-  'tom_build_cli': 'build_tom aft_cli-1_akfb-vsbcl1-build-cli-does-not-resolve',
-};
+///
+/// EMPTY, and that is the intended resting state. Keep the map rather than
+/// removing it: re-deriving the shape under time pressure is how an exemption
+/// gets added without an owner.
+const Map<String, String> _frozenLockExceptions = <String, String>{};
 
 /// A range of cached versions of one package that no lock here can take.
 class _HeldBack {
