@@ -193,6 +193,19 @@ The workspace's build actions:
 
 buildkit runs the single project in the current folder (`--nested`). Each step does only what the project's `buildkit.yaml` configures and skips itself otherwise. `:runner` needs a `build.yaml`, and `:compiler` compiles the executables of the `compiler:` section for the targets listed there (native and cross compilation). A TypeScript package whose build script is not named `build` overrides `actions.build` in its `tom_project.yaml`, as `tom_vscode_shared` does with `npm run compile`.
 
+The workspace's `clean` action removes what a build generated:
+
+| Types | Commands |
+| ----- | -------- |
+| Dart (default) | `buildkit --nested :cleanup`: the files the project's `buildkit.yaml` `cleanup:` list names; skipped without one |
+| `flutter_app` | `buildkit --nested :cleanup`, then `flutter clean` (`build/`, `.dart_tool/`) |
+| `vscode_extension`, `typescript_*`, `typescript` | `npm run clean --if-present`, then `npx --no-install tsc --build --clean` (exactly what tsc built) |
+| `node_cli`, `javascript_*`, `javascript` | `npm run clean --if-present` |
+| `java` | `rm -rf build target` (Gradle and `build_jar.sh`, Maven) |
+| Python | `rm -rf build *.egg-info` |
+
+The files a `cleanup:` list names can be tracked generated files (`*.versioner.dart`, `*.b.dart`); the next `build` writes them again.
+
 The workspace's run actions:
 
 | Action | Default | Other types |
