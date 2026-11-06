@@ -182,6 +182,17 @@ The families are checked in that order. A folder is a project exactly when one o
 
 The workspace's `test` action runs a project's whole test suite with the runner of its family. Dart (the default) uses `testkit --nested :test --baseline`, which runs `dart test` or `flutter test` for the one project, records the run in its `testlog/` tracking file and creates the baseline on the first run. JavaScript/TypeScript projects use `npm test`, and Java and Python projects use their `./run_tests.sh`. Tag selection stays with each package's `dart_test.yaml`; a project that needs other arguments overrides `actions.test` in its `tom_project.yaml` (e.g. `testkit --nested :test --baseline --test-args="--exclude-tags db"`).
 
+The workspace's build actions:
+
+| Action | Dart and Flutter (default) | Other types |
+| ------ | -------------------------- | ----------- |
+| `build` | `buildkit --nested :pubget :runner :d4rtgen :versioner :compiler` | `vscode_extension`: `npm run compile`; other JavaScript/TypeScript: `npm run build --if-present`; `java`: `./build_jar.sh`; Python: skipped (nothing to build) |
+| `pubget` | `buildkit --nested :pubget` | Not applied |
+| `builder_runner` | `buildkit --nested :runner` | Not applied |
+| `bin_release` | `buildkit --nested :compiler` | Not applied |
+
+buildkit runs the single project in the current folder (`--nested`). Each step does only what the project's `buildkit.yaml` configures and skips itself otherwise. `:runner` needs a `build.yaml`, and `:compiler` compiles the executables of the `compiler:` section for the targets listed there (native and cross compilation). A TypeScript package whose build script is not named `build` overrides `actions.build` in its `tom_project.yaml`, as `tom_vscode_shared` does with `npm run compile`.
+
 An **ActionConfig** holds `pre-commands`, `commands` and `post-commands`, each a list of commands. Any other key is a custom tag, carried into `tom_master*.yaml`.
 
 A **command** is a string or a map with exactly one key:
