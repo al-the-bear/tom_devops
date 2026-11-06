@@ -95,9 +95,13 @@ class WorkspaceConfigCheck {
   static const workspaceFile = 'tom_workspace.yaml';
 
   /// Discovers the workspace's projects and checks them.
-  Future<List<ConfigFinding>> run() async {
-    final analyzer = WorkspaceAnalyzer(workspaceRoot);
-    final discovered = await analyzer.discoverProjects();
+  Future<List<ConfigFinding>> run() async =>
+      runOn(await WorkspaceAnalyzer(workspaceRoot).discoverProjects());
+
+  /// Checks [discovered], the result of [WorkspaceAnalyzer.discoverProjects]
+  /// for [workspaceRoot]; for callers that discover once and check several
+  /// things.
+  List<ConfigFinding> runOn(List<ProjectInfo> discovered) {
     final projects = [
       for (final project in discovered) _load(project),
     ].where((p) => includeProject?.call(p.relativePath) ?? true).toList();

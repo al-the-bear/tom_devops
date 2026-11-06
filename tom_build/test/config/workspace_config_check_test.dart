@@ -1,32 +1,15 @@
 // WorkspaceConfigCheck: the project-configuration rules PC-1..4 and
 // WC-1..4 (documented on the class and in doc/tom_configuration_reference.md
-// §7), first over hand-built configuration, then over a scratch workspace,
-// then over this workspace itself.
-//
-// The live-workspace test (WCC-30) only READS files: safe while other
-// sessions work in the workspace. It discovers projects the way the workspace
-// analyzer does (~1 min on the full tree).
+// §7), first over hand-built configuration, then over a scratch workspace.
+// The check over this workspace itself is live_workspace_test.dart LW-1.
 @TestOn('vm')
 library;
 
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:tom_build/tom_build.dart';
-
-/// Manifest files that make a folder a project (WorkspaceAnalyzer._isProject).
-const _manifests = [
-  'pubspec.yaml',
-  'package.json',
-  'pom.xml',
-  'build.gradle',
-  'build.gradle.kts',
-  'pyproject.toml',
-  'requirements.txt',
-  'environment.yml',
-];
 
 CheckedProject _project(
   String key, {
@@ -327,50 +310,4 @@ groups:
       },
     );
   });
-
-  group('live workspace (read-only)', () {
-    test(
-      'WCC-30: this workspace\'s project configuration has no findings',
-      () async {
-        final root = _findWorkspaceRoot();
-        final tracked = _trackedProjectFolders(root);
-        final findings = await WorkspaceConfigCheck(
-          root.path,
-          includeProject: tracked.contains,
-        ).run();
-        expect(findings, isEmpty, reason: findings.join('\n'));
-      },
-      timeout: const Timeout(Duration(minutes: 5)),
-    );
-  });
-}
-
-/// The nearest folder above the package holding tom_workspace.yaml.
-Directory _findWorkspaceRoot() {
-  var dir = Directory.current.absolute;
-  while (!File(p.join(dir.path, 'tom_workspace.yaml')).existsSync()) {
-    final parent = dir.parent;
-    if (parent.path == dir.path) {
-      fail('No tom_workspace.yaml above ${Directory.current.path}');
-    }
-    dir = parent;
-  }
-  return dir;
-}
-
-/// Workspace-relative folders holding a tracked manifest (submodules
-/// included): the projects of the repository, as opposed to the disk.
-Set<String> _trackedProjectFolders(Directory root) {
-  final result = Process.runSync('git', [
-    'ls-files',
-    '--recurse-submodules',
-    '--',
-    for (final manifest in _manifests) ...[manifest, '*/$manifest'],
-  ], workingDirectory: root.path);
-  expect(result.exitCode, 0, reason: '${result.stderr}');
-  return const LineSplitter()
-      .convert(result.stdout as String)
-      .where((f) => f.isNotEmpty)
-      .map(p.posix.dirname)
-      .toSet();
 }

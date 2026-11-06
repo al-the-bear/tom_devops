@@ -197,7 +197,7 @@ The workspace's `clean` action removes what a build generated:
 
 | Types | Commands |
 | ----- | -------- |
-| Dart (default) | `buildkit --nested :cleanup`: the files the project's `buildkit.yaml` `cleanup:` list names; skipped without one |
+| Dart (default) | `buildkit --nested :cleanup` (the files the project's `buildkit.yaml` `cleanup:` list names; skipped without one), then `rm -rf build/api_doc` (the generated API docs) |
 | `flutter_app` | `buildkit --nested :cleanup`, then `flutter clean` (`build/`, `.dart_tool/`) |
 | `vscode_extension`, `typescript_*`, `typescript` | `npm run clean --if-present`, then `npx --no-install tsc --build --clean` (exactly what tsc built) |
 | `node_cli`, `javascript_*`, `javascript` | `npm run clean --if-present` |
@@ -205,6 +205,8 @@ The workspace's `clean` action removes what a build generated:
 | Python | `rm -rf build *.egg-info` |
 
 The files a `cleanup:` list names can be tracked generated files (`*.versioner.dart`, `*.b.dart`); the next `build` writes them again.
+
+The workspace's `docs` action generates API documentation for Dart and Flutter packages (`applies-to-types`): `dart doc --output build/api_doc`. `doc/` is hand-authored and `doc/api/` holds the hand-written API summaries, which is also where `dart doc` writes by default. The generated HTML therefore goes to the gitignored `build/api_doc/`, and `clean` removes it.
 
 The workspace's run actions:
 
@@ -326,4 +328,4 @@ The schemas check each file's shape. `WorkspaceConfigCheck` (this package, `lib/
 | WC-3 | `tom_workspace.yaml` | Every group member is a project |
 | WC-4 | `tom_workspace.yaml` | Every project is in exactly one group (`zom_` test projects excepted) |
 
-Discovery reads the disk, so a folder only one machine has (a gitignored copy, a scratch clone) is found too. `test/config/workspace_config_check_test.dart` checks this workspace with only the projects whose manifest git tracks (WCC-30); run it from this package with `testkit :test`. It only reads files and takes about a minute on the full tree.
+Discovery reads the disk, so a folder only one machine has (a gitignored copy, a scratch clone) is found too. `test/config/live_workspace_test.dart` checks this workspace with only the projects whose manifest git tracks (LW-1), together with the checks that every tracked project can run the workspace actions it is given (LW-2..5). It discovers the projects once for all of them, only reads files, and takes one to several minutes on the full tree; run it from this package with `testkit :test`.

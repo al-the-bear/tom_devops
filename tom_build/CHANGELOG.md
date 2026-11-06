@@ -1,3 +1,14 @@
+## 1.0.6
+
+- **`WorkspaceConfigCheck.runOn(discovered)`** checks an already discovered
+  project list, so one discovery serves several checks; `run()` uses it.
+- Tests: the live-workspace checks moved into one file,
+  `test/config/live_workspace_test.dart` (LW-1..5), which discovers once.
+  Each action test file used to scan the whole tree itself, and the
+  concurrent scans timed out together on a busy disk. Shared helpers and the
+  action commands live in `test/config/support/workspace_support.dart`.
+- New `test/config/docs_action_test.dart` for the workspace docs action.
+
 ## 1.0.5
 
 - **`WorkspaceAnalyzer.runsAction`:** a project whose tom_project.yaml
