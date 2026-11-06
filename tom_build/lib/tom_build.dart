@@ -19,6 +19,7 @@ library;
 // ANALYZER
 // =============================================================================
 export 'src/analyzer/workspace_analyzer.dart';
+export 'src/analyzer/workspace_config_check.dart';
 export 'src/scan_exclusions.dart';
 
 // =============================================================================

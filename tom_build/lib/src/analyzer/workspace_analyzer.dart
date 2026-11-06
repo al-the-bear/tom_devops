@@ -269,11 +269,7 @@ class WorkspaceAnalyzer {
 
   /// Main entry point - analyzes workspace and writes metadata.
   Future<void> analyze() async {
-    // Load workspace-level tom_workspace.yaml if present
-    workspaceSettings = await _loadWorkspaceIndex();
-
-    // Find all Dart/Flutter projects
-    await _discoverProjects();
+    await discoverProjects();
 
     // Analyze each project
     for (final project in projects) {
@@ -355,6 +351,16 @@ class WorkspaceAnalyzer {
     for (final subfolder in module.subfolders) {
       _sortModule(subfolder);
     }
+  }
+
+  /// Loads tom_workspace.yaml into [workspaceSettings] and fills [projects]
+  /// with every project of the workspace, without analyzing them or writing
+  /// anything. [analyze] starts with it; read-only checks use it alone.
+  Future<List<ProjectInfo>> discoverProjects() async {
+    workspaceSettings = await _loadWorkspaceIndex();
+    projects.clear();
+    await _discoverProjects();
+    return projects;
   }
 
   /// Discovers all projects in the workspace.

@@ -10,6 +10,7 @@ Every key of `tom_workspace.yaml` and `tom_project.yaml`: its type, its default,
 - [4. Shared blocks](#4-shared-blocks)
 - [5. Specified but not read](#5-specified-but-not-read)
 - [6. Readers that disagree](#6-readers-that-disagree)
+- [7. Project configuration checks](#7-project-configuration-checks)
 
 ---
 
@@ -62,7 +63,7 @@ No mode processing is applied to this file.
 | `cross-compilation` | [CrossCompilation](#43-cross-compilation) | No | — | Targets and which host builds which |
 | `groups` | `Map<String, Group>` | No | `{}` | Group name → projects ([§2.3](#23-groups)) |
 | `pipelines` | `Map<String, Pipeline>` | No | `{}` | Pipeline name → projects and actions ([§2.4](#24-pipelines)) |
-| `project-info` | `Map<String, Project>` | No | `{}` | Project name → settings deep-merged into that project; each entry has the `tom_project.yaml` shape |
+| `project-info` | `Map<String, Project>` | No | `{}` | Project folder name → settings deep-merged into that project; each entry has the `tom_project.yaml` shape. A `path` entry, when given, must be the project's folder ([§7](#7-project-configuration-checks)). |
 | `deps` | `Map<String, String?>` | No | `{}` | Package → version constraint; `null` declares a package without one |
 | `deps-dev` | `Map<String, String?>` | No | `{}` | Dev package → version constraint; `null` as for `deps` |
 | `version-settings` | [VersionSettings](#25-version-settings) | No | — | Version numbering |
@@ -97,7 +98,7 @@ Project type detection itself is built in (spec §7.1); this block only describe
 | --- | ---- | ----------- |
 | `name` | `String` | Defaults to the group's key |
 | `description` | `String` | |
-| `projects` | `List<String>` | Project names; `tom :groups <group> :<action>` runs the action on them |
+| `projects` | `List<String>` | Project folder names; `tom :groups <group> :<action>` runs the action on them. Every project belongs to exactly one group ([§7](#7-project-configuration-checks)). |
 | `project-info-overrides` | `Project` | Settings merged into every project of the group |
 
 ### 2.4 pipelines
@@ -128,7 +129,7 @@ The file is optional: a project without one is auto-detected (type, name, metada
 | Key | Type | Default | Description |
 | --- | ---- | ------- | ----------- |
 | `project_id` | `String` | — | Short project id, e.g. `TB`. Selects the project in buildkit (`--project`) and identifies it in issuekit. |
-| `name` | `String` | Folder name | Project name |
+| `name` | `String` | — | Short name that selects the project in buildkit (`--project <name>`), e.g. `buildkit` for tom_build_kit. Unique in the workspace and never another project's folder name or `project_id`. The project's key (in `tom_master.yaml`, `project-info`, `groups`) is its folder name; its package name comes from the manifest. |
 | `type` | `String` | Auto-detected | A key of the workspace's `project-types`, e.g. `dart_package` |
 | `description` | `String` | From the manifest | |
 | `license` | `String` | From `LICENSE` | SPDX id; read by tom_package_scanner when no license file says otherwise |
@@ -250,3 +251,22 @@ The [specification](tom_tool_specification.md) describes these; the parser does 
 ## 6. Readers that disagree
 
 **Project `binaries`.** `TomProject` reads `binaries` as the binary output folder (a string). The workspace analyzer reads a project's `binaries` as a list of tool files and writes that list into `tom_master.yaml`; reading such a `tom_master.yaml` back through `TomMaster.fromYaml` fails on the list. The schema follows `TomProject` (a string) and points file lists to `binary-files`. Tracked in the build_tom quest (`aft_cfg-52_akfj-project-binaries-two-readers`).
+
+---
+
+## 7. Project configuration checks
+
+The schemas check each file's shape. `WorkspaceConfigCheck` (this package, `lib/src/analyzer/workspace_config_check.dart`) checks what a schema cannot see: references between projects, uniqueness, and coverage. Projects are what the workspace analyzer discovers (`WorkspaceAnalyzer.discoverProjects`), keyed by folder name.
+
+| Rule | File | Holds |
+| ---- | ---- | ----- |
+| PC-1 | `tom_project.yaml` | `project_id`, `name` and `description` are given, each a non-empty string |
+| PC-2 | `tom_project.yaml` | No two projects share a `project_id` (ignoring case, as buildkit compares) |
+| PC-3 | `tom_project.yaml` | No two projects share a `name`, and a `name` is not another project's folder name or `project_id`: buildkit resolves `--project` by folder name, then id, then name |
+| PC-4 | `tom_project.yaml` | Every project named in `build-after` and `action-order` exists |
+| WC-1 | `tom_workspace.yaml` | Every `project-info` key is a project |
+| WC-2 | `tom_workspace.yaml` | A `project-info` entry's `path`, when given, is that project's folder |
+| WC-3 | `tom_workspace.yaml` | Every group member is a project |
+| WC-4 | `tom_workspace.yaml` | Every project is in exactly one group (`zom_` test projects excepted) |
+
+Discovery reads the disk, so a folder only one machine has (a gitignored copy, a scratch clone) is found too. `test/config/workspace_config_check_test.dart` checks this workspace with only the projects whose manifest git tracks (WCC-30); run it from this package with `testkit :test`. It only reads files and takes about a minute on the full tree.

@@ -1,3 +1,12 @@
+## 1.0.3
+
+- **`WorkspaceConfigCheck`** checks a workspace's project configuration
+  beyond the schemas: complete and unique `project_id` / `name`, ordering
+  references, `project-info` keys and paths, group members, and every project
+  in exactly one group (rules PC-1..4, WC-1..4; reference §7). Read-only.
+- **`WorkspaceAnalyzer.discoverProjects()`** finds the projects without
+  analyzing them or writing metadata; `analyze()` starts with it.
+
 ## 1.0.2
 
 - **`TomWorkspace.knownKeys` and `TomProject.knownKeys`** expose the top-level
