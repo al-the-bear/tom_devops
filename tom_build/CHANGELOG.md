@@ -1,3 +1,16 @@
+## 1.0.4
+
+- **Project type families as constants:** `WorkspaceAnalyzer.dartProjectTypes`,
+  `javascriptProjectTypes`, `javaProjectTypes`, `pythonProjectTypes` and their
+  union `projectTypes`.
+- **A folder is a project exactly when a type is detected.** Discovery and
+  detection disagreed: `setup.py` / `setup.cfg` gave a type but did not make a
+  folder a project, `requirements.txt` made a project with no type.
+- **A tool-only `pyproject.toml` no longer makes a project Python.** It
+  counts only when it declares a package (`[project]`, `[build-system]` or a
+  packager's `[tool.*]` table); a Node project with ruff/pytest settings is a
+  JavaScript project again.
+
 ## 1.0.3
 
 - **`WorkspaceConfigCheck`** checks a workspace's project configuration

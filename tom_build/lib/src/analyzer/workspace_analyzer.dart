@@ -267,6 +267,50 @@ class WorkspaceAnalyzer {
 
   WorkspaceAnalyzer(this.workspaceRoot, {this.options = const AnalyzerOptions()});
 
+  /// Project types detected for Dart and Flutter projects.
+  static const Set<String> dartProjectTypes = {
+    'dart_package',
+    'dart_console',
+    'flutter_app',
+  };
+
+  /// Project types detected for JavaScript and TypeScript projects.
+  static const Set<String> javascriptProjectTypes = {
+    'vscode_extension',
+    'node_cli',
+    'typescript_node',
+    'typescript_react',
+    'typescript_vue',
+    'typescript',
+    'javascript_react',
+    'javascript_vue',
+    'javascript',
+  };
+
+  /// Project types detected for Java projects (Maven or Gradle).
+  static const Set<String> javaProjectTypes = {'java'};
+
+  /// Project types detected for Python projects.
+  static const Set<String> pythonProjectTypes = {
+    'python_uv',
+    'python_poetry',
+    'python_flit',
+    'python_pdm',
+    'python_hatch',
+    'python_setuptools',
+    'python_pip',
+    'python_conda',
+    'python',
+  };
+
+  /// Every project type the analyzer assigns.
+  static const Set<String> projectTypes = {
+    ...dartProjectTypes,
+    ...javascriptProjectTypes,
+    ...javaProjectTypes,
+    ...pythonProjectTypes,
+  };
+
   /// Main entry point - analyzes workspace and writes metadata.
   Future<void> analyze() async {
     await discoverProjects();
@@ -541,17 +585,9 @@ class WorkspaceAnalyzer {
     return true;
   }
 
-  /// Checks if a directory is any recognized project type.
-  Future<bool> _isProject(String dirPath) async {
-    return File(path.join(dirPath, 'pubspec.yaml')).existsSync() ||
-           File(path.join(dirPath, 'package.json')).existsSync() ||
-           File(path.join(dirPath, 'pom.xml')).existsSync() ||
-           File(path.join(dirPath, 'build.gradle')).existsSync() ||
-           File(path.join(dirPath, 'build.gradle.kts')).existsSync() ||
-           File(path.join(dirPath, 'pyproject.toml')).existsSync() ||
-           File(path.join(dirPath, 'requirements.txt')).existsSync() ||
-           File(path.join(dirPath, 'environment.yml')).existsSync();
-  }
+  /// A folder is a project exactly when a project type is detected for it.
+  Future<bool> _isProject(String dirPath) async =>
+      _detectProjectType(dirPath) != null;
 
   /// Creates a ProjectInfo from a project directory.
   /// [projectFolder] is the relative path from workspace root (null for direct children).
@@ -666,7 +702,7 @@ class WorkspaceAnalyzer {
     final hasPomXml = File(path.join(projectPath, 'pom.xml')).existsSync();
     final hasBuildGradle = File(path.join(projectPath, 'build.gradle')).existsSync() ||
                            File(path.join(projectPath, 'build.gradle.kts')).existsSync();
-    final hasPyprojectToml = File(path.join(projectPath, 'pyproject.toml')).existsSync();
+    final hasPythonPackageToml = _declaresPythonPackage(projectPath);
     final hasSetupPy = File(path.join(projectPath, 'setup.py')).existsSync();
     final hasSetupCfg = File(path.join(projectPath, 'setup.cfg')).existsSync();
     final hasEnvironmentYml = File(path.join(projectPath, 'environment.yml')).existsSync() ||
@@ -678,7 +714,7 @@ class WorkspaceAnalyzer {
     }
 
     // 2. Python projects (check before Java because some Python projects use Gradle)
-    if (hasPyprojectToml || hasSetupPy || hasSetupCfg || hasEnvironmentYml) {
+    if (hasPythonPackageToml || hasSetupPy || hasSetupCfg || hasEnvironmentYml) {
       return _detectPythonProjectType(projectPath);
     }
 
@@ -694,6 +730,26 @@ class WorkspaceAnalyzer {
 
     return null;
   }
+
+  /// Whether the folder's pyproject.toml declares a Python package: a
+  /// `[project]` or `[build-system]` table, or a packager's `[tool.<name>]`
+  /// table. A pyproject.toml that only configures tools (ruff, pytest, black)
+  /// does not make a folder a Python project — Node projects keep one for
+  /// their Python helper scripts.
+  static bool _declaresPythonPackage(String projectPath) {
+    final file = File(path.join(projectPath, 'pyproject.toml'));
+    if (!file.existsSync()) return false;
+    try {
+      return _pythonPackageTable.hasMatch(file.readAsStringSync());
+    } on FileSystemException {
+      return false;
+    }
+  }
+
+  static final _pythonPackageTable = RegExp(
+    r'^\[(project|build-system|tool\.(uv|poetry|flit|pdm|hatch|setuptools))[\].]',
+    multiLine: true,
+  );
 
   /// Detects the specific type of Python project.
   String _detectPythonProjectType(String projectPath) {

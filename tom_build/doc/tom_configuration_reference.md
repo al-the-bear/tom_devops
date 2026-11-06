@@ -169,6 +169,19 @@ An action is a map. Its named keys are:
 
 Every other key is a project type id (e.g. `flutter_app`) whose `ActionConfig` replaces `default` for projects of that type. It must be a map.
 
+The project type ids are the ones the workspace analyzer assigns (`WorkspaceAnalyzer.projectTypes`):
+
+| Family | Type ids | Detected from |
+| ------ | -------- | ------------- |
+| Dart | `dart_package`, `dart_console`, `flutter_app` | `pubspec.yaml` |
+| Python | `python_uv`, `python_poetry`, `python_flit`, `python_pdm`, `python_hatch`, `python_setuptools`, `python_pip`, `python_conda`, `python` | `pyproject.toml` declaring a package (`[project]`, `[build-system]` or a packager's `[tool.*]` table), `setup.py`, `setup.cfg`, `environment.yml` |
+| Java | `java` | `pom.xml`, `build.gradle(.kts)` |
+| JavaScript / TypeScript | `vscode_extension`, `node_cli`, `typescript_node`, `typescript_react`, `typescript_vue`, `typescript`, `javascript_react`, `javascript_vue`, `javascript` | `package.json` |
+
+The families are checked in that order. A folder is a project exactly when one of them matches. A `pyproject.toml` that only configures tools (ruff, pytest) does not make a folder a Python project.
+
+The workspace's `test` action runs a project's whole test suite with the runner of its family. Dart (the default) uses `testkit --nested :test --baseline`, which runs `dart test` or `flutter test` for the one project, records the run in its `testlog/` tracking file and creates the baseline on the first run. JavaScript/TypeScript projects use `npm test`, and Java and Python projects use their `./run_tests.sh`. Tag selection stays with each package's `dart_test.yaml`; a project that needs other arguments overrides `actions.test` in its `tom_project.yaml` (e.g. `testkit --nested :test --baseline --test-args="--exclude-tags db"`).
+
 An **ActionConfig** holds `pre-commands`, `commands` and `post-commands`, each a list of commands. Any other key is a custom tag, carried into `tom_master*.yaml`.
 
 A **command** is a string or a map with exactly one key:
