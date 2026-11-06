@@ -91,15 +91,7 @@ class _HeldBack {
 
 /// Cached versions FL-2 ignores, by package name. FL-4 fails once one no
 /// longer holds any lock back.
-const Map<String, _HeldBack> _heldBackVersions = <String, _HeldBack>{
-  'tom_analyzer_shared': _HeldBack(
-    from: '0.8.0',
-    owner: 'd4rt vstdm3_akex-d4rt-repo-to-analyzer-14',
-    reason:
-        'tom_analyzer_shared 0.8.0 requires analyzer ^14.1, and tom_build '
-        'reaches tom_d4rt and tom_d4rt_generator, which are on analyzer ^10',
-  ),
-};
+const Map<String, _HeldBack> _heldBackVersions = <String, _HeldBack>{};
 
 /// Below this many distinct cached `tom_*` packages, a pass means nothing: the
 /// discriminator can only see a freeze whose newer version is cached here.

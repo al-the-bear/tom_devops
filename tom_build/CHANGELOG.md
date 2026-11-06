@@ -1,3 +1,14 @@
+## 1.0.7
+
+- **`DependencyScheduler`** runs a job per project in parallel while keeping
+  the dependency order: a project starts once every project it waits for has
+  succeeded, at most `concurrency` at a time; dependents of a failure are
+  skipped (transitively), `stopOnFailure` starts nothing new after the first
+  failure, a dependency cycle is refused before anything runs, and results
+  come back in the given order. For the Tom CLI's multi-project actions.
+- **`TomProject.dependenciesFor(action)`**: the `<action>-after` entry of
+  `action-order` when given, else `build-after`.
+
 ## 1.0.6
 
 - **`WorkspaceConfigCheck.runOn(discovered)`** checks an already discovered

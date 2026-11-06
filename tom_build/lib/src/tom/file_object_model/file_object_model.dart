@@ -628,6 +628,12 @@ class TomProject {
     );
   }
 
+  /// The projects this one waits for under [action]: the `<action>-after`
+  /// entry of `action-order` when given (it replaces `build-after` for that
+  /// action), else `build-after`.
+  List<String> dependenciesFor(String action) =>
+      actionOrder['$action-after'] ?? buildAfter;
+
   Map<String, dynamic> toYaml() {
     final result = <String, dynamic>{};
 

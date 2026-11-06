@@ -48,6 +48,7 @@ export 'src/scripting/zone.dart';
 export 'src/tom/file_object_model/file_object_model.dart';
 export 'src/tom/file_object_model/workspace_parser.dart';
 // Context - The global `tom` object for scripts
+export 'src/tom/execution/dependency_scheduler.dart';
 export 'src/tom/tom_context.dart';
 
 // =============================================================================
