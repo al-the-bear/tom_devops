@@ -20,6 +20,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:tom_build/tom_build.dart';
+import 'package:tom_test_support/workspace_clone.dart';
 
 import 'support/workspace_support.dart';
 
@@ -37,15 +38,21 @@ Iterable<(String, ProjectInfo)> get _projects sync* {
   }
 }
 
+late final TomWorkspaceClone _clone;
+
 void main() {
   setUpAll(() async {
-    _root = findWorkspaceRoot();
+    // The machine's workspace clone, never the live tree (aft_tclone-56).
+    _clone = await holdWorkspaceClone();
+    _root = _clone.root;
     final workspace = readWorkspaceYaml(_root);
     _rawActions = workspace['actions'] as Map<String, dynamic>;
     _actions = TomWorkspace.fromYaml(workspace).actions;
     _tracked = trackedProjectFolders(_root);
     _discovered = await WorkspaceAnalyzer(_root.path).discoverProjects();
   });
+
+  tearDownAll(() => _clone.release());
 
   test('LW-1: the project configuration has no findings '
       '(WorkspaceConfigCheck)', () {

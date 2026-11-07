@@ -34,9 +34,9 @@ const _typescriptTypes = {
 late final ActionDef _clean;
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     _clean = TomWorkspace.fromYaml(
-      readWorkspaceYaml(findWorkspaceRoot()),
+      await readClonedWorkspaceYaml(),
     ).actions['clean']!;
   });
 

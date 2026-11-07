@@ -20,9 +20,9 @@ import 'support/workspace_support.dart';
 late final ActionDef _docs;
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     _docs = TomWorkspace.fromYaml(
-      readWorkspaceYaml(findWorkspaceRoot()),
+      await readClonedWorkspaceYaml(),
     ).actions['docs']!;
   });
 

@@ -29,8 +29,8 @@ late final Map<String, dynamic> _rawActions;
 late final Map<String, ActionDef> _actions;
 
 void main() {
-  setUpAll(() {
-    final yaml = readWorkspaceYaml(findWorkspaceRoot());
+  setUpAll(() async {
+    final yaml = await readClonedWorkspaceYaml();
     _rawActions = yaml['actions'] as Map<String, dynamic>;
     _actions = TomWorkspace.fromYaml(yaml).actions;
   });

@@ -28,7 +28,12 @@ void main() {
 
     setUp(() async {
       d4rt = D4rtInstance.create();
-      workspacePath = Directory.current.parent.path;
+      // A package-local scratch folder, never the live tree (aft_tclone-56):
+      // the groups that pass it to a tool are skipped today, and when they
+      // run they must not point a runner or pipeline at the workspace.
+      workspacePath = (Directory(
+        '${Directory.current.path}/.dart_tool/tools_bridge_workspace',
+      )..createSync(recursive: true)).path;
 
       // Bridges are already registered by D4rtInstance.create()
 

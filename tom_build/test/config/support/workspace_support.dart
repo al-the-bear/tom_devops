@@ -8,6 +8,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:tom_build/tom_build.dart';
+import 'package:tom_test_support/workspace_clone.dart';
 import 'package:yaml/yaml.dart';
 
 // Commands of the workspace actions (tom_workspace.yaml). The action tests
@@ -53,17 +54,30 @@ const manifestFiles = [
   'environment.yml',
 ];
 
-/// The nearest folder above the package holding tom_workspace.yaml.
-Directory findWorkspaceRoot() {
-  var dir = Directory.current.absolute;
-  while (!File(p.join(dir.path, 'tom_workspace.yaml')).existsSync()) {
-    final parent = dir.parent;
-    if (parent.path == dir.path) {
-      fail('No tom_workspace.yaml above ${Directory.current.path}');
-    }
-    dir = parent;
+/// The machine's workspace clone (tom_test_support `TomWorkspaceClone`) for
+/// a suite that reads the workspace: its configuration, its projects, its
+/// schemas. Never the live tree, which other sessions change under a run.
+/// Call in `setUpAll`; give it back with `release()` in `tearDownAll`.
+Future<TomWorkspaceClone> holdWorkspaceClone() async {
+  final live = TomWorkspaceClone.findLiveRoot();
+  if (live == null) {
+    fail('No Tom workspace above ${Directory.current.path} to clone');
   }
-  return dir;
+  return TomWorkspaceClone.acquire(
+    liveRoot: live,
+    log: (m) => print('    [workspace clone] $m'),
+  );
+}
+
+/// The clone's tom_workspace.yaml: holds the clone just long enough to read
+/// it, for a suite that needs nothing else from the workspace.
+Future<Map<String, dynamic>> readClonedWorkspaceYaml() async {
+  final clone = await holdWorkspaceClone();
+  try {
+    return readWorkspaceYaml(clone.root);
+  } finally {
+    await clone.release();
+  }
 }
 
 /// [file] parsed as YAML into plain maps and lists.

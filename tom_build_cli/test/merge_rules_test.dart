@@ -19,14 +19,15 @@ import 'package:test/test.dart';
 import 'package:tom_build/tom_build.dart';
 import 'package:yaml/yaml.dart';
 
-String get fixturesPath => path.join(
-  Directory.current.path,
-  'test',
-  'fixtures',
-  'workspace_analyzer',
-);
+import 'helpers/fixture_copy.dart';
+
+/// A working copy of test/fixtures/workspace_analyzer: the analyzer writes
+/// into the workspace it analyses, and must not rewrite tracked fixtures.
+String get fixturesPath => workspaceAnalyzerFixtures();
 
 void main() {
+  tearDownAll(deleteFixtureCopy);
+
   group('Configuration Merge Rules', () {
     // =========================================================================
     // Section 1: Action Merge Tests

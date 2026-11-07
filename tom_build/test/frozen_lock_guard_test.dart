@@ -34,8 +34,8 @@
 // 5 packages. `pub upgrade` in tom_build, tom_issue_kit, tom_test_kit and
 // tom_devops_samples/tom_build_kit_sample moved every one it could;
 // tom_build_cli, which did not resolve at all until the d4rt stack moved to
-// analyzer 14 and tom_build_kit to dcli 10, followed on the same day. Nothing
-// is exempted or held back now. tom_build_cli builds the `tom` binary and
+// analyzer 14 and tom_build_kit to dcli 10, followed on the same day. What is
+// held back is named below with its owner. tom_build_cli builds the `tom` binary and
 // tom_test_kit builds `testkit`, so the binaries on a developer's PATH are
 // compiled from these resolutions.
 //
@@ -91,7 +91,15 @@ class _HeldBack {
 
 /// Cached versions FL-2 ignores, by package name. FL-4 fails once one no
 /// longer holds any lock back.
-const Map<String, _HeldBack> _heldBackVersions = <String, _HeldBack>{};
+const Map<String, _HeldBack> _heldBackVersions = <String, _HeldBack>{
+  'tom_analyzer_shared': _HeldBack(
+    from: '0.9.0',
+    owner: 'd4rt vstdm15_akgm-generator-analyzer-shared-caret',
+    reason:
+        'tom_d4rt_generator 1.53.0, which tom_build and tom_build_cli depend '
+        'on, declares tom_analyzer_shared ^0.8.0',
+  ),
+};
 
 /// Below this many distinct cached `tom_*` packages, a pass means nothing: the
 /// discriminator can only see a freeze whose newer version is cached here.
@@ -123,6 +131,7 @@ class _StaleLock {
       'pub cache';
 }
 
+// live-root: ok -- this guard's subject is this machine's live locks.
 Directory? _repoRoot() {
   var dir = Directory.current.absolute;
   for (var i = 0; i < 6; i++) {
@@ -324,6 +333,7 @@ Set<String> _declaredPathDependencies(Directory package) {
 }
 
 void main() {
+  // live-root: ok -- the live locks are what this guard judges.
   final root = _repoRoot();
 
   group('frozen locks (tom_ai/devops): resolutions match declarations', () {

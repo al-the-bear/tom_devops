@@ -7,13 +7,22 @@ library;
 import 'package:test/test.dart';
 import 'package:tom_build/src/scripting/workspace.dart';
 import 'package:tom_build/src/tools/tool_context.dart';
+import 'package:tom_test_support/workspace_clone.dart';
+
+import '../config/support/workspace_support.dart' show holdWorkspaceClone;
 
 void main() {
   group('Workspace', () {
+    late TomWorkspaceClone clone;
+
     setUpAll(() async {
-      // Ensure tool context is loaded
-      await ToolContext.load();
+      // Ensure tool context is loaded — from the machine's workspace clone,
+      // never the live tree (aft_tclone-56).
+      clone = await holdWorkspaceClone();
+      await ToolContext.load(workspacePath: clone.root.path);
     });
+
+    tearDownAll(() => clone.release());
 
     group('context access', () {
       test('context returns ToolContext.current', () {

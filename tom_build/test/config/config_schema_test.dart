@@ -20,7 +20,10 @@ import 'package:json_schema/json_schema.dart';
 import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:tom_build/tom_build.dart';
+import 'package:tom_test_support/workspace_clone.dart';
 import 'package:yaml/yaml.dart';
+
+import 'support/workspace_support.dart' show holdWorkspaceClone;
 
 /// Top-level tom_project.yaml keys read by tools other than TomProject.
 const Map<String, String> _otherToolProjectKeys = {
@@ -37,15 +40,21 @@ late final Directory _schemaDir;
 late final JsonSchema _workspaceSchema;
 late final JsonSchema _projectSchema;
 
+late final TomWorkspaceClone _clone;
+
 void main() {
-  setUpAll(() {
-    _workspaceRoot = _findWorkspaceRoot();
+  setUpAll(() async {
+    // The machine's workspace clone, never the live tree (aft_tclone-56).
+    _clone = await holdWorkspaceClone();
+    _workspaceRoot = _clone.root;
     _schemaDir = Directory(
       p.join(_workspaceRoot.path, '.tom', 'json-schema', 'tom_build'),
     );
     _workspaceSchema = _compile('tom_workspace.schema.json');
     _projectSchema = _compile('tom_project.schema.json');
   });
+
+  tearDownAll(() => _clone.release());
 
   group('schema files', () {
     test('CS-1: every schema is a draft-07 schema that compiles', () {
@@ -302,29 +311,6 @@ void main() {
 // -----------------------------------------------------------------------------
 // Helpers
 // -----------------------------------------------------------------------------
-
-/// The workspace root: the nearest folder above the package holding both
-/// `tom_workspace.yaml` and the schemas.
-Directory _findWorkspaceRoot() {
-  var dir = Directory.current.absolute;
-  while (true) {
-    final hasWorkspace = File(
-      p.join(dir.path, 'tom_workspace.yaml'),
-    ).existsSync();
-    final hasSchemas = Directory(
-      p.join(dir.path, '.tom', 'json-schema', 'tom_build'),
-    ).existsSync();
-    if (hasWorkspace && hasSchemas) return dir;
-    final parent = dir.parent;
-    if (parent.path == dir.path) {
-      fail(
-        'No workspace root with tom_workspace.yaml and '
-        '.tom/json-schema/tom_build/ above ${Directory.current.path}',
-      );
-    }
-    dir = parent;
-  }
-}
 
 Map<String, dynamic> _readJson(String schemaFile) =>
     jsonDecode(File(p.join(_schemaDir.path, schemaFile)).readAsStringSync())

@@ -22,9 +22,9 @@ import 'support/workspace_support.dart';
 late final Map<String, ActionDef> _actions;
 
 void main() {
-  setUpAll(() {
+  setUpAll(() async {
     _actions = TomWorkspace.fromYaml(
-      readWorkspaceYaml(findWorkspaceRoot()),
+      await readClonedWorkspaceYaml(),
     ).actions;
   });
 
