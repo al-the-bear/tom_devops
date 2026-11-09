@@ -11,7 +11,7 @@
 ///   dart run bin/workspace_analyzer.dart wa-path=. wa-include-tests
 ///
 /// Options:
-///   wa-path=<path>      Workspace path (default: parent directory of this project)
+///   wa-path=<path>      Workspace path (default: nearest tom_workspace.yaml)
 ///   wa-include-tests    Include test projects (zom_*) in the output
 ///   --include-tests     (legacy) Include test projects
 ///   --help, -h          Show this help
@@ -41,14 +41,23 @@ void main(List<String> arguments) async {
     }
   }
 
-  // Resolve workspace root: named param → positional → parent of current dir
+  // Resolve workspace root: named param → positional → nearest tom_workspace.yaml
   final String workspaceRoot;
   if (waPath != null) {
     workspaceRoot = path.isAbsolute(waPath)
         ? path.normalize(waPath)
         : path.normalize(path.absolute(waPath));
   } else {
-    workspaceRoot = path.normalize(path.dirname(Directory.current.path));
+    final currentDir = Directory.current.path;
+    final found = WorkspaceAnalyzer.findWorkspaceRoot(currentDir);
+    if (found == null) {
+      stderr.writeln(
+          'Error: no ${WorkspaceAnalyzer.workspaceFileName} at or above '
+          '$currentDir; name the workspace with wa-path=<dir>.');
+      exitCode = 64;
+      return;
+    }
+    workspaceRoot = found;
   }
 
   if (!Directory(workspaceRoot).existsSync()) {
@@ -80,7 +89,7 @@ void _printUsage() {
   print('  dart run bin/workspace_analyzer.dart . --include-tests');
   print('');
   print('Options (wa- prefix):');
-  print('  wa-path=<path>      Workspace path (default: parent directory)');
+  print('  wa-path=<path>      Workspace path (default: nearest tom_workspace.yaml)');
   print('  wa-include-tests    Include test projects (zom_*)');
   print('');
   print('Legacy options:');

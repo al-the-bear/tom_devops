@@ -1,6 +1,6 @@
 name: tom_build
 description: Build tools and workspace analyzer for the Tom framework.
-version: 1.0.8
+version: 1.0.9
 publish_to: none
 
 environment:

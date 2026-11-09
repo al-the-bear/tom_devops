@@ -1,3 +1,14 @@
+## 1.0.9
+
+- **`WorkspaceAnalyzer.findWorkspaceRoot(start)`**: the nearest directory at or
+  above `start` holding `tom_workspace.yaml`, or null. `workspace_analyzer`
+  without `wa-path=` analyzes that workspace and refuses (exit 64) when there
+  is none; it used to take the parent of the current directory and write
+  `.tom_metadata/` there, which left stray `.tom_metadata/` folders in the tree
+  (`_scripts/`, `tom_ai/`) that root walks took for the workspace. Tests
+  WA-ROOT-1..3.
+- Removed the stray, tracked `.tom_metadata/workspace_state.yaml` (empty).
+
 ## 1.0.8
 
 - **`tom_d4rt_generator >=1.58.0`** (was `>=1.15.3`): the first release on

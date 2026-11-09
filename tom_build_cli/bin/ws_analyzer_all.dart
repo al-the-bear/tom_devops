@@ -9,7 +9,8 @@
 /// Usage:
 ///   dart run bin/ws_analyzer_all.dart [workspace_path]
 ///
-/// If no path is provided, uses the parent directory of the current project.
+/// If no path is provided, uses the nearest directory at or above the current
+/// one holding tom_workspace.yaml, and refuses when there is none.
 library;
 
 import 'dart:io';
@@ -19,9 +20,20 @@ import 'package:tom_build/tom_build.dart';
 void main(List<String> arguments) async {
   // Determine workspace root
   final currentDir = Directory.current.path;
-  final workspaceRoot = arguments.isNotEmpty
-      ? path.absolute(arguments.first)
-      : path.dirname(currentDir);
+  final String workspaceRoot;
+  if (arguments.isNotEmpty) {
+    workspaceRoot = path.absolute(arguments.first);
+  } else {
+    final found = WorkspaceAnalyzer.findWorkspaceRoot(currentDir);
+    if (found == null) {
+      stderr.writeln(
+          'Error: no ${WorkspaceAnalyzer.workspaceFileName} at or above '
+          '$currentDir; name the workspace with the workspace directory as the first argument.');
+      exitCode = 64;
+      return;
+    }
+    workspaceRoot = found;
+  }
 
   print('Analyzing workspace: $workspaceRoot');
   print('Including all projects (including test projects zom_*)');

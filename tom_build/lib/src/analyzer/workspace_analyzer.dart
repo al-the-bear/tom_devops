@@ -267,6 +267,28 @@ class WorkspaceAnalyzer {
 
   WorkspaceAnalyzer(this.workspaceRoot, {this.options = const AnalyzerOptions()});
 
+  /// The file that makes a directory a Tom workspace root.
+  static const workspaceFileName = 'tom_workspace.yaml';
+
+  /// The workspace to analyze when none is named: the nearest directory at or
+  /// above [startPath] holding [workspaceFileName], or null when there is none.
+  ///
+  /// Not the parent of the current directory, and not the nearest
+  /// `.tom_metadata/`: the analyzer writes `.tom_metadata/` into its root, so
+  /// a guessed root plants a folder that later root walks take for the
+  /// workspace (`_scripts/.tom_metadata`, `tom_ai/.tom_metadata`).
+  static String? findWorkspaceRoot(String startPath) {
+    var current = path.normalize(path.absolute(startPath));
+    while (true) {
+      if (File(path.join(current, workspaceFileName)).existsSync()) {
+        return current;
+      }
+      final parent = path.dirname(current);
+      if (parent == current) return null;
+      current = parent;
+    }
+  }
+
   /// Project types detected for Dart and Flutter projects.
   static const Set<String> dartProjectTypes = {
     'dart_package',

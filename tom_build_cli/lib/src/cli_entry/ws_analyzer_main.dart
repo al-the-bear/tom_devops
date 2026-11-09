@@ -33,7 +33,15 @@ Future<void> wsAnalyzerMain(List<String> arguments) async {
         ? args.positionalArgs.first
         : path.absolute(args.positionalArgs.first);
   } else {
-    workspaceRoot = path.dirname(currentDir);
+    final found = WorkspaceAnalyzer.findWorkspaceRoot(currentDir);
+    if (found == null) {
+      stderr.writeln(
+          'Error: no ${WorkspaceAnalyzer.workspaceFileName} at or above '
+          '$currentDir; name the workspace with wa-path=<dir>.');
+      exitCode = 64;
+      return;
+    }
+    workspaceRoot = found;
   }
 
   print('Analyzing workspace: $workspaceRoot');
@@ -62,7 +70,7 @@ void printWsAnalyzerUsage() {
   print('  dart run tom_build_cli:ws_analyzer . --include-tests');
   print('');
   print('Options (wa- prefix):');
-  print('  wa-path=<path>     Workspace path (default: parent directory)');
+  print('  wa-path=<path>     Workspace path (default: nearest tom_workspace.yaml)');
   print('  wa-include-tests   Include test projects (zom_*)');
   print('');
   print('Legacy options:');

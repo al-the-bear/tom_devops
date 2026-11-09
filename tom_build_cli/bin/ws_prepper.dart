@@ -25,12 +25,21 @@ Future<void> main(List<String> arguments) async {
     return;
   }
 
-  // Determine workspace path from named params or current directory
+  // Workspace path: the named param, else the nearest tom_workspace.yaml.
   String workspacePath;
   if (args.has('path')) {
     workspacePath = args.resolvePath(args['path']!);
   } else {
-    workspacePath = Directory.current.path;
+    final currentDir = Directory.current.path;
+    final found = WorkspaceAnalyzer.findWorkspaceRoot(currentDir);
+    if (found == null) {
+      stderr.writeln(
+          'Error: no ${WorkspaceAnalyzer.workspaceFileName} at or above '
+          '$currentDir; name the workspace with wp-path=<dir>.');
+      exitCode = 64;
+      return;
+    }
+    workspacePath = found;
   }
 
   // Handle wp-modes option - list valid modes from workspace metadata
@@ -252,7 +261,7 @@ void _printUsage() {
   print('');
   print('Options (wp- prefix for composability):');
   print('  wp-mode=<modes>      Mode(s) to apply, comma-separated');
-  print('  wp-path=<path>       Workspace path (default: current directory)');
+  print('  wp-path=<path>       Workspace path (default: nearest tom_workspace.yaml)');
   print('  wp-dry-run           Preview changes without writing files');
   print('  wp-list              List all template files and their modes');
   print('  wp-modes             List valid modes from workspace metadata');

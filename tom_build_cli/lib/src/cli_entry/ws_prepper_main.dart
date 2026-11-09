@@ -24,7 +24,16 @@ Future<void> wsPrepperMain(List<String> arguments) async {
   if (args.has('path')) {
     workspacePath = args.resolvePath(args['path']!);
   } else {
-    workspacePath = Directory.current.path;
+    final currentDir = Directory.current.path;
+    final found = WorkspaceAnalyzer.findWorkspaceRoot(currentDir);
+    if (found == null) {
+      stderr.writeln(
+          'Error: no ${WorkspaceAnalyzer.workspaceFileName} at or above '
+          '$currentDir; name the workspace with wp-path=<dir>.');
+      exitCode = 64;
+      return;
+    }
+    workspacePath = found;
   }
 
   if (args.hasFlag('modes')) {
@@ -153,7 +162,7 @@ void printWsPrepperUsage() {
   print('\nUsage: ws_prepper wp-mode=<mode> [options]');
   print('\nOptions:');
   print('  wp-mode=<modes>      Mode(s) to apply, comma-separated');
-  print('  wp-path=<path>       Workspace path (default: current directory)');
+  print('  wp-path=<path>       Workspace path (default: nearest tom_workspace.yaml)');
   print('  wp-dry-run           Preview changes without writing files');
   print('  wp-list              List all template files and their modes');
   print('  wp-modes             List valid modes from workspace metadata');

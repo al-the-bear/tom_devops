@@ -1,3 +1,12 @@
+## 1.0.2
+
+- `ws_analyzer`, `ws_analyzer_all`, `wsAnalyzerMain`, `ws_prepper` /
+  `wsPrepperMain` and `tom` (`runTomCli`, `path=`) default to the nearest
+  `tom_workspace.yaml` (`WorkspaceAnalyzer.findWorkspaceRoot`, tom_build
+  1.0.9) instead of the parent or current directory, and refuse (exit 64)
+  outside a workspace. The analyzer writes `.tom_metadata/` into its root, so
+  the old defaults planted stray `.tom_metadata/` folders.
+
 ## 1.0.1
 
 - **`tom_d4rt_generator >=1.58.0`** (was `>=1.28.0`): the first release on

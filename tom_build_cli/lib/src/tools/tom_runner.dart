@@ -323,7 +323,7 @@ Global Options:
   --help, -h       Show this help
 
 Global Parameters:
-  path=<path>      Workspace path (default: current directory)
+  path=<path>      Workspace path (default: nearest tom_workspace.yaml)
 
 Commands:
   ws_analyzer      Analyze workspace structure
@@ -367,7 +367,18 @@ Future<void> runTomCli(List<String> args) async {
     return;
   }
 
-  final workspacePath = parsed.get('path', Directory.current.path);
+  // The named workspace, else the nearest tom_workspace.yaml: never the
+  // current directory, where ws_analyzer would write a stray .tom_metadata/.
+  final currentDir = Directory.current.path;
+  final workspacePath = parsed.get(
+    'path',
+    WorkspaceAnalyzer.findWorkspaceRoot(currentDir) ?? '',
+  );
+  if (workspacePath.isEmpty) {
+    stderr.writeln('Error: no ${WorkspaceAnalyzer.workspaceFileName} at or '
+        'above $currentDir; name the workspace with path=<dir>.');
+    exit(64);
+  }
   final runner = TomRunner(
     workspacePath: workspacePath,
     verbose: parsed.verbose,

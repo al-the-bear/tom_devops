@@ -14,11 +14,12 @@
 ///   dart run bin/ws_analyzer.dart wa-path=. wa-include-tests
 ///
 /// Options:
-///   wa-path=<path>     Workspace path (default: parent directory)
+///   wa-path=<path>     Workspace path (default: nearest tom_workspace.yaml)
 ///   wa-include-tests   Include test projects (zom_*) in the output
 ///   --include-tests    (legacy) Include test projects
 ///
-/// If no path is provided, uses the parent directory of the current project.
+/// If no path is provided, uses the nearest directory at or above the current
+/// one holding tom_workspace.yaml, and refuses when there is none.
 library;
 
 import 'dart:io';
@@ -50,7 +51,15 @@ void main(List<String> arguments) async {
         ? args.positionalArgs.first
         : path.absolute(args.positionalArgs.first);
   } else {
-    workspaceRoot = path.dirname(currentDir);
+    final found = WorkspaceAnalyzer.findWorkspaceRoot(currentDir);
+    if (found == null) {
+      stderr.writeln(
+          'Error: no ${WorkspaceAnalyzer.workspaceFileName} at or above '
+          '$currentDir; name the workspace with wa-path=<dir>.');
+      exitCode = 64;
+      return;
+    }
+    workspaceRoot = found;
   }
 
   print('Analyzing workspace: $workspaceRoot');
@@ -77,7 +86,7 @@ void _printUsage() {
   print('  dart run tom_build_cli:ws_analyzer . --include-tests');
   print('');
   print('Options (wa- prefix):');
-  print('  wa-path=<path>     Workspace path (default: parent directory)');
+  print('  wa-path=<path>     Workspace path (default: nearest tom_workspace.yaml)');
   print('  wa-include-tests   Include test projects (zom_*)');
   print('');
   print('Legacy options:');
