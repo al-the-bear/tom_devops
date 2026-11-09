@@ -1,6 +1,6 @@
 name: tom_build
 description: Build tools and workspace analyzer for the Tom framework.
-version: 1.0.7
+version: 1.0.8
 publish_to: none
 
 environment:
@@ -38,8 +38,11 @@ dev_dependencies:
   lints: ^6.0.0
   test: ^1.25.6
   build_runner: ^2.10.4
-  tom_d4rt_generator: ">=1.15.3"
-  # Hosted, lower bound only: pub takes the analyzer-10 line (1.8.x) while
-  # flutter or tom_d4rt hold analyzer below 14, and 1.9+ once they move.
+  # Floor 1.58.0: the first release on tom_analyzer_shared 0.13.0, whose
+  # summary cache neither keeps a truncated bundle nor deletes one a concurrent
+  # run links against (both silently dropped types from generated bridges).
+  tom_d4rt_generator: ">=1.58.0"
+  # Hosted, lower bound only. The tom_d4rt_generator floor (analyzer ^14.5)
+  # already rules out the analyzer-10 line (1.8.x), so this resolves 1.9+.
   tom_reflection_generator: ">=1.8.2"
   json_schema: ^5.2.2

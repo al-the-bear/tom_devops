@@ -279,16 +279,12 @@ void main() {
   Future<dynamic> evaluate(String expression) async {
     _checkDisposed();
 
-    try {
-      // Use eval() for expressions - it preserves state and evaluates inline
-      // Place this instance in the zone so nested scripts can access it
-      return runZoned(
-        () => interpreter.eval(expression),
-        zoneValues: {'context': _context, d4rtInstanceZoneKey: this},
-      );
-    } catch (e) {
-      rethrow;
-    }
+    // Use eval() for expressions - it preserves state and evaluates inline
+    // Place this instance in the zone so nested scripts can access it
+    return runZoned(
+      () => interpreter.eval(expression),
+      zoneValues: {'context': _context, d4rtInstanceZoneKey: this},
+    );
   }
 
   /// Executes a D4rt script file.
@@ -299,15 +295,11 @@ void main() {
   Future<dynamic> executeScript(String scriptContent) async {
     _checkDisposed();
 
-    try {
-      // Execute in a zone with context variables and this instance available
-      return runZoned(
-        () => interpreter.execute(source: scriptContent),
-        zoneValues: {'context': _context, d4rtInstanceZoneKey: this},
-      );
-    } catch (e) {
-      rethrow;
-    }
+    // Execute in a zone with context variables and this instance available
+    return runZoned(
+      () => interpreter.execute(source: scriptContent),
+      zoneValues: {'context': _context, d4rtInstanceZoneKey: this},
+    );
   }
 
   /// Disposes this instance, releasing resources.

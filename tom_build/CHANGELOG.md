@@ -1,3 +1,11 @@
+## 1.0.8
+
+- **`tom_d4rt_generator >=1.58.0`** (was `>=1.15.3`): the first release on
+  `tom_analyzer_shared` 0.13.0. Its summary cache keeps no truncated bundle
+  (0.12.0) and no longer deletes a bundle a concurrent run links against
+  (0.13.0); both bugs silently dropped types from generated bridges. The floor
+  also rules out the analyzer-10 `tom_reflection_generator` line (1.8.x).
+
 ## 1.0.7
 
 - **`DependencyScheduler`** runs a job per project in parallel while keeping
