@@ -5,3 +5,5 @@
 # Avoid committing pubspec.lock for library packages; see
 # https://dart.dev/guides/libraries/private-files#pubspeclock.
 pubspec.lock
+# Application package: its pubspec.lock is tracked (al_the_bear tom_app_locks, todo oqa2).
+!/pubspec.lock
