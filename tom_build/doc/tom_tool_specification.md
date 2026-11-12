@@ -2052,8 +2052,6 @@ Detection rules should be implemented in separate Dart files for extensibility.
 
 ### 7.3 Source Structure Discovery
 
-For Dart projects, see [project_structure.md](../../../../_copilot_guidelines/project_structure.md) for detailed source structure patterns.
-
 **Implementation Reference:** The current implementation for Dart projects is in `tom_build/lib/src/analyzer/workspace_analyzer.dart`. This logic handles:
 
 - Package module detection (`lib/*.dart`)
@@ -3749,10 +3747,7 @@ Shell.run('npm install', environment: {'NODE_ENV': 'production'});
 
 **Note:** This section will be expanded as implementation details are finalized.
 
-**Testing Guidelines:**
-
-- For general unit testing patterns, see [_copilot_guidelines/unit_tests.md](../../../../_copilot_guidelines/dart/unit_tests.md)
-- For build tools testing with `zom_` test projects, see [_copilot_guidelines/tests_buildtools.md](../../../../_copilot_guidelines/dart/tests_buildtools.md)
+**Testing:** build tools are tested against `zom_` test projects (see below).
 
 ### Unit Tests Required
 
@@ -3782,4 +3777,4 @@ Shell.run('npm install', environment: {'NODE_ENV': 'production'});
 
 ### Test Workspace Setup
 
-Use `zom_` prefixed test projects for build tools testing. See [_copilot_guidelines/tests_buildtools.md](../../../../_copilot_guidelines/dart/tests_buildtools.md) for complete guidelines on test project setup and naming conventions.
+Use `zom_` prefixed test projects for build tools testing.

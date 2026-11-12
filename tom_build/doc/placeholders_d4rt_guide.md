@@ -776,5 +776,5 @@ d4rt.evaluateSync(
 
 ## Related Documentation
 
-- [D4rt Usage Guide](../../../../_copilot_guidelines/d4rt/d4rt_usage_guide.md) - Low-level D4rt patterns
-- [D4rt BridgedClass Guidelines](../../../../_copilot_guidelines/d4rt/d4rt_bridgedclass_guidelines.md) - Creating bridges
+- [D4rt User Guide](../../../d4rt/tom_d4rt/doc/d4rt_user_guide.md) - Low-level D4rt patterns
+- [D4rt Bridging Guide](../../../d4rt/tom_d4rt/doc/BRIDGING_GUIDE.md) - Creating bridges
