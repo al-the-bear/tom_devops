@@ -290,7 +290,7 @@ Commands that scan the workspace (`:scan`, `:verify`, `:sync`, `:validate`, `:ag
 |--------|-------------|
 | `-R, --root[=<path>]` | Workspace mode: detect or specify workspace root |
 | `-s, --scan=<path>` | Scan a specific directory for projects |
-| `-r, --recursive` | Recurse into subdirectories |
+| `-r, --recursive` | Also scan inside projects for nested projects (e.g. `test/` fixtures); folders without a `pubspec.yaml` are always scanned |
 | `-p, --project=<pattern>` | Filter by project name pattern |
 | `-i, --include=<pattern>` | Include only matching projects |
 | `-o, --exclude=<pattern>` | Exclude matching projects |
@@ -317,7 +317,7 @@ issuekit :aggregate
 | `--output=<spec>` | Output format: `plain` (default), `csv`, `json`, `md`, or `<format>:<file>` |
 | `-R, --root[=<path>]` | Workspace root |
 | `-s, --scan=<path>` | Scan directory |
-| `-r, --recursive` | Recurse into subdirectories |
+| `-r, --recursive` | Also scan inside projects for nested projects (e.g. `test/` fixtures); folders without a `pubspec.yaml` are always scanned |
 | `-p, --project=<pattern>` | Filter projects |
 | `-i, --include=<pattern>` | Include pattern |
 | `-o, --exclude=<pattern>` | Exclude pattern |

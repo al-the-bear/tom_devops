@@ -1319,7 +1319,7 @@ issuekit uses the same navigation system as testkit and buildkit for workspace s
 |--------|-------------|
 | `-R, --root[=<path>]` | Workspace mode: detect or specify workspace root |
 | `-s, --scan=<path>` | Scan a specific directory for projects |
-| `-r, --recursive` | Recurse into subdirectories |
+| `-r, --recursive` | Also scan inside projects for nested projects (e.g. `test/` fixtures); folders without a `pubspec.yaml` are always scanned |
 | `-p, --project=<pattern>` | Filter by project name pattern |
 | `-i, --include=<pattern>` | Include only matching projects |
 | `-o, --exclude=<pattern>` | Exclude matching projects |

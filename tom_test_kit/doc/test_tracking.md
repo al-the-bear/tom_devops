@@ -712,7 +712,7 @@ By default, testkit operates on **the current directory only** (non-recursive). 
 | Option | Description |
 |--------|-------------|
 | `-s, --scan=<path>` | Scan a directory for projects (default: `.`) |
-| `-r, --recursive` | Recurse into subdirectories when scanning |
+| `-r, --recursive` | Also scan inside projects for nested projects (e.g. `test/` fixtures); folders without a `pubspec.yaml` are always scanned |
 | `-R, --root[=<path>]` | Workspace mode: detect or specify workspace root, scan recursively |
 | `-p, --project=<pattern>` | Process projects matching a glob pattern |
 | `-b, --build-order` | Process in dependency order (default: on) |
