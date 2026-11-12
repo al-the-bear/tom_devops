@@ -924,18 +924,18 @@ packages:
     dependency: transitive
     description:
       name: tom_build_base
-      sha256: be71220b8cc2ea0f2c18da0d83a301474bd2ab51389392ca4bcc7768a1c0fc87
+      sha256: ba84a741b3587451528dcc8ef47e7f180dd4f77163bdbfbe7f68bce3d8656ff9
       url: "https://pub.dev"
     source: hosted
-    version: "2.19.0"
+    version: "2.19.1"
   tom_build_kit:
     dependency: "direct dev"
     description:
       name: tom_build_kit
-      sha256: "601d0b1603a9ae482366e63c721241cefde0e531eedd75b0a335eca67de3e2be"
+      sha256: "60f5adf944a5c41d45aac452233212b2883c9ec0c1fb27fdd0baf0071b939581"
       url: "https://pub.dev"
     source: hosted
-    version: "1.13.1"
+    version: "1.13.2"
   tom_core_kernel:
     dependency: "direct main"
     description:
