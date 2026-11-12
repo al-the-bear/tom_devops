@@ -175,6 +175,20 @@ void main() {
       );
     });
 
+    test('TF-13: JSON that cannot be encoded again is left, not thrown', () {
+      // `1e309` decodes to Infinity, which jsonEncode refuses.
+      for (var i = 0; i < 50; i++) {
+        expect(
+          const JsonMutator().mutate(
+            _b('[1e309, {"a": 1e309}]'),
+            random,
+            const [],
+          ),
+          isNull,
+        );
+      }
+    });
+
     test('TF-9: byte mutation always yields bytes, even from empty', () {
       for (var i = 0; i < 200; i++) {
         expect(
@@ -183,6 +197,16 @@ void main() {
         );
       }
     });
+  });
+
+  test('TF-14: a mutator that throws does not end the run', () async {
+    final report = await Fuzzer(
+      const FuzzTarget('json', jsonTarget, rejects: rejectsFormat),
+      corpus: Corpus([CorpusEntry('doc', _b('[1]'))]),
+      mutators: const [_ThrowingMutator(), ByteMutator()],
+    ).run(iterations: 200, seed: 2);
+    expect(report.inputsRun, 200);
+    expect(report.clean, isTrue, reason: report.toText());
   });
 
   test(
@@ -242,4 +266,15 @@ void main() {
 
 void _textTarget(String input) {
   if (!input.contains('�')) throw StateError('not decoded leniently');
+}
+
+class _ThrowingMutator implements Mutator {
+  const _ThrowingMutator();
+
+  @override
+  String get name => 'throws';
+
+  @override
+  Uint8List? mutate(Uint8List input, Random random, List<Uint8List> corpus) =>
+      throw StateError('a broken mutator');
 }

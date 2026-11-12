@@ -367,11 +367,14 @@ class Fuzzer {
         tries < mutators.length * 2 && next == null;
         tries++
       ) {
-        next = mutators[random.nextInt(mutators.length)].mutate(
-          current,
-          random,
-          seeds,
-        );
+        final mutator = mutators[random.nextInt(mutators.length)];
+        try {
+          next = mutator.mutate(current, random, seeds);
+        } catch (_) {
+          // A mutator that breaks on an input does not apply to it; the
+          // run goes on with another.
+          next = null;
+        }
       }
       current = next ?? const ByteMutator().mutate(current, random, seeds)!;
     }

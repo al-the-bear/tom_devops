@@ -160,6 +160,8 @@ class JsonMutator implements Mutator {
       tree = jsonDecode(utf8.decode(input));
     } on FormatException {
       return null;
+    } on StackOverflowError {
+      return null; // nested deeper than the decoder recurses
     }
     final nodes = <(Object, Object)>[]; // (container, key or index)
     void collect(Object? node) {
@@ -205,7 +207,13 @@ class JsonMutator implements Mutator {
       }
       result = tree;
     }
-    return Uint8List.fromList(utf8.encode(jsonEncode(result)));
+    try {
+      return Uint8List.fromList(utf8.encode(jsonEncode(result)));
+    } on JsonUnsupportedObjectError {
+      return null; // e.g. `1e309` decoded to Infinity, which JSON cannot hold
+    } on StackOverflowError {
+      return null;
+    }
   }
 }
 

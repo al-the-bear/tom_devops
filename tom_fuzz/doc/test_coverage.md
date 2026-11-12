@@ -17,3 +17,5 @@ whose behaviour is known: one with a planted bug, a clean JSON target, one that 
 | TF-10 | A text target sees malformed UTF-8 decoded leniently | ✅ |
 | TF-11 | The campaign runs from the command line: exit code, text and JSON report, `--list` | ✅ |
 | TF-12 | `fuzzTest` runs the fixed-seed short mode as a test | ✅ |
+| TF-13 | JSON that cannot be encoded again (`1e309`) is left, not thrown | ✅ |
+| TF-14 | A mutator that throws does not end the run | ✅ |

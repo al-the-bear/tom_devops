@@ -3,7 +3,7 @@ description: >-
   A fuzzing harness for Dart parsers of untrusted input: seeded byte and
   structure mutation, crash, timeout and memory detection in a worker isolate,
   saved failures that replay as regression cases, and a short in-suite mode.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/al-the-bear/tom_devops
 homepage: https://github.com/al-the-bear/tom_devops/tree/main/tom_fuzz
 topics:
