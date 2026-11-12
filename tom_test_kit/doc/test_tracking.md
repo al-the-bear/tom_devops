@@ -12,12 +12,14 @@ This document defines the test tracking concept supported by Tom Test Kit's `tes
 4. [Tracking File](#tracking-file)
 5. [Command Reference (Quick)](#command-reference-quick)
 6. [Full Command Reference](#full-command-reference)
+7. [Flutter Packages](#flutter-packages)
+8. [Exit Code](#exit-code)
 
 ---
 
 ## Overview
 
-`testkit` provides automated test result tracking across multiple runs of `dart test`. It captures structured JSON test output, parses test descriptions for metadata (IDs, creation dates, expected outcomes), and maintains a persistent CSV tracking file that shows how test results evolve over time.
+`testkit` provides automated test result tracking across multiple runs of `dart test` (`flutter test` for Flutter packages, see [Flutter Packages](#flutter-packages)). It captures structured JSON test output, parses test descriptions for metadata (IDs, creation dates, expected outcomes), and maintains a persistent CSV tracking file that shows how test results evolve over time.
 
 The core idea is that test descriptions carry structured metadata that enables:
 
@@ -606,6 +608,48 @@ testkit :reset -r                        # Reset all subprojects
 ```
 
 ---
+
+## Flutter Packages
+
+Flutter packages use the same commands as Dart packages: `testkit :baseline`,
+`testkit :test` and every analysis command work on them unchanged.
+
+**Detection.** testkit runs `flutter test` for a package whose `pubspec.yaml`
+declares the Flutter SDK, and `dart test` for every other package:
+
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+```
+
+That is the signal the Flutter tooling itself uses. `flutter` as a hosted
+dependency, or `flutter_test` in `dev_dependencies` alone, does not count; a
+missing or unreadable pubspec falls back to `dart test`. With `-v` testkit
+prints the command it runs (`Running: flutter test --reporter json ...`).
+
+**Same protocol, same tracking.** `flutter test --reporter json` emits the
+package:test JSON protocol `dart test` does, so the parser, the
+`testlog/baseline_<MMDD_HHMM>.csv` tracking file, `testlog/last_testrun.json`,
+the test description convention and the exit code are identical. Widget tests
+are recorded like any other test.
+
+**Running it.** The Flutter SDK must be on `PATH` (`flutter.bat` on Windows);
+when the launcher is missing, testkit says so and exits 1. `flutter test`
+resolves the package itself, so a stale `.dart_tool/` is repaired by `flutter
+pub get`, not `dart pub get`.
+
+**`--test-args` are passed to `flutter test`**, which accepts most of the
+`dart test` options but not all:
+
+| Options | `dart test` | `flutter test` |
+|---------|-------------|----------------|
+| `--name`, `--plain-name`, `--tags`, `--exclude-tags`, `--timeout`, `--concurrency`, `--fail-fast`, `--run-skipped`, `--total-shards` / `--shard-index`, `--test-randomize-ordering-seed`, `--coverage` | yes | yes |
+| `--platform`, `--compiler`, `--chain-stack-traces` | yes | no |
+| `--update-goldens`, `--dart-define`, `--device-id`, `--flavor` | no | yes |
+
+The options testkit rejects (`--reporter`, `--file-reporter`,
+`--pause-after-load`, `--debug`) are rejected for both runners.
 
 ## Exit Code
 

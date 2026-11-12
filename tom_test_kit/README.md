@@ -161,7 +161,7 @@ three groups.
 | Option | Applies to | Effect |
 | ------ | ---------- | ------ |
 | `-c`, `--comment=TEXT` | `:baseline`, `:test` | Short label shown in the column header. |
-| `--test-args=ARGS` | `:baseline`, `:test` | Extra arguments forwarded to `dart test` (e.g. `--test-args="--tags e2e"`). |
+| `--test-args=ARGS` | `:baseline`, `:test` | Extra arguments forwarded to `dart test`, or `flutter test` for a Flutter package (e.g. `--test-args="--tags e2e"`). |
 | `--no-update` | `:test` | Run tests and print the summary **without** writing a column. |
 | `--failed` | `:test` | Re-run only the tests that failed last run (`X/OK`, `X/X`). |
 | `--mismatched` | `:test` | Re-run only tests that don't match their expectation (`X/OK`, `OK/X`). |
@@ -191,6 +191,26 @@ workspace (each gets its own `testlog/`):
 ```bash
 testkit :test -r          # recurse into every Dart project under the cwd
 ```
+
+### Flutter packages
+
+testkit runs `flutter test` for a package whose `pubspec.yaml` declares the
+Flutter SDK (`dependencies: flutter: sdk: flutter`) and `dart test` for every
+other package; the commands are the same for both. `flutter test --reporter
+json` emits the same package:test JSON protocol, so tracking files, diffs,
+history and the exit code work identically, and widget tests are recorded like
+any other test. The Flutter SDK must be on `PATH`.
+
+`--test-args` go to `flutter test`, which shares most `dart test` options
+(`--name`, `--tags`, `--timeout`, ...) but has no `--platform` / `--compiler` /
+`--chain-stack-traces` and adds `--update-goldens` and `--dart-define`:
+
+```bash
+testkit :test --test-args="--update-goldens"   # Flutter package: refresh goldens
+```
+
+Detection rules and the full option comparison:
+[doc/test_tracking.md](doc/test_tracking.md#flutter-packages).
 
 ### TUI mode
 
