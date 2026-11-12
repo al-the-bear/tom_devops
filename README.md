@@ -118,6 +118,7 @@ packages show `—`.
 | ------- | ---------- | ------ |
 | [`tom_test_kit`](tom_test_kit/) | Test result tracking — baseline / test / diff workflow with an optional TUI. | `testkit` |
 | [`tom_issue_kit`](tom_issue_kit/) | Issue tracking CLI — create, analyze, assign and verify issues with test linkage. | `issuekit` |
+| [`tom_fuzz`](tom_fuzz/) | Fuzzing harness for parsers of untrusted input — seeded mutation, crash/timeout/memory detection, replayable failures; campaigns run by `testkit :fuzz`. | — (library) |
 
 ### Deployment
 

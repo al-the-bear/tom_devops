@@ -1,0 +1,23 @@
+name: tom_fuzz
+description: >-
+  A fuzzing harness for Dart parsers of untrusted input: seeded byte and
+  structure mutation, crash, timeout and memory detection in a worker isolate,
+  saved failures that replay as regression cases, and a short in-suite mode.
+version: 0.1.0
+repository: https://github.com/al-the-bear/tom_devops
+homepage: https://github.com/al-the-bear/tom_devops/tree/main/tom_fuzz
+topics:
+  - fuzzing
+  - testing
+  - security
+
+environment:
+  sdk: ^3.10.4
+
+dependencies:
+  args: ^2.7.0
+  path: ^1.9.0
+  test: ^1.25.6
+
+dev_dependencies:
+  lints: ^6.0.0
