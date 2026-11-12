@@ -1,3 +1,8 @@
+// Every test here creates a package and runs real `dart test` processes,
+// often two; under a full suite's load that outgrows the 30 s default.
+@Timeout(Duration(minutes: 2))
+library;
+
 import 'dart:io';
 
 import 'package:path/path.dart' as p;

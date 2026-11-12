@@ -1,3 +1,19 @@
+## 1.5.0
+
+### Changed — one runner choice for every launch, from tom_build_base
+
+`:baseline` and `:test` already ran `flutter test` for a Flutter package, but
+the TUI's Test and Baseline commands still launched `dart test`, which cannot
+resolve `package:flutter`. All four now launch through `TestRunner`: `flutter
+test` for a Flutter package, `dart test` otherwise, through the shell on
+Windows for `flutter.bat` as for `dart.bat`. The TUI's phase and exit
+messages name the runner. The Flutter check is tom_build_base's
+`isFlutterPackage` (2.20.0), the rule its nature detector uses; testkit's own
+copy (`package_detection.dart`, `isFlutterPackage` /
+`pubspecDeclaresFlutterSdk` exported from `tom_test_kit`) is removed and so is
+`DartTestParser.runInShellForHost`. Tests TK-TRN-1..7, two of them running a
+real Flutter package. `tom_build_base: >=2.20.0`.
+
 ## 1.4.0
 
 ### Changed — `:test` and `:baseline` exit 1 when a test failed

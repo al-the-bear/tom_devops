@@ -178,11 +178,16 @@ void main() {
     });
 
     group('process execution', () {
-      test('TK-DTP-12: runInShellForHost matches the host platform', () {
-        // The Windows Dart SDK launcher is `dart.bat`, which Process.start
-        // cannot resolve unless invoked through a shell. This guard keeps the
-        // shell decision tied to the host so the Windows fix cannot regress.
-        expect(DartTestParser.runInShellForHost, equals(Platform.isWindows));
+      test('TK-DTP-12: the runner goes through the shell on the host that '
+          'needs it', () {
+        // The Windows SDK launchers are `dart.bat` / `flutter.bat`, which
+        // Process.start cannot resolve unless invoked through a shell. The
+        // parser launches through TestRunner, which ties that to the host
+        // (both launchers: TK-RUN-3..5).
+        expect(
+          TestRunner.forPackage(Directory.current.path).runInShell,
+          equals(Platform.isWindows),
+        );
       });
 
       test('TK-DTP-13: buildLaunchError is clear and actionable', () {

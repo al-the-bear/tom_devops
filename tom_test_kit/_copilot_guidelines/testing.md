@@ -58,7 +58,7 @@ Test IDs use the format: `TK-<CATEGORY>-<number>`
 | Description parser | `TDP` | `TestDescriptionParser.parse` |
 | Dart test parser | `DTP` | `DartTestParser.parseJsonOutput`, `runProblem`, `describeRunnerExit` |
 | Test / baseline commands | `TST` | `TestCommand.run`, `BaselineCommand.run` against real packages |
-| Package detection | `PKG` | `pubspecDeclaresFlutterSdk`, `isFlutterPackage` |
+| Test runner | `TRN` | `TestRunner`: `flutter test` / `dart test`, Windows launcher; real Flutter runs |
 | TUI command | `TCD` | `TuiCommand`, `TuiCommandSink`, `TuiCommandEvent`, `TuiCommandResult` |
 | TUI registry | `TRG` | `TuiCommandRegistry` registration, lookup, menu labels |
 | TUI output parser | `TOP` | `TuiProtocolParser`, `PassthroughParser` line parsing |

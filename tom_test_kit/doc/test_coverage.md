@@ -46,15 +46,16 @@ handle for regression tracking.
 | 13 | [`:reset` command](#13-reset-command) | 6 | 6✅ | `tracking/reset_command_test.dart` | `TK-RST` |
 | 14 | [`:runs` command](#14-runs-command) | 5 | 5✅ | `tracking/runs_command_test.dart` | `TK-RUNS` |
 | 15 | [`:status` command](#15-status-command) | 5 | 5✅ | `tracking/status_command_test.dart` | `TK-STAT` |
-| 16 | [`:test` and `:baseline` commands](#16-test-and-baseline-commands) | 18 | 18✅ | `tracking/test_command_test.dart` | `TK-TST` |
+| 16 | [`:test` and `:baseline` commands](#16-test-and-baseline-commands) | 21 | 21✅ | `tracking/test_command_test.dart` | `TK-TST` |
 | 17 | [`:trim` command](#17-trim-command) | 8 | 8✅ | `tracking/trim_command_test.dart` | `TK-TRIM` |
 | 18 | [File helpers](#18-file-helpers) | 5 | 5✅ | `util/file_helpers_test.dart` | `TK-FIL` |
 | 19 | [Format helpers](#19-format-helpers) | 7 | 7✅ | `util/format_helpers_test.dart` | `TK-FMT` |
 | 20 | [Markdown table parser](#20-markdown-table-parser) | 21 | 21✅ | `util/markdown_table_test.dart` | `TK-MDT` |
 | 21 | [Output formatter](#21-output-formatter) | 15 | 15✅ | `util/output_formatter_test.dart` | `TK-OFMT` |
 | 22 | [v2 CLI tool wiring](#22-v2-cli-tool-wiring) | 3 | 3✅ | `v2/testkit_tool_test.dart` | `TK-CLI` |
-| 23 | [Package detection](#23-package-detection) | 9 | 9✅ | `util/package_detection_test.dart` | `TK-PKG` |
-| — | **Total** | **215** | **215✅** | | |
+| 23 | [Test runner](#23-test-runner) | 7 | 7✅ | `util/test_runner_test.dart` | `TK-TRN` |
+| 24 | [Exit code](#16-test-and-baseline-commands) | 2 | 2✅ | `v2/exit_code_test.dart` | `TK-EXIT` |
+| — | **Total** | **218** | **218✅** | | |
 
 ---
 
@@ -536,23 +537,25 @@ help/version) built on `tom_build_base`.
 | TK-CLI-2 | Tool has expected commands | ✅ | `dart test --name 'TK-CLI-2'` |
 | TK-CLI-NEG01 | Tool definition does not register macro/define | ✅ | `dart test --name 'TK-CLI-NEG01'` |
 
-## 23. Package detection
+## 23. Test runner
 
-**Test file:** `test/util/package_detection_test.dart` — **ID prefix `TK-PKG`**
+**Test file:** `test/util/test_runner_test.dart` — **ID prefix `TK-TRN`**
 
-Decides whether a project is run with `flutter test` or `dart test`, from the
-Flutter SDK dependency in its `pubspec.yaml`.
+`TestRunner` decides how a project is run: `flutter test` for a Flutter package
+(tom_build_base's `isFlutterPackage`: a `dependencies: flutter: sdk: flutter`
+entry), `dart test` otherwise, through the shell on Windows where both
+launchers are `.bat` files. `:baseline`, `:test` and both TUI commands launch
+through it. The detection rule itself is tested in tom_build_base (BB-FLP).
 
-**How to test:** `dart test test/util/package_detection_test.dart`.
+**How to test:** `dart test test/util/test_runner_test.dart` (TK-TRN-6/7 need
+`flutter` on PATH and are skipped without it).
 
 | ID | Feature | Status | How to Test |
 |----|---------|--------|-------------|
-| TK-PKG-1 | detects a Flutter SDK dependency | ✅ | `dart test --name 'TK-PKG-1'` |
-| TK-PKG-2 | a plain Dart package is not a Flutter package | ✅ | `dart test --name 'TK-PKG-2'` |
-| TK-PKG-3 | no dependencies block is not a Flutter package | ✅ | `dart test --name 'TK-PKG-3'` |
-| TK-PKG-4 | flutter as a hosted (non-sdk) dep does not count | ✅ | `dart test --name 'TK-PKG-4'` |
-| TK-PKG-5 | flutter_test in dev_dependencies alone does not count | ✅ | `dart test --name 'TK-PKG-5'` |
-| TK-PKG-6 | non-map input returns false | ✅ | `dart test --name 'TK-PKG-6'` |
-| TK-PKG-7 | reads a Flutter pubspec from disk | ✅ | `dart test --name 'TK-PKG-7'` |
-| TK-PKG-8 | reads a plain Dart pubspec from disk | ✅ | `dart test --name 'TK-PKG-8'` |
-| TK-PKG-9 | missing pubspec falls back to false | ✅ | `dart test --name 'TK-PKG-9'` |
+| TK-TRN-1 | a Flutter package runs `flutter test` | ✅ | `dart test --name 'TK-TRN-1'` |
+| TK-TRN-2 | a Dart package runs `dart test` | ✅ | `dart test --name 'TK-TRN-2'` |
+| TK-TRN-3 | on Windows both launchers go through the shell | ✅ | `dart test --name 'TK-TRN-3'` |
+| TK-TRN-4 | elsewhere neither does | ✅ | `dart test --name 'TK-TRN-4'` |
+| TK-TRN-5 | without an override, the host decides | ✅ | `dart test --name 'TK-TRN-5'` |
+| TK-TRN-6 | a real Flutter package's widget test lands in the baseline | ✅ | `dart test --name 'TK-TRN-6'` |
+| TK-TRN-7 | the TUI baseline command runs `flutter test` for it too | ✅ | `dart test --name 'TK-TRN-7'` |

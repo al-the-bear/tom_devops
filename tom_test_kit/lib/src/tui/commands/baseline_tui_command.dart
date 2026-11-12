@@ -6,6 +6,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import '../../util/test_runner.dart';
 import '../../model/test_entry.dart';
 import '../../model/test_run.dart';
 import '../../model/tracking_file.dart';
@@ -16,7 +17,8 @@ import '../tui_command.dart';
 
 /// TUI-integrated baseline command.
 ///
-/// Runs `dart test --reporter json`, streams progress to the TUI,
+/// Runs `dart test --reporter json` (`flutter test` for a Flutter package, see
+/// [TestRunner]), streams progress to the TUI,
 /// and creates a baseline tracking file.
 class BaselineTuiCommand extends TuiCommand {
   @override
@@ -36,9 +38,10 @@ class BaselineTuiCommand extends TuiCommand {
   }) async {
     final stopwatch = Stopwatch()..start();
 
-    sink.phaseStarted('Running dart test');
+    final runner = TestRunner.forPackage(projectPath);
+    sink.phaseStarted('Running ${runner.label}');
 
-    final dartArgs = ['test', '--reporter', 'json'];
+    final testArgs = <String>[];
     final additionalArgs = args['test-args'];
     if (additionalArgs != null && additionalArgs.isNotEmpty) {
       final splitArgs = additionalArgs.split(' ');
@@ -54,15 +57,15 @@ class BaselineTuiCommand extends TuiCommand {
           summary: 'Forbidden test arg: $forbidden',
         );
       }
-      dartArgs.addAll(splitArgs);
+      testArgs.addAll(splitArgs);
     }
 
     final process = await Process.start(
-      'dart',
-      dartArgs,
+      runner.executable,
+      runner.argsFor(testArgs),
       workingDirectory: projectPath,
-      // Windows: the SDK launcher is `dart.bat`, only resolvable via the shell.
-      runInShell: Platform.isWindows,
+      // Windows: `dart.bat` / `flutter.bat` resolve only through the shell.
+      runInShell: runner.runInShell,
     );
 
     final entries = <TestEntry>[];
@@ -189,7 +192,7 @@ class BaselineTuiCommand extends TuiCommand {
     final exitCode = await process.exitCode;
 
     if (exitCode != 0 && exitCode != 1) {
-      sink.log('dart test exited with code $exitCode',
+      sink.log('${runner.label} exited with code $exitCode',
           level: TuiLogLevel.error);
       if (stderrOutput.isNotEmpty) {
         sink.log(stderrOutput, level: TuiLogLevel.error);
@@ -198,7 +201,7 @@ class BaselineTuiCommand extends TuiCommand {
       sink.done(summary: 'Failed (exit code $exitCode)');
       return TuiCommandResult(
         success: false,
-        summary: 'dart test failed with exit code $exitCode',
+        summary: '${runner.label} failed with exit code $exitCode',
         elapsed: stopwatch.elapsed,
       );
     }

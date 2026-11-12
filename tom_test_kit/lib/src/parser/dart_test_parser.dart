@@ -5,7 +5,7 @@ import 'package:tom_build_base/tom_build_base.dart';
 
 import '../model/test_entry.dart';
 import '../model/test_run.dart';
-import '../util/package_detection.dart';
+import '../util/test_runner.dart';
 import 'test_description_parser.dart';
 
 /// A test file the runner could not load — its tests never ran.
@@ -162,15 +162,6 @@ class DartTestParser {
     '--debug',
   ];
 
-  /// Whether the test-runner process must be launched through a shell.
-  ///
-  /// On Windows the SDK launchers are batch files (`dart.bat`, `flutter.bat`),
-  /// which `Process.start` cannot resolve directly — they must be invoked via
-  /// the shell. On POSIX hosts no shell is needed. Both the spawn and its
-  /// regression test read this single source of truth so the Windows fix
-  /// cannot drift.
-  static final bool runInShellForHost = Platform.isWindows;
-
   /// Builds a clear, actionable error message for a failed launch of
   /// [executable] (`dart` or `flutter`).
   ///
@@ -210,7 +201,7 @@ class DartTestParser {
   /// are run with `flutter test --reporter json`; all other packages with
   /// `dart test --reporter json`. Both emit the identical package:test JSON
   /// event protocol, so the parser is runner-agnostic — only the launcher
-  /// differs. See [isFlutterPackage].
+  /// differs. See [TestRunner].
   ///
   /// [projectPath] is the working directory for the test runner.
   /// [additionalArgs] are extra arguments to pass after `test`.
@@ -248,10 +239,9 @@ class DartTestParser {
       return null;
     }
 
-    // Flutter packages need `flutter test`; `dart test` cannot boot the
-    // Flutter test binding. Detection is by the pubspec's Flutter SDK dep.
-    final executable = isFlutterPackage(projectPath) ? 'flutter' : 'dart';
-    final args = ['test', '--reporter', 'json', ...additionalArgs];
+    final runner = TestRunner.forPackage(projectPath);
+    final executable = runner.executable;
+    final args = runner.argsFor(additionalArgs);
 
     if (verbose) {
       print('  Running: $executable ${args.join(' ')}');
@@ -268,7 +258,7 @@ class DartTestParser {
         executable,
         args,
         workingDirectory: projectPath,
-        runInShell: runInShellForHost,
+        runInShell: runner.runInShell,
       );
     } on ProcessException catch (e) {
       stderr.writeln(buildLaunchError(executable, e));
