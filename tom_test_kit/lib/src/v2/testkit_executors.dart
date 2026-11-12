@@ -92,7 +92,7 @@ class BaselineExecutor extends CommandExecutor {
         : ItemResult.failure(
             path: context.path,
             name: context.name,
-            error: 'Baseline creation failed',
+            error: 'Baseline run failed',
           );
   }
 }

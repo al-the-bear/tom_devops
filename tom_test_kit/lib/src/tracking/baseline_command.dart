@@ -6,6 +6,7 @@ import '../model/test_run.dart';
 import '../model/tracking_file.dart';
 import '../parser/dart_test_parser.dart';
 import '../util/file_helpers.dart';
+import 'test_command.dart';
 
 /// Implements the `:baseline` subcommand.
 ///
@@ -21,8 +22,10 @@ class BaselineCommand {
   /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
   /// pass their own so they never depend on the host's cache.
   ///
-  /// Returns true on success, false on failure — including a run in which no
-  /// test ran or a test file failed to load, for which nothing is written.
+  /// Returns true when the baseline was written and every test passed. A run
+  /// with a failing test writes its baseline and returns false (the `testkit`
+  /// process exits 1, as `dart test` does); a run in which no test ran or a
+  /// test file failed to load writes nothing and returns false.
   static Future<bool> run({
     required String projectPath,
     String? outputPath,
@@ -81,6 +84,6 @@ class BaselineCommand {
         '${results.failedTests} failed'
         '${results.skippedTests > 0 ? ', ${results.skippedTests} skipped' : ''})');
 
-    return true;
+    return TestCommand.reportVerdict(projectPath, null, results.failedTests);
   }
 }

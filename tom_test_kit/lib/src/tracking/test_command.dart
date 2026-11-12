@@ -28,9 +28,11 @@ class TestCommand {
   /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
   ///   pass their own so they never depend on the host's cache.
   ///
-  /// Returns true on success, false on failure — including a run in which no
-  /// test ran (nothing is recorded) or a test file failed to load (the tests
-  /// that ran are recorded, and the run still fails).
+  /// Returns true when every test passed, false otherwise: a failing test
+  /// (the run is recorded, and the command fails as `dart test` does), a run
+  /// in which no test ran (nothing is recorded) or a test file that failed to
+  /// load (the tests that ran are recorded, and the run still fails). The
+  /// `testkit` process exits 1 on false.
   static Future<bool> run({
     required String projectPath,
     String? trackingFilePath,
@@ -144,7 +146,7 @@ class TestCommand {
         'Failed ${summary.failedCount}${summary.expectedFail > 0 ? ' (${summary.expectedFail} expected)' : ''} '
         'Skipped ${summary.skippedCount}',
       );
-      return _reportProblem(projectPath, problem);
+      return reportVerdict(projectPath, problem, results.failedTests);
     }
 
     // Add new run
@@ -163,15 +165,25 @@ class TestCommand {
       '${results.skippedTests > 0 ? ', ${results.skippedTests} skipped' : ''})',
     );
 
-    return _reportProblem(projectPath, problem);
+    return reportVerdict(projectPath, problem, results.failedTests);
   }
 
-  /// Fails a run that was recorded but is incomplete — a test file that did
-  /// not load is missing from it — after its real results have been kept.
-  static bool _reportProblem(String projectPath, String? problem) {
-    if (problem == null) return true;
-    stderr.writeln('[$projectPath] $problem');
-    return false;
+  /// The verdict of a run whose results have been kept: it fails when a test
+  /// failed, or when the run is incomplete — a test file that did not load is
+  /// missing from it. Each reason is named on stderr.
+  static bool reportVerdict(
+    String projectPath,
+    String? problem,
+    int failedTests,
+  ) {
+    if (problem != null) stderr.writeln('[$projectPath] $problem');
+    if (failedTests > 0) {
+      stderr.writeln(
+        '[$projectPath] $failedTests test${failedTests == 1 ? '' : 's'} '
+        'failed.',
+      );
+    }
+    return problem == null && failedTests == 0;
   }
 
   /// Returns test names that should be re-run based on filter criteria.

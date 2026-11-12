@@ -1,3 +1,21 @@
+## 1.4.0
+
+### Changed — `:test` and `:baseline` exit 1 when a test failed
+
+A run with a failing test exited 0 (`Done. No errors.`), so a script could not
+tell a red suite from a green one by the exit code; only a run that could not
+start exited 1. Both commands now exit 1 when any test failed, the convention
+`dart test` follows, and name the count on stderr (`[<project>] 1 test
+failed.`). The results are still recorded: `:test` appends its column and
+`:baseline` writes its file before failing. A test expected to fail (`(FAIL)`)
+counts as failed too. An all-green run exits 0, as does a `--failed` /
+`--mismatched` run with nothing to re-run.
+
+The help (`:test` / `:baseline` descriptions, an Exit Code footer) and
+`doc/test_tracking.md` state it; TK-TST-19..21 and TK-EXIT-1/2 (the real
+executable) pin it. TK-TST-3/4/5/7, which ran suites with failing tests and
+expected success, now expect the failure.
+
 ## 1.3.0
 
 ### Fixed — an option written after the command name is no longer ignored

@@ -263,6 +263,10 @@ non-zero. A baseline is what every later run is compared with; one that is
 empty, or silently missing a file's tests, would carry that loss into every
 comparison after it. The raw output is still saved to `testlog/last_testrun.json`.
 
+**A failing test is recorded and fails the command.** The baseline is written
+with the failing test as `X`, and the command exits 1 (see
+[Exit Code](#exit-code)).
+
 **Options:**
 
 | Option | Description |
@@ -299,8 +303,8 @@ Runs `dart test` and appends a new result column to the most recent tracking fil
 column and exits non-zero. A run in which a test file failed to load records
 the tests that did run — their results are real — then names the file that did
 not load and exits non-zero, so its missing tests are never mistaken for a
-smaller suite. Failing tests are results, not errors: they are recorded as `X`
-and do not change the exit code.
+smaller suite. A failing test is recorded as `X`, and the command exits 1, as
+`dart test` does (see [Exit Code](#exit-code)).
 
 **Options:**
 
@@ -602,6 +606,23 @@ testkit :reset -r                        # Reset all subprojects
 ```
 
 ---
+
+## Exit Code
+
+`:baseline` and `:test` exit with the verdict of the run, as `dart test` does,
+so a script can tell a red suite from a green one by the exit code alone:
+
+| Exit code | Meaning |
+|-----------|---------|
+| `0` | Every test passed (an `--failed` / `--mismatched` run with nothing to re-run included) |
+| `1` | A test failed, no test ran, a test file failed to load, or the command could not run (no tracking file, an unreadable tracking file, a pub cache that cannot supply the lock) |
+
+A failing test does not stop the tracking: its run is still recorded (`:test`)
+or its baseline still written (`:baseline`), and stderr names the reason,
+e.g. `[<project>] 1 test failed.`. A test whose description expects a failure
+(`(FAIL)`) is a failing test here too: the expectation steers the `X/X` result,
+not the exit code. Over several projects the process exits 1 when any project's
+run failed.
 
 ## Common Options
 

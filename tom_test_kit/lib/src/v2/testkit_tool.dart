@@ -129,7 +129,8 @@ const resetOptions = <OptionDefinition>[
 /// Run commands (execute dart test).
 const baselineCommand = CommandDefinition(
   name: 'baseline',
-  description: 'Create a new baseline tracking file',
+  description:
+      'Create a new baseline tracking file; exits 1 when a test failed',
   options: baselineOptions,
   worksWithNatures: {DartProjectFolder},
   supportsProjectTraversal: true,
@@ -143,7 +144,9 @@ const baselineCommand = CommandDefinition(
 
 const testCommand = CommandDefinition(
   name: 'test',
-  description: 'Run tests and append results to the tracking file',
+  description:
+      'Run tests and append results to the tracking file; '
+      'exits 1 when a test failed',
   options: testOptions,
   worksWithNatures: {DartProjectFolder},
   supportsProjectTraversal: true,
@@ -297,5 +300,10 @@ Tracking File:
 Result Format:
   OK/OK (pass), X/OK (regression), X/X (known fail),
   OK/X (progress), -/OK (skip), --/OK (absent)
+
+Exit Code (:baseline, :test):
+  0  every test passed
+  1  a test failed (its results are still recorded), no test ran, a test
+     file failed to load, or the command could not run
 ''',
 );

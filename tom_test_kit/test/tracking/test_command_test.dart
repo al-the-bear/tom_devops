@@ -4,7 +4,7 @@ import 'package:path/path.dart' as p;
 import 'package:test/test.dart';
 import 'package:tom_test_kit/tom_test_kit.dart';
 
-/// Test IDs: TK-TST-1 through TK-TST-18
+/// Test IDs: TK-TST-1 through TK-TST-21
 ///
 /// Integration tests for TestCommand that create real Dart projects
 /// and run actual `dart test` commands.
@@ -120,8 +120,10 @@ dev_dependencies:
       await BaselineCommand.run(projectPath: tempDir.path);
 
       // Run test command
+      // The run is recorded, and the failing test fails the command (exit 1),
+      // as `dart test` does.
       final result = await TestCommand.run(projectPath: tempDir.path);
-      expect(result, isTrue);
+      expect(result, isFalse);
 
       // Verify tracking file has 2 runs
       final filePath = findLatestTrackingFile(tempDir.path);
@@ -154,7 +156,7 @@ dev_dependencies:
           projectPath: tempDir.path,
           noUpdate: true,
         );
-        expect(result, isTrue);
+        expect(result, isFalse, reason: 'a test failed');
 
         // Verify tracking file still has same number of runs
         final trackingAfter = TrackingFile.load(filePath);
@@ -175,12 +177,12 @@ dev_dependencies:
       // Create baseline
       await BaselineCommand.run(projectPath: tempDir.path);
 
-      // Run with --no-update - just verify it completes successfully
+      // Run with --no-update: it completes, and fails because a test failed
       final result = await TestCommand.run(
         projectPath: tempDir.path,
         noUpdate: true,
       );
-      expect(result, isTrue);
+      expect(result, isFalse, reason: 'a test failed');
 
       // Verify tracking file was NOT updated (still 1 run)
       final filePath = findLatestTrackingFile(tempDir.path);
@@ -241,7 +243,11 @@ dev_dependencies:
           projectPath: tempDir.path,
           noUpdate: true,
         );
-        expect(result, isTrue);
+        expect(
+          result,
+          isFalse,
+          reason: 'an expected failure is still a failed test',
+        );
 
         // Verify tracking file was NOT updated
         final filePath = findLatestTrackingFile(tempDir.path);
@@ -516,6 +522,65 @@ dev_dependencies:
         expect(trackingFiles(tempDir), isNotEmpty);
       },
     );
+
+    // vstkx1: a failing test fails the command — exit 1, the convention
+    // `dart test` follows — after its results have been recorded. A script
+    // can then tell a red suite from a green one by the exit code alone.
+    test(
+      'TK-TST-19: :test records a run with a failing test and fails',
+      () async {
+        await createTestProject(
+          tempDir,
+          tests: [
+            TestSpec('TK-A: passes', shouldPass: true),
+            TestSpec('TK-B: fails', shouldPass: false),
+          ],
+        );
+        expect(await BaselineCommand.run(projectPath: tempDir.path), isFalse);
+
+        final result = await TestCommand.run(projectPath: tempDir.path);
+
+        expect(result, isFalse);
+        final tracking =
+            TrackingFile.load(findLatestTrackingFile(tempDir.path)!);
+        expect(tracking!.runs, hasLength(2),
+            reason: 'the failing run is still recorded');
+      },
+    );
+
+    test(
+      'TK-TST-20: :baseline writes a baseline with a failing test and fails',
+      () async {
+        await createTestProject(
+          tempDir,
+          tests: [
+            TestSpec('TK-A: passes', shouldPass: true),
+            TestSpec('TK-B: fails', shouldPass: false),
+          ],
+        );
+
+        final result = await BaselineCommand.run(projectPath: tempDir.path);
+
+        expect(result, isFalse);
+        final tracking =
+            TrackingFile.load(findLatestTrackingFile(tempDir.path)!);
+        expect(tracking!.entries, hasLength(2),
+            reason: 'the baseline records the failing test too');
+      },
+    );
+
+    test('TK-TST-21: :test succeeds when every test passed', () async {
+      await createTestProject(
+        tempDir,
+        tests: [
+          TestSpec('TK-A: passes', shouldPass: true),
+          TestSpec('TK-B: passes too', shouldPass: true),
+        ],
+      );
+      expect(await BaselineCommand.run(projectPath: tempDir.path), isTrue);
+
+      expect(await TestCommand.run(projectPath: tempDir.path), isTrue);
+    });
   });
 }
 

@@ -369,7 +369,8 @@ Summarizes the current pass/fail/skip status of the latest run.
 End-to-end `:test` and `:baseline` flows against real temporary projects: run
 `dart test`, parse output, write a baseline or append a result column — and
 refuse to record a run in which no test ran or a test file failed to load, or
-whose locked packages the pub cache cannot supply.
+whose locked packages the pub cache cannot supply; a failing test is recorded
+and fails the command.
 
 **How to test:** `dart test test/tracking/test_command_test.dart`.
 
@@ -393,6 +394,17 @@ whose locked packages the pub cache cannot supply.
 | TK-TST-16 | :test records the tests that ran but fails when a file failed to load | ✅ | `dart test --name 'TK-TST-16'` |
 | TK-TST-17 | :baseline fails naming the packages when the pub cache cannot supply what the project locked | ✅ | `dart test --name 'TK-TST-17'` |
 | TK-TST-18 | a project whose locked packages are all present runs normally | ✅ | `dart test --name 'TK-TST-18'` |
+| TK-TST-19 | :test records a run with a failing test and fails | ✅ | `dart test --name 'TK-TST-19'` |
+| TK-TST-20 | :baseline writes a baseline with a failing test and fails | ✅ | `dart test --name 'TK-TST-20'` |
+| TK-TST-21 | :test succeeds when every test passed | ✅ | `dart test --name 'TK-TST-21'` |
+
+**Exit code** — `test/v2/exit_code_test.dart`, ID prefix `TK-EXIT`: the real
+executable, run in a temporary project.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-EXIT-1 | a failing test makes :baseline and :test exit 1 | ✅ | `dart test --name 'TK-EXIT-1'` |
+| TK-EXIT-2 | an all-green run of :baseline and :test exits 0 | ✅ | `dart test --name 'TK-EXIT-2'` |
 
 ## 17. `:trim` command
 
