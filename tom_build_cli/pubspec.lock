@@ -932,10 +932,10 @@ packages:
     dependency: "direct dev"
     description:
       name: tom_build_kit
-      sha256: "60f5adf944a5c41d45aac452233212b2883c9ec0c1fb27fdd0baf0071b939581"
+      sha256: "7b029cb8da5cdd14831c9846487391a378733bb4c1bb5b79766b673b254994bc"
       url: "https://pub.dev"
     source: hosted
-    version: "1.13.2"
+    version: "1.13.3"
   tom_core_kernel:
     dependency: "direct main"
     description:
