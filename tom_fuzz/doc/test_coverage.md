@@ -19,3 +19,5 @@ whose behaviour is known: one with a planted bug, a clean JSON target, one that 
 | TF-12 | `fuzzTest` runs the fixed-seed short mode as a test | ✅ |
 | TF-13 | JSON that cannot be encoded again (`1e309`) is left, not thrown | ✅ |
 | TF-14 | A mutator that throws does not end the run | ✅ |
+| TF-15 | `--describe` lists the targets with their coverage libraries | ✅ |
+| TF-16 | A report carries coverage as lines of its libraries (text, JSON round trip) | ✅ |

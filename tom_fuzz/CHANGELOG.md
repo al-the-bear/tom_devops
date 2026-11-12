@@ -1,3 +1,15 @@
+## 0.2.0
+
+### Added — line coverage of the libraries a target names
+
+`FuzzCampaignTarget(coverage: ['package:my_app/src/saml/'])` names the
+libraries whose line coverage the campaign report gives; `fuzzMain --describe`
+prints the targets with them as JSON. `FuzzReport` carries
+`coverageLibraries`, `coveredLines` and `coverableLines` (with `coverage` as
+their ratio and `withCoverage`), replacing the bare `coverage` number, which
+was never set. tom_fuzz does not measure coverage itself; testkit's `:fuzz`
+runs each target under the VM service and fills it in. Tests TF-15, TF-16.
+
 ## 0.1.1
 
 ### Fixed — a mutator can no longer end a run

@@ -262,10 +262,61 @@ void main() {
     mutators: const [ByteMutator(), JsonMutator()],
     iterations: 200,
   );
+
+  test(
+    'TF-15: --describe lists the targets and their coverage libraries',
+    () async {
+      final r = await Process.run('dart', [
+        'run',
+        'test/fixtures/campaign.dart',
+        '--describe',
+      ]);
+      expect(r.exitCode, 0, reason: '${r.stderr}');
+      expect(jsonDecode('${r.stdout}'), [
+        {
+          'target': 'key_value',
+          'coverage': ['package:tom_fuzz_test_fixtures/'],
+        },
+        {'target': 'json', 'coverage': <String>[]},
+      ]);
+    },
+  );
+
+  test('TF-16: a report carries coverage as lines of its libraries', () {
+    final report = FuzzReport(
+      target: 'saml',
+      seed: 1,
+      inputsRun: 10,
+      accepted: 4,
+      rejected: 6,
+      elapsed: const Duration(seconds: 1),
+      failures: const [],
+      coverageLibraries: const ['package:app/src/saml/'],
+    );
+    expect(report.coverage, isNull);
+    expect(report.toText(), contains('not measured (run it through testkit'));
+
+    final measured = report.withCoverage(covered: 6, coverable: 8);
+    expect(measured.coverage, 0.75);
+    expect(
+      measured.toText(),
+      contains('75.0 % (6/8 lines) of package:app/src/saml/'),
+    );
+    final back = FuzzReport.fromJson(
+      jsonDecode(jsonEncode(measured.toJson())) as Map<String, Object?>,
+    );
+    expect(back.coveredLines, 6);
+    expect(back.coverableLines, 8);
+    expect(back.coverageLibraries, ['package:app/src/saml/']);
+    expect(
+      FuzzReport.fromJson(report.toJson()).toText(),
+      contains('not measured'),
+    );
+  });
 }
 
 void _textTarget(String input) {
-  if (!input.contains('�')) throw StateError('not decoded leniently');
+  if (!input.contains('\uFFFD')) throw StateError('not decoded leniently');
 }
 
 class _ThrowingMutator implements Mutator {

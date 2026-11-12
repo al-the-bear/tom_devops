@@ -168,9 +168,17 @@ class FuzzReport {
   /// The distinct failures, first input of each kept.
   final List<FuzzFailure> failures;
 
-  /// Line coverage of the target library, when it was measured; tom_fuzz
-  /// does not measure it itself, so this is null unless a caller adds it.
-  final double? coverage;
+  /// The libraries whose line coverage the report gives: URI prefixes
+  /// (`package:my_app/src/saml/`), as the campaign target names them.
+  final List<String> coverageLibraries;
+
+  /// Lines of [coverageLibraries] the run reached, when coverage was
+  /// measured. tom_fuzz does not measure it itself: testkit's `:fuzz` runs the
+  /// campaign under the VM service and fills this in.
+  final int? coveredLines;
+
+  /// Lines of [coverageLibraries] that can be covered, when measured.
+  final int? coverableLines;
 
   /// Creates a report.
   FuzzReport({
@@ -181,8 +189,47 @@ class FuzzReport {
     required this.rejected,
     required this.elapsed,
     required this.failures,
-    this.coverage,
+    this.coverageLibraries = const [],
+    this.coveredLines,
+    this.coverableLines,
   });
+
+  /// Covered / coverable lines (0..1), or null when not measured.
+  double? get coverage =>
+      coveredLines == null || coverableLines == null || coverableLines == 0
+      ? null
+      : coveredLines! / coverableLines!;
+
+  /// This report with its coverage measured.
+  FuzzReport withCoverage({required int covered, required int coverable}) =>
+      FuzzReport(
+        target: target,
+        seed: seed,
+        inputsRun: inputsRun,
+        accepted: accepted,
+        rejected: rejected,
+        elapsed: elapsed,
+        failures: failures,
+        coverageLibraries: coverageLibraries,
+        coveredLines: covered,
+        coverableLines: coverable,
+      );
+
+  /// The coverage line of [toText]: the figure, or why there is none.
+  String get coverageText {
+    if (coverage != null) {
+      return '${(coverage! * 100).toStringAsFixed(1)} % '
+          '($coveredLines/$coverableLines lines) of '
+          '${coverageLibraries.join(', ')}';
+    }
+    if (coverableLines == 0) {
+      return 'not measured: no coverable line in '
+          '${coverageLibraries.join(', ')}';
+    }
+    return coverageLibraries.isEmpty
+        ? 'not measured (the target names no library)'
+        : 'not measured (run it through testkit :fuzz)';
+  }
 
   /// No failure.
   bool get clean => failures.isEmpty;
@@ -196,6 +243,9 @@ class FuzzReport {
     'rejected': rejected,
     'elapsedMs': elapsed.inMilliseconds,
     'coverage': coverage,
+    'coverageLibraries': coverageLibraries,
+    'coveredLines': coveredLines,
+    'coverableLines': coverableLines,
     'failures': [for (final f in failures) f.toJson()],
   };
 
@@ -207,7 +257,11 @@ class FuzzReport {
     accepted: json['accepted'] as int,
     rejected: json['rejected'] as int,
     elapsed: Duration(milliseconds: json['elapsedMs'] as int),
-    coverage: (json['coverage'] as num?)?.toDouble(),
+    coverageLibraries: [
+      for (final l in (json['coverageLibraries'] as List?) ?? const []) '$l',
+    ],
+    coveredLines: json['coveredLines'] as int?,
+    coverableLines: json['coverableLines'] as int?,
     failures: [
       for (final f in json['failures'] as List)
         FuzzFailure.fromJson((f as Map).cast<String, Object?>()),
@@ -222,9 +276,7 @@ class FuzzReport {
         '$inputsRun inputs (accepted $accepted, rejected $rejected) in '
         '${(elapsed.inMilliseconds / 1000).toStringAsFixed(1)} s, seed $seed',
       )
-      ..writeln(
-        '  coverage: ${coverage == null ? 'not measured' : '${(coverage! * 100).toStringAsFixed(1)} %'}',
-      );
+      ..writeln('  coverage: $coverageText');
     for (final f in failures) {
       b.writeln('  $f');
     }

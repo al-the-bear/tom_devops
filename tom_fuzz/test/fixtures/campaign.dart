@@ -8,6 +8,7 @@ Future<void> main(List<String> args) => fuzzMain(args, [
   FuzzCampaignTarget(
     FuzzTarget('key_value', brokenKeyValue, rejects: rejectsFormat),
     corpusDirectory: 'test/fixtures/corpus/key_value',
+    coverage: const ['package:tom_fuzz_test_fixtures/'],
   ),
   FuzzCampaignTarget(
     FuzzTarget('json', jsonTarget, rejects: rejectsFormat),

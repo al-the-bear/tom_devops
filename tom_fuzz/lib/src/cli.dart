@@ -22,11 +22,17 @@ class FuzzCampaignTarget {
   /// default.
   final String? corpusDirectory;
 
+  /// The libraries whose line coverage the campaign report gives, as URI
+  /// prefixes: `package:my_app/src/saml/` for a folder, a full library URI
+  /// for one file. testkit's `:fuzz` measures it.
+  final List<String> coverage;
+
   /// Creates the description.
   const FuzzCampaignTarget(
     this.target, {
     this.mutators = const [ByteMutator()],
     this.corpusDirectory,
+    this.coverage = const [],
   });
 }
 
@@ -36,7 +42,7 @@ class FuzzCampaignTarget {
 /// ```text
 /// dart run fuzz/saml_fuzz.dart [--target NAME] [--iterations N]
 ///     [--duration SECONDS] [--seed N] [--timeout-ms MS] [--memory-mb MB]
-///     [--failures DIR] [--report FILE] [--list]
+///     [--failures DIR] [--report FILE] [--list] [--describe]
 /// ```
 ///
 /// Without `--iterations` and `--duration` a campaign runs 100000 inputs per
@@ -57,6 +63,11 @@ Future<void> fuzzMain(
     ..addOption('failures', help: 'Where failures are saved')
     ..addOption('report', help: 'Write the reports as JSON to this file')
     ..addFlag('list', negatable: false, help: 'List the targets and stop')
+    ..addFlag(
+      'describe',
+      negatable: false,
+      help: 'Print the targets and their coverage libraries as JSON and stop',
+    )
     ..addFlag('help', abbr: 'h', negatable: false);
   final ArgResults args;
   try {
@@ -68,6 +79,15 @@ Future<void> fuzzMain(
   }
   if (args['help'] as bool) {
     stdout.writeln(parser.usage);
+    return;
+  }
+  if (args['describe'] as bool) {
+    stdout.writeln(
+      jsonEncode([
+        for (final t in targets)
+          {'target': t.target.name, 'coverage': t.coverage},
+      ]),
+    );
     return;
   }
   if (args['list'] as bool) {
@@ -109,10 +129,20 @@ Future<void> fuzzMain(
       failureDirectory:
           args['failures'] as String? ?? p.join(corpusDir, 'failures'),
     );
-    final report = await fuzzer.run(
+    final run = await fuzzer.run(
       iterations: iterations,
       duration: duration,
       seed: seedText == null ? null : int.parse(seedText),
+    );
+    final report = FuzzReport(
+      target: run.target,
+      seed: run.seed,
+      inputsRun: run.inputsRun,
+      accepted: run.accepted,
+      rejected: run.rejected,
+      elapsed: run.elapsed,
+      failures: run.failures,
+      coverageLibraries: t.coverage,
     );
     stdout.writeln(report.toText());
     reports.add(report);

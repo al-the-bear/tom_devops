@@ -72,10 +72,16 @@ A campaign file `fuzz/<name>_fuzz.dart` lists the package's targets:
 
 ```dart
 Future<void> main(List<String> args) => fuzzMain(args, [
-  FuzzCampaignTarget(semver),
-  FuzzCampaignTarget(samlResponse, mutators: [ByteMutator(), XmlMutator()]),
+  FuzzCampaignTarget(semver, coverage: ['package:my_app/src/semver.dart']),
+  FuzzCampaignTarget(
+    samlResponse,
+    mutators: [ByteMutator(), XmlMutator()],
+    coverage: ['package:my_app/src/saml/'],
+  ),
 ]);
 ```
+
+`coverage:` names the libraries whose line coverage the report gives, as URI prefixes (a folder or one library).
 
 Run it from the package root, by hand:
 
@@ -94,6 +100,7 @@ testkit :fuzz --duration 600                             # every campaign file o
 | `--failures DIR` | Where failures are saved (default `fuzz/corpus/<target>/failures/`, replayed by the next run) |
 | `--report FILE` | Write the reports as JSON |
 | `--list` | List the targets |
+| `--describe` | Print the targets and their coverage libraries as JSON (what testkit reads) |
 
 The report gives the inputs run, how many were accepted and rejected, and each
 distinct failure with its saved input:
@@ -104,8 +111,20 @@ key_value: 1 failure(s) — 3000 inputs (accepted 1638, rejected 1298) in 0.2 s,
   crash: StateError: Bad state: NUL in key reached the map (x64) -> fuzz/corpus/key_value/failures/key_value-caf1bfce.input
 ```
 
-The campaign exits 1 when a target failed. Coverage of the target library is
-not measured by tom_fuzz; the report says so.
+The campaign exits 1 when a target failed.
+
+**Coverage.** tom_fuzz itself does not measure coverage, so a campaign run
+directly reports `coverage: not measured`. `testkit :fuzz` runs each target of
+a campaign in its own process under the VM service and fills in the line
+coverage of the libraries the target names:
+
+```text
+semver: clean — 20000 inputs (accepted 2448, rejected 17552) in 0.6 s, seed 7
+  coverage: 92.3 % (12/13 lines) of package:my_app/src/semver.dart
+```
+
+The figure counts the lines the VM can record (calls and function entries); a
+line holding only `return 1;` has no coverable position and does not count.
 
 ## Replaying a failure
 
