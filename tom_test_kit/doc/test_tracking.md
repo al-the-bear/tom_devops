@@ -633,9 +633,18 @@ person starts.
 | `--campaign=<name>` | Only campaign files whose name contains this |
 | `--timeout-ms=<ms>`, `--memory-mb=<mb>` | Bounds per input (2000 ms, 512 MB) |
 | `--report=<path>` | Write all reports as one JSON list |
+| `--no-coverage` | Do not measure coverage (no VM service) |
 
 Failures are saved as the input plus a description (seed, iteration, error, stack trace) under
 `fuzz/corpus/<target>/failures/`, where the next run replays them first.
+
+**Coverage.** Each target runs in a process of its own. A target that names coverage libraries
+(`FuzzCampaignTarget(..., coverage: ['package:my_app/src/saml/'])`, tom_fuzz 0.2.0) runs under the VM service, paused on
+exit; testkit collects the line coverage of those libraries (package:coverage) before letting it go, and the report
+gives it (`coverage: 85.7 % (6/7 lines) of package:my_app/src/saml/`, and `coveredLines` / `coverableLines` in the
+JSON). Hits from the fuzzer's worker isolates count, killed ones included. Only lines the VM records (calls, function
+entries) count. A target that names no library, a campaign on an older tom_fuzz (no `--describe`; it runs whole) or
+`--no-coverage` reports `not measured`.
 
 **Examples:**
 ```bash

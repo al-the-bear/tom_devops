@@ -9,6 +9,9 @@
 /// parse a real command line with the tool's own definition and hand it to the
 /// executor, which is the path a user's shell takes.
 @TestOn('vm')
+// TK-BLF-3/4 run real `dart test`; under a full suite's load that outgrows
+// the 30 s default.
+@Timeout(Duration(minutes: 2))
 library;
 
 import 'dart:io';

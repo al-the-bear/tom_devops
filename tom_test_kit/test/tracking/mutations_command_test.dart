@@ -239,7 +239,10 @@ $_killed
     replace: "    n += 0;"
     tests: test/calc_test.dart
 ''');
-    final outcome = await sweep(timeout: const Duration(seconds: 8));
+    // The bound covers the unmutated baseline too, so it must leave that
+    // room under a loaded machine; the mutant loops for ever either way.
+    final outcome = await sweep(timeout: const Duration(seconds: 20));
+    expect(outcome.result!.error, isNull, reason: lines.join('\n'));
     expect(outcome.result!.outcomes.single.verdict, MutationVerdict.hung);
     expect(outcome.passed, isTrue, reason: 'a hang is the suite noticing');
     expect(calcNow(), _calc);

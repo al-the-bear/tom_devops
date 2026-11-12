@@ -55,9 +55,9 @@ handle for regression tracking.
 | 22 | [v2 CLI tool wiring](#22-v2-cli-tool-wiring) | 3 | 3✅ | `v2/testkit_tool_test.dart` | `TK-CLI` |
 | 23 | [Test runner](#23-test-runner) | 7 | 7✅ | `util/test_runner_test.dart` | `TK-TRN` |
 | 24 | [Exit code](#16-test-and-baseline-commands) | 2 | 2✅ | `v2/exit_code_test.dart` | `TK-EXIT` |
-| 25 | [`:fuzz` command](#25-fuzz-command) | 4 | 4✅ | `v2/fuzz_command_test.dart` | `TK-FUZ` |
+| 25 | [`:fuzz` command](#25-fuzz-command) | 8 | 8✅ | `v2/fuzz_command_test.dart` | `TK-FUZ` |
 | 26 | [`:mutations` command](#26-mutations-command) | 10 | 10✅ | `tracking/mutations_command_test.dart` | `TK-MUT` |
-| — | **Total** | **232** | **232✅** | | |
+| — | **Total** | **236** | **236✅** | | |
 
 ---
 
@@ -575,6 +575,10 @@ with a planted bug and one clean target.
 | TK-FUZ-2 | a clean run exits 0 and writes the combined report | ✅ | `dart test --name 'TK-FUZ-2'` |
 | TK-FUZ-3 | a project without a campaign is skipped by name | ✅ | `dart test --name 'TK-FUZ-3'` |
 | TK-FUZ-4 | the limits become fuzzMain arguments | ✅ | `dart test --name 'TK-FUZ-4'` |
+| TK-FUZ-5 | the line coverage of the libraries a target names is measured and shown | ✅ | `dart test --name 'TK-FUZ-5'` |
+| TK-FUZ-6 | `--no-coverage` runs without the VM service | ✅ | `dart test --name 'TK-FUZ-6'` |
+| TK-FUZ-7 | line coverage counts the lines of the named libraries | ✅ | `dart test --name 'TK-FUZ-7'` |
+| TK-FUZ-8 | a `--target` no campaign has fails the run | ✅ | `dart test --name 'TK-FUZ-8'` |
 
 ## 26. `:mutations` command
 

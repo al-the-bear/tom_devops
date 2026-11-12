@@ -1,3 +1,18 @@
+## 1.8.0
+
+### Added — `:fuzz` measures the coverage of a target's libraries
+
+Each target of a campaign now runs in a process of its own. A target that
+names coverage libraries (tom_fuzz 0.2.0, `FuzzCampaignTarget(coverage:
+[...])`, read with `--describe`) runs under the VM service, paused on exit;
+testkit collects their line coverage with package:coverage, prints it in place
+of the campaign's `not measured`, and writes `coveredLines` /
+`coverableLines` into the report. Worker-isolate hits count, killed workers
+included. `--no-coverage` turns it off; a campaign on an older tom_fuzz runs
+whole without coverage; a `--target` no campaign has fails the run; a failed
+collection stops the paused campaign instead of waiting on it. Tests
+TK-FUZ-5..8. `tom_fuzz: ^0.2.0`, `coverage: ^1.16.0`.
+
 ## 1.7.0
 
 ### Added — `:mutations`, the catalogued mutation sweep

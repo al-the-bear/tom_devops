@@ -460,7 +460,6 @@ class FuzzExecutor extends CommandExecutor {
       iterations: number('iterations'),
       durationSeconds: number('duration'),
       seed: number('seed'),
-      targets: list('target'),
       timeoutMs: number('timeout-ms'),
       memoryMb: number('memory-mb'),
     );
@@ -480,6 +479,8 @@ class FuzzExecutor extends CommandExecutor {
       projectPath: context.path,
       campaignArgs: campaignArgs,
       campaignFilter: list('campaign'),
+      targets: list('target'),
+      coverage: !_getFlag(opts, 'no-coverage'),
       reportPath: _getString(opts, 'report'),
       verbose: args.verbose,
     );

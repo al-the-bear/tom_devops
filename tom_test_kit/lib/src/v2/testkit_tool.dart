@@ -270,6 +270,11 @@ const fuzzOptions = <OptionDefinition>[
     description: 'Write all reports as one JSON list to this file',
     valueName: 'path',
   ),
+  OptionDefinition.flag(
+    name: 'no-coverage',
+    description:
+        'Do not measure the line coverage of the libraries a target names',
+  ),
 ];
 
 /// Runs the project's fuzz campaigns (tom_fuzz).
