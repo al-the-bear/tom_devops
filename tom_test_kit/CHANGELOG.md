@@ -1,3 +1,22 @@
+## 1.7.0
+
+### Added — `:mutations`, the catalogued mutation sweep
+
+The tom_core_server mutation sweep, made generic: a package's
+`tool/mutations.yaml` (same line grammar; the 199 entries of tom_core_server's
+catalogue read identically) is checked for drift before anything runs, the
+named tests run once unmutated (a red baseline aborts), and each mutation is
+applied, run (`flutter test` for a Flutter package) under a time bound that
+kills the whole process tree, and restored whatever happens, signals
+included. Verdicts killed, killed (hung), survived, invalid (the mutant does
+not compile) and skipped (a `requires:` precondition from
+`tool/mutation_requirements.yaml` — tcp, env, file or command — is not met).
+Report in `testlog/mutations_<MMDD_HHMM>.json` / `.md`, survivors listed with
+their behaviour, `--min-killed <percent>` gate, `--list`, module selection,
+and an exit code of surviving + invalid (tom_build_base 2.22's per-item exit
+code). Tests TK-MUT-1..9. `tom_build_base: >=2.22.1` (repeated `--module` /
+`--target` options now reach the command whole).
+
 ## 1.6.0
 
 ### Added — `:fuzz`, the long fuzz campaign

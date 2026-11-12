@@ -232,6 +232,7 @@ Comments, if provided via `-c`, appear in the column header.
 | `:trim <n>` | Remove old runs, keeping last N (baseline always preserved) |
 | `:reset` | Delete all tracking files in testlog/ |
 | `:fuzz` | Run the package's fuzz campaigns (`fuzz/*_fuzz.dart`, tom_fuzz); exits 1 when a target failed |
+| `:mutations` | Catalogued mutation sweep (`tool/mutations.yaml`): killed / survived / invalid, report and `--min-killed` gate |
 
 All commands support project traversal options for multi-project operation. Run `testkit help` for the overview or `testkit help <command>` for per-command details.
 
@@ -642,6 +643,83 @@ testkit :fuzz --duration 600                         # ten minutes per target
 testkit :fuzz --iterations 1000000 --seed 42 --target saml_response
 testkit :fuzz --report ztmp/fuzz_report.json         # gate evidence
 ```
+
+---
+
+### :mutations
+
+A catalogued mutation sweep (alias `:mutate`): break each recorded behaviour of the package on purpose and see whether
+the tests that name it notice. A test that *names* a behaviour is not one that *pins* it; a mutation the named tests
+still pass is a behaviour the suite does not test.
+
+**The catalogue** is committed in the package, `tool/mutations.yaml` by default. Module, then one entry per behaviour:
+the smallest `find`/`replace` edit that removes the promise, and the test files that must fail.
+
+```yaml
+cache:
+  - behaviour: a read promotes the entry to most-recently-used
+    file: lib/src/cache/server_cache.dart
+    find: "        if (_first != entry) {"
+    replace: "        if (false) {"
+    tests: test/cache_test.dart test/cache_lru_test.dart
+    requires: db
+```
+
+The file is read line by line, not as YAML: an unindented `name:` starts a module, `- ` an entry, every other line is
+`key: value` split at the first `: ` (so an unquoted value may contain `: `); a double-quoted value has its escapes
+decoded (`\n`, `\t`, `\"`); `tests` and `requires` are space-separated.
+
+**Preconditions.** A behaviour covered only by tests that self-skip without a database or a service names it in
+`requires:`; the package declares each in `tool/mutation_requirements.yaml`, with one check:
+
+```yaml
+db:
+  description: the MariaDB the db-tagged suites need
+  tcp: 127.0.0.1:3309        # or env: NAME, file: path, command: shell line (exit 0 within 10 s)
+```
+
+An entry whose precondition is not met is **skipped**, not run: its suites would self-skip, pass, and report the
+mutation as surviving. A `requires:` the file does not declare stops the sweep.
+
+**What the sweep does, in order:**
+
+1. Every `find` of the selected modules must occur in its file exactly once; every drifted entry is named, and nothing
+   runs until the catalogue is fixed.
+2. The named tests run once unmutated (`dart test -j 1`, `flutter test` for a Flutter package). A red baseline stops
+   the sweep: a red suite would call every mutation killed.
+3. Each entry: the edit is applied, its tests run, and the file is restored whatever happens, a timeout, an error,
+   SIGINT and SIGTERM included. A run past `--timeout` is stopped with its whole process tree (the test VMs `dart test`
+   started) and counts as **killed (hung)**: the suite noticed.
+4. Verdicts: **killed** (the tests failed), **survived** (they passed), **invalid** (the mutant does not compile: it
+   fails every test without asking anything of them, so the entry has to be rewritten), **skipped**.
+
+**The report** is written to `testlog/mutations_<MMDD_HHMM>.json` and `.md`: killed, survived, invalid and skipped per
+module, the kill rate (killed / run), and every survivor and invalid mutant with its behaviour; the survivors are also
+printed with their edit.
+
+**Exit code and gate.** Without `--min-killed` every survivor and invalid mutant fails the run, and the exit code is
+their number (1 when the sweep stopped early; capped at 125). With `--min-killed <percent>` the run passes when the kill
+rate reaches the threshold, and fails when no mutation ran (NOT MEASURED).
+
+**Options:**
+
+| Option | Description |
+|--------|-------------|
+| `<module> ...`, `--module=<name>` | Modules to sweep (default all) |
+| `--list` | List the selected entries and run nothing |
+| `--min-killed=<percent>` | Pass when at least this percentage of the mutations run was killed |
+| `--timeout=<seconds>` | Time bound of one test run (default 600) |
+| `--catalogue=<path>`, `--requirements=<path>` | Other files than `tool/mutations.yaml` / `tool/mutation_requirements.yaml` |
+| `--report=<path>` | Report path without extension (default `testlog/mutations_<MMDD_HHMM>`) |
+
+**Examples:**
+```bash
+testkit :mutations --list
+testkit :mutations cache endpoints
+testkit :mutations --min-killed 80          # the gate: at least 80 % killed
+```
+
+Run it by hand from the repository; a sweep runs the named tests once per mutation, so a large catalogue takes a while.
 
 ---
 

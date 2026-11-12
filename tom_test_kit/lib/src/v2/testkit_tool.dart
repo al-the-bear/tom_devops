@@ -288,6 +288,65 @@ const fuzzCommand = CommandDefinition(
   ],
 );
 
+/// Options for :mutations command.
+const mutationsOptions = <OptionDefinition>[
+  OptionDefinition.flag(
+    name: 'list',
+    description: 'List the selected entries and run nothing',
+  ),
+  OptionDefinition.multi(
+    name: 'module',
+    description: 'Modules to sweep (also as positional arguments); default all',
+    valueName: 'name',
+  ),
+  OptionDefinition.option(
+    name: 'min-killed',
+    description:
+        'Pass when at least this percentage of the mutations run was killed '
+        '(default: every survivor and invalid mutant fails)',
+    valueName: 'percent',
+  ),
+  OptionDefinition.option(
+    name: 'timeout',
+    description: 'Seconds one test run may take (default 600)',
+    valueName: 'seconds',
+  ),
+  OptionDefinition.option(
+    name: 'catalogue',
+    description: 'Catalogue file (default tool/mutations.yaml)',
+    valueName: 'path',
+  ),
+  OptionDefinition.option(
+    name: 'requirements',
+    description:
+        'Precondition declarations (default tool/mutation_requirements.yaml)',
+    valueName: 'path',
+  ),
+  OptionDefinition.option(
+    name: 'report',
+    description:
+        'Report path without extension (default testlog/mutations_<MMDD_HHMM>)',
+    valueName: 'path',
+  ),
+];
+
+/// Catalogued mutation sweep.
+const mutationsCommand = CommandDefinition(
+  name: 'mutations',
+  description:
+      'Catalogued mutation sweep (tool/mutations.yaml); exits with the number '
+      'of surviving + invalid mutants',
+  aliases: ['mutate'],
+  options: mutationsOptions,
+  worksWithNatures: {DartProjectFolder},
+  supportsProjectTraversal: true,
+  examples: [
+    'testkit :mutations --list',
+    'testkit :mutations cache endpoints',
+    'testkit :mutations --min-killed 80',
+  ],
+);
+
 /// Maintenance commands.
 const trimCommand = CommandDefinition(
   name: 'trim',
@@ -349,8 +408,9 @@ final testkitTool = ToolDefinition(
     historyCommand,
     flakyCommand,
     crossreferenceCommand,
-    // Fuzzing
+    // Fuzzing and mutation testing
     fuzzCommand,
+    mutationsCommand,
     // Maintenance commands
     trimCommand,
     resetCommand,

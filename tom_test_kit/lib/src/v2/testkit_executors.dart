@@ -13,6 +13,7 @@ import '../tracking/diff_command.dart';
 import '../tracking/flaky_command.dart';
 import '../tracking/fuzz_command.dart';
 import '../tracking/history_command.dart';
+import '../mutation/mutations_command.dart';
 import '../tracking/lastdiff_command.dart';
 import '../tracking/reset_command.dart';
 import '../tracking/runs_command.dart';
@@ -502,6 +503,52 @@ class FuzzExecutor extends CommandExecutor {
 }
 
 // =============================================================================
+// Mutations Executor
+// =============================================================================
+
+/// Executor for :mutations command.
+class MutationsExecutor extends CommandExecutor {
+  @override
+  Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final opts = _optionsFor(args, 'mutations', aliases: const ['mutate']);
+    final module = opts['module'];
+    final modules = [
+      ...args.positionalArgs,
+      for (final m in module is List ? module : [?module])
+        ...'$m'.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty),
+    ];
+    final timeoutText = _getString(opts, 'timeout');
+    final minText = _getString(opts, 'min-killed');
+
+    final outcome = await MutationsCommand.run(
+      projectPath: context.path,
+      modules: modules,
+      listOnly: _getFlag(opts, 'list'),
+      cataloguePath: _getString(opts, 'catalogue'),
+      requirementsPath: _getString(opts, 'requirements'),
+      reportBase: _getString(opts, 'report'),
+      timeout: timeoutText == null
+          ? null
+          : Duration(seconds: int.parse(timeoutText)),
+      minKilled: minText == null ? null : double.parse(minText),
+      dryRun: args.dryRun,
+    );
+    return outcome.passed
+        ? ItemResult.success(
+            path: context.path,
+            name: context.name,
+            message: outcome.message,
+          )
+        : ItemResult.failure(
+            path: context.path,
+            name: context.name,
+            error: outcome.message,
+            exitCode: outcome.exitCode,
+          );
+  }
+}
+
+// =============================================================================
 // Executor Factory
 // =============================================================================
 
@@ -524,6 +571,8 @@ Map<String, CommandExecutor> createTestkitExecutors() {
     'xref': CrossReferenceExecutor(),
     // Maintenance commands
     'fuzz': FuzzExecutor(),
+    'mutations': MutationsExecutor(),
+    'mutate': MutationsExecutor(),
     'trim': TrimExecutor(),
     'reset': ResetExecutor(),
   };

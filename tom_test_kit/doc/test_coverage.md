@@ -56,7 +56,8 @@ handle for regression tracking.
 | 23 | [Test runner](#23-test-runner) | 7 | 7✅ | `util/test_runner_test.dart` | `TK-TRN` |
 | 24 | [Exit code](#16-test-and-baseline-commands) | 2 | 2✅ | `v2/exit_code_test.dart` | `TK-EXIT` |
 | 25 | [`:fuzz` command](#25-fuzz-command) | 4 | 4✅ | `v2/fuzz_command_test.dart` | `TK-FUZ` |
-| — | **Total** | **222** | **222✅** | | |
+| 26 | [`:mutations` command](#26-mutations-command) | 10 | 10✅ | `tracking/mutations_command_test.dart` | `TK-MUT` |
+| — | **Total** | **232** | **232✅** | | |
 
 ---
 
@@ -574,3 +575,22 @@ with a planted bug and one clean target.
 | TK-FUZ-2 | a clean run exits 0 and writes the combined report | ✅ | `dart test --name 'TK-FUZ-2'` |
 | TK-FUZ-3 | a project without a campaign is skipped by name | ✅ | `dart test --name 'TK-FUZ-3'` |
 | TK-FUZ-4 | the limits become fuzzMain arguments | ✅ | `dart test --name 'TK-FUZ-4'` |
+
+## 26. `:mutations` command
+
+**Test file:** `test/tracking/mutations_command_test.dart` — **ID prefix `TK-MUT`**
+
+A fixture package whose tests pin some behaviours and not others, swept for real (`dart test` per mutation).
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-MUT-1 | killed, surviving and invalid mutants; file restored; report written | ✅ | `dart test --name 'TK-MUT-1'` |
+| TK-MUT-2 | a drifted `find` stops the sweep before anything runs | ✅ | `dart test --name 'TK-MUT-2'` |
+| TK-MUT-3 | a red baseline aborts | ✅ | `dart test --name 'TK-MUT-3'` |
+| TK-MUT-4 | an entry whose precondition is missing is skipped, not surviving | ✅ | `dart test --name 'TK-MUT-4'` |
+| TK-MUT-5 | a `requires:` nobody declared is an error | ✅ | `dart test --name 'TK-MUT-5'` |
+| TK-MUT-6 | `--min-killed` passes the gate at the threshold | ✅ | `dart test --name 'TK-MUT-6'` |
+| TK-MUT-7 | a run past the time bound is killed (hung), its process tree too, and the file restored | ✅ | `dart test --name 'TK-MUT-7'` |
+| TK-MUT-8 | `--list` names the entries and runs nothing | ✅ | `dart test --name 'TK-MUT-8'` |
+| TK-MUT-9 | the testkit process exits with surviving + invalid | ✅ | `dart test --name 'TK-MUT-9'` |
+| TK-MUT-10 | the catalogue's line grammar (`: ` in values, escapes, comments, space-separated lists) | ✅ | `dart test --name 'TK-MUT-10'` |

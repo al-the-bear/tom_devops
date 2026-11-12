@@ -1,6 +1,6 @@
 name: tom_test_kit
 description: Test result tracking tool for Dart and Flutter projects.
-version: 1.6.0
+version: 1.7.0
 publish_to: none
 
 environment:
@@ -9,7 +9,7 @@ environment:
 dependencies:
   args: ^2.6.0
   path: ^1.9.1
-  tom_build_base: ">=2.20.0"
+  tom_build_base: ">=2.22.1"
   tom_fuzz: ^0.1.1
   utopia_tui: ^1.1.0
   yaml: ^3.1.0
