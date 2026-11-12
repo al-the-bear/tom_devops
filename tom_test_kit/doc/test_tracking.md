@@ -231,6 +231,7 @@ Comments, if provided via `-c`, appear in the column header.
 | `:crossreference` | Map tests to source files (aliases: `:crossref`, `:xref`) |
 | `:trim <n>` | Remove old runs, keeping last N (baseline always preserved) |
 | `:reset` | Delete all tracking files in testlog/ |
+| `:fuzz` | Run the package's fuzz campaigns (`fuzz/*_fuzz.dart`, tom_fuzz); exits 1 when a target failed |
 
 All commands support project traversal options for multi-project operation. Run `testkit help` for the overview or `testkit help <command>` for per-command details.
 
@@ -605,6 +606,41 @@ Deletes all tracking files from the project's `testlog/` directory. This removes
 testkit :reset                           # Delete with confirmation
 testkit :reset --force                   # Delete without prompt
 testkit :reset -r                        # Reset all subprojects
+```
+
+---
+
+### :fuzz
+
+Runs the package's fuzz campaigns: every `fuzz/*_fuzz.dart` file, each a `main` calling
+[tom_fuzz](https://pub.dev/packages/tom_fuzz)'s `fuzzMain` with the package's fuzz targets. Each campaign runs as
+`dart run <file>` in the package and shows its own report as it runs; testkit reads the reports back, prints the totals
+and exits 1 when a target failed, or a campaign ended without a report. A package without a campaign file is skipped
+by name.
+
+The short, fixed-seed run belongs in the unit suite instead (tom_fuzz's `fuzzTest`); `:fuzz` is the long campaign a
+person starts.
+
+**Options:**
+
+| Option | Description |
+|--------|-------------|
+| `-n, --iterations=<count>` | Inputs per target (default 100000 without `--duration`) |
+| `-d, --duration=<seconds>` | Seconds per target |
+| `--seed=<n>` | Seed of the mutations (default from the clock; each report names its seed) |
+| `-t, --target=<name>` | Only these targets |
+| `--campaign=<name>` | Only campaign files whose name contains this |
+| `--timeout-ms=<ms>`, `--memory-mb=<mb>` | Bounds per input (2000 ms, 512 MB) |
+| `--report=<path>` | Write all reports as one JSON list |
+
+Failures are saved as the input plus a description (seed, iteration, error, stack trace) under
+`fuzz/corpus/<target>/failures/`, where the next run replays them first.
+
+**Examples:**
+```bash
+testkit :fuzz --duration 600                         # ten minutes per target
+testkit :fuzz --iterations 1000000 --seed 42 --target saml_response
+testkit :fuzz --report ztmp/fuzz_report.json         # gate evidence
 ```
 
 ---

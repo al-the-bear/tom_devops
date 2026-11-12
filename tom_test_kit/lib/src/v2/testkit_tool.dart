@@ -225,6 +225,69 @@ const crossreferenceCommand = CommandDefinition(
   supportsProjectTraversal: true,
 );
 
+/// Options for :fuzz command.
+const fuzzOptions = <OptionDefinition>[
+  OptionDefinition.option(
+    name: 'iterations',
+    abbr: 'n',
+    description: 'Inputs per target (default 100000 without --duration)',
+    valueName: 'count',
+  ),
+  OptionDefinition.option(
+    name: 'duration',
+    abbr: 'd',
+    description: 'Seconds per target',
+    valueName: 'seconds',
+  ),
+  OptionDefinition.option(
+    name: 'seed',
+    description: 'Seed of the mutations (default: from the clock)',
+    valueName: 'n',
+  ),
+  OptionDefinition.multi(
+    name: 'target',
+    abbr: 't',
+    description: 'Only these targets',
+    valueName: 'name',
+  ),
+  OptionDefinition.multi(
+    name: 'campaign',
+    description: 'Only campaign files whose name contains this',
+    valueName: 'name',
+  ),
+  OptionDefinition.option(
+    name: 'timeout-ms',
+    description: 'Time bound per input (default 2000)',
+    valueName: 'ms',
+  ),
+  OptionDefinition.option(
+    name: 'memory-mb',
+    description: 'Memory bound per input (default 512)',
+    valueName: 'mb',
+  ),
+  OptionDefinition.option(
+    name: 'report',
+    description: 'Write all reports as one JSON list to this file',
+    valueName: 'path',
+  ),
+];
+
+/// Runs the project's fuzz campaigns (tom_fuzz).
+const fuzzCommand = CommandDefinition(
+  name: 'fuzz',
+  description:
+      'Run the fuzz campaigns in fuzz/*_fuzz.dart (tom_fuzz); exits 1 when a '
+      'target failed',
+  options: fuzzOptions,
+  worksWithNatures: {DartProjectFolder},
+  supportsProjectTraversal: true,
+  examples: [
+    'testkit :fuzz --duration 600',
+    'testkit :fuzz --iterations 1000000 --seed 42 --target saml_response',
+    'testkit :fuzz --report fuzz_report.json',
+  ],
+);
+
 /// Maintenance commands.
 const trimCommand = CommandDefinition(
   name: 'trim',
@@ -286,6 +349,8 @@ final testkitTool = ToolDefinition(
     historyCommand,
     flakyCommand,
     crossreferenceCommand,
+    // Fuzzing
+    fuzzCommand,
     // Maintenance commands
     trimCommand,
     resetCommand,

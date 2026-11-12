@@ -11,6 +11,7 @@ import '../tracking/baseline_command.dart';
 import '../tracking/crossref_command.dart';
 import '../tracking/diff_command.dart';
 import '../tracking/flaky_command.dart';
+import '../tracking/fuzz_command.dart';
 import '../tracking/history_command.dart';
 import '../tracking/lastdiff_command.dart';
 import '../tracking/reset_command.dart';
@@ -326,7 +327,11 @@ class FlakyExecutor extends CommandExecutor {
 class CrossReferenceExecutor extends CommandExecutor {
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
-    final cmdOpts = _optionsFor(args, 'crossreference', aliases: const ['crossref', 'xref']);
+    final cmdOpts = _optionsFor(
+      args,
+      'crossreference',
+      aliases: const ['crossref', 'xref'],
+    );
     final success = await CrossReferenceCommand.run(
       projectPath: context.path,
       baselineFile: _getString(cmdOpts, 'baseline-file'),
@@ -428,6 +433,75 @@ class ResetExecutor extends CommandExecutor {
 }
 
 // =============================================================================
+// Fuzz Executor
+// =============================================================================
+
+/// Executor for :fuzz command.
+class FuzzExecutor extends CommandExecutor {
+  @override
+  Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final opts = _optionsFor(args, 'fuzz');
+    int? number(String name) {
+      final text = _getString(opts, name);
+      return text == null ? null : int.parse(text);
+    }
+
+    // A multi option given once arrives as its single string.
+    List<String> list(String name) {
+      final value = opts[name];
+      final values = value is List ? value : [?value];
+      return [
+        for (final v in values) ...v.toString().split(',').map((s) => s.trim()),
+      ];
+    }
+
+    final campaignArgs = FuzzCommand.campaignArgs(
+      iterations: number('iterations'),
+      durationSeconds: number('duration'),
+      seed: number('seed'),
+      targets: list('target'),
+      timeoutMs: number('timeout-ms'),
+      memoryMb: number('memory-mb'),
+    );
+    if (args.dryRun) {
+      final files = FuzzCommand.campaigns(context.path);
+      return ItemResult.success(
+        path: context.path,
+        name: context.name,
+        message: files.isEmpty
+            ? '[DRY RUN] No fuzz campaign (fuzz/*_fuzz.dart)'
+            : '[DRY RUN] Would run ${files.join(', ')} '
+                  '${campaignArgs.join(' ')}',
+      );
+    }
+
+    final (outcome, _) = await FuzzCommand.run(
+      projectPath: context.path,
+      campaignArgs: campaignArgs,
+      campaignFilter: list('campaign'),
+      reportPath: _getString(opts, 'report'),
+      verbose: args.verbose,
+    );
+    return switch (outcome) {
+      FuzzCampaignOutcome.clean => ItemResult.success(
+        path: context.path,
+        name: context.name,
+      ),
+      FuzzCampaignOutcome.noCampaign => ItemResult.skipped(
+        path: context.path,
+        name: context.name,
+        message: 'no fuzz campaign (fuzz/*_fuzz.dart)',
+      ),
+      FuzzCampaignOutcome.failed => ItemResult.failure(
+        path: context.path,
+        name: context.name,
+        error: 'a fuzz target failed (see the report above)',
+      ),
+    };
+  }
+}
+
+// =============================================================================
 // Executor Factory
 // =============================================================================
 
@@ -449,6 +523,7 @@ Map<String, CommandExecutor> createTestkitExecutors() {
     'crossref': CrossReferenceExecutor(),
     'xref': CrossReferenceExecutor(),
     // Maintenance commands
+    'fuzz': FuzzExecutor(),
     'trim': TrimExecutor(),
     'reset': ResetExecutor(),
   };

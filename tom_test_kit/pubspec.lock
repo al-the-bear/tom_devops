@@ -601,6 +601,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.21.0"
+  tom_fuzz:
+    dependency: "direct main"
+    description:
+      name: tom_fuzz
+      sha256: e02e5ab4890af22a38c41927867bdca02c4d6eae6a6871752ccc4193c52cc5e0
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.1"
   typed_data:
     dependency: transitive
     description:

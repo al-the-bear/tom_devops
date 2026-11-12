@@ -55,7 +55,8 @@ handle for regression tracking.
 | 22 | [v2 CLI tool wiring](#22-v2-cli-tool-wiring) | 3 | 3✅ | `v2/testkit_tool_test.dart` | `TK-CLI` |
 | 23 | [Test runner](#23-test-runner) | 7 | 7✅ | `util/test_runner_test.dart` | `TK-TRN` |
 | 24 | [Exit code](#16-test-and-baseline-commands) | 2 | 2✅ | `v2/exit_code_test.dart` | `TK-EXIT` |
-| — | **Total** | **218** | **218✅** | | |
+| 25 | [`:fuzz` command](#25-fuzz-command) | 4 | 4✅ | `v2/fuzz_command_test.dart` | `TK-FUZ` |
+| — | **Total** | **222** | **222✅** | | |
 
 ---
 
@@ -559,3 +560,17 @@ through it. The detection rule itself is tested in tom_build_base (BB-FLP).
 | TK-TRN-5 | without an override, the host decides | ✅ | `dart test --name 'TK-TRN-5'` |
 | TK-TRN-6 | a real Flutter package's widget test lands in the baseline | ✅ | `dart test --name 'TK-TRN-6'` |
 | TK-TRN-7 | the TUI baseline command runs `flutter test` for it too | ✅ | `dart test --name 'TK-TRN-7'` |
+
+## 25. `:fuzz` command
+
+**Test file:** `test/v2/fuzz_command_test.dart` — **ID prefix `TK-FUZ`**
+
+The real executable on a temporary package that takes tom_fuzz from pub.dev, with a campaign file holding one target
+with a planted bug and one clean target.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-FUZ-1 | a failing target fails the run and its input is saved | ✅ | `dart test --name 'TK-FUZ-1'` |
+| TK-FUZ-2 | a clean run exits 0 and writes the combined report | ✅ | `dart test --name 'TK-FUZ-2'` |
+| TK-FUZ-3 | a project without a campaign is skipped by name | ✅ | `dart test --name 'TK-FUZ-3'` |
+| TK-FUZ-4 | the limits become fuzzMain arguments | ✅ | `dart test --name 'TK-FUZ-4'` |

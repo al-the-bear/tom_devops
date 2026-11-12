@@ -14,6 +14,7 @@ export 'src/tracking/crossref_command.dart';
 export 'src/tracking/diff_command.dart';
 export 'src/tracking/diff_helper.dart';
 export 'src/tracking/flaky_command.dart';
+export 'src/tracking/fuzz_command.dart';
 export 'src/tracking/history_command.dart';
 export 'src/tracking/lastdiff_command.dart';
 export 'src/tracking/reset_command.dart';

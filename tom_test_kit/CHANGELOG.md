@@ -1,3 +1,16 @@
+## 1.6.0
+
+### Added — `:fuzz`, the long fuzz campaign
+
+Runs a package's fuzz campaigns (`fuzz/*_fuzz.dart`, each calling
+[tom_fuzz](https://pub.dev/packages/tom_fuzz)'s `fuzzMain`) by iterations or
+wall time, with a seed, target and campaign selection and per-input bounds;
+reads each campaign's JSON report through tom_fuzz's `FuzzReport`, prints the
+totals, writes the combined report with `--report`, and exits 1 when a target
+failed or a campaign ended without a report. A package without a campaign is
+skipped by name. Documented in `doc/test_tracking.md`; tests TK-FUZ-1..4.
+`tom_fuzz: ^0.1.1`.
+
 ## 1.5.0
 
 ### Changed — one runner choice for every launch, from tom_build_base
