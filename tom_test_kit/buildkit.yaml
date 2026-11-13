@@ -1,5 +1,11 @@
 # Tom Test Kit configuration
 
+project_id: TK
+name: testkit
+description: >-
+  Testing utilities library.
+license: BSD-3-Clause
+
 versioner:
   variable-prefix: TestKit
 

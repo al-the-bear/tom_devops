@@ -1,3 +1,5 @@
+# buildkit configuration of tom_build_common
+
 project_id: TC
 name: build-common
 description: >-

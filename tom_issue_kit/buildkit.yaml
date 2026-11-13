@@ -1,5 +1,11 @@
 # Tom Build Configuration for tom_issue_kit
 
+project_id: IK
+name: issuekit
+description: >-
+  Issue tracking tool.
+license: BSD-3-Clause
+
 versioner:
   variable-prefix: issueKit
 
