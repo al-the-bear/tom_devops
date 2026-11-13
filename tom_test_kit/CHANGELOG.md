@@ -1,3 +1,18 @@
+## 1.9.2
+
+### Fixed — a test that writes without a trailing newline no longer loses the next result
+
+A test that writes to stdout without a newline (an ESC `[K` erase, a progress
+line rewritten after a `\r`) puts that text in front of `dart test`'s next JSON
+event on the same line. testkit skipped every line that was not JSON as a
+whole, so that event, often the test's own `testDone`, was lost and the
+passing test was recorded as `--`. The line is now read from the first `{"`
+from which the rest decodes (`decodeJsonEventLine`), in the parser and in the
+TUI's baseline and test commands. TK-DTP-26, and TK-DTP-28 on output recorded
+from a fixture package. Same-named tests (in two groups, or in two files
+without a group) were already told apart in 1.9.0; TK-DTP-27 covers the files
+case.
+
 ## 1.9.1
 
 ### Changed — on tom_build_base 2.27.0 and utopia_tui 2.0
