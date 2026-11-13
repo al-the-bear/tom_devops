@@ -317,19 +317,16 @@ echo "== b =="; tk "tests/b_test.sh" "${RESULT_B:-ok}"
 cd "$(dirname "$0")"
 printf '{"test":"t","result":"ok"}\n' >> "$TESTKIT_REPORT"
 ''');
-    final previous = Directory.current;
-    Directory.current = project.parent;
-    try {
-      final relative = p.relative(project.path, from: project.parent.path);
-      final runner = CommandRunner(
-        command: 'sh sub/run.sh',
-        format: ReportFormat.testkit,
-        origin: 'test',
-      );
-      final results = (await runner.run(projectPath: './$relative'))!;
-      expect(results.run.results, {'t': TestResult.ok});
-    } finally {
-      Directory.current = previous;
-    }
+    // Relative to the current directory, which the test leaves alone: it
+    // belongs to the whole process, and other test files read it.
+    final relative = p.relative(project.path);
+    expect(p.isRelative(relative), isTrue);
+    final runner = CommandRunner(
+      command: 'sh sub/run.sh',
+      format: ReportFormat.testkit,
+      origin: 'test',
+    );
+    final results = (await runner.run(projectPath: relative))!;
+    expect(results.run.results, {'t': TestResult.ok});
   });
 }
