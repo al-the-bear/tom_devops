@@ -467,3 +467,17 @@ Traversal-mode executors that operate across scanned projects: aggregation
 | IK-EXE-SCN-7 | output contains line numbers | ✅ | `dart test --name 'IK-EXE-SCN-7'` |
 | IK-EXE-FAC-TRV-1 | factory accepts custom TestScanner | ✅ | `dart test --name 'IK-EXE-FAC-TRV-1'` |
 | IK-EXE-FAC-TRV-2 | factory creates default TestScanner | ✅ | `dart test --name 'IK-EXE-FAC-TRV-2'` |
+
+## 9. Frozen-lock guard of the tom_ai/devops repository
+
+**Test file:** `test/frozen_lock_guard_test.dart` (moved here from tom_build when
+that package was archived). It judges this machine's
+live locks of every package in the repository except the archived ones (a
+`tom_skip.yaml`).
+
+| ID | Test | Status | Command |
+|----|------|--------|---------|
+| FL-1 | no undeclared path resolution | ✅ | `dart test --name 'FL-1'` |
+| FL-2 | no lock is behind a version already in the pub cache | ✅ | `dart test --name 'FL-2'` |
+| FL-3 | every exception is still load-bearing | ✅ | `dart test --name 'FL-3'` |
+| FL-4 | every held-back range still holds a lock back | ✅ | `dart test --name 'FL-4'` |

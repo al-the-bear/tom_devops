@@ -1,5 +1,13 @@
 # Tom Build
 
+> **Archived (2026-11-13).** This package belongs to the archived Tom build
+> stack ("stack A"): the workspace analyzer and the object model of `tom_workspace.yaml`, `tom_project.yaml` and the generated manifest `.tom_metadata/tom_master.yaml`. The build
+> work is done by `tom_build_base` and `buildkit`, scripting by `dcli`. The code is
+> kept, not maintained: no tool built on tom_build_base builds, tests, pub-gets
+> or lists it (`tom_skip.yaml`, `buildkit_skip.yaml`), and it may not resolve
+> against current dependencies. What stack A was and what of it a later
+> deployment tool can reuse: `_ai/quests/tom_deploy/archived_tom_build_stack/README.md`.
+
 > Tom Build is part of the **Tom framework** by al-the-bear.
 > Distributed under the terms in this package's license — see
 > [../LICENSE.md](../LICENSE.md).

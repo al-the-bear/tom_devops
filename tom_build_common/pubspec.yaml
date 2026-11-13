@@ -1,5 +1,5 @@
 name: tom_build_common
-description: Shared build types and utilities for the Tom framework build tooling.
+description: ARCHIVED, not maintained (the archived Tom build stack; see README). Shared build types and utilities for the Tom framework build tooling.
 version: 1.0.0
 publish_to: none
 # repository: https://github.com/my_org/my_repo
