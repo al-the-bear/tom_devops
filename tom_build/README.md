@@ -537,7 +537,7 @@ Related packages (don't duplicate — follow the link):
 | Package | Relationship |
 | ------- | ------------ |
 | [`tom_build_cli`](../tom_build_cli/) | The `tom` command surface; the CLI layer that drives `tom_build`. |
-| [`tom_build_kit`](../tom_build_kit/) | The `buildkit` orchestrator that reads `tom_master.yaml` to run pipelines. |
+| [`tom_build_kit`](../../basics/tom_build_kit/) | The `buildkit` orchestrator that reads `tom_master.yaml` to run pipelines. |
 | [`tom_build_base`](../../basics/tom_build_base/) | The shared CLI / build framework every Tom tool builds on. |
 | [Tom DevOps map](../README.md) | The repository-level index for the whole devops toolchain. |
 

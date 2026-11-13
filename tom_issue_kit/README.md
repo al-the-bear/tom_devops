@@ -28,7 +28,7 @@ resolved the original problem**. It fills the space that neither `testkit` nor
 | Tool | Scope |
 | ---- | ----- |
 | [`testkit`](../tom_test_kit/) | Runs Dart tests, tracks results over time, detects regressions. |
-| [`buildkit`](../tom_build_kit/) | Builds, analyzes, and manages projects. |
+| [`buildkit`](../../basics/tom_build_kit/) | Builds, analyzes, and manages projects. |
 | **`issuekit`** | Records discovered problems, tracks them as test entries, orchestrates their lifecycle across GitHub repos, and synchronises states with Dart test results. |
 
 ### The three layers
@@ -338,7 +338,7 @@ GitHub trackers through `tom_github_api`.
 | [`tom_github_api`](../../basics/tom_github_api/) | The GitHub REST client `issuekit` uses for all tracker operations. |
 | [`tom_build_base`](../../basics/tom_build_base/) | The shared v2 CLI framework (arg parsing, help, traversal, run summary). |
 | [`tom_test_kit`](../tom_test_kit/) | The `testkit` CLI — produces the test results `issuekit :sync` consumes. |
-| [`tom_build_kit`](../tom_build_kit/) | The `buildkit` orchestrator — the sibling build kit. |
+| [`tom_build_kit`](../../basics/tom_build_kit/) | The `buildkit` orchestrator — the sibling build kit. |
 | [Tom DevOps map](../README.md) | The repository-level index for the whole devops toolchain. |
 
 ---

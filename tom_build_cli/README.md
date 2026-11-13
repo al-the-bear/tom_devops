@@ -438,7 +438,7 @@ Related packages (don't duplicate — follow the link):
 | Package | Relationship |
 | ------- | ------------ |
 | [`tom_build`](../tom_build/) | Workspace analysis + file object model that `tom` drives. |
-| [`tom_build_kit`](../tom_build_kit/) | The `buildkit` orchestrator — pipelines over the same metadata. |
+| [`tom_build_kit`](../../basics/tom_build_kit/) | The `buildkit` orchestrator — pipelines over the same metadata. |
 | [`tom_build_base`](../../basics/tom_build_base/) | The shared CLI / build framework the kit tools build on. |
 | [Tom DevOps map](../README.md) | The repository-level index for the whole devops toolchain. |
 

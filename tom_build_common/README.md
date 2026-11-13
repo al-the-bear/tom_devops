@@ -29,7 +29,7 @@ Shared build types and utilities for the Tom framework build tooling.
 The Tom devops repository contains a family of build tools — the workspace
 analyzer ([`tom_build`](../tom_build/)), the `tom` CLI
 ([`tom_build_cli`](../tom_build_cli/)), and the CLI kits
-([`tom_build_kit`](../tom_build_kit/), [`tom_test_kit`](../tom_test_kit/),
+([`tom_build_kit`](../../basics/tom_build_kit/), [`tom_test_kit`](../tom_test_kit/),
 [`tom_issue_kit`](../tom_issue_kit/)). As those tools grow, small types and
 helpers naturally come to be shared between them. `tom_build_common` exists to
 be the place that shared code lands, so a common type does not have to be
@@ -48,7 +48,7 @@ first genuinely-shared type is ready to move.
 | Workspace model, file object model, analyzer, scripting helpers | [`tom_build`](../tom_build/) |
 | CLI framework — arg parsing, help, traversal, pipelines, config | [`tom_build_base`](../../basics/tom_build_base/) (basics layer) |
 | `tom` command surface, config merge, generation | [`tom_build_cli`](../tom_build_cli/) |
-| Pipeline orchestration, git workflows | [`tom_build_kit`](../tom_build_kit/) |
+| Pipeline orchestration, git workflows | [`tom_build_kit`](../../basics/tom_build_kit/) |
 
 When a type currently in one of those packages needs to be used by another
 without taking on the whole dependency, that type is the candidate to move into
@@ -81,7 +81,7 @@ tools that need to share types:
 | ------- | --------------------------------------- |
 | [`tom_build`](../tom_build/) | Share workspace/build model types with the CLI and kits. |
 | [`tom_build_cli`](../tom_build_cli/) | Reuse common types without re-declaring them. |
-| [`tom_build_kit`](../tom_build_kit/) | Reuse shared pipeline/build primitives. |
+| [`tom_build_kit`](../../basics/tom_build_kit/) | Reuse shared pipeline/build primitives. |
 | [`tom_test_kit`](../tom_test_kit/) / [`tom_issue_kit`](../tom_issue_kit/) | Reuse any cross-tool build types. |
 
 No package depends on `tom_build_common` yet; the table records the design
@@ -141,7 +141,7 @@ Don't duplicate — follow the link:
 | ------- | ------------ |
 | [`tom_build`](../tom_build/) | Where the workspace/build model types live today. |
 | [`tom_build_cli`](../tom_build_cli/) | The `tom` command built on `tom_build`. |
-| [`tom_build_kit`](../tom_build_kit/) | The `buildkit` orchestrator. |
+| [`tom_build_kit`](../../basics/tom_build_kit/) | The `buildkit` orchestrator. |
 | [`tom_build_base`](../../basics/tom_build_base/) | The shared CLI / build framework (basics layer). |
 | [Tom DevOps map](../README.md) | The repository-level index for the whole devops toolchain. |
 

@@ -10,7 +10,7 @@ Test result tracking tool for Dart projects.
 results into a CSV **tracking file**, and compares runs over time so you can see
 at a glance what regressed, what got fixed, and what is flaky. It is one of the
 three Tom CLI "kits" built on [`tom_build_base`](../../basics/tom_build_base/)
-(alongside [`buildkit`](../tom_build_kit/) and [`issuekit`](../tom_issue_kit/)),
+(alongside [`buildkit`](../../basics/tom_build_kit/) and [`issuekit`](../tom_issue_kit/)),
 and it ships an optional full-screen **TUI** dashboard.
 
 ---
@@ -312,7 +312,7 @@ is the test-tracking model on top.
 | Package | Relationship |
 | ------- | ------------ |
 | [`tom_build_base`](../../basics/tom_build_base/) | The shared v2 CLI framework `testkit` is built on. |
-| [`tom_build_kit`](../tom_build_kit/) | The `buildkit` build orchestrator — sibling kit. |
+| [`tom_build_kit`](../../basics/tom_build_kit/) | The `buildkit` build orchestrator — sibling kit. |
 | [`tom_issue_kit`](../tom_issue_kit/) | The `issuekit` issue-lifecycle CLI — sibling kit. |
 | [Tom DevOps map](../README.md) | The repository-level index for the whole devops toolchain. |
 
