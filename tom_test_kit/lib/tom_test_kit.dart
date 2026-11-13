@@ -1,13 +1,19 @@
-/// Tom Test Kit — test result tracking for Dart projects.
+/// Tom Test Kit — test result tracking for projects in every language its
+/// runners know (Dart, Flutter, Go, Rust, Python, Java, JavaScript,
+/// TypeScript, C, C++).
 ///
 /// Run `test_kit help` or `--help` for full usage information.
 library;
 
 export 'src/model/test_entry.dart';
 export 'src/model/test_run.dart';
+export 'src/model/test_run_results.dart';
 export 'src/model/tracking_file.dart';
 export 'src/parser/dart_test_parser.dart';
 export 'src/parser/test_description_parser.dart';
+export 'src/runner/project_test_runner.dart';
+export 'src/runner/report_parsers.dart';
+export 'src/runner/result_collector.dart';
 export 'src/tracking/baseline_command.dart';
 export 'src/tracking/basediff_command.dart';
 export 'src/tracking/crossref_command.dart';

@@ -4,25 +4,28 @@ import 'package:path/path.dart' as p;
 
 import '../model/test_run.dart';
 import '../model/tracking_file.dart';
-import '../parser/dart_test_parser.dart';
+import '../model/test_run_results.dart';
+import '../runner/project_test_runner.dart';
 import '../util/file_helpers.dart';
 import 'baseline_command.dart';
 
 /// Implements the `:test` subcommand.
 ///
-/// Runs the test suite (`dart test`, or `flutter test` for Flutter packages)
-/// and appends a new result column to the most recent tracking file.
+/// Runs the test suite with the project's runner ([ProjectTestRunner]) and
+/// appends a new result column to the most recent tracking file.
 class TestCommand {
   /// Runs the test command for a single project.
   ///
   /// [projectPath] is the project directory.
   /// [trackingFilePath] overrides which tracking file to update.
-  /// [testArgs] are additional arguments passed to `dart test`.
+  /// [testArgs] are additional arguments passed to the test runner.
+  /// [runner] runs the tests (default `dart test` / `flutter test`).
   /// [verbose] enables diagnostic output.
   /// [createBaseline] if true, creates a baseline when no tracking file exists.
   /// [failedOnly] if true, only re-run failed tests (X/OK, X/X).
   /// [mismatchedOnly] if true, only re-run tests that don't match expectation
-  ///   (X/OK, OK/X).
+  ///   (X/OK, OK/X). Only `dart test` selects tests by name; another runner
+  ///   runs every test, and all of them are recorded.
   /// [noUpdate] if true, runs tests and prints summary without updating
   ///   baseline.
   /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
@@ -44,6 +47,7 @@ class TestCommand {
     bool mismatchedOnly = false,
     bool noUpdate = false,
     String? pubCachePath,
+    ProjectTestRunner runner = const DartRunner(),
   }) async {
     // Find the tracking file
     final filePath = trackingFilePath ?? findLatestTrackingFile(projectPath);
@@ -59,6 +63,7 @@ class TestCommand {
           verbose: verbose,
           comment: comment,
           pubCachePath: pubCachePath,
+          runner: runner,
         );
       }
       stderr.writeln(
@@ -84,7 +89,12 @@ class TestCommand {
     // Build effective test args, potentially filtering by --failed/--mismatched
     var effectiveTestArgs = [...testArgs];
 
-    if (failedOnly || mismatchedOnly) {
+    if ((failedOnly || mismatchedOnly) && !runner.selectsTestsByName) {
+      print(
+        '  ${failedOnly ? '--failed' : '--mismatched'}: ${runner.label} '
+        'cannot select single tests; every test runs.',
+      );
+    } else if (failedOnly || mismatchedOnly) {
       final filterNames = _getFilteredTestNames(
         tracking,
         failedOnly: failedOnly,
@@ -108,21 +118,24 @@ class TestCommand {
       }
     }
 
-    // Run dart test
-    final results = await DartTestParser.runAndParse(
+    final results = await runner.run(
       projectPath: projectPath,
-      additionalArgs: effectiveTestArgs,
+      testArgs: effectiveTestArgs,
       verbose: verbose,
       pubCachePath: pubCachePath,
     );
 
     if (results == null) {
-      stderr.writeln('[$projectPath] Failed to run dart test.');
+      stderr.writeln('[$projectPath] Failed to run ${runner.label}.');
       return false;
     }
 
-    // Save raw JSON output for inspection
-    await saveLastTestRunJson(projectPath, results.rawJsonLines);
+    // Keep the raw output for inspection
+    await saveLastTestRunOutput(
+      projectPath,
+      results.rawOutput,
+      fileName: results.rawOutputName,
+    );
 
     // A run in which no test ran records nothing: a column of absent results
     // would read as every test having vanished rather than as a run that
@@ -237,7 +250,7 @@ class TestCommand {
   /// Computes summary statistics comparing results against expectations.
   static _NoUpdateSummary _computeSummary({
     required TrackingFile tracking,
-    required DartTestResults results,
+    required TestRunResults results,
   }) {
     var okCount = 0;
     var failedCount = 0;

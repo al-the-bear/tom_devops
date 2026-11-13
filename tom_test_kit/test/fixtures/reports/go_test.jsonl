@@ -1,0 +1,44 @@
+{"ImportPath":"example.com/tkgo/broken [example.com/tkgo/broken.test]","Action":"build-output","Output":"# example.com/tkgo/broken [example.com/tkgo/broken.test]\n"}
+{"ImportPath":"example.com/tkgo/broken [example.com/tkgo/broken.test]","Action":"build-output","Output":"broken/c_test.go:5:28: undefined: undefinedThing\n"}
+{"ImportPath":"example.com/tkgo/broken [example.com/tkgo/broken.test]","Action":"build-fail"}
+{"Time":"2026-11-13T09:47:22.308876+01:00","Action":"start","Package":"example.com/tkgo"}
+{"Time":"2026-11-13T09:47:22.30904+01:00","Action":"start","Package":"example.com/tkgo/broken"}
+{"Time":"2026-11-13T09:47:22.309073+01:00","Action":"output","Package":"example.com/tkgo/broken","Output":"FAIL\texample.com/tkgo/broken [build failed]\n"}
+{"Time":"2026-11-13T09:47:22.309089+01:00","Action":"fail","Package":"example.com/tkgo/broken","Elapsed":0,"FailedBuild":"example.com/tkgo/broken [example.com/tkgo/broken.test]"}
+{"Time":"2026-11-13T09:47:22.309154+01:00","Action":"start","Package":"example.com/tkgo/sub"}
+{"Time":"2026-11-13T09:47:22.598915+01:00","Action":"run","Package":"example.com/tkgo","Test":"TestPass"}
+{"Time":"2026-11-13T09:47:22.599003+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestPass","Output":"=== RUN   TestPass\n"}
+{"Time":"2026-11-13T09:47:22.599023+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestPass","Output":"--- PASS: TestPass (0.00s)\n"}
+{"Time":"2026-11-13T09:47:22.599037+01:00","Action":"pass","Package":"example.com/tkgo","Test":"TestPass","Elapsed":0}
+{"Time":"2026-11-13T09:47:22.599049+01:00","Action":"run","Package":"example.com/tkgo","Test":"TestFail"}
+{"Time":"2026-11-13T09:47:22.599059+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestFail","Output":"=== RUN   TestFail\n"}
+{"Time":"2026-11-13T09:47:22.599074+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestFail","Output":"    a_test.go:6: boom\n"}
+{"Time":"2026-11-13T09:47:22.59908+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestFail","Output":"--- FAIL: TestFail (0.00s)\n"}
+{"Time":"2026-11-13T09:47:22.599085+01:00","Action":"fail","Package":"example.com/tkgo","Test":"TestFail","Elapsed":0}
+{"Time":"2026-11-13T09:47:22.599089+01:00","Action":"run","Package":"example.com/tkgo","Test":"TestSkip"}
+{"Time":"2026-11-13T09:47:22.599093+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestSkip","Output":"=== RUN   TestSkip\n"}
+{"Time":"2026-11-13T09:47:22.599097+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestSkip","Output":"    a_test.go:7: later\n"}
+{"Time":"2026-11-13T09:47:22.599117+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestSkip","Output":"--- SKIP: TestSkip (0.00s)\n"}
+{"Time":"2026-11-13T09:47:22.599122+01:00","Action":"skip","Package":"example.com/tkgo","Test":"TestSkip","Elapsed":0}
+{"Time":"2026-11-13T09:47:22.599126+01:00","Action":"run","Package":"example.com/tkgo","Test":"TestTable"}
+{"Time":"2026-11-13T09:47:22.59913+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestTable","Output":"=== RUN   TestTable\n"}
+{"Time":"2026-11-13T09:47:22.599133+01:00","Action":"run","Package":"example.com/tkgo","Test":"TestTable/empty"}
+{"Time":"2026-11-13T09:47:22.59914+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestTable/empty","Output":"=== RUN   TestTable/empty\n"}
+{"Time":"2026-11-13T09:47:22.59915+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestTable/empty","Output":"--- PASS: TestTable/empty (0.00s)\n"}
+{"Time":"2026-11-13T09:47:22.599175+01:00","Action":"pass","Package":"example.com/tkgo","Test":"TestTable/empty","Elapsed":0}
+{"Time":"2026-11-13T09:47:22.599179+01:00","Action":"run","Package":"example.com/tkgo","Test":"TestTable/full"}
+{"Time":"2026-11-13T09:47:22.599184+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestTable/full","Output":"=== RUN   TestTable/full\n"}
+{"Time":"2026-11-13T09:47:22.599188+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestTable/full","Output":"--- PASS: TestTable/full (0.00s)\n"}
+{"Time":"2026-11-13T09:47:22.599208+01:00","Action":"pass","Package":"example.com/tkgo","Test":"TestTable/full","Elapsed":0}
+{"Time":"2026-11-13T09:47:22.599233+01:00","Action":"output","Package":"example.com/tkgo","Test":"TestTable","Output":"--- PASS: TestTable (0.00s)\n"}
+{"Time":"2026-11-13T09:47:22.599238+01:00","Action":"pass","Package":"example.com/tkgo","Test":"TestTable","Elapsed":0}
+{"Time":"2026-11-13T09:47:22.599243+01:00","Action":"output","Package":"example.com/tkgo","Output":"FAIL\n"}
+{"Time":"2026-11-13T09:47:22.599389+01:00","Action":"output","Package":"example.com/tkgo","Output":"FAIL\texample.com/tkgo\t0.290s\n"}
+{"Time":"2026-11-13T09:47:22.59942+01:00","Action":"fail","Package":"example.com/tkgo","Elapsed":0.291}
+{"Time":"2026-11-13T09:47:22.73582+01:00","Action":"run","Package":"example.com/tkgo/sub","Test":"TestPass"}
+{"Time":"2026-11-13T09:47:22.735857+01:00","Action":"output","Package":"example.com/tkgo/sub","Test":"TestPass","Output":"=== RUN   TestPass\n"}
+{"Time":"2026-11-13T09:47:22.73588+01:00","Action":"output","Package":"example.com/tkgo/sub","Test":"TestPass","Output":"--- PASS: TestPass (0.00s)\n"}
+{"Time":"2026-11-13T09:47:22.735889+01:00","Action":"pass","Package":"example.com/tkgo/sub","Test":"TestPass","Elapsed":0}
+{"Time":"2026-11-13T09:47:22.735895+01:00","Action":"output","Package":"example.com/tkgo/sub","Output":"PASS\n"}
+{"Time":"2026-11-13T09:47:22.736182+01:00","Action":"output","Package":"example.com/tkgo/sub","Output":"ok  \texample.com/tkgo/sub\t0.427s\n"}
+{"Time":"2026-11-13T09:47:22.737543+01:00","Action":"pass","Package":"example.com/tkgo/sub","Elapsed":0.428}

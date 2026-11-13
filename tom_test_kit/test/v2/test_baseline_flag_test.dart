@@ -26,11 +26,16 @@ import 'package:tom_test_kit/tom_test_kit.dart';
 CliArgs _parse(List<String> argv) =>
     CliArgParser(toolDefinition: testkitTool).parse(argv);
 
-CommandContext _contextFor(String path) => CommandContext(
-  fsFolder: FsFolder(path: path),
-  natures: const [],
-  executionRoot: path,
-);
+/// The context the traversal hands a Dart package's executor: the folder
+/// with its Dart nature, which picks the `dart test` runner.
+CommandContext _contextFor(String path) {
+  final folder = FsFolder(path: path);
+  return CommandContext(
+    fsFolder: folder,
+    natures: [DartProjectFolder(folder, projectName: 'baseline_flag_probe')],
+    executionRoot: path,
+  );
+}
 
 void main() {
   group('TK-BLF-1: the flag reaches the executor [2026-09-30]', () {

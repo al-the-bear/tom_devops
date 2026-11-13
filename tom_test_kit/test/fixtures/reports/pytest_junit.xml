@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="1" failures="1" skipped="1" tests="5" time="0.031" timestamp="2026-11-13T09:50:00.000000" hostname="host"><testcase classname="tests.test_parser" name="test_empty" time="0.001" /><testcase classname="tests.test_parser" name="test_nested[deep]" time="0.001" /><testcase classname="tests.test_parser" name="test_broken" time="0.002"><failure message="assert 1 == 2">def test_broken():
+&gt;       assert 1 == 2
+E       assert 1 == 2
+
+tests/test_parser.py:9: AssertionError</failure></testcase><testcase classname="tests.test_io" name="test_later" time="0.000"><skipped type="pytest.skip" message="later">tests/test_io.py:4: later</skipped></testcase><testcase classname="tests.test_io" name="test_fixture" time="0.000"><error message="failed on setup with &quot;fixture 'db' not found&quot;">fixture 'db' not found</error></testcase></testsuite></testsuites>

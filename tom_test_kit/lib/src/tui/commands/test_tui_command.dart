@@ -235,7 +235,7 @@ class TestTuiCommand extends TuiCommand {
     }
 
     // Save raw JSON output
-    await saveLastTestRunJson(projectPath, rawJsonLines);
+    await saveLastTestRunOutput(projectPath, rawJsonLines);
 
     // Update tracking file
     sink.phaseStarted('Updating tracking file');

@@ -1,3 +1,44 @@
+## 1.9.0
+
+### Added — baselines for every language testkit can run
+
+testkit runs and tracks the tests of Go, Rust, Python, Java, JavaScript,
+TypeScript, C and C++ projects as well as Dart and Flutter packages. A
+project's runner (`ProjectTestRunner`) is, in this order: a `testkit:`
+section of its `buildkit.yaml` (`command:`, `report:`, `report-path:`), `dart
+test` / `flutter test` for a Dart project, the `buildkit.yaml` `test:` step as
+a script writing testkit's line protocol (one JSON object per test) to the
+file `$TESTKIT_REPORT` names, or the language's runner: `go test -json ./...`,
+`cargo test --no-fail-fast`, pytest `--junitxml`, Maven / Gradle surefire
+reports, jest `--json`, `node --test` with the JUnit reporter. Readers for the
+line protocol, go-json, libtest text, JUnit XML and jest JSON turn each into
+result rows; a name reported in two groups is qualified by its group, a Go
+package whose build failed and a jest file that did not run are load
+failures. `{report}` in a command is the report file, kept as
+`testlog/last_testrun_report.*`; the runner's output is
+`testlog/last_testrun.txt`. `:baseline`, `:test`, `:runs`, `:status`,
+`:basediff`, `:lastdiff`, `:diff`, `:history`, `:flaky`, `:trim` and `:reset`
+work on every such nature; `--failed` / `--mismatched` run every test of a
+runner other than `dart test`, which alone selects by name. A run whose
+command exits with an error although no reported test failed is incomplete
+(no baseline is written). Proven on the 18 SOM runtime packages. Tests
+TK-RPT-1..9, TK-RCL-1..4, TK-PTR-1..13 on recorded reports. `glob`, `xml`
+added.
+
+### Changed
+
+- `DartTestResults` is `TestRunResults` (`lib/src/model/test_run_results.dart`),
+  its `rawJsonLines` `rawOutput` with `rawOutputName`; `saveLastTestRunJson`
+  is `saveLastTestRunOutput`.
+- `dart test` results go through the same collector: two tests of the same
+  name in different groups were one tracking-file row (the key is the name
+  without its groups) and overwrote each other; each is now keyed
+  `<group> > <name>` (TK-DTP-25). tom_som_dart_runtime: 962 rows, was 941.
+  Those tests show once as absent under their old key.
+- A test name is read as `ID: description` only when spelled so: `a::b` and
+  `case:x` keep their colon in the description (they did not survive a
+  tracking file's round trip before).
+
 ## 1.8.0
 
 ### Added — `:fuzz` measures the coverage of a target's libraries

@@ -14,6 +14,7 @@ import '../tracking/flaky_command.dart';
 import '../tracking/fuzz_command.dart';
 import '../tracking/history_command.dart';
 import '../mutation/mutations_command.dart';
+import '../runner/project_test_runner.dart';
 import '../tracking/lastdiff_command.dart';
 import '../tracking/reset_command.dart';
 import '../tracking/runs_command.dart';
@@ -74,10 +75,13 @@ class BaselineExecutor extends CommandExecutor {
     if (args.dryRun) {
       final outputPath =
           _getString(cmdOpts, 'file') ?? 'testlog/baseline_<timestamp>.csv';
+      final runner = ProjectTestRunner.resolve(context.path, context.natures);
       return ItemResult.success(
         path: context.path,
         name: context.name,
-        message: '[DRY RUN] Would run tests and create baseline at $outputPath',
+        message:
+            '[DRY RUN] Would run ${runner.label} and create baseline at '
+            '$outputPath',
       );
     }
 
@@ -87,6 +91,7 @@ class BaselineExecutor extends CommandExecutor {
       testArgs: _parseTestArgs(cmdOpts),
       verbose: args.verbose,
       comment: _getString(cmdOpts, 'comment'),
+      runner: ProjectTestRunner.resolve(context.path, context.natures),
     );
 
     return success
@@ -120,7 +125,9 @@ class TestExecutor extends CommandExecutor {
         path: context.path,
         name: context.name,
         message:
-            '[DRY RUN] Would run tests and update tracking'
+            '[DRY RUN] Would run '
+            '${ProjectTestRunner.resolve(context.path, context.natures).label}'
+            ' and update tracking'
             '${opts.isNotEmpty ? ' (${opts.join(', ')})' : ''}',
       );
     }
@@ -135,6 +142,7 @@ class TestExecutor extends CommandExecutor {
       failedOnly: _getFlag(cmdOpts, 'failed'),
       mismatchedOnly: _getFlag(cmdOpts, 'mismatched'),
       noUpdate: _getFlag(cmdOpts, 'no-update'),
+      runner: ProjectTestRunner.resolve(context.path, context.natures),
     );
 
     return success

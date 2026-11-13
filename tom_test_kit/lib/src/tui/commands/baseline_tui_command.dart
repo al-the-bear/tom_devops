@@ -210,7 +210,7 @@ class BaselineTuiCommand extends TuiCommand {
     sink.phaseStarted('Writing baseline');
 
     // Save raw JSON output for inspection
-    await saveLastTestRunJson(projectPath, rawJsonLines);
+    await saveLastTestRunOutput(projectPath, rawJsonLines);
 
     final tracking = TrackingFile.fromBaseline(entries, run);
     final outputPath = args['output'] ?? defaultBaselinePath(projectPath);

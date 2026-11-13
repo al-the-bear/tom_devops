@@ -3,102 +3,10 @@ import 'dart:io';
 
 import 'package:tom_build_base/tom_build_base.dart';
 
-import '../model/test_entry.dart';
 import '../model/test_run.dart';
+import '../model/test_run_results.dart';
 import '../util/test_runner.dart';
-import 'test_description_parser.dart';
-
-/// A test file the runner could not load — its tests never ran.
-///
-/// `dart test` reports it as a pseudo-test named `loading <path>` whose result
-/// is `error`, which is how a file whose imports do not resolve shows up. The
-/// run's exit code is then 1, the same as a run whose tests merely failed, so
-/// this record is the only thing that tells the two apart.
-class LoadFailure {
-  /// The test file, as the runner names it (e.g. `test/foo_test.dart`).
-  final String suitePath;
-
-  /// The runner's error, without its stack trace.
-  final String message;
-
-  const LoadFailure({required this.suitePath, required this.message});
-}
-
-/// Parsed results from a `dart test --reporter json` run.
-class DartTestResults {
-  /// All test entries found in the run.
-  final List<TestEntry> entries;
-
-  /// The test run with results.
-  final TestRun run;
-
-  /// Total number of tests.
-  final int totalTests;
-
-  /// Number of passed tests.
-  final int passedTests;
-
-  /// Number of failed tests.
-  final int failedTests;
-
-  /// Number of skipped tests.
-  final int skippedTests;
-
-  /// Raw JSON lines from `dart test --reporter json` output.
-  final List<String> rawJsonLines;
-
-  /// Test files that failed to load, so none of their tests ran.
-  final List<LoadFailure> loadFailures;
-
-  /// The test runner's exit code (0 or 1 — any other code yields no results).
-  final int exitCode;
-
-  DartTestResults({
-    required this.entries,
-    required this.run,
-    required this.totalTests,
-    required this.passedTests,
-    required this.failedTests,
-    required this.skippedTests,
-    List<String>? rawJsonLines,
-    this.loadFailures = const [],
-    this.exitCode = 0,
-  }) : rawJsonLines = rawJsonLines ?? [];
-
-  /// Why this run cannot be trusted as a complete record, or null when it can.
-  ///
-  /// Failing tests are results and are not a problem. What is: a run in which
-  /// no test ran at all — there is no case in which "0 tests passed" is the
-  /// answer the caller wanted — and a run missing the tests of a file that did
-  /// not load, which would otherwise look like a smaller suite.
-  String? get runProblem {
-    final failures = loadFailures.map(_describeLoadFailure).join('\n');
-    if (totalTests == 0) {
-      if (loadFailures.isNotEmpty) {
-        return 'No test ran: ${loadFailures.length} test file(s) failed to '
-            'load.\n$failures';
-      }
-      return 'No test ran: the runner finished (exit code $exitCode) without '
-          'reporting a single test. Either no test file declares one, or the '
-          'arguments filtered every test out.';
-    }
-    if (loadFailures.isNotEmpty) {
-      return '${loadFailures.length} test file(s) failed to load, so their '
-          'tests are missing from this run.\n$failures';
-    }
-    return null;
-  }
-
-  static String _describeLoadFailure(LoadFailure failure) {
-    final lines = const LineSplitter()
-        .convert(failure.message)
-        .where((l) => l.trim().isNotEmpty)
-        .take(4)
-        .map((l) => '      $l')
-        .join('\n');
-    return '  ${failure.suitePath}:\n$lines';
-  }
-}
+import '../runner/result_collector.dart';
 
 /// Parses `dart test --reporter json` output into structured results.
 class DartTestParser {
@@ -206,7 +114,7 @@ class DartTestParser {
   /// [projectPath] is the working directory for the test runner.
   /// [additionalArgs] are extra arguments to pass after `test`.
   /// [verbose] enables diagnostic output.
-  static Future<DartTestResults?> runAndParse({
+  static Future<TestRunResults?> runAndParse({
     required String projectPath,
     List<String> additionalArgs = const [],
     bool verbose = false,
@@ -289,14 +197,15 @@ class DartTestParser {
     }
 
     final result = parseJsonOutput(stdoutLines, verbose: verbose);
-    return DartTestResults(
+    return TestRunResults(
       entries: result.entries,
       run: result.run,
       totalTests: result.totalTests,
       passedTests: result.passedTests,
       failedTests: result.failedTests,
       skippedTests: result.skippedTests,
-      rawJsonLines: stdoutLines,
+      rawOutput: stdoutLines,
+      rawOutputName: lastTestRunJsonName,
       loadFailures: result.loadFailures,
       exitCode: exitCode,
     );
@@ -352,13 +261,14 @@ class DartTestParser {
   }
 
   /// Parses `dart test --reporter json` output lines.
-  static DartTestResults parseJsonOutput(
+  static TestRunResults parseJsonOutput(
     List<String> lines, {
     bool verbose = false,
   }) {
-    final timestamp = DateTime.now();
-    final run = TestRun(timestamp: timestamp);
-    final entries = <TestEntry>[];
+    // The collector keys each test by its name without its groups (the
+    // tracking file's key) and keeps apart two tests of the same name in
+    // different groups, which would otherwise overwrite each other.
+    final collector = ResultCollector();
 
     // Track test info by ID
     final testNames = <int, String>{}; // testID -> name
@@ -367,11 +277,7 @@ class DartTestParser {
     final groupNames = <int, String>{}; // groupID -> name
     final testGroupMap = <int, List<int>>{}; // testID -> groupIDs
 
-    var passCount = 0;
-    var failCount = 0;
-    var skipCount = 0;
     final errorMessages = <int, List<String>>{}; // testID -> error texts
-    final loadFailures = <LoadFailure>[];
 
     for (final line in lines) {
       if (line.trim().isEmpty) continue;
@@ -430,12 +336,15 @@ class DartTestParser {
           if (name.startsWith('loading ')) {
             final loadResult = json['result'] as String? ?? '';
             if (loadResult != 'success') {
-              loadFailures.add(LoadFailure(
-                suitePath: testSuites[testSuiteMap[testId]] ??
-                    name.substring('loading '.length),
-                message: (errorMessages[testId] ?? const ['(no message)'])
-                    .join('\n'),
-              ));
+              collector.loadFailures.add(
+                LoadFailure(
+                  suitePath:
+                      testSuites[testSuiteMap[testId]] ??
+                      name.substring('loading '.length),
+                  message: (errorMessages[testId] ?? const ['(no message)'])
+                      .join('\n'),
+                ),
+              );
             }
             continue;
           }
@@ -446,17 +355,11 @@ class DartTestParser {
 
           if (hidden) continue;
 
-          TestResult result;
-          if (skipped) {
-            result = TestResult.skip;
-            skipCount++;
-          } else if (resultStr == 'success') {
-            result = TestResult.ok;
-            passCount++;
-          } else {
-            result = TestResult.fail;
-            failCount++;
-          }
+          final result = skipped
+              ? TestResult.skip
+              : resultStr == 'success'
+              ? TestResult.ok
+              : TestResult.fail;
 
           final suitePath = testSuites[testSuiteMap[testId]];
           final gids = testGroupMap[testId] ?? [];
@@ -465,21 +368,21 @@ class DartTestParser {
             groupIds: gids,
             groupNames: groupNames,
           );
-          final entry = TestDescriptionParser.parse(strippedName,
-              suite: suitePath, groups: groups);
-          entries.add(entry);
-          run.setResult(entry.fullDescription, result);
+          collector.add(
+            ReportedTest(
+              name: strippedName,
+              suite: suitePath,
+              groups: groups,
+              result: result,
+            ),
+          );
       }
     }
 
-    return DartTestResults(
-      entries: entries,
-      run: run,
-      totalTests: passCount + failCount + skipCount,
-      passedTests: passCount,
-      failedTests: failCount,
-      skippedTests: skipCount,
-      loadFailures: loadFailures,
+    return collector.build(
+      rawOutput: const [],
+      rawOutputName: lastTestRunJsonName,
+      exitCode: 0,
     );
   }
 }

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:tom_test_kit/tom_test_kit.dart';
 
-/// Test IDs: TK-DTP-1 through TK-DTP-24
+/// Test IDs: TK-DTP-1 through TK-DTP-25
 void main() {
   group('DartTestParser', () {
     group('parseJsonOutput', () {
@@ -23,6 +23,31 @@ void main() {
         expect(results.entries, hasLength(1));
         expect(results.entries.first.fullDescription, equals('should pass'));
         expect(results.entries.first.groups, isNull);
+      });
+
+      test('TK-DTP-25: two tests with the same name in different groups stay '
+          'two tests, each keyed with its group', () {
+        final lines = _makeJsonLines([
+          _suiteEvent(0, 'test/my_test.dart'),
+          _groupEvent(1, '', suiteId: 0),
+          _groupEvent(2, 'reader', suiteId: 0),
+          _groupEvent(3, 'writer', suiteId: 0),
+          _testStartEvent(4, 'reader empty', suiteId: 0, groupIds: [1, 2]),
+          _testDoneEvent(4, result: 'success'),
+          _testStartEvent(5, 'writer empty', suiteId: 0, groupIds: [1, 3]),
+          _testDoneEvent(5, result: 'failure'),
+          _testStartEvent(6, 'reader only here', suiteId: 0, groupIds: [1, 2]),
+          _testDoneEvent(6, result: 'success'),
+        ]);
+
+        final results = DartTestParser.parseJsonOutput(lines);
+        expect(results.entries, hasLength(3));
+        expect(results.run.results, {
+          'reader > empty': TestResult.ok,
+          'writer > empty': TestResult.fail,
+          'only here': TestResult.ok,
+        });
+        expect((results.passedTests, results.failedTests), (2, 1));
       });
 
       test('TK-DTP-2: should parse a failing test', () {

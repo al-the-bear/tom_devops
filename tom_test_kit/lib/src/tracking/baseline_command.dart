@@ -4,20 +4,22 @@ import 'package:path/path.dart' as p;
 
 import '../model/test_run.dart';
 import '../model/tracking_file.dart';
-import '../parser/dart_test_parser.dart';
+import '../runner/project_test_runner.dart';
 import '../util/file_helpers.dart';
 import 'test_command.dart';
 
 /// Implements the `:baseline` subcommand.
 ///
-/// Runs the test suite (`dart test`, or `flutter test` for Flutter packages)
-/// and creates a new baseline tracking file.
+/// Runs the test suite with the project's runner ([ProjectTestRunner]:
+/// `dart test` / `flutter test`, the project's test script, or its language's
+/// runner) and creates a new baseline tracking file.
 class BaselineCommand {
   /// Runs the baseline command for a single project.
   ///
-  /// [projectPath] is the project directory (must contain pubspec.yaml).
+  /// [projectPath] is the project directory.
   /// [outputPath] overrides the default output location.
-  /// [testArgs] are additional arguments passed to `dart test`.
+  /// [testArgs] are additional arguments passed to the test runner.
+  /// [runner] runs the tests (default `dart test` / `flutter test`).
   /// [verbose] enables diagnostic output.
   /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
   /// pass their own so they never depend on the host's cache.
@@ -33,22 +35,26 @@ class BaselineCommand {
     bool verbose = false,
     String? comment,
     String? pubCachePath,
+    ProjectTestRunner runner = const DartRunner(),
   }) async {
-    // Run dart test
-    final results = await DartTestParser.runAndParse(
+    final results = await runner.run(
       projectPath: projectPath,
-      additionalArgs: testArgs,
+      testArgs: testArgs,
       verbose: verbose,
       pubCachePath: pubCachePath,
     );
 
     if (results == null) {
-      stderr.writeln('[$projectPath] Failed to run dart test.');
+      stderr.writeln('[$projectPath] Failed to run ${runner.label}.');
       return false;
     }
 
-    // Save raw JSON output for inspection
-    await saveLastTestRunJson(projectPath, results.rawJsonLines);
+    // Keep the raw output for inspection
+    await saveLastTestRunOutput(
+      projectPath,
+      results.rawOutput,
+      fileName: results.rawOutputName,
+    );
 
     // A baseline is the reference every later run is compared with. One that
     // is empty, or missing a file that did not load, would pass that loss on
@@ -79,10 +85,12 @@ class BaselineCommand {
     // Print summary
     final relativePath = p.relative(resolvedOutput, from: projectPath);
     print('  Created: $relativePath');
-    print('  Tests: ${results.totalTests} '
-        '(${results.passedTests} passed, '
-        '${results.failedTests} failed'
-        '${results.skippedTests > 0 ? ', ${results.skippedTests} skipped' : ''})');
+    print(
+      '  Tests: ${results.totalTests} '
+      '(${results.passedTests} passed, '
+      '${results.failedTests} failed'
+      '${results.skippedTests > 0 ? ', ${results.skippedTests} skipped' : ''})',
+    );
 
     return TestCommand.reportVerdict(projectPath, null, results.failedTests);
   }

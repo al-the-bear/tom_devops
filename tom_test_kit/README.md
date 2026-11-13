@@ -4,9 +4,11 @@
 > Distributed under the terms in this package's license — see
 > [LICENSE](LICENSE).
 
-Test result tracking tool for Dart projects.
+Test result tracking for projects in every language testkit can run: Dart,
+Flutter, Go, Rust, Python, Java, JavaScript, TypeScript, C and C++.
 
-`tom_test_kit` is the `testkit` CLI: it runs your `dart test` suite, records the
+`tom_test_kit` is the `testkit` CLI: it runs a project's tests (`dart test`,
+its own test script, or its language's runner), records the
 results into a CSV **tracking file**, and compares runs over time so you can see
 at a glance what regressed, what got fixed, and what is flaky. It is one of the
 three Tom CLI "kits" built on [`tom_build_base`](../../basics/tom_build_base/)
@@ -36,14 +38,17 @@ that by persisting every run as a column in a CSV baseline and diffing columns:
    testkit :test
         │ ToolRunner (tom_build_base v2) dispatches the :test executor
         ▼
-   dart test --reporter json   ─▶  DartTestParser  ─▶  TestRun
+   the project's runner        ─▶  its report reader ─▶ TestRun
+   (dart test, a test script,      (package:test JSON, line protocol,
+    go test, cargo, pytest, ...)    go-json, libtest, JUnit, jest)
         │                                                  │
         │ append a result column to the most recent        ▼
         ▼ testlog/baseline_<MMDD_HHMM>.csv             TrackingFile (CSV)
    diff vs. baseline ─▶ regressions / fixes summary
 ```
 
-The `testlog/` folder (baselines + the raw `last_testrun.json`) is **gitignored**
+The `testlog/` folder (baselines, the raw `last_testrun.json` / `.txt` and the
+report file) is **gitignored**
 — it is per-developer run state, not source. Hand-authored docs live in `doc/`.
 
 ---
@@ -64,10 +69,12 @@ tk :status            # `tk` is the Unix symlink alias
 ```
 
 **SDK requirement:** Dart `^3.10.4`. **Dart dependencies:**
-[`tom_build_base`](../../basics/tom_build_base/) `^2.6.25` (the v2 CLI
+[`tom_build_base`](../../basics/tom_build_base/) `>=2.22.1` (the v2 CLI
 framework — a normal **hosted** dependency, no path override),
 [`args`](https://pub.dev/packages/args),
-[`path`](https://pub.dev/packages/path), and
+[`glob`](https://pub.dev/packages/glob),
+[`path`](https://pub.dev/packages/path),
+[`xml`](https://pub.dev/packages/xml) (JUnit reports), and
 [`utopia_tui`](https://pub.dev/packages/utopia_tui) `^1.1.0` (the TUI runtime).
 
 ---
@@ -184,13 +191,51 @@ testkit :basediff --output=md:report.md      # write a Markdown diff
 
 ### Project traversal
 
-Every command declares `worksWithNatures: {DartProjectFolder}` and supports
-project traversal, so a single invocation can run across many packages in a
-workspace (each gets its own `testlog/`):
+The run, analysis and maintenance commands work on every project testkit can
+test (Dart, Go, Rust, Python, Java, JavaScript, TypeScript, C and C++
+natures); `:fuzz`, `:mutations` and `:crossreference` stay Dart only. Every
+command supports project traversal, so a single invocation runs across many
+projects in a workspace (each gets its own `testlog/`):
 
 ```bash
-testkit :test -r          # recurse into every Dart project under the cwd
+testkit :test -r          # recurse into every project under the cwd
 ```
+
+### Other languages
+
+A non-Dart project's tests run with the first runner that applies:
+
+1. a `testkit:` section in its `buildkit.yaml`:
+
+   ```yaml
+   testkit:
+     command: ctest --test-dir build --output-junit {report}
+     report: junit            # testkit | junit | go-json | libtest | jest-json
+     report-path: build/*.xml # when the report is not written to {report}
+   ```
+
+2. the `test:` step of its `buildkit.yaml` (the step `buildkit :test` runs): a
+   script that writes testkit's line protocol to the file `$TESTKIT_REPORT`
+   names, one JSON object per test:
+
+   ```json
+   {"test": "tests/parser_test.py", "result": "ok"}
+   ```
+
+   `result` is `ok`, `fail` or `skip`; `suite` and `group` are optional;
+3. its language's runner: `go test -json ./...`, `cargo test --no-fail-fast`,
+   `python3 -m pytest --junitxml`, Maven / Gradle surefire reports, jest
+   `--json` (when package.json names jest), `node --test` with the JUnit
+   reporter. C, C++ and TypeScript without jest have no default.
+
+`{report}` in a command is the report file testkit hands over (also in
+`$TESTKIT_REPORT`), kept as `testlog/last_testrun_report.*`; the runner's
+output is kept as `testlog/last_testrun.txt`. Baselines, `:lastdiff`,
+`:status`, `:history` and `:flaky` read the result columns the same way for
+every language. Only `dart test` selects single tests, so `--failed` /
+`--mismatched` run every test of another runner. A run that exits with an
+error although every reported test passed is reported as incomplete. Details:
+[doc/test_tracking.md](doc/test_tracking.md#other-languages).
 
 ### Flutter packages
 
@@ -232,12 +277,26 @@ The tracking model and parsers are exported, so the same logic is usable
 programmatically — for instance to read a baseline in a build script:
 
 ```dart
+import 'dart:io';
+
 import 'package:tom_test_kit/tom_test_kit.dart';
 
 void main() {
-  // Parse a dart-test JSON report into a structured run.
-  final run = DartTestParser().parseFile('testlog/last_testrun.json');
-  print('Passed: ${run.passed.length}, failed: ${run.failed.length}');
+  // Read a dart-test JSON report into a structured run.
+  final results = DartTestParser.parseJsonOutput(
+    File('testlog/last_testrun.json').readAsLinesSync(),
+  );
+  print('Passed: ${results.passedTests}, failed: ${results.failedTests}');
+
+  // Or a JUnit report of another runner.
+  final collector = ResultCollector();
+  parseJunitXml(File('build/report.xml').readAsStringSync(), collector);
+  final junit = collector.build(
+    rawOutput: const [],
+    rawOutputName: lastTestRunTextName,
+    exitCode: 0,
+  );
+  print('JUnit tests: ${junit.totalTests}');
 }
 ```
 
@@ -257,9 +316,9 @@ void main() {
    ┌──────────┼───────────────┬─────────────────┐
    ▼          ▼               ▼                 ▼
  baseline   test         status/diff/…       trim/reset
-   │          │ dart test --reporter json
+   │          │ ProjectTestRunner.resolve (dart test, script, language runner)
    ▼          ▼
- DartTestParser ─▶ TestRun ─▶ TrackingFile (CSV)  ◀─ OutputFormatter
+ report reader ─▶ TestRunResults ─▶ TrackingFile (CSV)  ◀─ OutputFormatter
                                                        (plain/csv/json/md)
 ```
 
@@ -267,11 +326,14 @@ void main() {
 
 | Type | Role |
 | ---- | ---- |
-| `testkitTool` | The `ToolDefinition` — declares the 12 commands, options, `--tui` global flag, help topics, and result-format footer. |
+| `testkitTool` | The `ToolDefinition` — declares the 14 commands, options, `--tui` global flag, help topics, and result-format footer. |
 | `createTestkitExecutors()` | Builds the `CommandExecutor` set the v2 `ToolRunner` dispatches to. |
 | `TestRun` / `TestEntry` | A single run and one test's result within it. |
 | `TrackingFile` | The CSV baseline model — runs as columns, tests as rows. |
-| `DartTestParser` | Parses `dart test --reporter json` output into a `TestRun`. |
+| `ProjectTestRunner` | Picks a project's runner (`DartRunner`, `CommandRunner`, or `RunnerUnavailable` with the reason) and runs it. |
+| `DartTestParser` | Runs `dart test` / `flutter test` and parses its JSON output. |
+| `parseTestkitLines`, `parseGoTestJson`, `parseLibtestOutput`, `parseJunitXml`, `parseJestJson` | The other runners' report readers (`ReportFormat`). |
+| `ResultCollector` / `TestRunResults` | The reported tests of a run, and the run's results with its counts, load failures and run problem. |
 | `TestDescriptionParser` | Extracts `ID: description [date] (result)` structure from test names. |
 | `OutputFormatter` / `OutputSpec` | Renders analysis/diff output as plain, CSV, JSON, or Markdown. |
 | `TestKitTuiApp` | The `utopia_tui` dashboard app. |

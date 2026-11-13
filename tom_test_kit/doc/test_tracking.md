@@ -14,12 +14,13 @@ This document defines the test tracking concept supported by Tom Test Kit's `tes
 6. [Full Command Reference](#full-command-reference)
 7. [Flutter Packages](#flutter-packages)
 8. [Exit Code](#exit-code)
+9. [Other Languages](#other-languages)
 
 ---
 
 ## Overview
 
-`testkit` provides automated test result tracking across multiple runs of `dart test` (`flutter test` for Flutter packages, see [Flutter Packages](#flutter-packages)). It captures structured JSON test output, parses test descriptions for metadata (IDs, creation dates, expected outcomes), and maintains a persistent CSV tracking file that shows how test results evolve over time.
+`testkit` provides automated test result tracking across multiple runs of `dart test` (`flutter test` for Flutter packages, see [Flutter Packages](#flutter-packages); the other languages' runners, see [Other Languages](#other-languages)). It captures structured JSON test output, parses test descriptions for metadata (IDs, creation dates, expected outcomes), and maintains a persistent CSV tracking file that shows how test results evolve over time.
 
 The core idea is that test descriptions carry structured metadata that enables:
 
@@ -824,7 +825,7 @@ The `--report=<file>` option (on diff commands) generates a detailed Markdown re
 
 ## Project Traversal
 
-testkit supports multi-project operation through the standard tom_build_base navigation system. This lets you run any command across multiple Dart projects in a workspace.
+testkit supports multi-project operation through the standard tom_build_base navigation system. This lets you run any command across multiple projects in a workspace (every language testkit can run; see [Other Languages](#other-languages)).
 
 ### Default Behavior
 
@@ -943,3 +944,98 @@ testkit version                  # Show version information
 
 - [CLI Tools Navigation Guide](../../../basics/tom_build_base/doc/cli_tools_navigation.md) — Standard navigation options
 - [Build Base User Guide](../../../basics/tom_build_base/doc/build_base_user_guide.md) — Configuration and project discovery
+
+## Other Languages
+
+testkit tracks the tests of every project it can run, not only Dart and
+Flutter packages: Go, Rust, Python, Java, JavaScript, TypeScript, C and C++.
+The tracking file, the result format, `:lastdiff`, `:status`, `:history`,
+`:flaky`, `:trim` and `:reset` are the same; only how the tests run differs.
+
+### Which runner
+
+The runner of a project is the first that applies:
+
+| # | Source | Runner | Report |
+| - | ------ | ------ | ------ |
+| 1 | `testkit:` section of `buildkit.yaml` | its `command:` | its `report:` (default `testkit`), at `report-path:` or `{report}` |
+| 2 | Dart or Flutter project | `dart test` / `flutter test` | package:test JSON |
+| 3 | `test:` step of `buildkit.yaml` | the step's command(s) | testkit line protocol in `$TESTKIT_REPORT` |
+| 4 | Go | `go test -json ./...` | `go-json` on the output |
+| 4 | Rust | `cargo test --no-fail-fast` | `libtest` text on the output |
+| 4 | Python | `python3 -m pytest -q --junitxml={report}` | `junit` |
+| 4 | Java, Maven | `mvn -B test` | `junit`, `target/surefire-reports/TEST-*.xml` |
+| 4 | Java, Gradle | `./gradlew test` (or `gradle test`) | `junit`, `build/test-results/test/*.xml` |
+| 4 | JavaScript / TypeScript with jest | `npx jest --json --outputFile={report}` | `jest-json` |
+| 4 | JavaScript | `node --test --test-reporter=junit --test-reporter-destination={report}` | `junit` |
+
+C, C++ and TypeScript without jest have no default: such a project needs a
+`test:` step or a `testkit:` section, and testkit says so. A `--dry-run` names
+the runner each project gets.
+
+```yaml
+# buildkit.yaml — a CMake project with CTest
+testkit:
+  command: ctest --test-dir build --output-junit {report}
+  report: junit
+```
+
+`{report}` is replaced by the (quoted) path of the report file testkit hands
+the command, `testlog/last_testrun_report.<xml|json|jsonl>`; the same path is
+in the environment as `TESTKIT_REPORT`. A report file left by an earlier run is
+deleted first, so a run that writes none records nothing. `--test-args` are
+appended to the command.
+
+### The line protocol
+
+A project that tests through its own script (the SOM runtimes'
+`run_tests.sh`) writes one line per test to the file `$TESTKIT_REPORT` names:
+
+```json
+{"test": "tests/parser_test.py", "result": "ok"}
+{"test": "examples/a_typed_access.py", "result": "fail", "group": "samples"}
+```
+
+| Field | Meaning |
+| ----- | ------- |
+| `test` | The test's name: its key in the tracking file. An `ID: description` name is read like a Dart test name. |
+| `result` | `ok` (or `pass`), `skip`, anything else is a failure. |
+| `suite`, `group` | Optional: the file and the group (`Groups` column; the suite when no group is given). |
+
+A line that is not such an object is ignored, so the script may write nothing
+else there. In bash:
+
+```bash
+tk_result() { # <test name> <exit code>
+  if [ -n "${TESTKIT_REPORT:-}" ]; then
+    local result=ok
+    [ "$2" -eq 0 ] || result=fail
+    printf '{"test":"%s","result":"%s"}\n' "$1" "$result" >>"$TESTKIT_REPORT"
+  fi
+}
+python3 tests/parser_test.py; tk_result tests/parser_test.py $?
+```
+
+### What is recorded
+
+- **Names.** A test is keyed by its name as the runner reports it (`TestParse/empty`,
+  `parser::tests::empty`, `test_empty`). A name reported in two groups
+  (the same test name in two packages, classes or files) is written
+  `<group> > <name>` for each, so the two stay apart. A test reported twice in
+  one group (a retry) is recorded once, with its last result.
+- **Groups.** The package (Go), the test binary (Rust: `unittests src/lib.rs`,
+  `tests/api.rs`, `doc-tests <crate>`), the class (`classname` in JUnit
+  reports; the `<testsuite>` names for `node --test`, whose classname is the
+  constant `test`), the describe blocks (jest).
+- **Load failures.** A Go package whose build failed and a jest test file that
+  failed before any test ran are load failures, as a Dart test file that does
+  not load: the run is incomplete, `:baseline` writes nothing and `:test`
+  records what ran and fails.
+- **Exit code.** A run whose command exits with an error although no reported
+  test failed (a script whose build step failed before its tests reported) is
+  incomplete in the same way.
+- **No test.** A run that reports no test records nothing; the message quotes
+  the last lines of the runner's output.
+- **Selection.** Only `dart test` selects single tests by name: `--failed` and
+  `--mismatched` run every test of another runner (and say so), and all their
+  results are recorded.

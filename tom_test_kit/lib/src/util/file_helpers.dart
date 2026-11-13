@@ -20,7 +20,10 @@ const String trackingDirName = 'testlog';
 String defaultBaselinePath(String projectPath, {DateTime? now}) {
   final ts = now ?? DateTime.now();
   return p.join(
-      projectPath, trackingDirName, 'baseline_${baselineTimestamp(ts)}.csv');
+    projectPath,
+    trackingDirName,
+    'baseline_${baselineTimestamp(ts)}.csv',
+  );
 }
 
 /// Finds the most recent `baseline_*.csv` file in a project's `testlog/`
@@ -35,9 +38,11 @@ String? findLatestTrackingFile(String projectPath) {
   final files = docDir
       .listSync()
       .whereType<File>()
-      .where((f) =>
-          p.basename(f.path).startsWith('baseline_') &&
-          f.path.endsWith('.csv'))
+      .where(
+        (f) =>
+            p.basename(f.path).startsWith('baseline_') &&
+            f.path.endsWith('.csv'),
+      )
       .toList();
 
   if (files.isEmpty) return null;
@@ -47,16 +52,20 @@ String? findLatestTrackingFile(String projectPath) {
   return files.first.path;
 }
 
-/// Saves raw JSON test output to `last_testrun.json` in the project's
-/// `testlog/` directory (same location as baseline files).
+/// Saves a test run's raw output to `testlog/<fileName>` in the project
+/// (beside the baseline files): `last_testrun.json` for `dart test`'s JSON
+/// events, `last_testrun.txt` for the other runners' output.
 ///
 /// Overwrites any existing file.
-Future<void> saveLastTestRunJson(
-    String projectPath, List<String> jsonLines) async {
+Future<void> saveLastTestRunOutput(
+  String projectPath,
+  List<String> lines, {
+  String fileName = 'last_testrun.json',
+}) async {
   final dir = Directory(p.join(projectPath, trackingDirName));
   if (!dir.existsSync()) {
     dir.createSync(recursive: true);
   }
-  final file = File(p.join(dir.path, 'last_testrun.json'));
-  await file.writeAsString('${jsonLines.join('\n')}\n');
+  final file = File(p.join(dir.path, fileName));
+  await file.writeAsString('${lines.join('\n')}\n');
 }

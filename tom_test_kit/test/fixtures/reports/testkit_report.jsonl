@@ -1,0 +1,6 @@
+{"test":"conformance harness","result":"ok"}
+{"test":"tests/foo_test.py","result":"fail"}
+not json at all
+{"test":"sample: a_typed_access","result":"skip","group":"samples"}
+{"test":"TK-SCR-1: with an ID","result":"pass","suite":"tests/bar_test.py"}
+{"result":"ok"}

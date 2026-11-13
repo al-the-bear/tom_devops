@@ -3,7 +3,8 @@
 project_id: TK
 name: testkit
 description: >-
-  Testing utilities library.
+  Test result tracking for Dart, Flutter, Go, Rust, Python, Java, JavaScript,
+  TypeScript, C and C++ projects.
 license: BSD-3-Clause
 
 versioner:

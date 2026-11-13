@@ -126,13 +126,28 @@ const resetOptions = <OptionDefinition>[
 // Command Definitions
 // =============================================================================
 
-/// Run commands (execute dart test).
+/// The natures whose tests testkit runs and tracks (the runner per project:
+/// `ProjectTestRunner`). Fuzzing, mutation sweeps and the cross-reference
+/// stay Dart only.
+const testedNatures = <Type>{
+  DartProjectFolder,
+  GoFolder,
+  RustFolder,
+  PythonFolder,
+  JavaFolder,
+  JavaScriptFolder,
+  TypeScriptFolder,
+  CFolder,
+  CppFolder,
+};
+
+/// Run commands (run the project's tests).
 const baselineCommand = CommandDefinition(
   name: 'baseline',
   description:
       'Create a new baseline tracking file; exits 1 when a test failed',
   options: baselineOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
   examples: [
     'testkit :baseline',
@@ -148,7 +163,7 @@ const testCommand = CommandDefinition(
       'Run tests and append results to the tracking file; '
       'exits 1 when a test failed',
   options: testOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
   examples: [
     'testkit :test',
@@ -162,7 +177,7 @@ const runsCommand = CommandDefinition(
   name: 'runs',
   description: 'List run timestamps in the tracking file',
   options: analysisOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
 );
 
@@ -170,7 +185,7 @@ const statusCommand = CommandDefinition(
   name: 'status',
   description: 'Quick summary — pass/fail counts, regressions/fixes',
   options: analysisOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
 );
 
@@ -178,7 +193,7 @@ const basediffCommand = CommandDefinition(
   name: 'basediff',
   description: 'Diff baseline vs latest run',
   options: diffOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
 );
 
@@ -186,7 +201,7 @@ const lastdiffCommand = CommandDefinition(
   name: 'lastdiff',
   description: 'Diff previous run vs latest run',
   options: diffOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
 );
 
@@ -194,7 +209,7 @@ const diffCommand = CommandDefinition(
   name: 'diff',
   description: 'Diff two arbitrary runs by timestamp',
   options: diffOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
   examples: ['testkit :diff 0211_1430', 'testkit :diff 0211_1430 0212_0900'],
 );
@@ -203,7 +218,7 @@ const historyCommand = CommandDefinition(
   name: 'history',
   description: 'Show all results for a test across runs',
   options: analysisOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
   examples: ['testkit :history "parser"', 'testkit :history ID001'],
 );
@@ -212,7 +227,7 @@ const flakyCommand = CommandDefinition(
   name: 'flaky',
   description: 'List tests with inconsistent results',
   options: analysisOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
 );
 
@@ -357,7 +372,7 @@ const trimCommand = CommandDefinition(
   name: 'trim',
   description: 'Keep only the last N runs',
   options: trimOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
   examples: ['testkit :trim 5', 'testkit :trim 10 -r'],
 );
@@ -366,7 +381,7 @@ const resetCommand = CommandDefinition(
   name: 'reset',
   description: 'Delete all tracking files',
   options: resetOptions,
-  worksWithNatures: {DartProjectFolder},
+  worksWithNatures: testedNatures,
   supportsProjectTraversal: true,
   examples: ['testkit :reset', 'testkit :reset --force'],
 );
@@ -378,7 +393,7 @@ const resetCommand = CommandDefinition(
 /// Testkit tool definition.
 final testkitTool = ToolDefinition(
   name: 'testkit',
-  description: 'Test result tracking for Dart projects',
+  description: 'Test result tracking for projects in every language',
   version: TestKitVersionInfo.version,
   versionString: 'Tom TestKit ${TestKitVersionInfo.versionLong}',
   mode: ToolMode.multiCommand,
@@ -424,12 +439,23 @@ final testkitTool = ToolDefinition(
 Tracking File:
   Baseline: testlog/baseline_<MMDD_HHMM>.csv
   :test appends a result column to the most recent baseline file.
-  Raw JSON: testlog/last_testrun.json
+  Raw output: testlog/last_testrun.json (dart test), last_testrun.txt
+  (other runners), last_testrun_report.* (the report file)
   (testlog/ is gitignored; doc/ holds hand-authored docs only.)
 
 Result Format:
   OK/OK (pass), X/OK (regression), X/X (known fail),
   OK/X (progress), -/OK (skip), --/OK (absent)
+
+Test Runner (per project):
+  1. a testkit: section in buildkit.yaml (command:, report:, report-path:;
+     report one of testkit, junit, go-json, libtest, jest-json)
+  2. dart test / flutter test (Dart and Flutter projects)
+  3. the test: step of buildkit.yaml, writing testkit's line protocol to
+     \$TESTKIT_REPORT: one JSON object per line,
+     {"test": "<name>", "result": "ok|fail|skip"}
+  4. the language's runner: go test -json, cargo test, pytest --junitxml,
+     Maven / Gradle surefire XML, jest --json, node --test (JUnit)
 
 Exit Code (:baseline, :test):
   0  every test passed
