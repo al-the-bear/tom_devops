@@ -12,11 +12,9 @@ class TrackingFile {
   /// All runs in chronological order.
   final List<TestRun> runs;
 
-  TrackingFile({
-    Map<String, TestEntry>? entries,
-    List<TestRun>? runs,
-  })  : entries = entries ?? {},
-        runs = runs ?? [];
+  TrackingFile({Map<String, TestEntry>? entries, List<TestRun>? runs})
+    : entries = entries ?? {},
+      runs = runs ?? [];
 
   /// Creates a new tracking file from a baseline run.
   factory TrackingFile.fromBaseline(
@@ -27,10 +25,7 @@ class TrackingFile {
     for (final entry in testEntries) {
       entries[entry.fullDescription] = entry;
     }
-    return TrackingFile(
-      entries: entries,
-      runs: [baselineRun],
-    );
+    return TrackingFile(entries: entries, runs: [baselineRun]);
   }
 
   /// Adds a new run and merges any new test entries.
@@ -101,8 +96,6 @@ class TrackingFile {
       buf.writeln();
     }
 
-
-
     final file = File(filePath);
     await file.parent.create(recursive: true);
     await file.writeAsString(buf.toString());
@@ -151,11 +144,14 @@ class TrackingFile {
       final cell = headerCells[i].trim();
       final parsed = parseColumnHeader(cell);
       if (parsed != null) {
-        runs.add(TestRun(
-          timestamp: parsed.timestamp,
-          isBaseline: parsed.isBaseline,
-          comment: parsed.comment,
-        ));
+        runs.add(
+          TestRun(
+            timestamp: parsed.timestamp,
+            isBaseline: parsed.isBaseline,
+            comment: parsed.comment,
+            coverage: parsed.coverage,
+          ),
+        );
       }
     }
 

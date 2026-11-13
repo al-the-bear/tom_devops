@@ -3,6 +3,7 @@ library;
 
 import '../model/test_entry.dart';
 import '../model/test_run.dart';
+import '../model/line_coverage.dart';
 
 /// Splits a markdown table row into cell contents.
 ///
@@ -48,10 +49,14 @@ class ColumnHeader {
   final bool isBaseline;
   final String? comment;
 
+  /// The line coverage token `cov:<covered>/<coverable>`, when present.
+  final LineCoverage? coverage;
+
   ColumnHeader({
     required this.timestamp,
     required this.isBaseline,
     this.comment,
+    this.coverage,
   });
 }
 
@@ -79,14 +84,18 @@ ColumnHeader? parseColumnHeader(String header) {
     int.parse(match.group(4)!),
   );
 
-  // Extract comment: everything after the closing bracket
-  final afterBracket = trimmed.substring(match.end).trim();
+  // After the closing bracket: the coverage token, when the run measured
+  // it, then the comment.
+  var afterBracket = trimmed.substring(match.end).trim();
+  final cov = LineCoverage.fromHeaderText(afterBracket);
+  if (cov != null) afterBracket = cov.rest;
   final comment = afterBracket.isNotEmpty ? afterBracket : null;
 
   return ColumnHeader(
     timestamp: timestamp,
     isBaseline: isBaseline,
     comment: comment,
+    coverage: cov?.coverage,
   );
 }
 

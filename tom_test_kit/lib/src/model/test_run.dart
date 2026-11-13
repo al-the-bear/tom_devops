@@ -1,3 +1,4 @@
+import 'line_coverage.dart';
 import 'test_entry.dart';
 import '../util/format_helpers.dart';
 
@@ -36,20 +37,28 @@ class TestRun {
   /// Results keyed by test full description.
   final Map<String, TestResult> results;
 
+  /// The run's line coverage, when it was measured (`--coverage`).
+  LineCoverage? coverage;
+
   TestRun({
     required this.timestamp,
     this.isBaseline = false,
     this.comment,
+    this.coverage,
     Map<String, TestResult>? results,
   }) : results = results ?? {};
 
-  /// Column header in compact format: `[MM-DD HH:MM]` or `[MM-DD HH:MM] comment`.
+  /// Column header in compact format: `[MM-DD HH:MM]`, followed by the line
+  /// coverage token `cov:<covered>/<coverable>` when it was measured and by
+  /// the comment: `[MM-DD HH:MM] cov:1234/1520 comment`.
   String get columnHeader {
     final prefix = isBaseline ? 'Baseline ' : '';
-    final ts = '[${padTwo(timestamp.month)}-${padTwo(timestamp.day)} '
+    final ts =
+        '[${padTwo(timestamp.month)}-${padTwo(timestamp.day)} '
         '${padTwo(timestamp.hour)}:${padTwo(timestamp.minute)}]';
+    final cov = coverage != null ? ' ${coverage!.headerToken}' : '';
     final suffix = comment != null && comment!.isNotEmpty ? ' $comment' : '';
-    return '$prefix$ts$suffix';
+    return '$prefix$ts$cov$suffix';
   }
 
   /// Sets the result for a test.

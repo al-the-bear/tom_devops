@@ -39,27 +39,35 @@ class RunsCommand {
     }
 
     final spec = output ?? OutputSpec.defaultSpec;
-    final headers = ['#', 'Timestamp', 'Type', 'Comment'];
+    // A coverage column only when a run measured it (`--coverage`).
+    final withCoverage = tracking.runs.any((r) => r.coverage != null);
+    final headers = [
+      '#',
+      'Timestamp',
+      'Type',
+      if (withCoverage) 'Line coverage',
+      'Comment',
+    ];
     final rows = <List<String>>[];
 
     for (var i = 0; i < tracking.runs.length; i++) {
       final run = tracking.runs[i];
-      final ts = '${padTwo(run.timestamp.month)}-${padTwo(run.timestamp.day)} '
+      final ts =
+          '${padTwo(run.timestamp.month)}-${padTwo(run.timestamp.day)} '
           '${padTwo(run.timestamp.hour)}:${padTwo(run.timestamp.minute)}';
       rows.add([
         '${i + 1}',
         ts,
         run.isBaseline ? 'baseline' : 'run',
+        if (withCoverage) run.coverage?.describe() ?? '',
         run.comment ?? '',
       ]);
     }
 
     final title = 'Runs in ${p.basename(filePath)}';
-    await OutputWriter(spec).writeTable(
-      headers: headers,
-      rows: rows,
-      title: title,
-    );
+    await OutputWriter(
+      spec,
+    ).writeTable(headers: headers, rows: rows, title: title);
 
     return true;
   }

@@ -8,6 +8,7 @@ import '../model/test_run_results.dart';
 import '../util/test_runner.dart';
 import '../runner/result_collector.dart';
 import 'json_event_line.dart';
+import '../model/line_coverage.dart';
 
 /// Parses `dart test --reporter json` output into structured results.
 class DartTestParser {
@@ -115,11 +116,14 @@ class DartTestParser {
   /// [projectPath] is the working directory for the test runner.
   /// [additionalArgs] are extra arguments to pass after `test`.
   /// [verbose] enables diagnostic output.
+  /// [coveragePath] makes the run write an lcov report there; its line
+  /// coverage is kept on the run ([TestRun.coverage]).
   static Future<TestRunResults?> runAndParse({
     required String projectPath,
     List<String> additionalArgs = const [],
     bool verbose = false,
     String? pubCachePath,
+    String? coveragePath,
   }) async {
     // scd8_aicx: a locked package the pub cache cannot supply is not a
     // resolution error — the lock is satisfiable, so `dart pub get` reports
@@ -150,7 +154,19 @@ class DartTestParser {
 
     final runner = TestRunner.forPackage(projectPath);
     final executable = runner.executable;
-    final args = runner.argsFor(additionalArgs);
+    var lcovPath = coveragePath;
+    if (lcovPath != null && executable == 'dart') {
+      final problem = coverageUnsupportedReason(projectPath);
+      if (problem != null) {
+        stderr.writeln('[$projectPath] No coverage: $problem');
+        lcovPath = null;
+      }
+    }
+    // A report left by an earlier run must not be read as this run's.
+    if (lcovPath != null && File(lcovPath).existsSync()) {
+      File(lcovPath).deleteSync();
+    }
+    final args = runner.argsFor(additionalArgs, coveragePath: lcovPath);
 
     if (verbose) {
       print('  Running: $executable ${args.join(' ')}');
@@ -198,6 +214,19 @@ class DartTestParser {
     }
 
     final result = parseJsonOutput(stdoutLines, verbose: verbose);
+    if (lcovPath != null) {
+      final report = File(lcovPath);
+      final coverage = report.existsSync()
+          ? LineCoverage.parseLcov(report.readAsStringSync())
+          : null;
+      if (coverage == null) {
+        stderr.writeln(
+          '[$projectPath] No coverage: `${runner.label}` wrote no lcov report '
+          'at $lcovPath.',
+        );
+      }
+      result.run.coverage = coverage;
+    }
     return TestRunResults(
       entries: result.entries,
       run: result.run,
@@ -210,6 +239,42 @@ class DartTestParser {
       loadFailures: result.loadFailures,
       exitCode: exitCode,
     );
+  }
+
+  /// The first package:test with `--coverage-path` (an lcov report written by
+  /// `dart test` itself).
+  static const coveragePathTestVersion = '1.27.0';
+
+  /// Why `dart test` in [projectPath] cannot write an lcov report, or null:
+  /// the package:test it resolves (pubspec.lock) predates
+  /// [coveragePathTestVersion].
+  static String? coverageUnsupportedReason(String projectPath) {
+    final lock = File('$projectPath/pubspec.lock');
+    if (!lock.existsSync()) return null;
+    final match = RegExp(
+      r'^  test:\n(?:    .*\n)*?    version: "([^"]+)"',
+      multiLine: true,
+    ).firstMatch(lock.readAsStringSync());
+    final version = match?.group(1);
+    if (version == null) return null;
+    if (_compareVersions(version, coveragePathTestVersion) >= 0) return null;
+    return 'package:test $version is resolved; `dart test --coverage-path` '
+        'needs $coveragePathTestVersion or later (raise the dev_dependency).';
+  }
+
+  static int _compareVersions(String a, String b) {
+    List<int> parts(String v) => v
+        .split(RegExp(r'[-+]'))
+        .first
+        .split('.')
+        .map((x) => int.tryParse(x) ?? 0)
+        .toList();
+    final pa = parts(a), pb = parts(b);
+    for (var i = 0; i < 3; i++) {
+      final d = (i < pa.length ? pa[i] : 0) - (i < pb.length ? pb[i] : 0);
+      if (d != 0) return d;
+    }
+    return 0;
   }
 
   /// `package:test`'s exit code for a run in which no test was selected.

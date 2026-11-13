@@ -28,11 +28,16 @@ class TestRunner {
         runInShell: windows ?? Platform.isWindows,
       );
 
-  /// The arguments of a JSON-reporting run with [testArgs] appended.
-  List<String> argsFor(List<String> testArgs) => [
+  /// The arguments of a JSON-reporting run with [testArgs] appended. With
+  /// [coveragePath] the run also writes an lcov report there: `dart test`
+  /// with `--coverage-path` (package:test 1.27.0 or later), `flutter test`
+  /// with `--coverage` and `--coverage-path`.
+  List<String> argsFor(List<String> testArgs, {String? coveragePath}) => [
     'test',
     '--reporter',
     'json',
+    if (coveragePath != null && executable == 'flutter') '--coverage',
+    if (coveragePath != null) '--coverage-path=$coveragePath',
     ...testArgs,
   ];
 

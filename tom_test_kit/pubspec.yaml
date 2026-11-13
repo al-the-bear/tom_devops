@@ -1,6 +1,6 @@
 name: tom_test_kit
 description: Test result tracking tool for Dart, Flutter, Go, Rust, Python, Java, JavaScript, TypeScript, C and C++ projects.
-version: 1.9.2
+version: 1.10.0
 publish_to: none
 
 environment:

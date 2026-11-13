@@ -69,8 +69,7 @@ class HistoryCommand {
             // Match against full path (group + description), ID, description,
             // and groups individually
             return e.key.toLowerCase().contains(query) ||
-                (entry.id != null &&
-                    entry.id!.toLowerCase().contains(query)) ||
+                (entry.id != null && entry.id!.toLowerCase().contains(query)) ||
                 entry.description.toLowerCase().contains(query) ||
                 (entry.groups != null &&
                     entry.groups!.toLowerCase().contains(query));
@@ -79,8 +78,10 @@ class HistoryCommand {
     if (matches.isEmpty) {
       stderr.writeln('  No tests matching "$searchTerm".');
       if (verbose) {
-        stderr.writeln('  Search matches against test ID, description, '
-            'group path, and full test path.');
+        stderr.writeln(
+          '  Search matches against test ID, description, '
+          'group path, and full test path.',
+        );
       }
       return false;
     }
@@ -113,16 +114,25 @@ class HistoryCommand {
       rows.add(row);
     }
 
+    // The runs' line coverage, when any run measured it.
+    if (tracking.runs.any((r) => r.coverage != null)) {
+      rows.add([
+        'Line coverage',
+        for (final run in tracking.runs)
+          run.coverage == null
+              ? ''
+              : '${run.coverage!.percent.toStringAsFixed(1)}%',
+      ]);
+    }
+
     final matchLabel = matches.length == 1
         ? matches.first.value.description
         : '${matches.length} tests matching "$searchTerm"';
     final title = 'History: $matchLabel';
 
-    await OutputWriter(spec).writeTable(
-      headers: headers,
-      rows: rows,
-      title: title,
-    );
+    await OutputWriter(
+      spec,
+    ).writeTable(headers: headers, rows: rows, title: title);
 
     return true;
   }

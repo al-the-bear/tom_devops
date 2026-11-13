@@ -30,6 +30,10 @@ class TestCommand {
   ///   baseline.
   /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
   ///   pass their own so they never depend on the host's cache.
+  /// [coverage] measures the run's line coverage: the lcov report goes to
+  ///   `coverage/lcov.info` in the project, and the covered / coverable line
+  ///   count into the run's column header (shown by `:status` and
+  ///   `:history`).
   ///
   /// Returns true when every test passed, false otherwise: a failing test
   /// (the run is recorded, and the command fails as `dart test` does), a run
@@ -48,6 +52,7 @@ class TestCommand {
     bool noUpdate = false,
     String? pubCachePath,
     ProjectTestRunner runner = const DartRunner(),
+    bool coverage = false,
   }) async {
     // Find the tracking file
     final filePath = trackingFilePath ?? findLatestTrackingFile(projectPath);
@@ -64,6 +69,7 @@ class TestCommand {
           comment: comment,
           pubCachePath: pubCachePath,
           runner: runner,
+          coverage: coverage,
         );
       }
       stderr.writeln(
@@ -123,6 +129,7 @@ class TestCommand {
       testArgs: effectiveTestArgs,
       verbose: verbose,
       pubCachePath: pubCachePath,
+      coveragePath: coverage ? coverageReportPath(projectPath) : null,
     );
 
     if (results == null) {
@@ -159,6 +166,7 @@ class TestCommand {
         'Failed ${summary.failedCount}${summary.expectedFail > 0 ? ' (${summary.expectedFail} expected)' : ''} '
         'Skipped ${summary.skippedCount}',
       );
+      reportCoverage(projectPath, results.run);
       return reportVerdict(projectPath, problem, results.failedTests);
     }
 
@@ -177,8 +185,36 @@ class TestCommand {
       '${results.failedTests} failed'
       '${results.skippedTests > 0 ? ', ${results.skippedTests} skipped' : ''})',
     );
+    reportCoverage(projectPath, results.run);
 
     return reportVerdict(projectPath, problem, results.failedTests);
+  }
+
+  /// Where a `--coverage` run writes its lcov report in [projectPath].
+  static String coverageReportPath(String projectPath) {
+    final path = p.join(projectPath, 'coverage', 'lcov.info');
+    Directory(p.dirname(path)).createSync(recursive: true);
+    return path;
+  }
+
+  /// Prints the line coverage of [run] when it was measured, and a hint when
+  /// git would track the lcov report (it belongs in `.gitignore`).
+  static void reportCoverage(String projectPath, TestRun run) {
+    final coverage = run.coverage;
+    if (coverage == null) return;
+    print('  Line coverage: ${coverage.describe()}');
+    final check = Process.runSync('git', [
+      'check-ignore',
+      '-q',
+      p.join('coverage', 'lcov.info'),
+    ], workingDirectory: projectPath);
+    // 1: inside a repository and not ignored (128: no repository).
+    if (check.exitCode == 1) {
+      print(
+        '  Note: coverage/lcov.info is not ignored by git; add `coverage/` '
+        'to .gitignore.',
+      );
+    }
   }
 
   /// The verdict of a run whose results have been kept: it fails when a test

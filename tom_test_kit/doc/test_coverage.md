@@ -57,7 +57,8 @@ handle for regression tracking.
 | 24 | [Exit code](#16-test-and-baseline-commands) | 2 | 2✅ | `v2/exit_code_test.dart` | `TK-EXIT` |
 | 25 | [`:fuzz` command](#25-fuzz-command) | 8 | 8✅ | `v2/fuzz_command_test.dart` | `TK-FUZ` |
 | 26 | [`:mutations` command](#26-mutations-command) | 10 | 10✅ | `tracking/mutations_command_test.dart` | `TK-MUT` |
-| — | **Total** | **240** | **240✅** | | |
+| 27 | [Line coverage](#27-line-coverage) | 6 | 6✅ | `tracking/coverage_test.dart` | `TK-COV` |
+| — | **Total** | **246** | **246✅** | | |
 
 ---
 
@@ -602,3 +603,18 @@ A fixture package whose tests pin some behaviours and not others, swept for real
 | TK-MUT-8 | `--list` names the entries and runs nothing | ✅ | `dart test --name 'TK-MUT-8'` |
 | TK-MUT-9 | the testkit process exits with surviving + invalid | ✅ | `dart test --name 'TK-MUT-9'` |
 | TK-MUT-10 | the catalogue's line grammar (`: ` in values, escapes, comments, space-separated lists) | ✅ | `dart test --name 'TK-MUT-10'` |
+
+## 27. Line coverage
+
+**Test file:** `test/tracking/coverage_test.dart` — **ID prefix `TK-COV`**
+
+`--coverage` on `:baseline` / `:test`; TK-COV-5 and -6 run real `dart test` and `flutter test` on a package whose test calls one of two functions.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-COV-1 | an lcov report is summed from LH/LF, or from DA records | ✅ | `dart test --name 'TK-COV-1'` |
+| TK-COV-2 | the column header keeps `cov:<covered>/<coverable>` before the comment; a tracking file round-trips it | ✅ | `dart test --name 'TK-COV-2'` |
+| TK-COV-3 | `dart test --coverage-path`, `flutter test --coverage --coverage-path` | ✅ | `dart test --name 'TK-COV-3'` |
+| TK-COV-4 | a package:test before 1.27.0 cannot write lcov, and says so | ✅ | `dart test --name 'TK-COV-4'` |
+| TK-COV-5 | `dart test`: lcov written, partial coverage kept on the baseline and the run; none without `--coverage` | ✅ | `dart test --name 'TK-COV-5'` |
+| TK-COV-6 | the same with `flutter test` | ✅ | `dart test --name 'TK-COV-6'` |

@@ -23,6 +23,7 @@ class BaselineCommand {
   /// [verbose] enables diagnostic output.
   /// [pubCachePath] overrides where the pub-cache pre-flight looks; tests
   /// pass their own so they never depend on the host's cache.
+  /// [coverage] measures the run's line coverage (see [TestCommand.run]).
   ///
   /// Returns true when the baseline was written and every test passed. A run
   /// with a failing test writes its baseline and returns false (the `testkit`
@@ -36,12 +37,16 @@ class BaselineCommand {
     String? comment,
     String? pubCachePath,
     ProjectTestRunner runner = const DartRunner(),
+    bool coverage = false,
   }) async {
     final results = await runner.run(
       projectPath: projectPath,
       testArgs: testArgs,
       verbose: verbose,
       pubCachePath: pubCachePath,
+      coveragePath: coverage
+          ? TestCommand.coverageReportPath(projectPath)
+          : null,
     );
 
     if (results == null) {
@@ -70,6 +75,7 @@ class BaselineCommand {
       timestamp: results.run.timestamp,
       isBaseline: true,
       comment: comment,
+      coverage: results.run.coverage,
       results: Map.of(results.run.results),
     );
 
@@ -91,6 +97,7 @@ class BaselineCommand {
       '${results.failedTests} failed'
       '${results.skippedTests > 0 ? ', ${results.skippedTests} skipped' : ''})',
     );
+    TestCommand.reportCoverage(projectPath, baselineRun);
 
     return TestCommand.reportVerdict(projectPath, null, results.failedTests);
   }

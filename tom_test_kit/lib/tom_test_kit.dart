@@ -5,6 +5,7 @@
 /// Run `test_kit help` or `--help` for full usage information.
 library;
 
+export 'src/model/line_coverage.dart';
 export 'src/model/test_entry.dart';
 export 'src/model/test_run.dart';
 export 'src/model/test_run_results.dart';

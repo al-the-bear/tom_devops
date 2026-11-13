@@ -81,7 +81,8 @@ class BaselineExecutor extends CommandExecutor {
         name: context.name,
         message:
             '[DRY RUN] Would run ${runner.label} and create baseline at '
-            '$outputPath',
+            '$outputPath'
+            '${_getFlag(cmdOpts, 'coverage') ? ' (--coverage)' : ''}',
       );
     }
 
@@ -92,6 +93,7 @@ class BaselineExecutor extends CommandExecutor {
       verbose: args.verbose,
       comment: _getString(cmdOpts, 'comment'),
       runner: ProjectTestRunner.resolve(context.path, context.natures),
+      coverage: _getFlag(cmdOpts, 'coverage'),
     );
 
     return success
@@ -119,6 +121,7 @@ class TestExecutor extends CommandExecutor {
       if (_getFlag(cmdOpts, 'failed')) opts.add('--failed');
       if (_getFlag(cmdOpts, 'mismatched')) opts.add('--mismatched');
       if (_getFlag(cmdOpts, 'no-update')) opts.add('--no-update');
+      if (_getFlag(cmdOpts, 'coverage')) opts.add('--coverage');
       final testArgs = _parseTestArgs(cmdOpts);
       if (testArgs.isNotEmpty) opts.add('--test-args="${testArgs.join(' ')}"');
       return ItemResult.success(
@@ -143,6 +146,7 @@ class TestExecutor extends CommandExecutor {
       mismatchedOnly: _getFlag(cmdOpts, 'mismatched'),
       noUpdate: _getFlag(cmdOpts, 'no-update'),
       runner: ProjectTestRunner.resolve(context.path, context.natures),
+      coverage: _getFlag(cmdOpts, 'coverage'),
     );
 
     return success

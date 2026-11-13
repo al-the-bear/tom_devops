@@ -1,3 +1,18 @@
+## 1.10.0
+
+### Added — `--coverage` on `:baseline` and `:test`
+
+The run's line coverage: `dart test --coverage-path=coverage/lcov.info`
+(package:test 1.27.0 or later; an older one is named and the tests run without
+coverage) or `flutter test --coverage --coverage-path=coverage/lcov.info`.
+The lcov report is `coverage/lcov.info` in the project (a note when git would
+track it); the covered / coverable lines are printed and kept in the run's
+column header as `cov:<covered>/<coverable>` (a testkit before 1.10.0 reads it
+as part of the comment). `:status` shows the latest measured coverage and the
+baseline's, `:runs` a *Line coverage* column, `:history` a *Line coverage*
+row. Per project and in workspace mode. TK-COV-1..6;
+doc/test_tracking.md, Line Coverage.
+
 ## 1.9.2
 
 ### Fixed — a test that writes without a trailing newline no longer loses the next result

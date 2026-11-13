@@ -62,10 +62,24 @@ class StatusCommand {
       }
     }
 
-    print('  Tests: $totalTests '
-        '($passCount passed, $failCount failed'
-        '${skipCount > 0 ? ', $skipCount skipped' : ''}'
-        '${absentCount > 0 ? ', $absentCount absent' : ''})');
+    print(
+      '  Tests: $totalTests '
+      '($passCount passed, $failCount failed'
+      '${skipCount > 0 ? ', $skipCount skipped' : ''}'
+      '${absentCount > 0 ? ', $absentCount absent' : ''})',
+    );
+
+    // Line coverage: the latest run's, or the last run that measured it.
+    final measured = tracking.runs.where((r) => r.coverage != null).toList();
+    if (measured.isNotEmpty) {
+      final last = measured.last;
+      final when = identical(last, latestRun) ? '' : ' (${last.columnHeader})';
+      final base = baseline.coverage;
+      final sinceBaseline = base != null && !identical(last, baseline)
+          ? ', baseline ${base.percent.toStringAsFixed(1)}%'
+          : '';
+      print('  Line coverage: ${last.coverage!.describe()}$when$sinceBaseline');
+    }
 
     // Compare with baseline
     if (tracking.runs.length >= 2) {

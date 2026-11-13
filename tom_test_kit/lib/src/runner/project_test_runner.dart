@@ -100,12 +100,15 @@ sealed class ProjectTestRunner {
 
   /// Runs the tests in [projectPath] with [testArgs] appended to the command
   /// and reads the results; null when the run could not happen (the reason
-  /// is on stderr).
+  /// is on stderr). With [coveragePath] the run's line coverage is measured
+  /// into an lcov report there and kept on the run, where the runner can
+  /// (only `dart test` / `flutter test`).
   Future<TestRunResults?> run({
     required String projectPath,
     List<String> testArgs = const [],
     bool verbose = false,
     String? pubCachePath,
+    String? coveragePath,
   });
 }
 
@@ -125,11 +128,13 @@ class DartRunner extends ProjectTestRunner {
     List<String> testArgs = const [],
     bool verbose = false,
     String? pubCachePath,
+    String? coveragePath,
   }) => DartTestParser.runAndParse(
     projectPath: projectPath,
     additionalArgs: testArgs,
     verbose: verbose,
     pubCachePath: pubCachePath,
+    coveragePath: coveragePath,
   );
 }
 
@@ -178,7 +183,14 @@ class CommandRunner extends ProjectTestRunner {
     List<String> testArgs = const [],
     bool verbose = false,
     String? pubCachePath,
+    String? coveragePath,
   }) async {
+    if (coveragePath != null) {
+      stderr.writeln(
+        '[$projectPath] No coverage: only `dart test` / `flutter test` runs '
+        'measure it; $label runs without.',
+      );
+    }
     // Absolute: a traversal hands relative project paths, and a test script
     // that changes directory still has to find $TESTKIT_REPORT.
     final reportFile = p.normalize(
@@ -314,6 +326,7 @@ class RunnerUnavailable extends ProjectTestRunner {
     List<String> testArgs = const [],
     bool verbose = false,
     String? pubCachePath,
+    String? coveragePath,
   }) async {
     stderr.writeln('[$projectPath] $reason');
     return null;

@@ -25,6 +25,12 @@ const baselineOptions = <OptionDefinition>[
         'Output file path (overrides default testlog/baseline_<ts>.csv)',
     valueName: 'path',
   ),
+  OptionDefinition.flag(
+    name: 'coverage',
+    description:
+        'Measure line coverage (dart test / flutter test): '
+        'coverage/lcov.info, and the percentage in the run column',
+  ),
   OptionDefinition.option(
     name: 'test-args',
     description: 'Additional arguments passed to dart test',
@@ -60,6 +66,12 @@ const testOptions = <OptionDefinition>[
   OptionDefinition.flag(
     name: 'no-update',
     description: 'Run tests without updating baseline; print summary only',
+  ),
+  OptionDefinition.flag(
+    name: 'coverage',
+    description:
+        'Measure line coverage (dart test / flutter test): '
+        'coverage/lcov.info, and the percentage in the run column',
   ),
   OptionDefinition.option(
     name: 'test-args',

@@ -13,8 +13,9 @@ This document defines the test tracking concept supported by Tom Test Kit's `tes
 5. [Command Reference (Quick)](#command-reference-quick)
 6. [Full Command Reference](#full-command-reference)
 7. [Flutter Packages](#flutter-packages)
-8. [Exit Code](#exit-code)
-9. [Other Languages](#other-languages)
+8. [Line Coverage](#line-coverage)
+9. [Exit Code](#exit-code)
+10. [Other Languages](#other-languages)
 
 ---
 
@@ -212,7 +213,7 @@ Run column headers use the compact format `MM-DD HH:MM`:
 Baseline [02-10 14:30],[02-10 15:45],[02-11 09:00]
 ```
 
-Comments, if provided via `-c`, appear in the column header.
+Comments, if provided via `-c`, appear in the column header. A run measured with `--coverage` carries its line coverage there too, before the comment: `[11-13 22:00] cov:1234/1520 after fix` (see [Line Coverage](#line-coverage)).
 
 ---
 
@@ -278,6 +279,7 @@ with the failing test as `X`, and the command exits 1 (see
 |--------|-------------|
 | `-c, --comment=<text>` | Short label shown in the baseline column header |
 | `--file=<path>` | Output file path (overrides default `testlog/baseline_<ts>.csv`) |
+| `--coverage` | Measure line coverage: `coverage/lcov.info`, and the percentage in the column header ([Line Coverage](#line-coverage)) |
 | `--test-args=<args>` | Additional arguments passed to `dart test` |
 
 **Examples:**
@@ -319,6 +321,7 @@ smaller suite. A failing test is recorded as `X`, and the command exits 1, as
 | `--file=<path>` | Tracking file to update (instead of most recent) |
 | `--baseline` | Create baseline if no tracking file exists |
 | `--no-update` | Run tests and print summary without updating baseline |
+| `--coverage` | Measure line coverage: `coverage/lcov.info`, and the percentage in the run's column header ([Line Coverage](#line-coverage)) |
 | `--test-args=<args>` | Additional arguments passed to `dart test` |
 
 **Test args:** Arguments are passed through to `dart test`. testkit always adds `--reporter json` internally. Forbidden args (will be rejected): `--reporter`, `--file-reporter`, `--pause-after-load`, `--debug`.
@@ -774,6 +777,42 @@ pub get`, not `dart pub get`.
 
 The options testkit rejects (`--reporter`, `--file-reporter`,
 `--pause-after-load`, `--debug`) are rejected for both runners.
+
+## Line Coverage
+
+`--coverage` on `:baseline` and `:test` measures the run's line coverage:
+
+```bash
+testkit :baseline --coverage            # baseline with its coverage
+testkit :test --coverage -c "after fix" # run column with its coverage
+testkit -s . -r :test --coverage        # every project of the workspace
+```
+
+- **Dart packages** run `dart test --coverage-path=coverage/lcov.info`; this
+  needs package:test 1.27.0 or later in the project's lock. With an older one
+  testkit says so and runs the tests without coverage.
+- **Flutter packages** run `flutter test --coverage
+  --coverage-path=coverage/lcov.info`.
+- A project with another runner (a `testkit:` section, a `test:` step, a
+  language default) runs without coverage, with a note.
+
+The lcov report is written to `coverage/lcov.info` in the project (a report
+left by an earlier run is deleted first); add `coverage/` to the project's
+`.gitignore`; testkit notes it when git would track the file. The run's
+covered and coverable lines (summed over the report: lcov's `LH` / `LF`) are
+printed (`Line coverage: 81.2% (1234/1520 lines)`) and kept in the run's
+column header as `cov:<covered>/<coverable>`, so they stay with the tracking
+file:
+
+```
+Baseline [11-13 22:00] cov:1234/1520,[11-13 23:10] cov:1240/1520 after fix
+```
+
+`:status` shows the latest measured coverage (and the baseline's), `:runs` a
+*Line coverage* column and `:history` a *Line coverage* row, whenever a run
+measured it. A run without `--coverage` records none.
+
+---
 
 ## Exit Code
 
