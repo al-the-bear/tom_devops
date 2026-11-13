@@ -9,7 +9,7 @@ tom_issue_kit uses DCli for test scanning, file operations, git integration, and
 ## Import
 
 ```dart
-import 'package:dcli/dcli.dart';
+import 'package:tom_dcli/dcli.dart';
 ```
 
 ## Common Patterns in tom_issue_kit

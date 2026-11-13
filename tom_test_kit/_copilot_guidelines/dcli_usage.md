@@ -9,7 +9,7 @@ tom_test_kit uses DCli for test execution, file scanning, baseline management, a
 ## Import
 
 ```dart
-import 'package:dcli/dcli.dart';
+import 'package:tom_dcli/dcli.dart';
 ```
 
 ## Common Patterns in tom_test_kit
