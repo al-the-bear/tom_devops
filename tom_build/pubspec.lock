@@ -1025,7 +1025,7 @@ packages:
       path: "../../basics/tom_test_support"
       relative: true
     source: path
-    version: "0.7.0"
+    version: "0.8.0"
   tuple:
     dependency: transitive
     description:
