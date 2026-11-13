@@ -144,7 +144,7 @@ issuekit:
     token_file: ~/.tom/github_token
 ''';
 
-/// Sample tom_project.yaml content for testing.
+/// Sample project buildkit.yaml content (its identity) for testing.
 const String sampleProjectYaml = '''
 name: test_project
 project_id: TP

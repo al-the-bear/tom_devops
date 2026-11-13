@@ -112,7 +112,7 @@ graph TB
 
 Every entity in the system is identified by a short, scannable ID:
 
-**Project IDs** — 2–4 uppercase characters, declared in `tom_project.yaml`:
+**Project IDs** — 2–4 uppercase characters, declared as `project_id` in the project's `buildkit.yaml`:
 
 | Project | ID |
 |---------|---|

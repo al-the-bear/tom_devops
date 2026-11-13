@@ -216,7 +216,7 @@ issuekit:
       }
     });
 
-    test('IK-CFG-19: tom_workspace.yaml is not read any more [2026-11-13]',
+    test('IK-CFG-20: tom_workspace.yaml is not read any more [2026-11-13]',
         () async {
       final tempDir = Directory.systemTemp.createTempSync('issuekit_ws_');
       await File(path.join(tempDir.path, 'tom_workspace.yaml')).writeAsString('''
@@ -232,7 +232,7 @@ issue_tracking:
       }
     });
 
-    test('IK-CFG-20: the workspace root is TOM_WORKSPACE_ROOT, else the '
+    test('IK-CFG-21: the workspace root is TOM_WORKSPACE_ROOT, else the '
         'nearest buildkit_master.yaml (a stray tom_workspace.yaml below it '
         'marks nothing), else the start directory [2026-11-13]', () {
       final tempDir = Directory.systemTemp.createTempSync('issuekit_root_');
@@ -257,13 +257,18 @@ issue_tracking:
           lonely.path);
     });
 
-    test('IK-CFG-18: Load project config from project directory', () async {
+    test('IK-CFG-18: Load project config from the project\'s buildkit.yaml',
+        () async {
       final tempDir = Directory.systemTemp.createTempSync('issuekit_proj_');
-      final projectYaml = File(path.join(tempDir.path, 'tom_project.yaml'));
+      final projectYaml = File(path.join(tempDir.path, 'buildkit.yaml'));
 
       await projectYaml.writeAsString('''
 project_id: IK
 name: Tom Issue Kit
+description: >-
+  Issue tracking tool.
+versioner:
+  variable-prefix: issuekit
 ''');
 
       try {
@@ -272,6 +277,18 @@ name: Tom Issue Kit
         expect(config, isNotNull);
         expect(config!.projectId, 'IK');
         expect(config.projectName, 'Tom Issue Kit');
+      } finally {
+        await tempDir.delete(recursive: true);
+      }
+    });
+
+    test('IK-CFG-22: tom_project.yaml is not read any more [2026-11-13]',
+        () async {
+      final tempDir = Directory.systemTemp.createTempSync('issuekit_old_');
+      File(path.join(tempDir.path, 'tom_project.yaml'))
+          .writeAsStringSync('project_id: OLD\nname: old\n');
+      try {
+        expect(await IssueKitConfig.loadProject(tempDir.path), isNull);
       } finally {
         await tempDir.delete(recursive: true);
       }

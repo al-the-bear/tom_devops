@@ -1,3 +1,12 @@
+## 1.4.0
+
+### Changed — the project id comes from `buildkit.yaml`
+
+`IssueKitConfig.loadProject` reads `project_id` and `name` from the project's
+`buildkit.yaml` (tom_build_base ^2.25.0, the one project file); `tom_project.yaml`
+is not read any more. The hand-written YAML parser it used is gone (package:yaml
+reads the file). IK-CFG-18, IK-CFG-22.
+
 ## 1.3.0
 
 ### Changed — configuration in `buildkit_master.yaml`, workspace by its marker
@@ -9,7 +18,8 @@
 - The workspace settings are read from the `issuekit:` section of
   `buildkit_master.yaml` (`issue_tracking:`, `github_auth:`), with package:yaml.
   `tom_workspace.yaml` is no longer read; it never held an `issue_tracking`
-  section, so nothing moves. Tests IK-CFG-17, IK-CFG-19, IK-CFG-20.
+  section, so nothing moves. Tests IK-CFG-17, IK-CFG-20, IK-CFG-21 (renumbered
+  in 1.4.0; they were released as IK-CFG-19 and -20, which collided).
 
 ## 1.2.0
 

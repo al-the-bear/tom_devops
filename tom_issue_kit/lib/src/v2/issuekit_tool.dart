@@ -765,7 +765,7 @@ final issuekitTool = ToolDefinition(
   helpFooter: '''
 Configuration:
   buildkit_master.yaml (workspace level) — issuekit: issue_tracking: issues_repo, tests_repo
-  tom_project.yaml (project level) — project_id
+  buildkit.yaml (project level) — project_id
 
 Repositories:
   tom_issues — Public issue intake (@issues)

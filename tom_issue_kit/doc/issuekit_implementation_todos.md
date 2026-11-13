@@ -57,7 +57,7 @@ The CLI framework and configuration layer.
 
 - CLI entry point (`bin/issuekit.dart`)
 - Command registration and dispatch
-- Configuration loading (`buildkit_master.yaml` `issuekit:` section, `tom_project.yaml`)
+- Configuration loading (`buildkit_master.yaml` `issuekit:` section, the project's `buildkit.yaml`)
 - GitHub authentication resolution (env → file → keychain)
 - Output formatting (plain, csv, json, md)
 

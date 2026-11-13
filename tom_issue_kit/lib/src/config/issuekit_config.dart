@@ -1,7 +1,7 @@
 /// Configuration loading for issuekit.
 ///
 /// Reads configuration from the `issuekit:` section of `buildkit_master.yaml`
-/// (workspace level) and tom_project.yaml (project level).
+/// (workspace level) and the project's `buildkit.yaml` (project level).
 library;
 
 import 'dart:io';
@@ -82,13 +82,11 @@ class IssueTrackingConfig {
   String? get testsRepoName => getRepoName(testsRepo);
 }
 
-/// Project configuration from tom_project.yaml.
+/// Project configuration: the identity at the top of the project's
+/// `buildkit.yaml`.
 class ProjectConfig {
   /// Constructor.
-  const ProjectConfig({
-    required this.projectId,
-    this.projectName,
-  });
+  const ProjectConfig({required this.projectId, this.projectName});
 
   /// The project ID (2-4 uppercase characters, e.g., 'D4', 'BK', 'IK').
   final String projectId;
@@ -260,90 +258,16 @@ class IssueKitConfig {
 
   /// Load project configuration from a project directory.
   ///
-  /// Reads tom_project.yaml for project_id.
+  /// Reads `project_id` and `name` from the project's `buildkit.yaml`.
   static Future<ProjectConfig?> loadProject(String projectPath) async {
-    final projectYaml = File(path.join(projectPath, 'tom_project.yaml'));
+    final projectYaml = File(path.join(projectPath, 'buildkit.yaml'));
+    if (!projectYaml.existsSync()) return null;
 
-    if (!projectYaml.existsSync()) {
-      return null;
-    }
-
-    final contents = await projectYaml.readAsString();
-    final yaml = _parseYaml(contents);
-
-    if (yaml is Map<String, dynamic>) {
-      return ProjectConfig.tryParse(yaml);
-    }
-
-    return null;
-  }
-
-  /// Simple YAML parser for basic key-value structures.
-  ///
-  /// This is a basic implementation that handles simple nested maps.
-  /// For production, consider using the yaml package.
-  static dynamic _parseYaml(String contents) {
-    final result = <String, dynamic>{};
-    Map<String, dynamic>? currentSection;
-
-    final lines = contents.split('\n');
-
-    for (final line in lines) {
-      // Skip empty lines and comments
-      if (line.trim().isEmpty || line.trim().startsWith('#')) {
-        continue;
-      }
-
-      // Count leading spaces
-      final leadingSpaces = line.length - line.trimLeft().length;
-      final trimmedLine = line.trim();
-
-      // Check if this is a section header (ends with :)
-      if (trimmedLine.endsWith(':') && !trimmedLine.contains(': ')) {
-        final key = trimmedLine.substring(0, trimmedLine.length - 1);
-        if (leadingSpaces == 0) {
-          // Top-level section
-          currentSection = <String, dynamic>{};
-          result[key] = currentSection;
-        } else if (currentSection != null) {
-          // Nested section
-          final nestedSection = <String, dynamic>{};
-          currentSection[key] = nestedSection;
-        }
-      } else if (trimmedLine.contains(': ')) {
-        // Key-value pair
-        final colonIndex = trimmedLine.indexOf(': ');
-        final key = trimmedLine.substring(0, colonIndex);
-        var value = trimmedLine.substring(colonIndex + 2);
-
-        // Remove quotes if present
-        if ((value.startsWith('"') && value.endsWith('"')) ||
-            (value.startsWith("'") && value.endsWith("'"))) {
-          value = value.substring(1, value.length - 1);
-        }
-
-        // Parse value type
-        dynamic parsedValue;
-        if (value.toLowerCase() == 'true') {
-          parsedValue = true;
-        } else if (value.toLowerCase() == 'false') {
-          parsedValue = false;
-        } else if (int.tryParse(value) != null) {
-          parsedValue = int.parse(value);
-        } else if (double.tryParse(value) != null) {
-          parsedValue = double.parse(value);
-        } else {
-          parsedValue = value;
-        }
-
-        if (leadingSpaces > 0 && currentSection != null) {
-          currentSection[key] = parsedValue;
-        } else {
-          result[key] = parsedValue;
-        }
-      }
-    }
-
-    return result;
+    final yaml = loadYaml(await projectYaml.readAsString());
+    if (yaml is! YamlMap) return null;
+    return ProjectConfig.tryParse({
+      if (yaml['project_id'] != null) 'project_id': '${yaml['project_id']}',
+      if (yaml['name'] != null) 'name': '${yaml['name']}',
+    });
   }
 }

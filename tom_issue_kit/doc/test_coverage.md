@@ -37,7 +37,7 @@ handle for regression tracking.
 
 | # | Feature Area | Tests | Status | Test File | ID Prefix |
 |---|-------------|-------|--------|-----------|-----------|
-| 1 | [Configuration](#1-configuration) | 19 | 19✅ | `config/issuekit_config_test.dart` | `IK-CFG` |
+| 1 | [Configuration](#1-configuration) | 22 | 22✅ | `config/issuekit_config_test.dart` | `IK-CFG` |
 | 2 | [Executor integration](#2-executor-integration) | 21 | 21✅ | `integration/executor_integration_test.dart` | `IK-INT` |
 | 3 | [Issue service](#3-issue-service) | 41 | 41✅ | `services/issue_service_test.dart` | `IK-ANZ`/`IK-ASN`/… |
 | 4 | [Test scanner service](#4-test-scanner-service) | 14 | 14✅ | `services/test_scanner_test.dart` | `IK-SCN` |
@@ -76,9 +76,12 @@ sourcing, defaults, and validation of required fields.
 | IK-CFG-14 | Parse from map with custom values | ✅ | `dart test --name 'IK-CFG-14'` |
 | IK-CFG-15 | isValid returns true when issueTracking is set | ✅ | `dart test --name 'IK-CFG-15'` |
 | IK-CFG-16 | isValid returns false when issueTracking is null | ✅ | `dart test --name 'IK-CFG-16'` |
-| IK-CFG-17 | Load from workspace directory | ✅ | `dart test --name 'IK-CFG-17'` |
-| IK-CFG-18 | Load project config from project directory | ✅ | `dart test --name 'IK-CFG-18'` |
+| IK-CFG-17 | Load from the `issuekit:` section of buildkit_master.yaml | ✅ | `dart test --name 'IK-CFG-17'` |
+| IK-CFG-18 | Load project config from the project's buildkit.yaml | ✅ | `dart test --name 'IK-CFG-18'` |
 | IK-CFG-19 | Return null when project yaml missing | ✅ | `dart test --name 'IK-CFG-19'` |
+| IK-CFG-20 | tom_workspace.yaml is not read | ✅ | `dart test --name 'IK-CFG-20'` |
+| IK-CFG-21 | Workspace root: TOM_WORKSPACE_ROOT, nearest buildkit_master.yaml, start directory | ✅ | `dart test --name 'IK-CFG-21'` |
+| IK-CFG-22 | tom_project.yaml is not read | ✅ | `dart test --name 'IK-CFG-22'` |
 
 ## 2. Executor integration
 

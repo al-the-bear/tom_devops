@@ -85,8 +85,8 @@ issuekit:
 ```
 
 ```yaml
-# tom_project.yaml (each project root)
-project_id: tom_d4rt
+# buildkit.yaml (each project root)
+project_id: D4
 ```
 
 The GitHub token is resolved (via `tom_github_api`) from `github_auth`, the
@@ -295,7 +295,7 @@ per-command executors.
 | `IssueService` | High-level issue operations — create / update / analyze / assign / verify / resolve / sync, label management, lifecycle transitions. |
 | `IssueKitConfig` | Workspace configuration loaded from the `issuekit:` section of `buildkit_master.yaml` (`workspaceRootFor` finds the workspace); exposes `token`, `issueTracking`, `isValid`. |
 | `IssueTrackingConfig` | The `issues_repo` / `tests_repo` slugs. |
-| `ProjectConfig` | Per-project `project_id` from `tom_project.yaml`. |
+| `ProjectConfig` | Per-project `project_id` from the project's `buildkit.yaml`. |
 | `GitHubAuthConfig` | Token resolution (explicit / `GITHUB_TOKEN` / `~/.tom/github_token`). |
 | `OutputFormatter` | Renders results as plain / csv / json / md (or to a file). |
 

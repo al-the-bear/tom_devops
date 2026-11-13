@@ -294,7 +294,7 @@ The ID scheme creates a globally unique, scannable connection between issues, pr
 
 ### Project ID
 
-Each project in the workspace has a short unique prefix, defined in the project's `tom_project.yaml`. Project IDs should be **as short as possible** while remaining unique and easy to remember:
+Each project in the workspace has a short unique prefix, defined as `project_id` in the project's `buildkit.yaml`. Project IDs should be **as short as possible** while remaining unique and easy to remember:
 
 | Project | Project ID |
 |---------|-----------|
@@ -310,7 +310,7 @@ Each project in the workspace has a short unique prefix, defined in the project'
 Project IDs are uppercase, 2–4 characters. They must be unique across the workspace. Each project declares its ID:
 
 ```yaml
-# tom_project.yaml
+# buildkit.yaml
 project_id: D4
 ```
 
@@ -992,7 +992,7 @@ If testkit hasn't been run recently, `:verify` will report `NOT RUN`.
 ### Buildkit Integration
 
 - **Project discovery:** Uses the same detection as buildkit (`pubspec.yaml`)
-- **Project IDs:** Defined in `tom_project.yaml`, used by both buildkit and issuekit
+- **Project IDs:** Defined in the project's `buildkit.yaml` (`project_id`), used by both buildkit and issuekit
 - **Workspace navigation:** Shares the standard tom_build_base navigation options
 
 ---
@@ -1243,7 +1243,7 @@ Naming convention: `baseline_MMDD_HHMM.csv` for per-project, `consolidated_MMDD_
 
 ## Configuration
 
-issuekit reads configuration from the `issuekit:` section of `buildkit_master.yaml` (workspace level) and `tom_project.yaml` (project level). The workspace is `TOM_WORKSPACE_ROOT` when set, else the nearest directory holding `buildkit_master.yaml`.
+issuekit reads configuration from the `issuekit:` section of `buildkit_master.yaml` (workspace level) and the project's `buildkit.yaml` (project level). The workspace is `TOM_WORKSPACE_ROOT` when set, else the nearest directory holding `buildkit_master.yaml`.
 
 ### Workspace Configuration
 
@@ -1260,7 +1260,7 @@ issuekit:
 ### Project Configuration
 
 ```yaml
-# tom_project.yaml
+# buildkit.yaml
 project_id: D4
 ```
 

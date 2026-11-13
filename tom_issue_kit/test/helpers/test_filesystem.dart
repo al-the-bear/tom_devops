@@ -204,9 +204,9 @@ library;
     return writeFile('lib/src/$relativePath', content);
   }
 
-  /// Adds a tom_project.yaml configuration file.
+  /// Adds the project's buildkit.yaml with its identity.
   void addProjectConfig({String? module}) {
-    writeFile('tom_project.yaml', '''
+    writeFile('buildkit.yaml', '''
 name: $name
 project_id: $projectId
 ${module != null ? 'module: $module' : ''}
