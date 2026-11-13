@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../../.tom/json-schema/buildkit/buildkit.schema.json
+# Tom Md2Pdf configuration
+
+project_id: MD2PDF
+name: md2pdf
+description: >-
+  Markdown to PDF converter in pure Dart (htmltopdfwidgets); renders the
+  combined API reference of `buildkit :apireference`.
+license: BSD-3-Clause
+
+# Compiler tool configuration: md2pdf in the binaries layer, where
+# `buildkit :apireference` runs it from PATH.
+compiler:
+  compiles:
+    # macOS ARM64 - compile for self; with --all-platforms also linux-x64
+    - pipeline:
+        - shell mkdir -p $TOM_BINARY_PATH/%{target-platform-vs}
+        - shell dart compile exe %{file} --target-os=%{dart-target-os} --target-arch=%{dart-target-arch} -o $TOM_BINARY_PATH/%{target-platform-vs}/md2pdf
+      files: bin/md_pdf_converter.dart
+      targets: [darwin-arm64, linux-x64]
+      platforms: [darwin-arm64]
+
+    # Unix-like platforms - compile for self only
+    - pipeline:
+        - shell mkdir -p $TOM_BINARY_PATH/%{target-platform-vs}
+        - shell dart compile exe %{file} --target-os=%{dart-target-os} --target-arch=%{dart-target-arch} -o $TOM_BINARY_PATH/%{target-platform-vs}/md2pdf
+      files: bin/md_pdf_converter.dart
+      platforms: [darwin-x64, linux-*]
+
+    # Windows - compile for self only
+    - pipeline:
+        - shell dart compile exe %{file} --target-os=%{dart-target-os} --target-arch=%{dart-target-arch} -o $TOM_BINARY_PATH/win32-x64/md2pdf.exe
+      files: bin/md_pdf_converter.dart
+      platforms: [win32-*]
+
+  postcompile:
+    # Make binaries executable on Unix-like systems
+    - pipeline:
+        - shell chmod -R +x $TOM_BINARY_PATH/%{current-platform-vs}/
+      platforms: [macos, linux]

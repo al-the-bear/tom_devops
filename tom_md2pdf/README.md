@@ -77,6 +77,10 @@ dart run tom_md2pdf:md2pdf <input> [options]
 dart compile exe bin/md_pdf_converter.dart -o md2pdf
 ```
 
+The binaries layer carries `md2pdf` for every platform (`$TOM_BINARY_PATH/<platform>/`,
+built by `buildkit :compiler` from this package's `buildkit.yaml`), and
+`buildkit :apireference` runs it to render a package's combined API reference.
+
 **SDK requirement:** Dart `^3.10.4`. **Dart dependencies:**
 [`htmltopdfwidgets`](https://pub.dev/packages/htmltopdfwidgets) (Markdown → PDF
 widgets), [`pdf`](https://pub.dev/packages/pdf) (document layout), and
