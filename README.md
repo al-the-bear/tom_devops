@@ -6,9 +6,10 @@
 
 The command-line toolchain that turns the Tom monorepo into something you can
 build, test, ship and document with a single, consistent set of tools. Every
-package here is a CLI tool (or the library behind one): the workspace analyzer
-and build orchestrator, the test- and issue-tracking kits, the deployment
-tooling, a GitHub REST client, and a pair of Markdown converters.
+package here is a CLI tool (or the library behind one): the test- and
+issue-tracking kits, the fuzzing harness, the deployment tooling and a pair of
+Markdown converters. The build orchestrator, `buildkit`, and the GitHub REST
+client live in the basics layer.
 
 **This document is the map.** It orients you to the whole `tom_ai/devops`
 repository and routes you to the one tool you actually need — each package
@@ -38,13 +39,9 @@ toolchain. From there, the
 
 ## What you can do with Tom DevOps
 
-- **Understand your workspace** — scan every package, derive the dependency
-  build order, and regenerate the workspace metadata (`tom_build`,
-  `workspace_analyzer`).
-- **Drive the whole repo from one command** — the `tom` CLI runs cleanup,
-  versioning, compilation, dependency resolution, publishing and git workflows
-  as composable pipelines (sharing the same engine as the `buildkit`
-  orchestrator, which now lives in the [basics layer](../basics/tom_build_kit/)).
+- **Build the whole repo** — cleanup, versioning, compilation, dependency
+  resolution, publishing and git workflows as composable pipelines are
+  `buildkit`'s, in the [basics layer](../basics/tom_build_kit/).
 - **Track tests over time** — capture a baseline, re-run, and diff results to
   catch regressions and confirm fixes (`testkit`).
 - **Manage issues from the terminal** — create, analyze, assign and verify
@@ -61,12 +58,9 @@ toolchain. From there, the
 
 ## How the packages fit together
 
-Tom DevOps splits into four concern areas. Read this framing before the
+Tom DevOps splits into three concern areas. Read this framing before the
 component tables so the inventory makes sense:
 
-- **Build framework** — the workspace analyzer (`tom_build`), the `tom` CLI
-  surface (`tom_build_cli`), and the shared build types they sit on
-  (`tom_build_common`). These understand the monorepo's shape and order.
 - **CLI kits** — the day-to-day developer tools: test tracking
   (`tom_test_kit`) and issue tracking (`tom_issue_kit`). Each is a standalone
   command driven by `tom_build_base`. The build orchestrator itself —
@@ -77,6 +71,11 @@ component tables so the inventory makes sense:
 - **Doc conversion** — Markdown-to-document converters (`tom_md2latex`,
   `tom_md2pdf`) used to produce reference PDFs from the workspace's docs.
 
+The repository also keeps the archived packages of the old build stack
+(`tom_build`, its CLI and `tom_build_common`): code only, skipped by every tool
+and not maintained. What they were is described in the tom_deploy quest's
+`archived_tom_build_stack/README.md`.
+
 ```
                     ┌──────────────────────────────────┐
                     │   tom_build_base (basics layer)   │
@@ -84,16 +83,14 @@ component tables so the inventory makes sense:
                     │   traversal, pipelines, config    │
                     └─────────────────┬─────────────────┘
                                       │ every tool builds on it
-        ┌─────────────────┬───────────┼────┬───────────────┐
-        │                 │                │               │
-┌───────┴──────┐ ┌────────┴───────┐ ┌──────┴──────┐ ┌──────┴──────┐
-│ Build        │ │ CLI kits       │ │ Deployment  │ │ Doc         │
-│ framework    │ │ tom_test_kit   │ │ tom_deploy  │ │ conversion  │
-│ tom_build    │ │ tom_issue_kit  │ │ tom_deploy_ │ │ tom_md2latex│
-│ tom_build_cli│ │                │ │  tools      │ │ tom_md2pdf  │
-│ tom_build_   │ │                │ │             │ │             │
-│  common      │ │                │ │             │ │             │
-└──────────────┘ └────────────────┘ └─────────────┘ └─────────────┘
+             ┌────────────────────────┼─────────────────┐
+             │                        │                 │
+    ┌────────┴───────┐         ┌──────┴──────┐   ┌──────┴──────┐
+    │ CLI kits       │         │ Deployment  │   │ Doc         │
+    │ tom_test_kit   │         │ tom_deploy  │   │ conversion  │
+    │ tom_issue_kit  │         │ tom_deploy_ │   │ tom_md2latex│
+    │ tom_fuzz       │         │  tools      │   │ tom_md2pdf  │
+    └────────────────┘         └─────────────┘   └─────────────┘
 ```
 
 ---
@@ -103,14 +100,6 @@ component tables so the inventory makes sense:
 Every package appears in exactly one row below, linked to its own README. The
 **Binary** column lists the command(s) each package installs; library-only
 packages show `—`.
-
-### Build framework
-
-| Package | What it is | Binary |
-| ------- | ---------- | ------ |
-| [`tom_build`](tom_build/) | Build tools and workspace analyzer — scans the workspace, detects natures, derives build order and regenerates metadata. | `workspace_analyzer` |
-| [`tom_build_cli`](tom_build_cli/) | The `tom` command surface; dispatches between Tom command mode and TomD4rt scripting. | `tom` |
-| [`tom_build_common`](tom_build_common/) | Shared build types and utilities consumed by the build tools and kits. | — |
 
 ### CLI kits
 
@@ -194,9 +183,6 @@ In-package guides beyond the package READMEs:
 
 | Topic | Document |
 | ----- | -------- |
-| Workspace analyzer + tooling reference | [`tom_build/doc/tom_user_reference.md`](tom_build/doc/tom_user_reference.md) |
-| Tool specification | [`tom_build/doc/tom_tool_specification.md`](tom_build/doc/tom_tool_specification.md) |
-| `tom` CLI usage | [`tom_build_cli/doc/tom_cli_usage.md`](tom_build_cli/doc/tom_cli_usage.md) |
 | testkit — test tracking | [`tom_test_kit/doc/test_tracking.md`](tom_test_kit/doc/test_tracking.md) |
 | testkit — TUI | [`tom_test_kit/doc/tom_test_tui.md`](tom_test_kit/doc/tom_test_tui.md) |
 | issuekit — command reference | [`tom_issue_kit/doc/issuekit_command_reference.md`](tom_issue_kit/doc/issuekit_command_reference.md) |
@@ -212,12 +198,6 @@ tom_ai/devops/
 ├── LICENSE.md                # per-package licensing note
 ├── analysis_options.yaml     # shared analyzer settings
 │
-├── tom_build/                # workspace analyzer + build-order/metadata (build framework)
-│   └── doc/                  # analyzer + tooling references
-├── tom_build_cli/            # the `tom` command surface + TomD4rt mode
-│   └── doc/                  # tom CLI usage
-├── tom_build_common/         # shared build types/utilities
-│
 ├── tom_test_kit/             # testkit — baseline/test/diff tracking (CLI kit)
 │   └── doc/                  # test tracking + TUI
 ├── tom_issue_kit/            # issuekit — issue lifecycle + test linkage (CLI kit)
@@ -229,7 +209,9 @@ tom_ai/devops/
 ├── tom_md2latex/             # Markdown → LaTeX → PDF converter
 ├── tom_md2pdf/               # Markdown → PDF converter (htmltopdfwidgets)
 │
-└── tom_devops_samples/       # runnable, article-grade sample projects
+├── tom_devops_samples/       # runnable, article-grade sample projects
+│
+└── tom_build/, tom_build_*/  # archived: the old build stack (kept, skipped by every tool)
 ```
 
 The CLI framework these tools share — `tom_build_base` — lives one repo over in
