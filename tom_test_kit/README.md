@@ -154,6 +154,7 @@ three groups.
 | `:diff <ts> [ts]` | Diff two arbitrary runs by timestamp. |
 | `:history <query>` | Show every result for a matching test across all runs. |
 | `:flaky` | List tests whose results are inconsistent across runs. |
+| `:report` | One table of the latest results of every project the traversal visits; a project without `testlog/` is listed as not measured. |
 | `:crossreference` | Map tests to their source files. *(aliases: `:crossref`, `:xref`)* |
 
 **Maintenance commands**:
@@ -382,15 +383,15 @@ is the test-tracking model on top.
 
 ## Status
 
-- **Version:** 1.9.0 (`publish_to: none` — workspace-internal)
+- **Version:** 1.11.0 (`publish_to: none` — workspace-internal)
 - **SDK:** Dart `^3.10.4`
-- **Dart dependencies:** `tom_build_base >=2.22.1` (hosted), `tom_fuzz`,
+- **Dart dependencies:** `tom_build_base ^2.31.0` (hosted), `tom_fuzz`,
   `coverage`, `args`, `glob`, `path`, `utopia_tui`, `xml`, `yaml`.
 - **Executable:** `testkit` (`bin/testkit.dart`); `tk` symlink on Unix.
-- **Commands:** 14 (`:baseline`, `:test`, `:runs`, `:status`, `:basediff`,
-  `:lastdiff`, `:diff`, `:history`, `:flaky`, `:crossreference`, `:fuzz`,
+- **Commands:** 15 (`:baseline`, `:test`, `:runs`, `:status`, `:basediff`,
+  `:lastdiff`, `:diff`, `:history`, `:flaky`, `:report`, `:crossreference`, `:fuzz`,
   `:mutations`, `:trim`, `:reset`) + `--tui` mode.
-- **Tests:** 30 test files (model, parser, runner, tracking, util, v2).
+- **Tests:** 32 test files (model, parser, runner, tracking, util, v2).
 
 ---
 

@@ -135,6 +135,7 @@ Generate reports for documentation or code review:
 testkit :basediff --report=progress.md           # Markdown report (baseline → latest)
 testkit :lastdiff --full --report=lastdiff.md    # With error details
 testkit :basediff --output csv:results.csv       # Export as CSV
+testkit -s . -r :report --output ztmp/report.md   # One table over every project
 ```
 
 ---
@@ -230,6 +231,7 @@ Comments, if provided via `-c`, appear in the column header. A run measured with
 | `:diff <ts> [<ts2>]` | Diff two arbitrary runs by timestamp |
 | `:history <search>` | Show all results for a test across runs |
 | `:flaky` | List tests with inconsistent results across runs |
+| `:report` | One table of the latest results of every project; projects without `testlog/` are not measured |
 | `:crossreference` | Map tests to source files (aliases: `:crossref`, `:xref`) |
 | `:trim <n>` | Remove old runs, keeping last N (baseline always preserved) |
 | `:reset` | Delete all tracking files in testlog/ |
@@ -541,6 +543,44 @@ A **flip** is a transition between OK and X in consecutive runs (e.g., OK→X or
 testkit :flaky                           # Show flaky tests
 testkit :flaky --output json             # Export as JSON
 testkit :flaky -r                        # Check all subprojects
+```
+
+---
+
+### :report
+
+One table of the latest results of every project the traversal visits, read
+from each project's `testlog/`; nothing runs and nothing is written into the
+projects. Use it after a workspace run to see which projects are green, which
+regressed and which were never measured.
+
+Rows are sorted by project path. **Columns:** Project (relative to the execution root), State, Last run,
+Passed, Failed, Skipped (the latest run), Regressions (tests that passed in
+the baseline and fail in the latest run, as `:status` counts them), Flaky
+(tests that passed in one run and failed in another, as `:flaky` finds them),
+Coverage (the latest run's line coverage, when measured). A line under the
+table counts the projects per state.
+
+**State:**
+
+| State | Meaning |
+|-------|---------|
+| `green` | Every test of the latest run passed or was skipped |
+| `failing` | Tests fail in the latest run, none of them a regression |
+| `regressed` | A test that passed in the baseline fails in the latest run |
+| `not measured` | No tracking file in `testlog/`: nothing is known, so never counted as clean |
+
+**Options:**
+
+| Option | Description |
+|--------|-------------|
+| `--output=<file>` | Also write the report: `<file>.md` (Markdown) or `<file>.json` (JSON), or `md:<file>` / `json:<file>`. A file inside a `doc/` folder is refused (exit 1): `doc/` holds hand-authored documents only. |
+
+**Examples:**
+```bash
+testkit -s tom_ai -r -p 'tom_ai/basics/*' -p 'tom_ai/devops/*' :report   # basics and devops packages in one table
+testkit -s . -r :report --output ztmp/test_report.md              # whole workspace, also as Markdown
+testkit :report --output json:ztmp/test_report.json               # this project, as JSON
 ```
 
 ---

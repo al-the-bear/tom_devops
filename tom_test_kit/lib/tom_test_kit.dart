@@ -27,6 +27,7 @@ export 'src/mutation/mutation_sweep.dart';
 export 'src/mutation/mutations_command.dart';
 export 'src/tracking/history_command.dart';
 export 'src/tracking/lastdiff_command.dart';
+export 'src/tracking/report_command.dart';
 export 'src/tracking/reset_command.dart';
 export 'src/tracking/runs_command.dart';
 export 'src/tracking/status_command.dart';

@@ -16,6 +16,7 @@ import '../tracking/history_command.dart';
 import '../mutation/mutations_command.dart';
 import '../runner/project_test_runner.dart';
 import '../tracking/lastdiff_command.dart';
+import '../tracking/report_command.dart';
 import '../tracking/reset_command.dart';
 import '../tracking/runs_command.dart';
 import '../tracking/status_command.dart';
@@ -203,6 +204,49 @@ class StatusExecutor extends CommandExecutor {
             name: context.name,
             error: 'Status command failed',
           );
+  }
+}
+
+/// Executor for :report: one row per visited project, read from its
+/// `testlog/` (nothing runs), and the table once the traversal is done.
+class ReportExecutor extends CommandExecutor {
+  /// Where the table goes; stdout unless a test captures it.
+  final StringSink? output;
+
+  ReportExecutor({this.output});
+
+  final _rows = <ProjectReport>[];
+
+  @override
+  Future<ItemResult> execute(CommandContext context, CliArgs args) async {
+    final row = ProjectReport.read(context.path, project: context.relativePath);
+    _rows.add(row);
+    return ItemResult.success(
+      path: context.path,
+      name: context.name,
+      message: row.state.label,
+    );
+  }
+
+  @override
+  Future<ItemResult?> afterTraversal(
+    List<ItemResult> results,
+    CliArgs args,
+  ) async {
+    // Sorted by path: the traversal visits in build order, which scatters a
+    // folder's projects through the table.
+    final report = WorkspaceReport(
+      List.of(_rows)..sort((a, b) => a.project.compareTo(b.project)),
+    );
+    _rows.clear();
+    final error = await ReportCommand.emit(
+      report,
+      output: _getString(_optionsFor(args, 'report'), 'output'),
+      sink: output,
+    );
+    return error == null
+        ? null
+        : ItemResult.failure(path: '', name: 'report', error: error);
   }
 }
 
@@ -579,6 +623,7 @@ Map<String, CommandExecutor> createTestkitExecutors() {
     'diff': DiffExecutor(),
     'history': HistoryExecutor(),
     'flaky': FlakyExecutor(),
+    'report': ReportExecutor(),
     'crossreference': CrossReferenceExecutor(),
     'crossref': CrossReferenceExecutor(),
     'xref': CrossReferenceExecutor(),

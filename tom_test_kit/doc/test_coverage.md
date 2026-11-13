@@ -58,7 +58,8 @@ handle for regression tracking.
 | 25 | [`:fuzz` command](#25-fuzz-command) | 8 | 8✅ | `v2/fuzz_command_test.dart` | `TK-FUZ` |
 | 26 | [`:mutations` command](#26-mutations-command) | 10 | 10✅ | `tracking/mutations_command_test.dart` | `TK-MUT` |
 | 27 | [Line coverage](#27-line-coverage) | 6 | 6✅ | `tracking/coverage_test.dart` | `TK-COV` |
-| — | **Total** | **246** | **246✅** | | |
+| 28 | [Workspace report](#28-workspace-report) | 6 | 6✅ | `tracking/report_test.dart` | `TK-REP` |
+| — | **Total** | **252** | **252✅** | | |
 
 ---
 
@@ -618,3 +619,18 @@ A fixture package whose tests pin some behaviours and not others, swept for real
 | TK-COV-4 | a package:test before 1.27.0 cannot write lcov, and says so | ✅ | `dart test --name 'TK-COV-4'` |
 | TK-COV-5 | `dart test`: lcov written, partial coverage kept on the baseline and the run; none without `--coverage` | ✅ | `dart test --name 'TK-COV-5'` |
 | TK-COV-6 | the same with `flutter test` | ✅ | `dart test --name 'TK-COV-6'` |
+
+## 28. Workspace report
+
+**Test file:** `test/tracking/report_test.dart` — **ID prefix `TK-REP`**
+
+`:report`: one table of the latest results of every project the traversal visits; TK-REP-5 and -6 run the command through ToolRunner on a scratch workspace.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-REP-1 | a project without `testlog/` is not measured, never clean | ✅ | `dart test --name 'TK-REP-1'` |
+| TK-REP-2 | the latest run's counts, regressions against the baseline, flaky tests, coverage | ✅ | `dart test --name 'TK-REP-2'` |
+| TK-REP-3 | the plain table and its summary line, Markdown, JSON | ✅ | `dart test --name 'TK-REP-3'` |
+| TK-REP-4 | `--output` takes `.md` / `.json` or `md:` / `json:`, never a file inside `doc/` | ✅ | `dart test --name 'TK-REP-4'` |
+| TK-REP-5 | one table over every project, the untracked one not measured; nothing written into the projects | ✅ | `dart test --name 'TK-REP-5'` |
+| TK-REP-6 | `--output` writes the file; a `doc/` target fails the run | ✅ | `dart test --name 'TK-REP-6'` |

@@ -1,3 +1,17 @@
+## 1.11.0
+
+### Added — `:report`, one table over every project
+
+`testkit -s . -r :report` reads each visited project's `testlog/` and prints
+one table: project, state (green / failing / regressed / not measured), last
+run, passed / failed / skipped, regressions against the baseline, flaky tests
+and line coverage, with a line counting the projects per state. A project
+without tracking data is listed as not measured, never as clean. `--output
+<file>.md|.json` (or `md:` / `json:`) also writes it; a file inside a `doc/`
+folder is refused. Nothing runs and nothing is written into the projects.
+Needs tom_build_base 2.31.0 (`CommandExecutor.afterTraversal`). TK-REP-1..6;
+doc/test_tracking.md, :report.
+
 ## 1.10.0
 
 ### Added — `--coverage` on `:baseline` and `:test`

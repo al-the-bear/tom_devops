@@ -50,32 +50,20 @@ class FlakyCommand {
 
     for (final entry in tracking.entries.entries) {
       final key = entry.key;
-      var passCount = 0;
-      var failCount = 0;
-      var totalRuns = 0;
+      final (passCount, failCount) = _passFailCounts(tracking, key);
+      final totalRuns = passCount + failCount;
 
-      for (final run in tracking.runs) {
-        final result = run.getResult(key);
-        if (result == TestResult.ok) {
-          passCount++;
-          totalRuns++;
-        } else if (result == TestResult.fail) {
-          failCount++;
-          totalRuns++;
-        }
-        // skip and absent don't count toward flakiness
-      }
-
-      // A test is flaky if it has both passes and failures
-      if (passCount > 0 && failCount > 0) {
+      if (_isFlaky(passCount, failCount)) {
         final flipCount = _countFlips(tracking, key);
-        flakyTests.add(_FlakyEntry(
-          testEntry: entry.value,
-          passCount: passCount,
-          failCount: failCount,
-          totalRuns: totalRuns,
-          flipCount: flipCount,
-        ));
+        flakyTests.add(
+          _FlakyEntry(
+            testEntry: entry.value,
+            passCount: passCount,
+            failCount: failCount,
+            totalRuns: totalRuns,
+            flipCount: flipCount,
+          ),
+        );
       }
     }
 
@@ -103,16 +91,47 @@ class FlakyCommand {
       ]);
     }
 
-    final title = 'Flaky tests (${flakyTests.length} found '
+    final title =
+        'Flaky tests (${flakyTests.length} found '
         'across ${tracking.runs.length} runs)';
 
-    await OutputWriter(spec).writeTable(
-      headers: headers,
-      rows: rows,
-      title: title,
-    );
+    await OutputWriter(
+      spec,
+    ).writeTable(headers: headers, rows: rows, title: title);
 
     return true;
+  }
+
+  /// The number of tests in [tracking] that are flaky: passed in one run
+  /// and failed in another.
+  static int countFlaky(TrackingFile tracking) =>
+      tracking.entries.keys.where((key) {
+        final (passes, fails) = _passFailCounts(tracking, key);
+        return _isFlaky(passes, fails);
+      }).length;
+
+  /// A test is flaky when it has both passes and failures.
+  static bool _isFlaky(int passes, int fails) => passes > 0 && fails > 0;
+
+  /// How often [testKey] passed and failed over the runs; skipped and absent
+  /// results do not count toward flakiness.
+  static (int passes, int fails) _passFailCounts(
+    TrackingFile tracking,
+    String testKey,
+  ) {
+    var passes = 0;
+    var fails = 0;
+    for (final run in tracking.runs) {
+      switch (run.getResult(testKey)) {
+        case TestResult.ok:
+          passes++;
+        case TestResult.fail:
+          fails++;
+        case TestResult.skip || TestResult.absent:
+          break;
+      }
+    }
+    return (passes, fails);
   }
 
   /// Counts the number of pass/fail transitions (flips) across runs.

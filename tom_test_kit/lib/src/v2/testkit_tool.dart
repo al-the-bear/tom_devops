@@ -243,6 +243,33 @@ const flakyCommand = CommandDefinition(
   supportsProjectTraversal: true,
 );
 
+/// Options for :report.
+const reportOptions = <OptionDefinition>[
+  OptionDefinition.option(
+    name: 'output',
+    description:
+        'Also write the report to a file: <file>.md or <file>.json '
+        '(or md:<file> / json:<file>); not inside a doc/ folder',
+    valueName: 'file',
+  ),
+];
+
+const reportCommand = CommandDefinition(
+  name: 'report',
+  description:
+      'One table of the latest results of every project: state, last run, '
+      'passed/failed/skipped, regressions, flaky, coverage; projects without '
+      'testlog/ are listed as not measured',
+  options: reportOptions,
+  worksWithNatures: testedNatures,
+  supportsProjectTraversal: true,
+  examples: [
+    "testkit -s tom_ai -r -p 'tom_ai/basics/*' -p 'tom_ai/devops/*' :report",
+    'testkit :report --output ztmp/test_report.md',
+    'testkit -s . -r :report --output json:ztmp/test_report.json',
+  ],
+);
+
 const crossreferenceCommand = CommandDefinition(
   name: 'crossreference',
   description: 'Map tests to source files',
@@ -439,6 +466,7 @@ final testkitTool = ToolDefinition(
     diffCommand,
     historyCommand,
     flakyCommand,
+    reportCommand,
     crossreferenceCommand,
     // Fuzzing and mutation testing
     fuzzCommand,

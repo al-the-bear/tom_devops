@@ -83,7 +83,7 @@ class StatusCommand {
 
     // Compare with baseline
     if (tracking.runs.length >= 2) {
-      final cmp = _compareTwoRuns(tracking, baseline, latestRun);
+      final cmp = compareRuns(tracking, baseline, latestRun);
       print('');
       print('  Since baseline:');
       print('    Regressions: ${cmp.$1}');
@@ -93,7 +93,7 @@ class StatusCommand {
     // Compare with previous run
     if (tracking.runs.length >= 2) {
       final previousRun = tracking.runs[tracking.runs.length - 2];
-      final cmp = _compareTwoRuns(tracking, previousRun, latestRun);
+      final cmp = compareRuns(tracking, previousRun, latestRun);
       print('');
       print('  Since last run:');
       print('    Regressions: ${cmp.$1}');
@@ -107,7 +107,7 @@ class StatusCommand {
   ///
   /// A regression is a test that was OK in [older] but is now X in [newer].
   /// A fix is a test that was X in [older] but is now OK in [newer].
-  static (int regressions, int fixes) _compareTwoRuns(
+  static (int regressions, int fixes) compareRuns(
     TrackingFile tracking,
     TestRun older,
     TestRun newer,
