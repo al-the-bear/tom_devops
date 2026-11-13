@@ -35,5 +35,5 @@ compiler:
     
     # Create ik symlink for issuekit
     - pipeline:
-        - shell ln -sf $TOM_BINARY_PATH/%{current-platform-vs}/issuekit $TOM_BINARY_PATH/%{current-platform-vs}/ik
+        - shell ln -sf issuekit $TOM_BINARY_PATH/%{current-platform-vs}/ik
       platforms: [macos, linux]
