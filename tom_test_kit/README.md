@@ -382,12 +382,15 @@ is the test-tracking model on top.
 
 ## Status
 
-- **Version:** 0.1.0 (`publish_to: none` — workspace-internal)
+- **Version:** 1.9.0 (`publish_to: none` — workspace-internal)
 - **SDK:** Dart `^3.10.4`
-- **Dart dependencies:** `tom_build_base ^2.6.25` (hosted), `args`, `path`, `utopia_tui ^1.1.0`.
+- **Dart dependencies:** `tom_build_base >=2.22.1` (hosted), `tom_fuzz`,
+  `coverage`, `args`, `glob`, `path`, `utopia_tui`, `xml`, `yaml`.
 - **Executable:** `testkit` (`bin/testkit.dart`); `tk` symlink on Unix.
-- **Commands:** 12 (`:baseline`, `:test`, `:runs`, `:status`, `:basediff`, `:lastdiff`, `:diff`, `:history`, `:flaky`, `:crossreference`, `:trim`, `:reset`) + `--tui` mode.
-- **Tests:** 22 test files (model, parser, tracking, util, v2).
+- **Commands:** 14 (`:baseline`, `:test`, `:runs`, `:status`, `:basediff`,
+  `:lastdiff`, `:diff`, `:history`, `:flaky`, `:crossreference`, `:fuzz`,
+  `:mutations`, `:trim`, `:reset`) + `--tui` mode.
+- **Tests:** 30 test files (model, parser, runner, tracking, util, v2).
 
 ---
 
