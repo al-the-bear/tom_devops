@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 import 'package:tom_test_kit/tom_test_kit.dart';
 
-/// Test IDs: TK-DTP-1 through TK-DTP-25
+/// Test IDs: TK-DTP-1 through TK-DTP-28
 void main() {
   group('DartTestParser', () {
     group('parseJsonOutput', () {
@@ -48,6 +48,88 @@ void main() {
           'only here': TestResult.ok,
         });
         expect((results.passedTests, results.failedTests), (2, 1));
+      });
+
+      test('TK-DTP-26: an event after output printed without a newline is '
+          'still read', () {
+        // A test that writes `\r`, ESC [K or a partial `{"` without a
+        // newline glues that text onto the next JSON event on the same line.
+        final glued = <String>[
+          'Progress 3/10\r',
+          '\x1B[2K\rworking...',
+          'not json {"half": ',
+          '{"a":1} ',
+        ];
+        final events = <Map<String, dynamic>>[
+          _suiteEvent(0, 'test/my_test.dart'),
+          _groupEvent(1, '', suiteId: 0),
+        ];
+        for (var i = 0; i < glued.length; i++) {
+          events
+            ..add(_testStartEvent(10 + i, 'p$i', suiteId: 0, groupIds: [1]))
+            ..add(_testDoneEvent(10 + i, result: 'success'));
+        }
+        final lines = _makeJsonLines(events);
+        // Glue each text onto the test's done event.
+        for (var i = 0; i < glued.length; i++) {
+          final done = 2 + 2 * i + 1;
+          lines[done] = '${glued[i]}${lines[done]}';
+        }
+
+        final results = DartTestParser.parseJsonOutput(lines);
+        expect(results.run.results, {
+          'p0': TestResult.ok,
+          'p1': TestResult.ok,
+          'p2': TestResult.ok,
+          'p3': TestResult.ok,
+        });
+        expect(results.passedTests, 4);
+      });
+
+      test('TK-DTP-27: two tests with the same name in different files, '
+          'without groups, stay two tests keyed with their files', () {
+        final lines = _makeJsonLines([
+          _suiteEvent(0, 'test/a_test.dart'),
+          _suiteEvent(1, 'test/b_test.dart'),
+          _testStartEvent(2, 'same', suiteId: 0, groupIds: []),
+          _testDoneEvent(2, result: 'success'),
+          _testStartEvent(3, 'same', suiteId: 1, groupIds: []),
+          _testDoneEvent(3, result: 'failure'),
+        ]);
+
+        final results = DartTestParser.parseJsonOutput(lines);
+        expect(results.run.results, {
+          'test/a_test.dart > same': TestResult.ok,
+          'test/b_test.dart > same': TestResult.fail,
+        });
+      });
+
+      test('TK-DTP-28: real `dart test --reporter json` output with prints '
+          'without a newline and same-named tests: every test has its result',
+          () {
+        // Recorded from a fixture package: one test writes `Progress 3/10\r`,
+        // one an ESC [K erase, each without a newline, so the done event is
+        // written behind that text; two tests share a name in two groups, two
+        // in two files without a group.
+        final lines = File(
+          'test/fixtures/reports/dart_json_print_without_newline.jsonl',
+        ).readAsLinesSync();
+        // Read as testkit reads stdout (LineSplitter): `\r` ends a line, so
+        // the progress line stands alone, but the erase is glued.
+        expect(lines, contains('Progress 3/10'));
+        expect(lines.where((l) => l.startsWith('\x1B[K{')), hasLength(1));
+
+        final results = DartTestParser.parseJsonOutput(lines);
+        expect(results.run.results, {
+          'progress ends in carriage return': TestResult.ok,
+          'progress ends in an erase': TestResult.ok,
+          'after the progress tests': TestResult.ok,
+          'reader > same name': TestResult.ok,
+          'writer > same name': TestResult.ok,
+          'test/a_test.dart > in two files': TestResult.ok,
+          'test/b_test.dart > in two files': TestResult.ok,
+        });
+        expect((results.totalTests, results.passedTests), (7, 7));
       });
 
       test('TK-DTP-2: should parse a failing test', () {

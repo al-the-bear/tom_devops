@@ -1,3 +1,30 @@
+## 1.9.2
+
+### Fixed — a test that writes without a trailing newline no longer loses the next result
+
+A test that writes to stdout without a newline (an ESC `[K` erase, a progress
+line rewritten after a `\r`) puts that text in front of `dart test`'s next JSON
+event on the same line. testkit skipped every line that was not JSON as a
+whole, so that event, often the test's own `testDone`, was lost and the
+passing test was recorded as `--`. The line is now read from the first `{"`
+from which the rest decodes (`decodeJsonEventLine`), in the parser and in the
+TUI's baseline and test commands. TK-DTP-26, and TK-DTP-28 on output recorded
+from a fixture package. Same-named tests (in two groups, or in two files
+without a group) were already told apart in 1.9.0; TK-DTP-27 covers the files
+case.
+
+## 1.9.1
+
+### Changed — on tom_build_base 2.27.0 and utopia_tui 2.0
+
+- `tom_build_base: ^2.27.0`: testkit's output piped into something that stops
+  reading (`testkit --version | head -1`) ends quietly instead of with an
+  uncaught broken-pipe error.
+- `utopia_tui: ^2.0.0`: tom_build_base 2.27.0 depends on `tom_dcli`, whose
+  `dart_console` ^5.1 the 1.x TUI library (`dart_console` ^4) could not share;
+  2.0 has no dependencies. The output panel paints its progress bar with
+  `TuiProgressBar.paintSurface` (`TuiProgressBarView` is gone).
+
 ## 1.9.0
 
 ### Added — baselines for every language testkit can run

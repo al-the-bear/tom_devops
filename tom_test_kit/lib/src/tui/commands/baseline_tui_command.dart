@@ -14,6 +14,7 @@ import '../../parser/dart_test_parser.dart';
 import '../../parser/test_description_parser.dart';
 import '../../util/file_helpers.dart';
 import '../tui_command.dart';
+import '../../parser/json_event_line.dart';
 
 /// TUI-integrated baseline command.
 ///
@@ -91,12 +92,8 @@ class BaselineTuiCommand extends TuiCommand {
       rawJsonLines.add(line);
       if (line.trim().isEmpty) return;
 
-      Map<String, dynamic> json;
-      try {
-        json = jsonDecode(line) as Map<String, dynamic>;
-      } catch (_) {
-        return;
-      }
+      final json = decodeJsonEventLine(line);
+      if (json == null) return;
 
       final type = json['type'] as String?;
       if (type == null) return;

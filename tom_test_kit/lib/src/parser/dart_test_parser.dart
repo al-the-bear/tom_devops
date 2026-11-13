@@ -7,6 +7,7 @@ import '../model/test_run.dart';
 import '../model/test_run_results.dart';
 import '../util/test_runner.dart';
 import '../runner/result_collector.dart';
+import 'json_event_line.dart';
 
 /// Parses `dart test --reporter json` output into structured results.
 class DartTestParser {
@@ -250,15 +251,7 @@ class DartTestParser {
     return buffer.toString().trimRight();
   }
 
-  static bool _isJsonEvent(String line) {
-    final trimmed = line.trimLeft();
-    if (!trimmed.startsWith('{')) return false;
-    try {
-      return jsonDecode(trimmed) is Map;
-    } on FormatException {
-      return false;
-    }
-  }
+  static bool _isJsonEvent(String line) => decodeJsonEventLine(line) != null;
 
   /// Parses `dart test --reporter json` output lines.
   static TestRunResults parseJsonOutput(
@@ -282,12 +275,10 @@ class DartTestParser {
     for (final line in lines) {
       if (line.trim().isEmpty) continue;
 
-      Map<String, dynamic> json;
-      try {
-        json = jsonDecode(line) as Map<String, dynamic>;
-      } catch (_) {
-        continue; // Skip non-JSON lines
-      }
+      // A line without a JSON event is skipped; one with text glued in front
+      // of its event (a print without a newline) still yields the event.
+      final json = decodeJsonEventLine(line);
+      if (json == null) continue;
 
       final type = json['type'] as String?;
       if (type == null) continue;

@@ -1,0 +1,27 @@
+{"protocolVersion":"0.1.1","runnerVersion":"1.33.0","pid":76230,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"test/b_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading test/b_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"suite":{"id":2,"platform":"vm","path":"test/a_test.dart"},"type":"suite","time":6}
+{"test":{"id":3,"name":"loading test/a_test.dart","suiteID":2,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":6}
+{"count":2,"time":8,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":690}
+{"group":{"id":4,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":692}
+{"test":{"id":5,"name":"in two files","suiteID":0,"groupIDs":[4],"metadata":{"skip":false,"skipReason":null},"line":4,"column":3,"url":"file:///fixture/test/b_test.dart"},"type":"testStart","time":692}
+{"testID":3,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":702}
+{"group":{"id":6,"suiteID":2,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":702}
+{"test":{"id":7,"name":"progress ends in carriage return","suiteID":2,"groupIDs":[6],"metadata":{"skip":false,"skipReason":null},"line":5,"column":3,"url":"file:///fixture/test/a_test.dart"},"type":"testStart","time":703}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":704}
+Progress 3/10{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":722}
+{"test":{"id":8,"name":"progress ends in an erase","suiteID":2,"groupIDs":[6],"metadata":{"skip":false,"skipReason":null},"line":9,"column":3,"url":"file:///fixture/test/a_test.dart"},"type":"testStart","time":723}
+[K{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":724}
+{"test":{"id":9,"name":"after the progress tests","suiteID":2,"groupIDs":[6],"metadata":{"skip":false,"skipReason":null},"line":13,"column":3,"url":"file:///fixture/test/a_test.dart"},"type":"testStart","time":724}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":724}
+{"group":{"id":10,"suiteID":2,"parentID":6,"name":"reader","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":14,"column":3,"url":"file:///fixture/test/a_test.dart"},"type":"group","time":725}
+{"test":{"id":11,"name":"reader same name","suiteID":2,"groupIDs":[6,10],"metadata":{"skip":false,"skipReason":null},"line":15,"column":5,"url":"file:///fixture/test/a_test.dart"},"type":"testStart","time":725}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":725}
+{"group":{"id":12,"suiteID":2,"parentID":6,"name":"writer","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":17,"column":3,"url":"file:///fixture/test/a_test.dart"},"type":"group","time":726}
+{"test":{"id":13,"name":"writer same name","suiteID":2,"groupIDs":[6,12],"metadata":{"skip":false,"skipReason":null},"line":18,"column":5,"url":"file:///fixture/test/a_test.dart"},"type":"testStart","time":726}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":726}
+{"test":{"id":14,"name":"in two files","suiteID":2,"groupIDs":[6],"metadata":{"skip":false,"skipReason":null},"line":20,"column":3,"url":"file:///fixture/test/a_test.dart"},"type":"testStart","time":726}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":727}
+{"success":true,"type":"done","time":729}

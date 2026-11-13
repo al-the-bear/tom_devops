@@ -34,7 +34,7 @@ handle for regression tracking.
 | 1 | [Test entry model](#1-test-entry-model) | 10 | 10✅ | `model/test_entry_test.dart` | `TK-ENT` |
 | 2 | [Test run model](#2-test-run-model) | 14 | 14✅ | `model/test_run_test.dart` | `TK-RUN` |
 | 3 | [Tracking file model](#3-tracking-file-model) | 9 | 9✅ | `model/tracking_file_test.dart` | `TK-TRK` |
-| 4 | [Dart test-output parser](#4-dart-test-output-parser) | 24 | 24✅ | `parser/dart_test_parser_test.dart` | `TK-DTP` |
+| 4 | [Dart test-output parser](#4-dart-test-output-parser) | 28 | 28✅ | `parser/dart_test_parser_test.dart` | `TK-DTP` |
 | 5 | [Test-description parser](#5-test-description-parser) | 10 | 10✅ | `parser/test_description_parser_test.dart` | `TK-TDP` |
 | 6 | [`:basediff` command](#6-basediff-command) | 7 | 7✅ | `tracking/basediff_command_test.dart` | `TK-BDIF` |
 | 7 | [`:crossref` command](#7-crossref-command) | 5 | 5✅ | `tracking/crossref_command_test.dart` | `TK-XREF` |
@@ -57,7 +57,7 @@ handle for regression tracking.
 | 24 | [Exit code](#16-test-and-baseline-commands) | 2 | 2✅ | `v2/exit_code_test.dart` | `TK-EXIT` |
 | 25 | [`:fuzz` command](#25-fuzz-command) | 8 | 8✅ | `v2/fuzz_command_test.dart` | `TK-FUZ` |
 | 26 | [`:mutations` command](#26-mutations-command) | 10 | 10✅ | `tracking/mutations_command_test.dart` | `TK-MUT` |
-| — | **Total** | **236** | **236✅** | | |
+| — | **Total** | **240** | **240✅** | | |
 
 ---
 
@@ -168,6 +168,10 @@ exited before reporting results (`describeRunnerExit`).
 | TK-DTP-22 | exit code 79 is reported as "no tests matched", with the runner's own line | ✅ | `dart test --name 'TK-DTP-22'` |
 | TK-DTP-23 | any other early exit carries its code and the text the runner printed on stdout and stderr | ✅ | `dart test --name 'TK-DTP-23'` |
 | TK-DTP-24 | a line the runner printed on both stdout and stderr is reported once | ✅ | `dart test --name 'TK-DTP-24'` |
+| TK-DTP-25 | two tests with the same name in different groups stay two tests, each keyed with its group | ✅ | `dart test --name 'TK-DTP-25'` |
+| TK-DTP-26 | an event after output printed without a newline (`\r`, ESC [K, a partial `{"`) is still read | ✅ | `dart test --name 'TK-DTP-26'` |
+| TK-DTP-27 | two tests with the same name in different files, without groups, stay two tests keyed with their files | ✅ | `dart test --name 'TK-DTP-27'` |
+| TK-DTP-28 | recorded `dart test --reporter json` output with a print without a newline and same-named tests: every test has its result | ✅ | `dart test --name 'TK-DTP-28'` |
 
 ## 5. Test-description parser
 

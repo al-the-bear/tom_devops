@@ -181,7 +181,7 @@ class TuiOutputPanel extends TuiComponent {
       final countText = ' $progressCurrent/$progressTotal';
       final barWidth = w - countText.length - 1;
       if (barWidth > 5) {
-        TuiProgressBarView(progress).paintSurface(
+        progress.paintSurface(
           surface,
           TuiRect(x: rect.x, y: y, width: barWidth, height: 1),
         );
