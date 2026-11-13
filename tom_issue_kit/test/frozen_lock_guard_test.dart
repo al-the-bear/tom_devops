@@ -1,4 +1,4 @@
-// REPO-WIDE GUARD (tom_build) — no package in tom_ai/devops resolves a
+// REPO-WIDE GUARD (tom_issue_kit) — no package in tom_ai/devops resolves a
 // tom_* version behind one already in the pub cache.
 //
 // This is the tom_ai/devops repo's own copy of the d4rt repo's
@@ -31,17 +31,17 @@
 //
 // WHAT THIS REPO HAD, measured 2026-11-06 on mbp and cleared by the sweep that
 // added this file (build_tom frozenlocks_aivu): 16 frozen resolutions across
-// 5 packages. `pub upgrade` in tom_build, tom_issue_kit, tom_test_kit and
-// tom_devops_samples/tom_build_kit_sample moved every one it could;
-// tom_build_cli, which did not resolve at all until the d4rt stack moved to
-// analyzer 14 and tom_build_kit to dcli 10, followed on the same day. What is
-// held back is named below with its owner. tom_build_cli builds the `tom` binary and
-// tom_test_kit builds `testkit`, so the binaries on a developer's PATH are
-// compiled from these resolutions.
+// 5 packages, which `pub upgrade` moved the same day. What is held back is
+// named below with its owner. tom_test_kit and tom_issue_kit build `testkit`
+// and `issuekit`, so the binaries on a developer's PATH are compiled from these
+// resolutions.
 //
-// WHY IT LIVES HERE. tom_build is the repo's library every tool package builds
-// on, and it is `publish_to: none`, so a guard that walks sibling packages
-// costs no consumer anything. It skips when the repo root is not reachable.
+// WHY IT LIVES HERE. tom_issue_kit is `publish_to: none`, so a guard that
+// walks sibling packages costs no consumer anything. It lived in tom_build until
+// that package was archived; archived packages (a
+// `tom_skip.yaml` in the folder: tom_build, tom_build_cli, tom_build_common)
+// are nobody's to upgrade and are not walked. It skips when the repo root is
+// not reachable.
 //
 // MANY GUARDS, NOT ONE. A single workspace guard would need one exception list
 // spanning a dozen repos with no owner; each repo carries its own copy with
@@ -55,7 +55,7 @@ import 'dart:io';
 import 'package:test/test.dart';
 
 /// Packages whose presence identifies the tom_ai/devops repo root.
-const _repoMarkers = ['tom_build', 'tom_build_cli', 'tom_test_kit'];
+const _repoMarkers = ['tom_issue_kit', 'tom_test_kit'];
 
 /// Only this workspace's own packages: a third-party dependency cannot suffer
 /// an unpropagated publish from here.
@@ -137,11 +137,13 @@ Directory? _repoRoot() {
   return null;
 }
 
-/// Directories whose packages are nobody's to upgrade: build output and the
-/// untracked scratch under `ztmp/` and `testlog/`.
+/// Directories whose packages are nobody's to upgrade: build output, the
+/// untracked scratch under `ztmp/` and `testlog/`, and archived packages (a
+/// `tom_skip.yaml`: no tool builds or pub-gets them).
 bool _pruned(Directory dir) {
   final name = dir.path.split(Platform.pathSeparator).last;
-  return name.startsWith('.') ||
+  return File('${dir.path}/tom_skip.yaml').existsSync() ||
+      name.startsWith('.') ||
       name == 'build' ||
       name == 'node_modules' ||
       name == 'ztmp' ||
