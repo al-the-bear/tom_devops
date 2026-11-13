@@ -188,16 +188,19 @@ void main() {
       expect(config.isValid, isFalse);
     });
 
-    test('IK-CFG-17: Load from workspace directory', () async {
-      // Create a temp workspace with tom_workspace.yaml
+    test('IK-CFG-17: Load from the issuekit section of buildkit_master.yaml '
+        '[2026-11-13]', () async {
       final tempDir = Directory.systemTemp.createTempSync('issuekit_ws_');
-      final workspaceYaml = File(path.join(tempDir.path, 'tom_workspace.yaml'));
-
-      await workspaceYaml.writeAsString('''
-issue_tracking:
-  issues_repo: test-owner/test-issues
-  tests_repo: test-owner/test-tests
-  default_severity: high
+      await File(path.join(tempDir.path, 'buildkit_master.yaml')).writeAsString('''
+navigation:
+  exclude: [ztmp]
+issuekit:
+  issue_tracking:
+    issues_repo: test-owner/test-issues
+    tests_repo: test-owner/test-tests
+    default_severity: high
+  github_auth:
+    env_variable: MY_TOKEN
 ''');
 
       try {
@@ -207,9 +210,51 @@ issue_tracking:
         expect(config.issueTracking!.issuesRepo, 'test-owner/test-issues');
         expect(config.issueTracking!.testsRepo, 'test-owner/test-tests');
         expect(config.issueTracking!.defaultSeverity, 'high');
+        expect(config.auth!.envVariable, 'MY_TOKEN');
       } finally {
         await tempDir.delete(recursive: true);
       }
+    });
+
+    test('IK-CFG-19: tom_workspace.yaml is not read any more [2026-11-13]',
+        () async {
+      final tempDir = Directory.systemTemp.createTempSync('issuekit_ws_');
+      await File(path.join(tempDir.path, 'tom_workspace.yaml')).writeAsString('''
+issue_tracking:
+  issues_repo: test-owner/test-issues
+  tests_repo: test-owner/test-tests
+''');
+      try {
+        final config = await IssueKitConfig.load(tempDir.path);
+        expect(config.isValid, isFalse);
+      } finally {
+        await tempDir.delete(recursive: true);
+      }
+    });
+
+    test('IK-CFG-20: the workspace root is TOM_WORKSPACE_ROOT, else the '
+        'nearest buildkit_master.yaml (a stray tom_workspace.yaml below it '
+        'marks nothing), else the start directory [2026-11-13]', () {
+      final tempDir = Directory.systemTemp.createTempSync('issuekit_root_');
+      addTearDown(() => tempDir.deleteSync(recursive: true));
+      final ws = path.join(tempDir.path, 'ws');
+      File(path.join(ws, 'buildkit_master.yaml'))
+        ..createSync(recursive: true)
+        ..writeAsStringSync('');
+      final stray = Directory(path.join(ws, 'a'))..createSync();
+      File(path.join(stray.path, 'tom_workspace.yaml')).writeAsStringSync('');
+      final start = Directory(path.join(stray.path, 'pkg'))..createSync();
+
+      expect(IssueKitConfig.workspaceRootFor(start.path, const {}), ws);
+      expect(
+        IssueKitConfig.workspaceRootFor(start.path, const {
+          'TOM_WORKSPACE_ROOT': '/elsewhere',
+        }),
+        '/elsewhere',
+      );
+      final lonely = Directory(path.join(tempDir.path, 'lonely'))..createSync();
+      expect(IssueKitConfig.workspaceRootFor(lonely.path, const {}),
+          lonely.path);
     });
 
     test('IK-CFG-18: Load project config from project directory', () async {

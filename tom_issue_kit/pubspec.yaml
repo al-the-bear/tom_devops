@@ -1,6 +1,6 @@
 name: tom_issue_kit
 description: Issue tracking CLI for the Tom Framework.
-version: 1.2.0
+version: 1.3.0
 publish_to: none
 
 environment:
@@ -8,7 +8,8 @@ environment:
 
 dependencies:
   path: ^1.9.0
-  tom_build_base: ">=2.19.1"
+  tom_build_base: ">=2.23.0 <3.0.0"
+  yaml: ^3.1.0
   tom_github_api:
     path: ../../basics/tom_github_api
 

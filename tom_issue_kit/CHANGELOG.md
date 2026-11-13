@@ -1,3 +1,16 @@
+## 1.3.0
+
+### Changed — configuration in `buildkit_master.yaml`, workspace by its marker
+
+- The workspace is `TOM_WORKSPACE_ROOT` when set, else the nearest directory
+  holding `buildkit_master.yaml` (tom_build_base `>=2.23.0`), else the current
+  directory (`IssueKitConfig.workspaceRootFor`); before, it was the current
+  directory unless the variable was set.
+- The workspace settings are read from the `issuekit:` section of
+  `buildkit_master.yaml` (`issue_tracking:`, `github_auth:`), with package:yaml.
+  `tom_workspace.yaml` is no longer read; it never held an `issue_tracking`
+  section, so nothing moves. Tests IK-CFG-17, IK-CFG-19, IK-CFG-20.
+
 ## 1.2.0
 
 ### Fixed — options written after the command name were ignored (scf13)

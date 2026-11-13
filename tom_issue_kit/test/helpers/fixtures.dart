@@ -134,15 +134,13 @@ IssueKitConfig createTestConfig({
   );
 }
 
-/// Sample tom_workspace.yaml content for testing.
+/// Sample buildkit_master.yaml content (its issuekit section) for testing.
 const String sampleWorkspaceYaml = '''
-name: test_workspace
-version: 1.0.0
-
-issue_tracking:
-  issues_repo: al-the-bear/tom_issues
-  tests_repo: al-the-bear/tom_tests
-  auth:
+issuekit:
+  issue_tracking:
+    issues_repo: al-the-bear/tom_issues
+    tests_repo: al-the-bear/tom_tests
+  github_auth:
     token_file: ~/.tom/github_token
 ''';
 

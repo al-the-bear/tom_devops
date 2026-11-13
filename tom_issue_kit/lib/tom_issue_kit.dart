@@ -5,7 +5,7 @@
 ///
 /// ## Key Components
 ///
-/// - [IssueKitConfig] — Configuration loading from tom_workspace.yaml
+/// - [IssueKitConfig] — Configuration loading from buildkit_master.yaml
 /// - [IssueTrackingConfig] — Issue tracking repository configuration
 /// - [ProjectConfig] — Project-level configuration from tom_project.yaml
 /// - [GitHubAuthConfig] — GitHub authentication resolution

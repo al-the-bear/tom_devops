@@ -71,16 +71,17 @@ alias ik=issuekit
 ### Configuration
 
 `issuekit` reads its configuration from two files; no flags are needed once they
-are in place:
+are in place. The workspace is `TOM_WORKSPACE_ROOT` when set, else the nearest
+directory holding `buildkit_master.yaml`:
 
 ```yaml
-# tom_workspace.yaml (workspace root)
-issue_tracking:
-  issues_repo: al-the-bear/tom_issues   # @issues intake
-  tests_repo:  al-the-bear/tom_tests    # @tests tracking
-
-github_auth:
-  token_file: ~/.tom/github_token       # or rely on GITHUB_TOKEN
+# buildkit_master.yaml (workspace root)
+issuekit:
+  issue_tracking:
+    issues_repo: al-the-bear/tom_issues   # @issues intake
+    tests_repo:  al-the-bear/tom_tests    # @tests tracking
+  github_auth:
+    token_file: ~/.tom/github_token       # or rely on GITHUB_TOKEN
 ```
 
 ```yaml
@@ -292,7 +293,7 @@ per-command executors.
 | `issuekitTool` | The `ToolDefinition` — declares all 24 `:commands`, their options and help topics. |
 | `createIssuekitExecutors` | Builds the `CommandExecutor` map (one per command) bound to an `IssueService`. |
 | `IssueService` | High-level issue operations — create / update / analyze / assign / verify / resolve / sync, label management, lifecycle transitions. |
-| `IssueKitConfig` | Workspace configuration loaded from `tom_workspace.yaml`; exposes `token`, `issueTracking`, `isValid`. |
+| `IssueKitConfig` | Workspace configuration loaded from the `issuekit:` section of `buildkit_master.yaml` (`workspaceRootFor` finds the workspace); exposes `token`, `issueTracking`, `isValid`. |
 | `IssueTrackingConfig` | The `issues_repo` / `tests_repo` slugs. |
 | `ProjectConfig` | Per-project `project_id` from `tom_project.yaml`. |
 | `GitHubAuthConfig` | Token resolution (explicit / `GITHUB_TOKEN` / `~/.tom/github_token`). |

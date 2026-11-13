@@ -102,17 +102,8 @@ void scanTestFile(String path) {
 ### Workspace Root Detection
 
 ```dart
-// Find workspace root (directory with tom_workspace.yaml)
-String? findWorkspaceRoot(String startDir) {
-  var current = truepath(startDir);
-  while (current != rootPath) {
-    if (exists(join(current, 'tom_workspace.yaml'))) {
-      return current;
-    }
-    current = dirname(current);
-  }
-  return null;
-}
+// The workspace root: tom_build_base's finder (nearest buildkit_master.yaml).
+final root = findWorkspaceRootOrNull(pwd);
 ```
 
 ## Best Practices

@@ -1243,17 +1243,18 @@ Naming convention: `baseline_MMDD_HHMM.csv` for per-project, `consolidated_MMDD_
 
 ## Configuration
 
-issuekit reads configuration from `tom_workspace.yaml` (workspace level) and `tom_project.yaml` (project level).
+issuekit reads configuration from the `issuekit:` section of `buildkit_master.yaml` (workspace level) and `tom_project.yaml` (project level). The workspace is `TOM_WORKSPACE_ROOT` when set, else the nearest directory holding `buildkit_master.yaml`.
 
 ### Workspace Configuration
 
 ```yaml
-# tom_workspace.yaml (issue tracking section)
-issue_tracking:
-  issues_repo: al-the-bear/tom_issues
-  tests_repo: al-the-bear/tom_tests
-  default_severity: normal
-  default_reporter: alexis
+# buildkit_master.yaml (issuekit section)
+issuekit:
+  issue_tracking:
+    issues_repo: al-the-bear/tom_issues
+    tests_repo: al-the-bear/tom_tests
+    default_severity: normal
+    default_reporter: alexis
 ```
 
 ### Project Configuration

@@ -54,9 +54,12 @@ Future<void> _runCli(List<String> normalizedArgs) async {
     return;
   }
 
-  // Load configuration from workspace root (current directory by default)
-  final workspaceRoot =
-      Platform.environment['TOM_WORKSPACE_ROOT'] ?? Directory.current.path;
+  // The workspace: TOM_WORKSPACE_ROOT, else the nearest buildkit_master.yaml,
+  // else the current directory.
+  final workspaceRoot = IssueKitConfig.workspaceRootFor(
+    Directory.current.path,
+    Platform.environment,
+  );
   final config = await IssueKitConfig.load(workspaceRoot);
 
   // Resolve GitHub token
@@ -65,7 +68,7 @@ Future<void> _runCli(List<String> normalizedArgs) async {
     stderr.writeln('Error: No GitHub token configured.');
     stderr.writeln(
       'Set GITHUB_TOKEN environment variable or configure '
-      'token_file in tom_workspace.yaml',
+      'issuekit: github_auth: token_file in buildkit_master.yaml',
     );
     exitCode = 1;
     return;
@@ -74,7 +77,7 @@ Future<void> _runCli(List<String> normalizedArgs) async {
   // Verify issue tracking is configured
   if (!config.isValid) {
     stderr.writeln(
-      'Error: issue_tracking not configured in tom_workspace.yaml',
+      'Error: issuekit: issue_tracking: not configured in buildkit_master.yaml',
     );
     exitCode = 1;
     return;

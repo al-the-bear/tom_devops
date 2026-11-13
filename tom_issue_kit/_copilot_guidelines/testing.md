@@ -72,7 +72,7 @@ The `fixtures.dart` file provides factory functions for test data:
 | `createTestIssue()` | GitHubIssue with configurable fields |
 | `createTestLabel()` | GitHubLabel for label operations |
 | `createTestConfig()` | IssueKitConfig for testing |
-| `createTestWorkspaceYaml()` | Sample tom_workspace.yaml content |
+| `sampleWorkspaceYaml` | Sample `issuekit:` section of buildkit_master.yaml |
 | `createTestProjectYaml()` | Sample tom_project.yaml content |
 
 ### Test Naming Convention
@@ -190,7 +190,7 @@ These are dedicated repositories for testing — integration tests create/modify
    - Markdown
 
 4. **Configuration**
-   - Reading `tom_workspace.yaml`
+   - Reading the `issuekit:` section of `buildkit_master.yaml`
    - Reading `tom_project.yaml`
    - GitHub token resolution
 

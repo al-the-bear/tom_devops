@@ -1,14 +1,18 @@
 /// Configuration loading for issuekit.
 ///
-/// Reads configuration from tom_workspace.yaml (workspace level) and
-/// tom_project.yaml (project level).
+/// Reads configuration from the `issuekit:` section of `buildkit_master.yaml`
+/// (workspace level) and tom_project.yaml (project level).
 library;
 
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
+import 'package:tom_build_base/tom_build_base.dart'
+    show findWorkspaceRootOrNull, kBuildkitMasterYaml;
+import 'package:yaml/yaml.dart';
 
-/// Issue tracking configuration from tom_workspace.yaml.
+/// Issue tracking configuration (`issuekit: issue_tracking:` in
+/// `buildkit_master.yaml`).
 class IssueTrackingConfig {
   /// Constructor.
   const IssueTrackingConfig({
@@ -187,7 +191,7 @@ class IssueKitConfig {
     this.projectConfigs = const {},
   });
 
-  /// Issue tracking configuration from tom_workspace.yaml.
+  /// Issue tracking configuration (`issuekit: issue_tracking:`).
   final IssueTrackingConfig? issueTracking;
 
   /// GitHub authentication configuration.
@@ -202,37 +206,57 @@ class IssueKitConfig {
   /// Get the resolved GitHub token.
   String? get token => auth?.resolveToken();
 
+  /// The workspace issuekit works in, seen from [startDirectory]:
+  /// `TOM_WORKSPACE_ROOT` from [environment] when set, else the nearest
+  /// directory holding `buildkit_master.yaml`, else [startDirectory].
+  static String workspaceRootFor(
+    String startDirectory,
+    Map<String, String> environment,
+  ) {
+    final explicit = environment['TOM_WORKSPACE_ROOT'];
+    if (explicit != null && explicit.isNotEmpty) return explicit;
+    return findWorkspaceRootOrNull(startDirectory) ?? startDirectory;
+  }
+
   /// Load configuration from a workspace root.
   ///
-  /// Reads tom_workspace.yaml for issue_tracking configuration.
+  /// Reads the `issuekit:` section of `buildkit_master.yaml`:
+  ///
+  /// ```yaml
+  /// issuekit:
+  ///   issue_tracking:
+  ///     issues_repo: owner/issues
+  ///     tests_repo: owner/tests
+  ///   github_auth:
+  ///     token_file: ~/.tom/github_token
+  /// ```
   static Future<IssueKitConfig> load(String workspaceRoot) async {
-    final workspaceYaml = File(path.join(workspaceRoot, 'tom_workspace.yaml'));
+    final master = File(path.join(workspaceRoot, kBuildkitMasterYaml));
 
     IssueTrackingConfig? issueTracking;
     GitHubAuthConfig? auth;
 
-    if (workspaceYaml.existsSync()) {
-      final contents = await workspaceYaml.readAsString();
-      final yaml = _parseYaml(contents);
-
-      if (yaml is Map<String, dynamic>) {
+    if (master.existsSync()) {
+      final yaml = loadYaml(await master.readAsString());
+      final section = yaml is YamlMap ? yaml['issuekit'] : null;
+      if (section is YamlMap) {
         issueTracking = IssueTrackingConfig.tryParse(
-          yaml['issue_tracking'] as Map<String, dynamic>?,
+          _plainMap(section['issue_tracking']),
         );
-        auth = GitHubAuthConfig.tryParse(
-          yaml['github_auth'] as Map<String, dynamic>?,
-        );
+        auth = GitHubAuthConfig.tryParse(_plainMap(section['github_auth']));
       }
     }
 
     // If no auth config, use defaults
     auth ??= const GitHubAuthConfig();
 
-    return IssueKitConfig(
-      issueTracking: issueTracking,
-      auth: auth,
-    );
+    return IssueKitConfig(issueTracking: issueTracking, auth: auth);
   }
+
+  /// A YAML map as a plain `Map<String, dynamic>`, or null.
+  static Map<String, dynamic>? _plainMap(Object? value) => value is YamlMap
+      ? {for (final e in value.entries) '${e.key}': e.value}
+      : null;
 
   /// Load project configuration from a project directory.
   ///

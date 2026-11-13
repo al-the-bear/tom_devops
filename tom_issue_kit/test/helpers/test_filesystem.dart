@@ -288,9 +288,9 @@ library;
     return project;
   }
 
-  /// Writes a workspace configuration file.
+  /// Writes the workspace configuration file (`buildkit_master.yaml`).
   void addWorkspaceConfig(String content) {
-    _root.writeFile('tom_workspace.yaml', content);
+    _root.writeFile('buildkit_master.yaml', content);
   }
 
   /// Cleans up the workspace and all projects.
