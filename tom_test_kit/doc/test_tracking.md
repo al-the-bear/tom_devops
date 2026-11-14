@@ -2,6 +2,9 @@
 
 This document defines the test tracking concept supported by Tom Test Kit's `testkit` CLI. It describes the test-code-fix cycle, test description conventions, and how each command supports the workflow.
 
+How the workspace uses testkit together with buildkit (baselines before and after a change, build-tool tests on the
+workspace clone, releases and locks): [buildkit and testkit best practices](../../../basics/tom_build_kit/doc/best_practices.md).
+
 ---
 
 ## Table of Contents
