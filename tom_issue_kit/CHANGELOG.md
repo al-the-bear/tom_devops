@@ -1,3 +1,11 @@
+## 1.4.1
+
+### Fixed — `navigation: exclude` on Windows
+
+On tom_build_base 2.35.2: on Windows issuekit walked the projects
+`buildkit_master.yaml` excludes (the forks under `xternal/`, `ai_build/`, ...),
+because the path filters compared Windows paths with `/` patterns.
+
 ## 1.4.0
 
 ### Changed — the project id comes from `buildkit.yaml`
