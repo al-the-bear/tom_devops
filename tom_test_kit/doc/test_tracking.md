@@ -4,6 +4,8 @@ This document defines the test tracking concept supported by Tom Test Kit's `tes
 
 How the workspace uses testkit together with buildkit (baselines before and after a change, build-tool tests on the
 workspace clone, releases and locks): [buildkit and testkit best practices](../../../basics/tom_build_kit/doc/best_practices.md).
+Known failures (a passing test recorded as `--`, a test failing only under load, `NOT MEASURED`, pub-cache damage):
+[troubleshooting](../../../basics/tom_build_kit/doc/troubleshooting.md).
 
 ---
 
@@ -241,7 +243,7 @@ Comments, if provided via `-c`, appear in the column header. A run measured with
 | `:fuzz` | Run the package's fuzz campaigns (`fuzz/*_fuzz.dart`, tom_fuzz); exits 1 when a target failed |
 | `:mutations` | Catalogued mutation sweep (`tool/mutations.yaml`): killed / survived / invalid, report and `--min-killed` gate |
 
-All commands support project traversal options for multi-project operation. Run `testkit help` for the overview or `testkit help <command>` for per-command details.
+All commands support project traversal options for multi-project operation. Run `testkit help` for the overview or `testkit :<command> --help` (e.g. `testkit :report --help`) for per-command details.
 
 ---
 
@@ -1013,9 +1015,9 @@ The TUI provides a full-screen dashboard for running baselines and tests interac
 
 ```bash
 testkit help                     # Overview of all commands
-testkit help <command>           # Detailed help for a specific command
-testkit help baseline            # Example: detailed :baseline help
-testkit help crossreference      # Aliases work too: crossref, xref
+testkit :<command> --help        # Detailed help for a specific command
+testkit :baseline --help         # Example: detailed :baseline help
+testkit :crossref --help         # Aliases work too: crossref, xref
 testkit --help                   # Same as testkit help
 testkit version                  # Show version information
 ```
