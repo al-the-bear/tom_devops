@@ -1,3 +1,12 @@
+## 1.4.2
+
+### Changed — a one-value option given twice is refused
+
+On tom_build_base 2.36.0: `issuekit -s a -s b` (and any other option that takes
+one value, given twice) stops with an error naming the option and both values,
+instead of keeping the last value without a word. Several scan roots are
+written once, comma-separated: `issuekit -s a,b`.
+
 ## 1.4.1
 
 ### Fixed — `navigation: exclude` on Windows
