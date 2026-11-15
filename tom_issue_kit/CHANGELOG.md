@@ -1,3 +1,11 @@
+## 1.4.4
+
+### Fixed — `issuekit help <command>` prints the command's help
+
+On tom_build_base 2.38.0: `issuekit help <command>` (also `help :<command>`, an
+alias or an unambiguous prefix) prints the same help as
+`issuekit :<command> --help` instead of `Unknown help topic`.
+
 ## 1.4.3
 
 ### Changed — no escape codes in piped output

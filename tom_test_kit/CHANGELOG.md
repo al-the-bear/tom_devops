@@ -1,3 +1,11 @@
+## 1.11.4
+
+### Fixed — `testkit help <command>` prints the command's help
+
+On tom_build_base 2.38.0: `testkit help <command>` (also `help :<command>`, an
+alias or an unambiguous prefix) prints the same help as
+`testkit :<command> --help` instead of `Unknown help topic`.
+
 ## 1.11.3
 
 ### Changed — no escape codes in piped output

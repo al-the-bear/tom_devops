@@ -243,7 +243,7 @@ Comments, if provided via `-c`, appear in the column header. A run measured with
 | `:fuzz` | Run the package's fuzz campaigns (`fuzz/*_fuzz.dart`, tom_fuzz); exits 1 when a target failed |
 | `:mutations` | Catalogued mutation sweep (`tool/mutations.yaml`): killed / survived / invalid, report and `--min-killed` gate |
 
-All commands support project traversal options for multi-project operation. Run `testkit help` for the overview or `testkit :<command> --help` (e.g. `testkit :report --help`) for per-command details.
+All commands support project traversal options for multi-project operation. Run `testkit help` for the overview and `testkit help <command>` or `testkit :<command> --help` (e.g. `testkit help report`) for per-command details.
 
 ---
 
@@ -1015,7 +1015,8 @@ The TUI provides a full-screen dashboard for running baselines and tests interac
 
 ```bash
 testkit help                     # Overview of all commands
-testkit :<command> --help        # Detailed help for a specific command
+testkit help <command>           # Detailed help for a specific command
+testkit :<command> --help        # The same
 testkit :baseline --help         # Example: detailed :baseline help
 testkit :crossref --help         # Aliases work too: crossref, xref
 testkit --help                   # Same as testkit help
