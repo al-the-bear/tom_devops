@@ -1,3 +1,11 @@
+## 1.11.5
+
+### Fixed — `testkit help <command>` for a wired nested command
+
+On tom_build_base 2.38.1: `testkit help <nested command>` prints the help
+of a wired nested command, taken from its nested tool, instead of
+`Unknown help topic`.
+
 ## 1.11.4
 
 ### Fixed — `testkit help <command>` prints the command's help

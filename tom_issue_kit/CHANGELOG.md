@@ -1,3 +1,11 @@
+## 1.4.5
+
+### Fixed — `issuekit help <command>` for a wired nested command
+
+On tom_build_base 2.38.1: `issuekit help <nested command>` prints the help
+of a wired nested command, taken from its nested tool, instead of
+`Unknown help topic`.
+
 ## 1.4.4
 
 ### Fixed — `issuekit help <command>` prints the command's help
