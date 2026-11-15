@@ -1,3 +1,11 @@
+## 1.4.3
+
+### Changed — no escape codes in piped output
+
+On tom_build_base 2.37.0: issuekit styles its output only on a terminal. Piped or
+redirected output, and any output under `NO_COLOR`, is plain text with the
+markdown markers removed; `FORCE_COLOR=1` styles a pipe.
+
 ## 1.4.2
 
 ### Changed — a one-value option given twice is refused
