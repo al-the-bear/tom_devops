@@ -2000,7 +2000,8 @@ class RunTestsExecutor extends CommandExecutor {
 // Executor Factory
 // =============================================================================
 
-/// Create all issuekit command executors.
+/// Create all issuekit command executors, each in a
+/// [ResultPrintingExecutor].
 ///
 /// Requires an [IssueService] for commands that interact with the GitHub API.
 Map<String, CommandExecutor> createIssuekitExecutors({
@@ -2008,6 +2009,73 @@ Map<String, CommandExecutor> createIssuekitExecutors({
   TestScanner? scanner,
 }) {
   final testScanner = scanner ?? TestScanner();
+  return {
+    for (final MapEntry(:key, :value) in _executors(
+      service,
+      testScanner,
+    ).entries)
+      key: ResultPrintingExecutor(
+        value,
+        whenEmpty: const {
+          'list': 'No issues match.',
+          'search': 'No issues match.',
+        }[key],
+      ),
+  };
+}
+
+/// An issuekit executor that prints what its command reports.
+///
+/// The commands that visit no projects (`:list`, `:show`, `:init`, ...)
+/// report through the messages of the [ToolResult] they return, and the
+/// shared run summary prints only skips, failures and a footer. This prints
+/// the message of every successful, not skipped result, in order, and
+/// [whenEmpty] when a successful command reports nothing; the result itself is
+/// returned unchanged.
+class ResultPrintingExecutor extends CommandExecutor {
+  ResultPrintingExecutor(this.inner, {this.whenEmpty});
+
+  /// The command's executor.
+  final CommandExecutor inner;
+
+  /// Printed when the command succeeds without a result (an empty `:list`),
+  /// so the run does not end in silence.
+  final String? whenEmpty;
+
+  @override
+  bool get handlesListMode => inner.handlesListMode;
+
+  @override
+  Future<ItemResult> execute(CommandContext context, CliArgs args) =>
+      inner.execute(context, args);
+
+  @override
+  Future<ItemResult?> afterTraversal(List<ItemResult> results, CliArgs args) =>
+      inner.afterTraversal(results, args);
+
+  @override
+  Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
+    final result = await inner.executeWithoutTraversal(args);
+    if (result.success && result.itemResults.isEmpty && whenEmpty != null) {
+      print(whenEmpty);
+    }
+    for (final item in result.itemResults) {
+      final message = item.message;
+      if (item.success &&
+          !item.skipped &&
+          message != null &&
+          message.isNotEmpty) {
+        print(message);
+      }
+    }
+    return result;
+  }
+}
+
+Map<String, CommandExecutor> _executors(
+  IssueService service,
+  TestScanner testScanner,
+) {
   return {
     // Issue Management (wired to IssueService)
     'new': NewIssueExecutor(service),

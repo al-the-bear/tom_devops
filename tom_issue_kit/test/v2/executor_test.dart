@@ -2672,12 +2672,12 @@ void main() {
 
   group('IK-EXE-FAC: createIssuekitExecutors [2026-02-13]', () {
     test('IK-EXE-FAC-1: creates all executors matching commands', () {
-      final executors = createIssuekitExecutors(service: mockService);
+      final executors = _unwrapped(createIssuekitExecutors(service: mockService));
       expect(executors.length, issuekitTool.commands.length);
     });
 
     test('IK-EXE-FAC-2: wired executors have correct types', () {
-      final executors = createIssuekitExecutors(service: mockService);
+      final executors = _unwrapped(createIssuekitExecutors(service: mockService));
       expect(executors['new'], isA<NewIssueExecutor>());
       expect(executors['edit'], isA<EditIssueExecutor>());
       expect(executors['show'], isA<ShowExecutor>());
@@ -2698,7 +2698,7 @@ void main() {
     });
 
     test('IK-EXE-FAC-3: traversal executors have correct types', () {
-      final executors = createIssuekitExecutors(service: mockService);
+      final executors = _unwrapped(createIssuekitExecutors(service: mockService));
       expect(executors['testing'], isA<TestingExecutor>());
       expect(executors['verify'], isA<VerifyExecutor>());
       expect(executors['scan'], isA<ScanExecutor>());
@@ -2709,3 +2709,10 @@ void main() {
     });
   });
 }
+
+/// The factory's executors without their [ResultPrintingExecutor] wrapper:
+/// the command's own executor.
+Map<String, CommandExecutor> _unwrapped(Map<String, CommandExecutor> map) => {
+  for (final MapEntry(:key, :value) in map.entries)
+    key: value is ResultPrintingExecutor ? value.inner : value,
+};

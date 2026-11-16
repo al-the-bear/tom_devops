@@ -1,3 +1,14 @@
+## 1.4.6
+
+### Fixed — the commands print what they report
+
+The commands that visit no projects (`:list`, `:show`, `:search`, `:summary`,
+`:init`, ...) put their output into the messages of their results, and the
+shared run summary prints only skips, failures and a footer: `issuekit :list`
+printed "Done. No errors." over a repository with issues. Every executor now
+prints the messages of its successful results, in order; an empty `:list` or
+`:search` prints `No issues match.`
+
 ## 1.4.5
 
 ### Fixed — `issuekit help <command>` for a wired nested command

@@ -2170,9 +2170,8 @@ void main() {
 
   group('IK-EXE-FAC-TRV: factory with TestScanner [2026-02-14]', () {
     test('IK-EXE-FAC-TRV-1: factory accepts custom TestScanner', () {
-      final executors = createIssuekitExecutors(
-        service: mockService,
-        scanner: mockScanner,
+      final executors = _unwrapped(
+        createIssuekitExecutors(service: mockService, scanner: mockScanner),
       );
 
       expect(executors['scan'], isA<ScanExecutor>());
@@ -2185,7 +2184,7 @@ void main() {
     });
 
     test('IK-EXE-FAC-TRV-2: factory creates default TestScanner', () {
-      final executors = createIssuekitExecutors(service: mockService);
+      final executors = _unwrapped(createIssuekitExecutors(service: mockService));
 
       // All traversal executors should be created even without explicit scanner
       expect(executors['scan'], isA<ScanExecutor>());
@@ -2198,3 +2197,10 @@ void main() {
     });
   });
 }
+
+/// The factory's executors without their [ResultPrintingExecutor] wrapper:
+/// the command's own executor.
+Map<String, CommandExecutor> _unwrapped(Map<String, CommandExecutor> map) => {
+  for (final MapEntry(:key, :value) in map.entries)
+    key: value is ResultPrintingExecutor ? value.inner : value,
+};
