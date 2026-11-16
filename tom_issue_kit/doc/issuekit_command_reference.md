@@ -94,7 +94,7 @@ graph TB
 | Repository | Visibility | Purpose |
 |------------|-----------|---------|
 | **`tom_issues`** | Public | External issue intake (@issues) — reporters file issues here |
-| **`tom_tests`** | Private | Test entries (@tests) as GitHub Issues — project/module metadata, consolidated baselines, nightly snapshots |
+| **`tom_tests`** | Private | Test entries (@tests) as GitHub Issues — project/module metadata, consolidated baselines, snapshots |
 | **Project repos** | Public or private | Contain the actual code and dart tests (@code) |
 
 ### Key Actors
@@ -106,7 +106,7 @@ graph TB
 | **Developer / Copilot** | Creates dart test (@code), fixes bug, verifies |
 | **issuekit** | Orchestrates lifecycle, scans dart tests, syncs state |
 | **testkit** | Runs dart tests (@code), tracks baselines, detects pass/fail changes |
-| **GitHub Actions** | Nightly automated test runs from `tom_tests` |
+| **GitHub Actions** | Off on the fleet's repositories apart from a few exceptions; a test workflow on a repository that enables it is dispatched by `:run-tests --github` |
 
 ### ID Scheme
 
@@ -324,7 +324,7 @@ issuekit :aggregate
 
 #### Summary
 
-Merges testkit baselines from all projects into a consolidated CSV in `tom_tests`. This gives a single-file, cross-project view of every issue-linked test with result history. Typically run nightly by a GitHub Action, but can also be triggered manually after a test run.
+Merges testkit baselines from all projects into a consolidated CSV in `tom_tests`. This gives a single-file, cross-project view of every issue-linked test with result history. Run after a test run (`:run-tests`), by hand or in a test workflow.
 
 #### Use Case
 
@@ -362,7 +362,7 @@ CR,CR-103-ENC-4,Cipher fails on empty input,X,X
 
 The `:aggregate` command also generates a regression report highlighting changes: `OK → X` (regression), `X → OK` (fix), `-- → X` (new failure).
 
-This consolidated view is what `:sync` reads to detect regressions and state changes across the full workspace. It is also the artifact committed by the nightly GitHub Action.
+This consolidated view is what `:sync` reads to detect regressions and state changes across the full workspace. It is also what a test workflow commits on a repository that runs one (`:run-tests --github`).
 
 #### Examples
 
@@ -561,7 +561,7 @@ graph LR
     V[":verify 42<br/>All dart tests @code pass"] --> R[":resolve 42<br/>Reporter confirms"]
     R --> C[":close 42<br/>Archive issue @issues"]
     C --> G["Dart test @code D4-42-PAR-7<br/>stays as regression guard"]
-    G --> SY{":sync (nightly)"}
+    G --> SY{":sync"}
     SY -->|"dart test still passes"| OK["Issue @issues stays closed"]
     SY -->|"dart test fails"| RE["Issue @issues reopened automatically"]
 ```
@@ -1351,35 +1351,40 @@ issuekit :run-tests [options]
 
 | Option | Description |
 |--------|-------------|
-| `--wait` | Wait for the workflow to complete (polls status) |
+| `--github` | Dispatch the test workflow on the tests repository via GitHub Actions instead of running the tests locally |
+| `--workflow <file>` | With `--github`: the workflow file (default `nightly_tests.yml`) |
+| `--ref <ref>` | With `--github`: the branch or tag the workflow runs on (default `main`) |
+| `--wait` | With `--github`: wait for the run and report its conclusion (polls its status) |
 
 #### Summary
 
-Triggers the nightly test workflow in `tom_tests` via a GitHub API `workflow_dispatch` event. This runs all dart tests @code across all projects, aggregates results, and syncs issue states — the same process that runs on schedule, but triggered on demand.
+Runs the tests. By default locally, as a person starts them: `testkit :test` over the workspace (`testkit -R <workspace-root> :test`), its output in the terminal; this needs no GitHub token. With `--github` it dispatches a test workflow (`workflow_dispatch`) on the tests repository instead. GitHub Actions is off on the fleet's repositories apart from a few exceptions, so before dispatching it checks the repository's Actions permission and refuses with a clear message when Actions is off there. `--workflow`, `--ref` and `--wait` apply to `--github` only.
 
 #### Use Case
 
-The nightly GitHub Action in `tom_tests` checks out all repos, runs testkit, aggregates baselines, and runs `:sync`. Sometimes you need this immediately — after a major fix, before a release, or during a triage session.
+After a fix, before a release or during a triage session: run the whole workspace's tests with testkit and record them in the baselines (then `:aggregate` and `:sync` read them). On a repository that enables Actions for it (a test repository), `--github` starts the same run there, and `--wait` reports whether it passed.
 
 ```mermaid
 graph TB
     RT[":run-tests"]
-    RT -->|"workflow_dispatch"| GA["GitHub Action<br/>in tom_tests"]
-    GA --> CO["Checkout all repos"]
-    CO --> TK["Run testkit :baseline<br/>in each project"]
-    TK --> AG[":aggregate<br/>Merge baselines"]
-    AG --> SY[":sync --auto<br/>Update issue @issues states"]
-    SY --> CM["Commit results<br/>to tom_tests"]
+    RT -->|"default"| TK["testkit -R &lt;workspace&gt; :test<br/>on this machine"]
+    RT -->|"--github"| AC{"Actions on in<br/>the tests repository?"}
+    AC -->|"no"| RF["Refused: run locally<br/>or enable Actions"]
+    AC -->|"yes"| GA["workflow_dispatch<br/>(--workflow, --ref)"]
+    GA -->|"--wait"| WR["Run's conclusion"]
 ```
 
 #### Examples
 
 ```bash
-# Trigger the nightly workflow immediately
+# Run the workspace's tests here
 issuekit :run-tests
 
-# Trigger and wait for completion
-issuekit :run-tests --wait
+# Dispatch the nightly workflow and wait for its conclusion
+issuekit :run-tests --github --wait
+
+# Another workflow, on another branch
+issuekit :run-tests --github --workflow smoke.yml --ref dev
 ```
 
 [TOC](#table-of-contents) | [Intro](#introduction) | [Commands](#commands) | :run-tests: [Summary](#summary-15) | [Use Case](#use-case-15) | [Examples](#examples-15) — [:resolve](#resolve) | [:scan](#scan)
@@ -1639,11 +1644,11 @@ issuekit :snapshot [options]
 
 #### Summary
 
-Exports all issues @issues from tom_issues and all test entries @tests from tom_tests to timestamped JSON files. These snapshots provide versioned backup and enable recovery. Designed to be run nightly by a GitHub Action, with results committed to tom_tests for git-based versioning.
+Exports all issues @issues from tom_issues and all test entries @tests from tom_tests to timestamped JSON files. These snapshots provide versioned backup and enable recovery. Run by hand (or by a workflow on a repository with GitHub Actions on), with results committed to tom_tests for git-based versioning.
 
 #### Use Case
 
-The nightly backup mechanism ensures that all issue tracking data is preserved and versioned. `:snapshot` exports the complete state of both GitHub Issue trackers:
+The snapshots ensure that all issue tracking data is preserved and versioned. `:snapshot` exports the complete state of both GitHub Issue trackers:
 
 ```mermaid
 graph TB
@@ -1670,23 +1675,22 @@ graph TB
     T1 & T2 & T3 --> SN --> F2
 ```
 
-The snapshot workflow is typically run by a nightly GitHub Action:
+A person runs `:snapshot` and commits the files; on a repository that has GitHub Actions on, a workflow can do the same:
 
 ```mermaid
 sequenceDiagram
-    participant GA as GitHub Action<br/>(nightly)
+    participant GA as issuekit :snapshot<br/>(by hand or a workflow)
     participant GH1 as tom_issues<br/>(@issues)
     participant GH2 as tom_tests<br/>(@tests)
     participant FS as tom_tests<br/>(file system)
     participant GIT as Git
 
-    Note over GA: Nightly at 3:00 AM
     GA->>GH1: Fetch all issues via API
     GA->>GH2: Fetch all test entries via API
     GA->>FS: Write snapshots/issues/snapshot_YYYYMMDD.json
     GA->>FS: Write snapshots/tests/snapshot_YYYYMMDD.json
     GA->>GIT: git add snapshots/
-    GA->>GIT: git commit -m "Nightly snapshot YYYY-MM-DD"
+    GA->>GIT: git commit -m "Snapshot YYYY-MM-DD"
     Note over GIT: Versioning via git history
 ```
 
@@ -1737,10 +1741,10 @@ issuekit :snapshot --tests-only
 # Custom output directory
 issuekit :snapshot --output=backups/2026-02/
 
-# Typical nightly Action usage
+# Snapshot and commit
 issuekit :snapshot && \
   git add snapshots/ && \
-  git commit -m "Nightly snapshot $(date +%Y-%m-%d)"
+  git commit -m "Snapshot $(date +%Y-%m-%d)"
 ```
 
 [TOC](#table-of-contents) | [Intro](#introduction) | [Commands](#commands) | :snapshot: [Summary](#summary-19) | [Use Case](#use-case-19) | [Examples](#examples-19) — [:show](#show) | [:summary](#summary-cmd)
@@ -1851,7 +1855,7 @@ issuekit :sync [options]
 
 #### Summary
 
-Synchronizes issue @issues states with dart test @code results across the workspace. Detects fixes (dart tests now pass), regressions (dart tests now fail), and missing tests. Can automatically apply state transitions and reopen issues @issues on regression. This is the automation backbone — run nightly by GitHub Actions.
+Synchronizes issue @issues states with dart test @code results across the workspace. Detects fixes (dart tests now pass), regressions (dart tests now fail), and missing tests. Can automatically apply state transitions and reopen issues @issues on regression. This is the automation backbone — run after each test run.
 
 #### Use Case
 
@@ -1899,14 +1903,14 @@ graph TB
 ```mermaid
 graph LR
     FIX["Bug fixed<br/>dart test passes"] --> CLOSE["Issue @issues closed"]
-    CLOSE --> NIGHT["Nightly :sync"]
+    CLOSE --> NIGHT["Later :sync"]
     NIGHT --> CHK{"Dart test still passes?"}
     CHK -->|"OK"| CLOSE
     CHK -->|"FAIL"| REOPEN["Issue @issues reopened<br/>Comment: 'Regression in D4-42-PAR-7'"]
     REOPEN --> FIX
 ```
 
-Without `--auto`, `:sync` reports suggested changes but doesn't apply them. With `--auto`, it applies transitions and reopens automatically — this is what the nightly GitHub Action uses.
+Without `--auto`, `:sync` reports suggested changes but doesn't apply them. With `--auto`, it applies transitions and reopens automatically — what a test workflow runs after the tests.
 
 Output (dry-run):
 ```

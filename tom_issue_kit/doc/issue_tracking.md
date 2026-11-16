@@ -20,8 +20,8 @@ This document defines the issue tracking process supported by Tom Issue Kit's `i
 12. [Regression Detection and Automated Reopening](#regression-detection-and-automated-reopening)
 13. [Command Reference](#command-reference)
 14. [Integration with Testkit and Buildkit](#integration-with-testkit-and-buildkit)
-15. [GitHub Actions — Automated Test Runs](#github-actions--automated-test-runs)
-16. [Nightly Backup and Versioning](#nightly-backup-and-versioning)
+15. [Test Runs — Local and GitHub Actions](#test-runs--local-and-github-actions)
+16. [Backup and Versioning](#backup-and-versioning)
 17. [Initial Setup from Existing Codebase](#initial-setup-from-existing-codebase)
 18. [Configuration](#configuration)
 19. [Project Traversal](#project-traversal)
@@ -37,7 +37,7 @@ The tool operates across three GitHub repositories and any number of project rep
 | Repository | Visibility | Purpose |
 |------------|-----------|---------|
 | **`tom_issues`** | Public | External issue (@issues) intake — reporters file issues here |
-| **`tom_tests`** | Private | Test entries (@tests) as GitHub Issues — project/module metadata, consolidated baselines, regression tracking, nightly snapshots |
+| **`tom_tests`** | Private | Test entries (@tests) as GitHub Issues — project/module metadata, consolidated baselines, regression tracking, snapshots |
 | **Project repos** | Public or private | Contain the actual code and dart tests (@code) |
 
 Tom Issue Kit fills the space that neither `testkit` nor `buildkit` covers:
@@ -126,7 +126,7 @@ graph TB
     end
 
     subgraph "Private"
-        TT["tom_tests<br/>GitHub Issues tab<br/>Test entries (@tests)<br/>+ Consolidated baselines<br/>+ Nightly snapshots"]
+        TT["tom_tests<br/>GitHub Issues tab<br/>Test entries (@tests)<br/>+ Consolidated baselines<br/>+ Snapshots"]
     end
 
     subgraph "Project Repositories (public or private)"
@@ -179,7 +179,7 @@ graph TB
 **As a file repository:**
 
 - **Baselines:** Aggregated baseline CSVs from all projects.
-- **Snapshots:** Nightly JSON exports of all issues (@issues) and test entries (@tests) for backup and versioning.
+- **Snapshots:** JSON exports of all issues (@issues) and test entries (@tests) for backup and versioning.
 - **Reports:** Regression reports, issue-to-test mapping.
 
 **No dart test code.** Dart tests (@code) live in their respective project repositories.
@@ -191,10 +191,10 @@ tom_tests/
 │   ├── consolidated_0212_0800.csv
 │   └── ...
 ├── snapshots/
-│   ├── issues/                        # Nightly export of all @issues
+│   ├── issues/                        # Export of all @issues
 │   │   ├── snapshot_20260211.json
 │   │   └── snapshot_20260212.json
-│   └── tests/                         # Nightly export of all @tests entries
+│   └── tests/                         # Export of all @tests entries
 │       ├── snapshot_20260211.json
 │       └── snapshot_20260212.json
 ├── reports/
@@ -799,7 +799,7 @@ When an issue (@issues) is first filed, it has no dart test (@code). At `ASSIGNE
 `tom_tests` is a private repository that serves two purposes:
 
 1. **Issue tracker for test entries (@tests)** — each test entry is a GitHub Issue with project/module labels
-2. **File repository for baselines and snapshots** — aggregated results, nightly exports
+2. **File repository for baselines and snapshots** — aggregated results, exports
 
 ```
 tom_tests/
@@ -808,10 +808,10 @@ tom_tests/
 │   ├── consolidated_0212_0800.csv    # Full workspace baseline from Feb 12, 08:00
 │   └── ...
 ├── snapshots/
-│   ├── issues/                       # Nightly export of all @issues from tom_issues
+│   ├── issues/                       # Export of all @issues from tom_issues
 │   │   ├── snapshot_20260211.json
 │   │   └── snapshot_20260212.json
-│   └── tests/                        # Nightly export of all @tests from tom_tests
+│   └── tests/                        # Export of all @tests from tom_tests
 │       ├── snapshot_20260211.json
 │       └── snapshot_20260212.json
 ├── reports/
@@ -871,7 +871,7 @@ CR-103-ENC-4: X → OK   ← FIX (was broken, now passing)
 
 ```mermaid
 graph LR
-    A["Nightly test run<br/>(GitHub Action)"] --> B["Compare baselines"]
+    A["Test run<br/>(issuekit :run-tests)"] --> B["Compare baselines"]
     B --> C{"Regression?"}
     C -->|"OK → X"| D["issuekit :sync detects<br/>regression"]
     D --> E["Reopen issue @issues<br/>via GitHub API"]
@@ -959,7 +959,7 @@ graph TB
     end
 
     subgraph "Regression Guard"
-        R1["Future: test runs nightly"]
+        R1["Later test runs"]
         R2{"D4-42-PAR-7<br/>still passes?"}
         R3["All clear"]
         R4["issuekit :sync<br/>reopens #42"]
@@ -997,18 +997,22 @@ If testkit hasn't been run recently, `:verify` will report `NOT RUN`.
 
 ---
 
-## GitHub Actions — Automated Test Runs
+## Test Runs — Local and GitHub Actions
 
-A GitHub Action in the `tom_tests` repository provides automated, nightly testing of the full workspace.
+The workspace's tests are run by a person, from the repository: `issuekit :run-tests` runs `testkit :test` over the workspace on this machine (`testkit -R <workspace-root> :test`), and the baselines it writes are what `:aggregate` and `:sync` read. Nothing schedules it.
 
-### Why `tom_tests`?
+GitHub Actions is off on the fleet's repositories, with a few exceptions. A repository that enables Actions for it (a test repository) can hold a test workflow; `issuekit :run-tests --github` dispatches it (`--workflow`, default `nightly_tests.yml`; `--ref`, default `main`) and, with `--wait`, reports the run's conclusion. On a repository with Actions off it refuses before dispatching and says so.
 
-The Action runs from `tom_tests` (private) because:
+### Why the tests repository?
+
+A workflow there runs from `tom_tests` (private) because:
 - The full repository list stays hidden (workflow YAML is not public)
 - Test results stay private
 - The PAT (Personal Access Token) is stored in a private repo's secrets
 
-### The Workflow
+### A test workflow
+
+The shape of such a workflow, for a repository that has Actions on:
 
 ```yaml
 # tom_tests/.github/workflows/nightly_tests.yml
@@ -1076,14 +1080,15 @@ A **fine-grained PAT** scoped to the organization's repos provides access to bot
 ### Triggering from issuekit
 
 ```bash
-issuekit :run-tests
+issuekit :run-tests                    # testkit :test over the workspace, here
+issuekit :run-tests --github --wait    # the workflow on the tests repository
 ```
 
-Sends a `workflow_dispatch` event to `tom_tests` via the GitHub API.
+`--github` reads the repository's Actions permission first and sends a `workflow_dispatch` event only when Actions is on.
 
 ---
 
-## Nightly Backup and Versioning
+## Backup and Versioning
 
 ### Why Backup?
 
@@ -1160,13 +1165,13 @@ issuekit :import tom_tests/snapshots/tests/snapshot_20260211.json --target tom_t
 
 ### GitHub API Considerations
 
-- **Rate limits**: 5000 requests/hour with PAT. Exporting 100 issues with comments is ~200 requests — well within limits for nightly runs.
+- **Rate limits**: 5000 requests/hour with PAT. Exporting 100 issues with comments is ~200 requests — well within limits for a daily run.
 - **Pagination**: The API returns 100 issues per page. `:snapshot` handles pagination automatically.
 - **Comments**: Each issue's comments are fetched separately (1 request per issue with comments).
 
 ### On-Demand Snapshots
 
-Besides the nightly run, `:snapshot` can be triggered manually:
+`:snapshot` is run by hand (or by a workflow on a repository with GitHub Actions on):
 
 ```bash
 issuekit :snapshot                    # Export both @issues and @tests

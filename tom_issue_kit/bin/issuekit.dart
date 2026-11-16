@@ -62,8 +62,15 @@ Future<void> _runCli(List<String> normalizedArgs) async {
   );
   final config = await IssueKitConfig.load(workspaceRoot);
 
+  // `:run-tests` alone, without --github, runs testkit locally: it needs
+  // neither a GitHub token nor the issue tracking configuration.
+  final localRunTests =
+      preArgs.commands.length == 1 &&
+      preArgs.commands.single == 'run-tests' &&
+      preArgs.optionsFor('run-tests')['github'] != true;
+
   // Resolve GitHub token
-  final token = config.token;
+  final token = config.token ?? (localRunTests ? '' : null);
   if (token == null) {
     stderr.writeln('Error: No GitHub token configured.');
     stderr.writeln(
@@ -75,7 +82,7 @@ Future<void> _runCli(List<String> normalizedArgs) async {
   }
 
   // Verify issue tracking is configured
-  if (!config.isValid) {
+  if (!config.isValid && !localRunTests) {
     stderr.writeln(
       'Error: issuekit: issue_tracking: not configured in buildkit_master.yaml',
     );
@@ -87,8 +94,8 @@ Future<void> _runCli(List<String> normalizedArgs) async {
   final client = GitHubApiClient(token: token);
   final service = IssueService(
     client: client,
-    issuesRepo: config.issueTracking!.issuesRepo,
-    testsRepo: config.issueTracking!.testsRepo,
+    issuesRepo: config.issueTracking?.issuesRepo ?? '',
+    testsRepo: config.issueTracking?.testsRepo ?? '',
   );
 
   try {

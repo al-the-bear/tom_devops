@@ -4,6 +4,8 @@
 /// Handles label management, issue body formatting, and state transitions.
 library;
 
+import 'dart:async';
+
 import 'package:tom_github_api/tom_github_api.dart';
 
 /// Service for managing issues in tom_issues repository.
@@ -656,13 +658,71 @@ class IssueService {
     );
   }
 
-  /// Trigger the nightly test workflow via GitHub Actions.
-  Future<void> triggerTestWorkflow({bool wait = false}) async {
+  /// The tests repository (`owner/repo`).
+  String get testsRepo => _testsRepo;
+
+  /// Dispatch the test workflow [workflow] on [ref] of the tests repository
+  /// via GitHub Actions.
+  ///
+  /// Refused with [ActionsDisabledException] before anything is dispatched
+  /// when Actions is off on that repository (the fleet keeps it off on its
+  /// repositories, with a few exceptions). With [wait], finds the run the
+  /// dispatch started and polls it every [pollInterval] until it completed
+  /// (at most [timeout]), and returns it; without, returns null.
+  Future<GitHubWorkflowRun?> triggerTestWorkflow({
+    String workflow = 'nightly_tests.yml',
+    String ref = 'main',
+    bool wait = false,
+    Duration pollInterval = const Duration(seconds: 15),
+    Duration timeout = const Duration(hours: 2),
+  }) async {
+    if (!await _client.actionsEnabled(repoSlug: _testsRepo)) {
+      throw ActionsDisabledException(_testsRepo);
+    }
+    // GitHub's clock and ours differ; a run created up to a minute before
+    // the dispatch is still taken for the dispatched one.
+    final dispatchedAt = DateTime.now().toUtc().subtract(
+      const Duration(minutes: 1),
+    );
     await _client.dispatchWorkflow(
       repoSlug: _testsRepo,
-      workflowId: 'nightly_tests.yml',
-      ref: 'main',
+      workflowId: workflow,
+      ref: ref,
     );
+    if (!wait) return null;
+
+    final deadline = DateTime.now().add(timeout);
+    Future<void> pause() async {
+      if (DateTime.now().isAfter(deadline)) {
+        throw TimeoutException(
+          'the $workflow run on $_testsRepo did not finish',
+          timeout,
+        );
+      }
+      await Future<void>.delayed(pollInterval);
+    }
+
+    GitHubWorkflowRun? run;
+    while (true) {
+      final latest = await _client.latestWorkflowRun(
+        repoSlug: _testsRepo,
+        workflowId: workflow,
+        event: 'workflow_dispatch',
+      );
+      final created = latest?.createdAt;
+      if (latest != null &&
+          created != null &&
+          !created.isBefore(dispatchedAt)) {
+        run = latest;
+        break;
+      }
+      await pause();
+    }
+    while (!run!.isCompleted) {
+      await pause();
+      run = await _client.getWorkflowRun(repoSlug: _testsRepo, runId: run.id);
+    }
+    return run;
   }
 
   /// Release client resources.
@@ -870,4 +930,18 @@ class SnapshotResult {
     this.tests,
     required this.snapshotDate,
   });
+}
+
+/// GitHub Actions is off on [repo], so a workflow dispatched there never runs.
+class ActionsDisabledException implements Exception {
+  /// The repository (`owner/repo`).
+  final String repo;
+
+  const ActionsDisabledException(this.repo);
+
+  @override
+  String toString() =>
+      'GitHub Actions is off on $repo, so a dispatched workflow would never '
+      'run. Run the tests locally (`issuekit :run-tests` without --github), '
+      'or enable Actions on $repo.';
 }

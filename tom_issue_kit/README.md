@@ -38,7 +38,7 @@ The tool operates across three kinds of repository, kept deliberately distinct:
 | Layer | Repository | Purpose |
 | ----- | ---------- | ------- |
 | **@issues** | `tom_issues` (public) | Problem intake — reporters (or Copilot) file issues here. |
-| **@tests** | `tom_tests` (private) | Test entries with project/module metadata, consolidated baselines, regression tracking, nightly snapshots. |
+| **@tests** | `tom_tests` (private) | Test entries with project/module metadata, consolidated baselines, regression tracking, snapshots. |
 | **@code** | project repos | The actual code and the `test()` calls (Dart tests) that exercise the reported behaviour. |
 
 A **convention-based link** ties the three together: a Dart test whose ID
@@ -221,7 +221,7 @@ issuekit :validate --project tom_d4rt
 | `:import <file>` | Import issues from a file (`--dry-run`, `--repo`). |
 | `:init` | Initialise repos for tracking — labels and templates (`--repo issues\|tests\|both`, `--force`). |
 | `:snapshot` | Export issues to timestamped JSON for backup (`--issues-only`, `--tests-only`, `--output`). |
-| `:run-tests` | Trigger the nightly test workflow in `tom_tests` via the GitHub API (`--wait`). |
+| `:run-tests` | Run the tests: `testkit :test` over the workspace, or with `--github` the test workflow on the tests repository (refused when GitHub Actions is off there; `--workflow`, `--ref`, `--wait`). |
 
 ```bash
 issuekit :sync --auto

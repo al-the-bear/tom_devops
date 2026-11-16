@@ -179,7 +179,7 @@ GitHub Actions integration and initialization.
 ### Commands
 
 - `:init` — Initialize repos with labels and templates
-- `:run-tests` — Trigger nightly test workflow
+- `:run-tests` — Run the tests: `testkit :test` over the workspace, or with `--github` the test workflow on the tests repository (refused when Actions is off there)
 
 ---
 

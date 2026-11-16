@@ -11,7 +11,7 @@ coverage and stable regression checks. It mirrors the coverage documents for
 > test files whose bodies contain their own `test('<ID>: …')` declarations
 > (e.g. `TA-*`, `VA-*`, `PR-*`). Those are scanner input data, **not** registered
 > issuekit tests, so the per-test-ID tables below list only the real `IK-*`
-> tests (308 total, matching `dart test`).
+> tests (333 total, matching `dart test`).
 
 ## Status Legend
 
@@ -26,7 +26,7 @@ dart test          # full suite (authoritative)
 testkit :test      # tracked run against the latest baseline
 ```
 
-The authoritative total below (**308 passing**) is the count reported by
+The authoritative total below (**333 passing**) is the count reported by
 `dart test`. Per-file counts are the tests executed from each suite; test IDs
 follow the `IK-<AREA>-<n>` convention (e.g. `IK-EXE-ANZ-1`), which is the stable
 handle for regression tracking.
@@ -39,13 +39,17 @@ handle for regression tracking.
 |---|-------------|-------|--------|-----------|-----------|
 | 1 | [Configuration](#1-configuration) | 22 | 22✅ | `config/issuekit_config_test.dart` | `IK-CFG` |
 | 2 | [Executor integration](#2-executor-integration) | 21 | 21✅ | `integration/executor_integration_test.dart` | `IK-INT` |
-| 3 | [Issue service](#3-issue-service) | 41 | 41✅ | `services/issue_service_test.dart` | `IK-ANZ`/`IK-ASN`/… |
+| 3 | [Issue service](#3-issue-service) | 43 | 43✅ | `services/issue_service_test.dart` | `IK-ANZ`/`IK-ASN`/… |
 | 4 | [Test scanner service](#4-test-scanner-service) | 14 | 14✅ | `services/test_scanner_test.dart` | `IK-SCN` |
 | 5 | [Output formatter](#5-output-formatter) | 23 | 23✅ | `util/output_formatter_test.dart` | `IK-FMT` |
-| 6 | [v2 command executors](#6-v2-command-executors) | 105 | 105✅ | `v2/executor_test.dart` | `IK-EXE-*` |
+| 6 | [v2 command executors](#6-v2-command-executors) | 108 | 108✅ | `v2/executor_test.dart` | `IK-EXE-*` |
 | 7 | [v2 CLI tool wiring](#7-v2-cli-tool-wiring) | 12 | 12✅ | `v2/issuekit_tool_test.dart` | `IK-CLI` |
 | 8 | [v2 traversal executors](#8-v2-traversal-executors) | 73 | 73✅ | `v2/traversal_executor_test.dart` | `IK-EXE-*` |
-| — | **Total** | **308** | **308✅** | | |
+| 9 | [:run-tests CLI](#9-run-tests-cli) | 2 | 2✅ | `v2/run_tests_cli_test.dart` | `IK-RTCLI` |
+| 10 | [Frozen lock guard](#10-frozen-lock-guard) | 6 | 6✅ | `frozen_lock_guard_test.dart` | `FL` |
+| 11 | [Option position](#11-option-position) | 4 | 4✅ | `v2/option_position_test.dart` | `F-SCF13` |
+| 12 | [Result printing](#12-result-printing) | 5 | 5✅ | `v2/result_printing_test.dart` | `IK-OUT` |
+| — | **Total** | **333** | **333✅** | | |
 
 ---
 
@@ -167,7 +171,9 @@ export, import, and test-link operations against the GitHub issue tracker.
 | IK-EXP-2 | exports from tests repo with filters | ✅ | `dart test --name 'IK-EXP-2'` |
 | IK-SNAP-1 | creates full snapshot of both repos | ✅ | `dart test --name 'IK-SNAP-1'` |
 | IK-SNAP-2 | issues-only snapshot skips tests | ✅ | `dart test --name 'IK-SNAP-2'` |
-| IK-RUNTESTS-1 | dispatches workflow | ✅ | `dart test --name 'IK-RUNTESTS-1'` |
+| IK-RUNTESTS-1 | dispatches the workflow when Actions is on | ✅ | `dart test --name 'IK-RUNTESTS-1'` |
+| IK-RUNTESTS-2 | Actions off: refused, nothing dispatched | ✅ | `dart test --name 'IK-RUNTESTS-2'` |
+| IK-RUNTESTS-3 | wait finds the dispatched run and polls it to completion | ✅ | `dart test --name 'IK-RUNTESTS-3'` |
 | IK-IMP-1 | creates issues from entries | ✅ | `dart test --name 'IK-IMP-1'` |
 | IK-IMP-2 | dry-run returns empty without creating | ✅ | `dart test --name 'IK-IMP-2'` |
 
@@ -309,9 +315,13 @@ wiring, argument handling, and `ItemResult` outcomes.
 | IK-EXE-SNP-1 | creates snapshot on success | ✅ | `dart test --name 'IK-EXE-SNP-1'` |
 | IK-EXE-SNP-2 | passes filter options | ✅ | `dart test --name 'IK-EXE-SNP-2'` |
 | IK-EXE-SNP-3 | fails on service exception | ✅ | `dart test --name 'IK-EXE-SNP-3'` |
-| IK-EXE-RT-1 | triggers workflow on success | ✅ | `dart test --name 'IK-EXE-RT-1'` |
-| IK-EXE-RT-2 | passes wait option | ✅ | `dart test --name 'IK-EXE-RT-2'` |
-| IK-EXE-RT-3 | fails on service exception | ✅ | `dart test --name 'IK-EXE-RT-3'` |
+| IK-EXE-RT-1 | runs testkit :test over the workspace by default | ✅ | `dart test --name 'IK-EXE-RT-1'` |
+| IK-EXE-RT-2 | a failing local run fails; a missing testkit is named | ✅ | `dart test --name 'IK-EXE-RT-2'` |
+| IK-EXE-RT-3 | --wait/--workflow/--ref need --github | ✅ | `dart test --name 'IK-EXE-RT-3'` |
+| IK-EXE-RT-4 | --github dispatches the workflow | ✅ | `dart test --name 'IK-EXE-RT-4'` |
+| IK-EXE-RT-5 | --github refused when Actions is off | ✅ | `dart test --name 'IK-EXE-RT-5'` |
+| IK-EXE-RT-6 | --github --wait reports the conclusion | ✅ | `dart test --name 'IK-EXE-RT-6'` |
+| IK-EXE-RT-7 | dry run names what it would do | ✅ | `dart test --name 'IK-EXE-RT-7'` |
 | IK-EXE-NEW-7 | generic Exception wraps in error message | ✅ | `dart test --name 'IK-EXE-NEW-7'` |
 | IK-EXE-NEW-8 | result without test entry excludes Test entry text | ✅ | `dart test --name 'IK-EXE-NEW-8'` |
 | IK-EXE-EDT-6 | handles IssueServiceException | ✅ | `dart test --name 'IK-EXE-EDT-6'` |
@@ -339,7 +349,6 @@ wiring, argument handling, and `ItemResult` outcomes.
 | IK-EXE-INIT-4 | default options verified | ✅ | `dart test --name 'IK-EXE-INIT-4'` |
 | IK-EXE-SNP-4 | tests-only filter | ✅ | `dart test --name 'IK-EXE-SNP-4'` |
 | IK-EXE-SNP-5 | default options verified | ✅ | `dart test --name 'IK-EXE-SNP-5'` |
-| IK-EXE-RT-4 | default wait=false verified | ✅ | `dart test --name 'IK-EXE-RT-4'` |
 | IK-EXE-LST-7 | --reporter filter passed to service | ✅ | `dart test --name 'IK-EXE-LST-7'` |
 | IK-EXE-LST-9 | IssueServiceException uses direct message | ✅ | `dart test --name 'IK-EXE-LST-9'` |
 | IK-EXE-LST-10 | issue with no labels handled gracefully | ✅ | `dart test --name 'IK-EXE-LST-10'` |
@@ -481,3 +490,29 @@ live locks of every package in the repository except the archived ones (a
 | FL-2 | no lock is behind a version already in the pub cache | ✅ | `dart test --name 'FL-2'` |
 | FL-3 | every exception is still load-bearing | ✅ | `dart test --name 'FL-3'` |
 | FL-4 | every held-back range still holds a lock back | ✅ | `dart test --name 'FL-4'` |
+
+---
+
+## 9. :run-tests CLI
+
+**Test file:** `test/v2/run_tests_cli_test.dart` (runs `bin/issuekit.dart` in a temporary workspace without a GitHub token)
+
+| ID | Description | Status | Run |
+|----|-------------|--------|-----|
+| IK-RTCLI-1 | a local `:run-tests` needs no token and no `issuekit:` section | ✅ | `dart test --name 'IK-RTCLI-1'` |
+| IK-RTCLI-2 | `:run-tests --github` still needs the token | ✅ | `dart test --name 'IK-RTCLI-2'` |
+
+---
+
+## 10. Frozen lock guard
+
+**Test file:** `test/frozen_lock_guard_test.dart` (`FL-1..4` and their setup checks): no undeclared path resolution, no lock behind a version already in the pub cache, every exception and held-back range still needed.
+
+## 11. Option position
+
+**Test file:** `test/v2/option_position_test.dart` (`F-SCF13-*`): an issuekit option means the same before and after its command name; no executor reads `extraOptions` directly.
+
+## 12. Result printing
+
+**Test file:** `test/v2/result_printing_test.dart` (`IK-OUT-1..5`): the commands that visit no projects print the messages of their results; an empty `:list` says so; a failure without items prints `Error:` and its message.
+

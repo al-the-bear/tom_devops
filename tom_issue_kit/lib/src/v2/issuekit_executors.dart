@@ -1936,14 +1936,42 @@ class SnapshotExecutor extends CommandExecutor {
   }
 }
 
+/// Starts `testkit` with [args] in [workingDirectory] and returns its exit
+/// code; its output goes to the terminal.
+typedef TestkitRunner =
+    Future<int> Function(List<String> args, String workingDirectory);
+
+Future<int> _runTestkit(List<String> args, String workingDirectory) async {
+  final process = await Process.start(
+    'testkit',
+    args,
+    workingDirectory: workingDirectory,
+    mode: ProcessStartMode.inheritStdio,
+    runInShell: Platform.isWindows,
+  );
+  return process.exitCode;
+}
+
 /// Executor for :run-tests command.
 ///
-/// Triggers the nightly test workflow via GitHub Actions.
-/// Options: --wait.
+/// By default runs the tests locally, as a person starts them:
+/// `testkit :test` over the workspace (`testkit -R <workspace-root> :test`).
+/// With
+/// `--github` it dispatches the test workflow (`--workflow`, default
+/// `nightly_tests.yml`, on `--ref`, default `main`) on the tests repository
+/// via GitHub Actions, refused with a clear message when Actions is off
+/// there; `--wait` waits for the run and reports its conclusion.
 class RunTestsExecutor extends CommandExecutor {
   final IssueService service;
+  final TestkitRunner _runTestkitWith;
+  final String? _workspaceRoot;
 
-  RunTestsExecutor(this.service);
+  RunTestsExecutor(
+    this.service, {
+    TestkitRunner? runTestkit,
+    String? workspaceRoot,
+  }) : _runTestkitWith = runTestkit ?? _runTestkit,
+       _workspaceRoot = workspaceRoot;
 
   @override
   Future<ItemResult> execute(CommandContext context, CliArgs args) async {
@@ -1956,44 +1984,99 @@ class RunTestsExecutor extends CommandExecutor {
 
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
-    final wait = args.optionsFor('run-tests')['wait'] == true;
+    final options = args.optionsFor('run-tests');
+    final github = options['github'] == true;
+    if (!github) {
+      final githubOnly = [
+        if (options['wait'] == true) '--wait',
+        if (options['workflow'] != null) '--workflow',
+        if (options['ref'] != null) '--ref',
+      ];
+      if (githubOnly.isNotEmpty) {
+        return ToolResult.failure(
+          '${githubOnly.join(', ')} apply to --github (the workflow run); '
+          'without it :run-tests runs testkit :test locally',
+        );
+      }
+      return _runLocally(args.dryRun);
+    }
+    return _dispatch(
+      workflow: options['workflow'] as String? ?? 'nightly_tests.yml',
+      ref: options['ref'] as String? ?? 'main',
+      wait: options['wait'] == true,
+      dryRun: args.dryRun,
+    );
+  }
 
-    if (args.dryRun) {
-      return ToolResult(
-        success: true,
-        processedCount: 0,
-        itemResults: [
-          ItemResult.success(
-            path: 'run-tests',
-            name: 'workflow',
-            message:
-                '[DRY RUN] Would trigger test workflow'
-                '${wait ? ' (with wait)' : ''}',
-          ),
-        ],
+  Future<ToolResult> _runLocally(bool dryRun) async {
+    final root =
+        _workspaceRoot ??
+        findWorkspaceRootOrNull(Directory.current.path) ??
+        Directory.current.path;
+    final testkitArgs = ['-R', root, ':test'];
+    final command = 'testkit ${testkitArgs.join(' ')}';
+    if (dryRun) return _done('[DRY RUN] Would run $command', 0);
+    print('Running $command');
+    final int exitCode;
+    try {
+      exitCode = await _runTestkitWith(testkitArgs, root);
+    } on ProcessException catch (e) {
+      return ToolResult.failure(
+        'testkit could not be started (${e.message}); it is looked up on '
+        'PATH, from the binaries layer (\$TOM_BINARY_PATH/<platform>)',
       );
     }
+    if (exitCode != 0) {
+      return ToolResult.failure('testkit :test failed (exit $exitCode)');
+    }
+    return _done('testkit :test passed', 1);
+  }
 
-    try {
-      await service.triggerTestWorkflow(wait: wait);
-
-      return ToolResult(
-        success: true,
-        processedCount: 1,
-        itemResults: [
-          ItemResult.success(
-            path: 'run-tests',
-            name: 'workflow',
-            message:
-                'Test workflow triggered'
-                '${wait ? ' (waiting for completion)' : ''}',
-          ),
-        ],
+  Future<ToolResult> _dispatch({
+    required String workflow,
+    required String ref,
+    required bool wait,
+    required bool dryRun,
+  }) async {
+    final target = '$workflow ($ref) on ${service.testsRepo}';
+    if (dryRun) {
+      return _done(
+        '[DRY RUN] Would dispatch $target${wait ? ' and wait for it' : ''}',
+        0,
       );
+    }
+    try {
+      final run = await service.triggerTestWorkflow(
+        workflow: workflow,
+        ref: ref,
+        wait: wait,
+      );
+      if (run == null) return _done('Test workflow $target dispatched', 1);
+      final where = run.htmlUrl == null ? '' : ': ${run.htmlUrl}';
+      if (run.conclusion != 'success') {
+        return ToolResult.failure(
+          'Test workflow $target finished with ${run.conclusion}$where',
+        );
+      }
+      return _done(
+        'Test workflow $target dispatched; run ${run.id} finished with '
+        'success$where',
+        1,
+      );
+    } on ActionsDisabledException catch (e) {
+      return ToolResult.failure('$e');
     } on Exception catch (e) {
       return ToolResult.failure('Failed to trigger test workflow: $e');
     }
   }
+
+  ToolResult _done(String message, int processed) => ToolResult(
+    success: true,
+    processedCount: processed,
+    itemResults: [
+      ItemResult.success(path: 'run-tests', name: 'tests', message: message),
+    ],
+  );
 }
 
 // =============================================================================
@@ -2030,8 +2113,9 @@ Map<String, CommandExecutor> createIssuekitExecutors({
 /// report through the messages of the [ToolResult] they return, and the
 /// shared run summary prints only skips, failures and a footer. This prints
 /// the message of every successful, not skipped result, in order, and
-/// [whenEmpty] when a successful command reports nothing; the result itself is
-/// returned unchanged.
+/// [whenEmpty] when a successful command reports nothing, and `Error:` with
+/// the message of a failure that has no items; the result itself is returned
+/// unchanged.
 class ResultPrintingExecutor extends CommandExecutor {
   ResultPrintingExecutor(this.inner, {this.whenEmpty});
 
@@ -2058,6 +2142,12 @@ class ResultPrintingExecutor extends CommandExecutor {
     final result = await inner.executeWithoutTraversal(args);
     if (result.success && result.itemResults.isEmpty && whenEmpty != null) {
       print(whenEmpty);
+    }
+    // The run summary lists items only: a failure that has none would end
+    // the run in silence with exit 1.
+    final error = result.errorMessage;
+    if (!result.success && result.itemResults.isEmpty && error != null) {
+      print('Error: $error');
     }
     for (final item in result.itemResults) {
       final message = item.message;

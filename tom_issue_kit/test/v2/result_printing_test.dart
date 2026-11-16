@@ -5,7 +5,10 @@
 /// a repository with issues. Every executor the factory hands out now prints
 /// the messages of its successful results, once, in order.
 ///
-/// Test IDs: IK-OUT-1..4.
+/// A command that fails without item results (its failure message is all
+/// it has) prints that message too: the run summary shows only items.
+///
+/// Test IDs: IK-OUT-1..5.
 @TestOn('vm')
 library;
 
@@ -121,5 +124,16 @@ void main() {
     final list = createIssuekitExecutors(service: service)['list']!;
     final lines = await _printed(() => list.executeWithoutTraversal(CliArgs()));
     expect(lines, ['No issues match.']);
+  });
+
+  test('IK-OUT-5: a failure without items prints its message [2026-11-17]',
+      () async {
+    final executor = ResultPrintingExecutor(
+      _Results(const ToolResult.failure('GitHub Actions is off on o/r')),
+    );
+    final lines = await _printed(
+      () => executor.executeWithoutTraversal(CliArgs()),
+    );
+    expect(lines, ['Error: GitHub Actions is off on o/r']);
   });
 }

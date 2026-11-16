@@ -6,6 +6,7 @@ library;
 
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
+import 'package:tom_github_api/tom_github_api.dart';
 import 'package:tom_issue_kit/src/services/issue_service.dart';
 
 import '../helpers/fixtures.dart';
@@ -1319,21 +1320,115 @@ void main() {
   // ===========================================================================
 
   group('IK-RUNTESTS: triggerTestWorkflow [2026-02-13]', () {
-    test('IK-RUNTESTS-1: dispatches workflow', () async {
-      when(() => mockClient.dispatchWorkflow(
-            repoSlug: any(named: 'repoSlug'),
-            workflowId: any(named: 'workflowId'),
-            ref: any(named: 'ref'),
-            inputs: any(named: 'inputs'),
-          )).thenAnswer((_) async {});
+    void dispatchOk() => when(
+      () => mockClient.dispatchWorkflow(
+        repoSlug: any(named: 'repoSlug'),
+        workflowId: any(named: 'workflowId'),
+        ref: any(named: 'ref'),
+        inputs: any(named: 'inputs'),
+      ),
+    ).thenAnswer((_) async {});
 
-      await service.triggerTestWorkflow();
+    void actions(bool enabled) => when(
+      () => mockClient.actionsEnabled(repoSlug: any(named: 'repoSlug')),
+    ).thenAnswer((_) async => enabled);
 
-      verify(() => mockClient.dispatchWorkflow(
-            repoSlug: 'al-the-bear/tom_tests',
-            workflowId: 'nightly_tests.yml',
-            ref: 'main',
-          )).called(1);
+    test('IK-RUNTESTS-1: dispatches the workflow on the tests repository '
+        'when Actions is on [2026-11-17]', () async {
+      actions(true);
+      dispatchOk();
+
+      final run = await service.triggerTestWorkflow();
+
+      expect(run, isNull);
+      verify(
+        () => mockClient.actionsEnabled(repoSlug: 'al-the-bear/tom_tests'),
+      ).called(1);
+      verify(
+        () => mockClient.dispatchWorkflow(
+          repoSlug: 'al-the-bear/tom_tests',
+          workflowId: 'nightly_tests.yml',
+          ref: 'main',
+        ),
+      ).called(1);
+    });
+
+    test('IK-RUNTESTS-2: Actions off on the tests repository: refused, '
+        'nothing dispatched [2026-11-17]', () async {
+      actions(false);
+
+      await expectLater(
+        service.triggerTestWorkflow(),
+        throwsA(
+          isA<ActionsDisabledException>().having(
+            (e) => e.repo,
+            'repo',
+            'al-the-bear/tom_tests',
+          ),
+        ),
+      );
+      verifyNever(
+        () => mockClient.dispatchWorkflow(
+          repoSlug: any(named: 'repoSlug'),
+          workflowId: any(named: 'workflowId'),
+          ref: any(named: 'ref'),
+          inputs: any(named: 'inputs'),
+        ),
+      );
+    });
+
+    test('IK-RUNTESTS-3: wait finds the run the dispatch started and polls '
+        'it until it completed [2026-11-17]', () async {
+      actions(true);
+      dispatchOk();
+      final old = GitHubWorkflowRun(
+        id: 1,
+        status: 'completed',
+        conclusion: 'success',
+        createdAt: DateTime.utc(2020),
+      );
+      final started = GitHubWorkflowRun(
+        id: 2,
+        status: 'in_progress',
+        createdAt: DateTime.now().toUtc(),
+      );
+      final latest = [old, started];
+      when(
+        () => mockClient.latestWorkflowRun(
+          repoSlug: any(named: 'repoSlug'),
+          workflowId: any(named: 'workflowId'),
+          event: any(named: 'event'),
+        ),
+      ).thenAnswer(
+        (_) async => latest.length > 1 ? latest.removeAt(0) : latest.first,
+      );
+      final states = [
+        started,
+        GitHubWorkflowRun(id: 2, status: 'completed', conclusion: 'failure'),
+      ];
+      when(
+        () => mockClient.getWorkflowRun(
+          repoSlug: any(named: 'repoSlug'),
+          runId: any(named: 'runId'),
+        ),
+      ).thenAnswer((_) async => states.removeAt(0));
+
+      final run = await service.triggerTestWorkflow(
+        workflow: 'other.yml',
+        ref: 'dev',
+        wait: true,
+        pollInterval: Duration.zero,
+      );
+
+      expect(run!.id, 2);
+      expect(run.conclusion, 'failure');
+      verify(
+        () => mockClient.dispatchWorkflow(
+          repoSlug: 'al-the-bear/tom_tests',
+          workflowId: 'other.yml',
+          ref: 'dev',
+        ),
+      ).called(1);
     });
   });
 

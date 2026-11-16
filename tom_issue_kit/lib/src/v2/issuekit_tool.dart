@@ -434,8 +434,27 @@ const snapshotOptions = <OptionDefinition>[
 /// Options for :run-tests command.
 const runTestsOptions = <OptionDefinition>[
   OptionDefinition.flag(
+    name: 'github',
+    description:
+        'Dispatch the test workflow on the tests repository via GitHub '
+        'Actions instead of running the tests locally (refused when Actions '
+        'is off there)',
+  ),
+  OptionDefinition.option(
+    name: 'workflow',
+    description: 'With --github: the workflow file (default nightly_tests.yml)',
+    valueName: 'file',
+  ),
+  OptionDefinition.option(
+    name: 'ref',
+    description: 'With --github: the branch or tag to run on (default main)',
+    valueName: 'ref',
+  ),
+  OptionDefinition.flag(
     name: 'wait',
-    description: 'Wait for the workflow to complete (polls status)',
+    description:
+        'With --github: wait for the run and report its conclusion (polls '
+        'its status)',
   ),
 ];
 
@@ -701,11 +720,17 @@ const snapshotCommand = CommandDefinition(
 
 const runTestsCommand = CommandDefinition(
   name: 'run-tests',
-  description: 'Trigger nightly test workflow in tom_tests via GitHub API',
+  description:
+      'Run the tests: testkit :test over the workspace, or with --github the '
+      'test workflow on the tests repository',
   options: runTestsOptions,
   requiresTraversal: false,
   supportsProjectTraversal: false,
-  examples: ['issuekit :run-tests', 'issuekit :run-tests --wait'],
+  examples: [
+    'issuekit :run-tests',
+    'issuekit :run-tests --github --wait',
+    'issuekit :run-tests --github --workflow smoke.yml --ref dev',
+  ],
 );
 
 // =============================================================================

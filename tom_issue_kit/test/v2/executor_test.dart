@@ -10,6 +10,7 @@ import 'dart:io';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:tom_build_base/tom_build_base_v2.dart' hide ListExecutor, SyncExecutor;
+import 'package:tom_github_api/tom_github_api.dart';
 import 'package:tom_issue_kit/src/services/issue_service.dart';
 import 'package:tom_issue_kit/src/v2/issuekit_executors.dart';
 import 'package:tom_issue_kit/src/v2/issuekit_tool.dart';
@@ -1461,54 +1462,180 @@ void main() {
   // IK-EXE-RT: RunTestsExecutor
   // ===========================================================================
 
-  group('IK-EXE-RT: RunTestsExecutor [2026-02-13]', () {
-    late RunTestsExecutor executor;
+  group('IK-EXE-RT: RunTestsExecutor [2026-11-17]', () {
+    late List<(List<String>, String)> testkitRuns;
+    var testkitExit = 0;
+    Object? testkitError;
+
+    RunTestsExecutor executor() => RunTestsExecutor(
+      mockService,
+      workspaceRoot: '/ws',
+      runTestkit: (args, dir) async {
+        if (testkitError != null) throw testkitError!;
+        testkitRuns.add((args, dir));
+        return testkitExit;
+      },
+    );
+
+    void dispatch(Future<GitHubWorkflowRun?> Function() answer) => when(
+      () => mockService.triggerTestWorkflow(
+        workflow: any(named: 'workflow'),
+        ref: any(named: 'ref'),
+        wait: any(named: 'wait'),
+      ),
+    ).thenAnswer((_) => answer());
 
     setUp(() {
-      executor = RunTestsExecutor(mockService);
+      testkitRuns = [];
+      testkitExit = 0;
+      testkitError = null;
+      when(() => mockService.testsRepo).thenReturn('al-the-bear/tom_tests');
     });
 
-    test('IK-EXE-RT-1: triggers workflow on success', () async {
-      when(() => mockService.triggerTestWorkflow(
-            wait: any(named: 'wait'),
-          )).thenAnswer((_) async {});
-
-      final result = await executor.executeWithoutTraversal(
-        const CliArgs(),
-      );
-
+    test('IK-EXE-RT-1: by default runs testkit :test over the workspace, '
+        'touching no GitHub', () async {
+      final result = await executor().executeWithoutTraversal(const CliArgs());
       expect(result.success, isTrue);
-      expect(result.processedCount, 1);
-      expect(result.itemResults.first.message, contains('triggered'));
-    });
-
-    test('IK-EXE-RT-2: passes wait option', () async {
-      when(() => mockService.triggerTestWorkflow(
-            wait: any(named: 'wait'),
-          )).thenAnswer((_) async {});
-
-      final result = await executor.executeWithoutTraversal(
-        const CliArgs(
-          extraOptions: {'wait': true},
+      expect(testkitRuns, hasLength(1));
+      expect(testkitRuns.single.$1, ['-R', '/ws', ':test']);
+      expect(testkitRuns.single.$2, '/ws');
+      verifyNever(
+        () => mockService.triggerTestWorkflow(
+          workflow: any(named: 'workflow'),
+          ref: any(named: 'ref'),
+          wait: any(named: 'wait'),
         ),
       );
-
-      expect(result.success, isTrue);
-      expect(result.itemResults.first.message, contains('waiting'));
-      verify(() => mockService.triggerTestWorkflow(wait: true)).called(1);
     });
 
-    test('IK-EXE-RT-3: fails on service exception', () async {
-      when(() => mockService.triggerTestWorkflow(
-            wait: any(named: 'wait'),
-          )).thenThrow(Exception('GitHub error'));
-
-      final result = await executor.executeWithoutTraversal(
-        const CliArgs(),
-      );
-
+    test('IK-EXE-RT-2: a failing local run fails; a missing testkit is '
+        'named', () async {
+      testkitExit = 1;
+      var result = await executor().executeWithoutTraversal(const CliArgs());
       expect(result.success, isFalse);
-      expect(result.errorMessage, contains('workflow'));
+      expect(result.errorMessage, contains('testkit :test failed (exit 1)'));
+
+      testkitError = const ProcessException('testkit', [], 'not found');
+      result = await executor().executeWithoutTraversal(const CliArgs());
+      expect(result.success, isFalse);
+      expect(result.errorMessage, contains('testkit'));
+      expect(result.errorMessage, contains('PATH'));
+    });
+
+    test('IK-EXE-RT-3: --wait, --workflow and --ref apply to --github only',
+        () async {
+      for (final option in ['wait', 'workflow', 'ref']) {
+        final result = await executor().executeWithoutTraversal(
+          CliArgs(extraOptions: {option: option == 'wait' ? true : 'x'}),
+        );
+        expect(result.success, isFalse, reason: option);
+        expect(result.errorMessage, contains('--github'), reason: option);
+      }
+      expect(testkitRuns, isEmpty);
+    });
+
+    test('IK-EXE-RT-4: --github dispatches the workflow on the tests '
+        'repository', () async {
+      dispatch(() async => null);
+      final result = await executor().executeWithoutTraversal(
+        const CliArgs(
+          extraOptions: {'github': true, 'workflow': 'smoke.yml', 'ref': 'dev'},
+        ),
+      );
+      expect(result.success, isTrue);
+      expect(result.itemResults.first.message, contains('smoke.yml'));
+      expect(result.itemResults.first.message, contains('dispatched'));
+      verify(
+        () => mockService.triggerTestWorkflow(
+          workflow: 'smoke.yml',
+          ref: 'dev',
+          wait: false,
+        ),
+      ).called(1);
+      expect(testkitRuns, isEmpty);
+    });
+
+    test('IK-EXE-RT-5: --github refuses with a clear message when Actions is '
+        'off', () async {
+      dispatch(() async => throw const ActionsDisabledException(
+        'al-the-bear/tom_tests',
+      ));
+      final result = await executor().executeWithoutTraversal(
+        const CliArgs(extraOptions: {'github': true}),
+      );
+      expect(result.success, isFalse);
+      expect(
+        result.errorMessage,
+        contains('GitHub Actions is off on al-the-bear/tom_tests'),
+      );
+      expect(result.errorMessage, contains('without --github'));
+    });
+
+    test('IK-EXE-RT-6: --github --wait reports the run\'s conclusion', () async {
+      dispatch(
+        () async => const GitHubWorkflowRun(
+          id: 7,
+          status: 'completed',
+          conclusion: 'failure',
+          htmlUrl: 'https://github.com/x/runs/7',
+        ),
+      );
+      var result = await executor().executeWithoutTraversal(
+        const CliArgs(extraOptions: {'github': true, 'wait': true}),
+      );
+      expect(result.success, isFalse);
+      expect(result.errorMessage, contains('failure'));
+      expect(result.errorMessage, contains('https://github.com/x/runs/7'));
+
+      dispatch(
+        () async => const GitHubWorkflowRun(
+          id: 8,
+          status: 'completed',
+          conclusion: 'success',
+        ),
+      );
+      result = await executor().executeWithoutTraversal(
+        const CliArgs(extraOptions: {'github': true, 'wait': true}),
+      );
+      expect(result.success, isTrue);
+      expect(result.itemResults.first.message, contains('success'));
+      verify(
+        () => mockService.triggerTestWorkflow(
+          workflow: 'nightly_tests.yml',
+          ref: 'main',
+          wait: true,
+        ),
+      ).called(2);
+    });
+
+    test('IK-EXE-RT-7: a dry run names what it would do and does nothing',
+        () async {
+      var result = await executor().executeWithoutTraversal(
+        const CliArgs(dryRun: true),
+      );
+      expect(result.success, isTrue);
+      expect(
+        result.itemResults.first.message,
+        contains('[DRY RUN] Would run testkit -R /ws :test'),
+      );
+      result = await executor().executeWithoutTraversal(
+        const CliArgs(dryRun: true, extraOptions: {'github': true}),
+      );
+      expect(
+        result.itemResults.first.message,
+        contains(
+          '[DRY RUN] Would dispatch nightly_tests.yml (main) on '
+          'al-the-bear/tom_tests',
+        ),
+      );
+      expect(testkitRuns, isEmpty);
+      verifyNever(
+        () => mockService.triggerTestWorkflow(
+          workflow: any(named: 'workflow'),
+          ref: any(named: 'ref'),
+          wait: any(named: 'wait'),
+        ),
+      );
     });
   });
 
@@ -2203,33 +2330,6 @@ void main() {
             issuesOnly: false,
             testsOnly: false,
           )).called(1);
-    });
-  });
-
-  // ===========================================================================
-  // IK-EXE-RT: RunTestsExecutor (defaults)
-  // ===========================================================================
-
-  group('IK-EXE-RT: RunTestsExecutor additional [2026-02-15]', () {
-    late RunTestsExecutor executor;
-
-    setUp(() {
-      executor = RunTestsExecutor(mockService);
-    });
-
-    test('IK-EXE-RT-4: default wait=false verified', () async {
-      when(() => mockService.triggerTestWorkflow(
-            wait: any(named: 'wait'),
-          )).thenAnswer((_) async {});
-
-      final result = await executor.executeWithoutTraversal(
-        const CliArgs(),
-      );
-
-      expect(result.success, isTrue);
-      expect(result.itemResults.first.message, isNot(contains('waiting')));
-
-      verify(() => mockService.triggerTestWorkflow(wait: false)).called(1);
     });
   });
 

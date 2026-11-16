@@ -1,3 +1,23 @@
+## 1.5.0
+
+### Changed — `:run-tests` runs the tests locally; `--github` dispatches the workflow
+
+`:run-tests` dispatched `nightly_tests.yml` on the tests repository, where
+GitHub Actions is off (the fleet keeps it off on its repositories, with a few
+exceptions), so it could only fail. It now runs `testkit :test` over the
+workspace (`testkit -R <workspace-root> :test`), as a person starts it, and
+needs no GitHub token. `--github` dispatches the workflow (`--workflow`,
+default `nightly_tests.yml`; `--ref`, default `main`) after checking the
+repository's Actions permission, and refuses with a clear message when Actions
+is off. `--wait` now waits: it finds the run the dispatch started, polls it,
+and reports its conclusion (a failed run fails the command).
+
+### Fixed — a failing command that visits no projects says why
+
+A command's failure without item results (its message is all it has) ended
+the run with exit 1 and no output: the run summary lists items only. It now
+prints `Error: <message>`.
+
 ## 1.4.6
 
 ### Fixed — the commands print what they report
