@@ -1,3 +1,12 @@
+## 1.11.6
+
+### Fixed — a `testkit:` section of only defines
+
+testkit reads its section of `buildkit.yaml` through tom_build_base 2.39.1's
+`TomBuildConfig.readToolSection`, which leaves the section's `defines:` /
+`<MODE>-defines:` out: a section holding only defines no longer stops the tests
+with `needs a command:`, and defines beside `command:` are ignored by testkit.
+
 ## 1.11.5
 
 ### Fixed — `testkit help <command>` for a wired nested command

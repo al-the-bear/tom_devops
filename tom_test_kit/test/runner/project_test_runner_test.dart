@@ -163,6 +163,31 @@ testkit:
     );
   });
 
+  test('TK-PTR-14: the section\'s defines are not testkit\'s: a section of '
+      'only defines is no runner, defines beside command are ignored '
+      '[2026-11-16]', () {
+    write('buildkit.yaml', '''
+testkit:
+  defines:
+    suite: unit
+  DEV-defines:
+    suite: all
+''');
+    expect(
+      resolve([DartProjectFolder(folder, projectName: 'x')]),
+      isA<DartRunner>(),
+    );
+    write('buildkit.yaml', '''
+testkit:
+  command: make test
+  report: junit
+  defines:
+    suite: unit
+''');
+    final r = commandRunner([GoFolder(folder)]);
+    expect((r.command, r.format), ('make test', ReportFormat.junit));
+  });
+
   group('TK-PTR-8: a whole cycle through a test script', () {
     // The script writes one line per step, as the SOM runtimes' scripts do;
     // RESULT_B decides whether step b passes.

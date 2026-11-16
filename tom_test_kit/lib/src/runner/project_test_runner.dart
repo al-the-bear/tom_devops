@@ -68,7 +68,12 @@ sealed class ProjectTestRunner {
     List<RunFolder> natures,
   ) {
     final config = _readBuildkitYaml(projectPath);
-    final section = config?['testkit'];
+    // The section as tom_build_base hands it: without its defines (those are
+    // the build tools'), null when it holds nothing else.
+    final section = TomBuildConfig.readToolSection(
+      dir: projectPath,
+      toolKey: 'testkit',
+    );
     if (section != null) return _fromSection(section, projectPath);
     if (natures.any((n) => n is DartProjectFolder)) {
       return const DartRunner();
@@ -355,7 +360,7 @@ YamlMap? _readBuildkitYaml(String projectPath) {
 
 ProjectTestRunner _fromSection(Object section, String projectPath) {
   const where = 'the testkit: section of buildkit.yaml';
-  if (section is! YamlMap) {
+  if (section is! Map) {
     return const RunnerUnavailable('$where must be a map with command:');
   }
   final command = section['command'];
