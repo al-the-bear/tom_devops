@@ -615,7 +615,7 @@ packages:
       path: "../../basics/tom_github_api"
       relative: true
     source: path
-    version: "1.4.0"
+    version: "1.5.0"
   typed_data:
     dependency: transitive
     description:
