@@ -5,6 +5,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:mocktail/mocktail.dart';
@@ -1221,14 +1223,17 @@ void main() {
             createTestIssue(number: 2, title: 'Bug B'),
           ]);
 
-      final result = await executor.executeWithoutTraversal(
-        const CliArgs(),
+      late ToolResult result;
+      final printed = await _printedLines(
+        () async => result = await executor.executeWithoutTraversal(
+          const CliArgs(extraOptions: {'output': 'json'}),
+        ),
       );
 
       expect(result.success, isTrue);
       expect(result.processedCount, 2);
-      expect(result.itemResults[0].message, contains('#1'));
-      expect(result.itemResults[1].message, contains('#2'));
+      final data = jsonDecode(printed.join('\n')) as List;
+      expect([for (final r in data) r['number']], [1, 2]);
     });
 
     test('IK-EXE-EXP-2: passes filters to service', () async {
@@ -1244,6 +1249,7 @@ void main() {
       await executor.executeWithoutTraversal(
         const CliArgs(
           extraOptions: {
+            'output': 'json',
             'repo': 'tests',
             'severity': 'high',
             'project': 'D4',
@@ -1273,7 +1279,7 @@ void main() {
           )).thenThrow(Exception('API error'));
 
       final result = await executor.executeWithoutTraversal(
-        const CliArgs(),
+        const CliArgs(extraOptions: {'output': 'json'}),
       );
 
       expect(result.success, isFalse);
@@ -2070,7 +2076,7 @@ void main() {
           )).thenAnswer((_) async => []);
 
       await executor.executeWithoutTraversal(
-        const CliArgs(extraOptions: {'state': 'testing'}),
+        const CliArgs(extraOptions: {'output': 'json', 'state': 'testing'}),
       );
 
       verify(() => mockService.exportIssues(
@@ -2094,7 +2100,7 @@ void main() {
           )).thenAnswer((_) async => []);
 
       await executor.executeWithoutTraversal(
-        const CliArgs(extraOptions: {'tags': 'parser,regression'}),
+        const CliArgs(extraOptions: {'output': 'json', 'tags': 'parser,regression'}),
       );
 
       verify(() => mockService.exportIssues(
@@ -2118,7 +2124,7 @@ void main() {
           )).thenAnswer((_) async => []);
 
       final result = await executor.executeWithoutTraversal(
-        const CliArgs(),
+        const CliArgs(extraOptions: {'output': 'json'}),
       );
 
       expect(result.success, isTrue);
@@ -2136,7 +2142,7 @@ void main() {
           )).thenAnswer((_) async => []);
 
       await executor.executeWithoutTraversal(
-        const CliArgs(),
+        const CliArgs(extraOptions: {'output': 'json'}),
       );
 
       verify(() => mockService.exportIssues(
@@ -2147,6 +2153,102 @@ void main() {
             tags: null,
             includeAll: false,
           )).called(1);
+    });
+
+    void exportReturns(List<GitHubIssue> issues) => when(
+      () => mockService.exportIssues(
+        repo: any(named: 'repo'),
+        state: any(named: 'state'),
+        severity: any(named: 'severity'),
+        project: any(named: 'project'),
+        tags: any(named: 'tags'),
+        includeAll: any(named: 'includeAll'),
+      ),
+    ).thenAnswer((_) async => issues);
+
+    final twoIssues = [
+      createTestIssue(number: 1, title: 'Bug, with comma'),
+      createTestIssue(number: 2, title: 'Bug B'),
+    ];
+
+    test('IK-EXE-EXP-8: --output is required; an unknown format is refused; '
+        'nothing is fetched [2026-11-17]', () async {
+      exportReturns(twoIssues);
+      var result = await executor.executeWithoutTraversal(const CliArgs());
+      expect(result.success, isFalse);
+      expect(result.errorMessage, contains('--output'));
+      result = await executor.executeWithoutTraversal(
+        const CliArgs(extraOptions: {'output': 'xml'}),
+      );
+      expect(result.success, isFalse);
+      expect(result.errorMessage, contains('xml'));
+      verifyNever(
+        () => mockService.exportIssues(
+          repo: any(named: 'repo'),
+          state: any(named: 'state'),
+          severity: any(named: 'severity'),
+          project: any(named: 'project'),
+          tags: any(named: 'tags'),
+          includeAll: any(named: 'includeAll'),
+        ),
+      );
+    });
+
+    test('IK-EXE-EXP-9: json:<file> writes the issues to the file and says '
+        'so [2026-11-17]', () async {
+      exportReturns(twoIssues);
+      final dir = Directory.systemTemp.createTempSync('ik_export_');
+      addTearDown(() => dir.deleteSync(recursive: true));
+      final path = '${dir.path}/issues.json';
+      final result = await executor.executeWithoutTraversal(
+        CliArgs(extraOptions: {'output': 'json:$path'}),
+      );
+      expect(result.success, isTrue, reason: result.errorMessage);
+      final data = jsonDecode(File(path).readAsStringSync()) as List;
+      expect(data, hasLength(2));
+      expect(data.first['number'], 1);
+      expect(data.first['title'], 'Bug, with comma');
+      expect(data.first.keys, containsAll(['state', 'labels', 'url']));
+      expect(
+        result.itemResults.single.message,
+        'Exported 2 issue(s) as json to $path',
+      );
+    });
+
+    test('IK-EXE-EXP-10: csv and md go to stdout with a header row, csv '
+        'quoted where needed [2026-11-17]', () async {
+      exportReturns(twoIssues);
+      final csv = await _printedLines(
+        () => executor.executeWithoutTraversal(
+          const CliArgs(extraOptions: {'output': 'csv'}),
+        ),
+      );
+      expect(csv.first, startsWith('number,title,state'));
+      expect(csv.join('\n'), contains('1,"Bug, with comma",open'));
+      final md = await _printedLines(
+        () => executor.executeWithoutTraversal(
+          const CliArgs(extraOptions: {'output': 'md'}),
+        ),
+      );
+      expect(md.first, startsWith('| number | title | state'));
+      expect(md.join('\n'), contains('| 2 | Bug B | open'));
+    });
+
+    test('IK-EXE-EXP-11: a dry run names what it would write and writes '
+        'nothing [2026-11-17]', () async {
+      exportReturns(twoIssues);
+      final dir = Directory.systemTemp.createTempSync('ik_export_');
+      addTearDown(() => dir.deleteSync(recursive: true));
+      final path = '${dir.path}/issues.csv';
+      final result = await executor.executeWithoutTraversal(
+        CliArgs(dryRun: true, extraOptions: {'output': 'csv:$path'}),
+      );
+      expect(result.success, isTrue);
+      expect(
+        result.itemResults.single.message,
+        '[DRY RUN] Would export 2 issue(s) as csv to $path',
+      );
+      expect(File(path).existsSync(), isFalse);
     });
   });
 
@@ -2816,3 +2918,15 @@ Map<String, CommandExecutor> _unwrapped(Map<String, CommandExecutor> map) => {
   for (final MapEntry(:key, :value) in map.entries)
     key: value is ResultPrintingExecutor ? value.inner : value,
 };
+
+/// The lines [body] prints.
+Future<List<String>> _printedLines(Future<void> Function() body) async {
+  final lines = <String>[];
+  await runZoned(
+    body,
+    zoneSpecification: ZoneSpecification(
+      print: (self, parent, zone, line) => lines.addAll(line.split('\n')),
+    ),
+  );
+  return lines;
+}

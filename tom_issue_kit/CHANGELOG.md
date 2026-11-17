@@ -1,3 +1,14 @@
+## 1.5.1
+
+### Fixed — `:export` writes the format it is asked for
+
+`:export` ignored `--output`: it printed `#n: title` lines in every case, and
+nothing for an empty tracker, so `--output=csv:issues.csv` wrote no file. It
+now writes CSV, JSON, Markdown or a plain table (number, title, state, labels,
+assignee, created, updated, url) to stdout, or with `<format>:<file>` to the
+file and says how many entries it wrote. A missing or unknown `--output` is
+refused before anything is fetched; `-n` names what it would write.
+
 ## 1.5.0
 
 ### Changed — `:run-tests` runs the tests locally; `--github` dispatches the workflow

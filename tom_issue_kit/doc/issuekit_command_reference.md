@@ -674,7 +674,7 @@ issuekit :export [filters] --output=<spec>
 
 | Option | Description |
 |--------|-------------|
-| `--output=<spec>` | Output format: `csv`, `json`, `md`, or `<format>:<file>` (required) |
+| `--output=<spec>` | Output format: `csv`, `json`, `md` or `plain`, written to stdout; `<format>:<file>` writes the file (required) |
 | `--state=<state>` | Filter by state |
 | `--severity=<level>` | Filter by severity |
 | `--project=<name>` | Filter by project |
@@ -684,7 +684,7 @@ issuekit :export [filters] --output=<spec>
 
 #### Summary
 
-Exports entries from `tom_issues` (@issues) or `tom_tests` (@tests) to a file for offline processing, reporting, or migration. Supports CSV, JSON, and Markdown formats. Same filtering options as `:list`.
+Exports entries from `tom_issues` (@issues) or `tom_tests` (@tests) to a file for offline processing, reporting, or migration. Supports CSV, JSON, and Markdown formats. Same filtering options as `:list`. Each entry is one record with the fields `number`, `title`, `state`, `labels`, `assignee`, `created`, `updated` and `url` (labels a list in JSON, `;`-joined in CSV and Markdown). Without a file the export is the command's only output, so it can be piped; with a file the command says how many entries it wrote. With `-n` it fetches the entries and names what it would write, and writes nothing. A missing or unknown `--output` is refused before anything is fetched.
 
 #### Use Case
 

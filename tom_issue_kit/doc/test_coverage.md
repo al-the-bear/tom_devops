@@ -11,7 +11,7 @@ coverage and stable regression checks. It mirrors the coverage documents for
 > test files whose bodies contain their own `test('<ID>: …')` declarations
 > (e.g. `TA-*`, `VA-*`, `PR-*`). Those are scanner input data, **not** registered
 > issuekit tests, so the per-test-ID tables below list only the real `IK-*`
-> tests (333 total, matching `dart test`).
+> tests (337 total, matching `dart test`).
 
 ## Status Legend
 
@@ -26,7 +26,7 @@ dart test          # full suite (authoritative)
 testkit :test      # tracked run against the latest baseline
 ```
 
-The authoritative total below (**333 passing**) is the count reported by
+The authoritative total below (**337 passing**) is the count reported by
 `dart test`. Per-file counts are the tests executed from each suite; test IDs
 follow the `IK-<AREA>-<n>` convention (e.g. `IK-EXE-ANZ-1`), which is the stable
 handle for regression tracking.
@@ -42,14 +42,14 @@ handle for regression tracking.
 | 3 | [Issue service](#3-issue-service) | 43 | 43✅ | `services/issue_service_test.dart` | `IK-ANZ`/`IK-ASN`/… |
 | 4 | [Test scanner service](#4-test-scanner-service) | 14 | 14✅ | `services/test_scanner_test.dart` | `IK-SCN` |
 | 5 | [Output formatter](#5-output-formatter) | 23 | 23✅ | `util/output_formatter_test.dart` | `IK-FMT` |
-| 6 | [v2 command executors](#6-v2-command-executors) | 108 | 108✅ | `v2/executor_test.dart` | `IK-EXE-*` |
+| 6 | [v2 command executors](#6-v2-command-executors) | 112 | 112✅ | `v2/executor_test.dart` | `IK-EXE-*` |
 | 7 | [v2 CLI tool wiring](#7-v2-cli-tool-wiring) | 12 | 12✅ | `v2/issuekit_tool_test.dart` | `IK-CLI` |
 | 8 | [v2 traversal executors](#8-v2-traversal-executors) | 73 | 73✅ | `v2/traversal_executor_test.dart` | `IK-EXE-*` |
 | 9 | [:run-tests CLI](#9-run-tests-cli) | 2 | 2✅ | `v2/run_tests_cli_test.dart` | `IK-RTCLI` |
 | 10 | [Frozen lock guard](#10-frozen-lock-guard) | 6 | 6✅ | `frozen_lock_guard_test.dart` | `FL` |
 | 11 | [Option position](#11-option-position) | 4 | 4✅ | `v2/option_position_test.dart` | `F-SCF13` |
 | 12 | [Result printing](#12-result-printing) | 5 | 5✅ | `v2/result_printing_test.dart` | `IK-OUT` |
-| — | **Total** | **333** | **333✅** | | |
+| — | **Total** | **337** | **337✅** | | |
 
 ---
 
@@ -303,7 +303,7 @@ wiring, argument handling, and `ItemResult` outcomes.
 | IK-EXE-LNK-2 | fails without issue number | ✅ | `dart test --name 'IK-EXE-LNK-2'` |
 | IK-EXE-LNK-3 | fails without test-id | ✅ | `dart test --name 'IK-EXE-LNK-3'` |
 | IK-EXE-LNK-4 | fails on service exception | ✅ | `dart test --name 'IK-EXE-LNK-4'` |
-| IK-EXE-EXP-1 | exports issues and builds result | ✅ | `dart test --name 'IK-EXE-EXP-1'` |
+| IK-EXE-EXP-1 | exports the issues (JSON to stdout) | ✅ | `dart test --name 'IK-EXE-EXP-1'` |
 | IK-EXE-EXP-2 | passes filters to service | ✅ | `dart test --name 'IK-EXE-EXP-2'` |
 | IK-EXE-EXP-3 | fails on service exception | ✅ | `dart test --name 'IK-EXE-EXP-3'` |
 | IK-EXE-IMP-1 | fails when file not found | ✅ | `dart test --name 'IK-EXE-IMP-1'` |
@@ -342,6 +342,10 @@ wiring, argument handling, and `ItemResult` outcomes.
 | IK-EXE-EXP-5 | --tags with comma-separated parsing | ✅ | `dart test --name 'IK-EXE-EXP-5'` |
 | IK-EXE-EXP-6 | empty export result | ✅ | `dart test --name 'IK-EXE-EXP-6'` |
 | IK-EXE-EXP-7 | default options verified | ✅ | `dart test --name 'IK-EXE-EXP-7'` |
+| IK-EXE-EXP-8 | --output required; unknown format refused; nothing fetched | ✅ | `dart test --name 'IK-EXE-EXP-8'` |
+| IK-EXE-EXP-9 | json:<file> writes the file and says so | ✅ | `dart test --name 'IK-EXE-EXP-9'` |
+| IK-EXE-EXP-10 | csv and md to stdout with a header row | ✅ | `dart test --name 'IK-EXE-EXP-10'` |
+| IK-EXE-EXP-11 | dry run names what it would write | ✅ | `dart test --name 'IK-EXE-EXP-11'` |
 | IK-EXE-IMP-4 | successful import from JSON file | ✅ | `dart test --name 'IK-EXE-IMP-4'` |
 | IK-EXE-IMP-6 | --repo option passed to service | ✅ | `dart test --name 'IK-EXE-IMP-6'` |
 | IK-EXE-IMP-7 | IssueServiceException during import | ✅ | `dart test --name 'IK-EXE-IMP-7'` |

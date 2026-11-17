@@ -9,9 +9,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:tom_build_base/tom_build_base_v2.dart';
+import 'package:tom_github_api/tom_github_api.dart' show GitHubIssue;
 
 import '../services/issue_service.dart';
 import '../services/test_scanner.dart';
+import '../util/output_formatter.dart' show OutputFormatter;
 
 // =============================================================================
 // Helper Functions
@@ -1689,9 +1691,24 @@ class ExportExecutor extends CommandExecutor {
   @override
   Future<ToolResult> executeWithoutTraversal(CliArgs args) async {
     final opts = args.optionsFor('export');
+    final output = opts['output'] as String?;
+    if (output == null || output.trim().isEmpty) {
+      return const ToolResult.failure(
+        'Missing required option: --output=<format> or '
+        '--output=<format>:<file> (csv, json, md, plain)',
+      );
+    }
+    final spec = OutputSpec.tryParse(output.trim());
+    if (spec == null) {
+      return ToolResult.failure(
+        'Unknown --output format "$output": csv, json, md or plain, '
+        'optionally followed by :<file>',
+      );
+    }
 
+    final List<GitHubIssue> issues;
     try {
-      final issues = await service.exportIssues(
+      issues = await service.exportIssues(
         repo: opts['repo'] as String? ?? 'issues',
         state: opts['state'] as String?,
         severity: opts['severity'] as String?,
@@ -1701,23 +1718,88 @@ class ExportExecutor extends CommandExecutor {
             : null,
         includeAll: opts['all'] == true,
       );
-
-      final items = issues.map((issue) {
-        return ItemResult.success(
-          path: 'export',
-          name: '#${issue.number}',
-          message: '#${issue.number}: ${issue.title}',
-        );
-      }).toList();
-
-      return ToolResult(
-        success: true,
-        processedCount: issues.length,
-        itemResults: items,
-      );
     } on Exception catch (e) {
       return ToolResult.failure('Failed to export: $e');
     }
+
+    final format = spec.format.name;
+    final file = spec.filePath;
+    final where = file ?? 'stdout';
+    if (args.dryRun) {
+      return _exported(
+        '[DRY RUN] Would export ${issues.length} issue(s) as $format to $where',
+        issues.length,
+      );
+    }
+
+    final text = _formatExport(issues, spec.format);
+    if (file == null) {
+      // The export itself is the output: no message beside it.
+      print(text.trimRight());
+      return ToolResult(success: true, processedCount: issues.length);
+    }
+    File(file).writeAsStringSync(text);
+    return _exported(
+      'Exported ${issues.length} issue(s) as $format to $file',
+      issues.length,
+    );
+  }
+
+  ToolResult _exported(String message, int count) => ToolResult(
+    success: true,
+    processedCount: count,
+    itemResults: [
+      ItemResult.success(path: 'export', name: 'export', message: message),
+    ],
+  );
+
+  static const _columns = [
+    'number',
+    'title',
+    'state',
+    'labels',
+    'assignee',
+    'created',
+    'updated',
+    'url',
+  ];
+
+  /// [issues] in [format]: one record per issue with [_columns]; labels are
+  /// a list in JSON and `;`-joined in the table formats.
+  static String _formatExport(List<GitHubIssue> issues, OutputFormat format) {
+    Map<String, Object?> record(GitHubIssue i) => {
+      'number': i.number,
+      'title': i.title,
+      'state': i.state,
+      'labels': [for (final l in i.labels) l.name],
+      'assignee': i.assignee?.login,
+      'created': i.createdAt.toUtc().toIso8601String(),
+      'updated': i.updatedAt.toUtc().toIso8601String(),
+      'url': i.htmlUrl,
+    };
+    final records = [for (final i in issues) record(i)];
+    if (format == OutputFormat.json) {
+      return '${OutputFormatter.formatJson(records)}\n';
+    }
+    final rows = [
+      for (final r in records)
+        [
+          for (final c in _columns)
+            switch (r[c]) {
+              final List<Object?> list => list.join(';'),
+              null => '',
+              final Object v => '$v',
+            },
+        ],
+    ];
+    return switch (format) {
+      OutputFormat.csv => OutputFormatter.formatCsv(rows, headers: _columns),
+      OutputFormat.md => OutputFormatter.formatMarkdownTable(
+        rows,
+        headers: _columns,
+      ),
+      _ => OutputFormatter.formatTable(rows, headers: _columns),
+    };
   }
 }
 
