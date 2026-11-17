@@ -28,7 +28,7 @@ project lands.
 | 2 | [`tom_build_kit_sample`](tom_build_kit_sample/) *(planned)* | Authoring a small build tool / pipeline with [`buildkit`](../../basics/tom_build_kit/) against a fixture workspace. |
 | 3 | `tom_test_kit_sample` *(planned)* | The baseline → test → diff tracking workflow of [`testkit`](../tom_test_kit/) on a small fixture project. |
 | 4 | `tom_issue_kit_sample` *(planned)* | The issue create / analyze / verify flow of [`issuekit`](../tom_issue_kit/) against a mock backend. |
-| 5 | `tom_md2pdf_sample` *(planned)* | Converting Markdown to PDF with [`md2pdf`](../tom_md2pdf/) and to LaTeX/PDF with [`md2latex`](../tom_md2latex/). |
+| 5 | `tom_md2pdf_sample` *(planned)* | Converting Markdown to PDF with [`md2pdf`](../tom_md2pdf/). |
 | 6 | `tom_deploy_sample` *(planned)* | Modelling a deployment with [`tom_deploy`](../tom_deploy/) / [`tom_deploy_tools`](../tom_deploy_tools/) against a local target. |
 
 > Sample 1 (`tom_github_api_sample`) is the confirmed flagship; samples 2–6 are

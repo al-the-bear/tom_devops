@@ -12,11 +12,6 @@ rendered to PDF widgets by [`htmltopdfwidgets`](https://pub.dev/packages/htmltop
 and laid out by the [`pdf`](https://pub.dev/packages/pdf) package. If Dart runs,
 it produces a PDF — there is nothing else to install.
 
-> Need **real LaTeX** output, or LaTeX-quality typesetting? Use the sibling
-> [`tom_md2latex`](../tom_md2latex/) instead — it emits `.tex` and, optionally,
-> a PDF via **XeLaTeX**. `tom_md2pdf` is the choice when you just want a PDF and
-> don't want a TeX installation in the loop.
-
 ---
 
 ## Overview
@@ -27,10 +22,8 @@ it produces a PDF — there is nothing else to install.
 | ----- | ------------ | ----- |
 | **Markdown → PDF** | `htmltopdfwidgets` converts the Markdown into PDF widgets; the `pdf` package assembles them into a paginated document and saves the bytes. | Dart only — no external tools. |
 
-Compare this with `tom_md2latex`, which separates *Markdown → LaTeX* (pure Dart)
-from an optional *LaTeX → PDF* pass that shells out to XeLaTeX. `tom_md2pdf` has
-no second stage and no system dependency: it goes from Markdown to PDF bytes in
-a single Dart call.
+There is no second stage and no system dependency: it goes from Markdown to PDF
+bytes in a single Dart call.
 
 ### What it converts
 
@@ -40,26 +33,6 @@ a single Dart call.
 - Block quotes
 - Multiple page formats (A3/A4/A5/Letter/Legal/Tabloid) and configurable margins
 - Optional page-number footers and custom page headers/footers
-
-### When to reach for which converter
-
-```
-            Markdown docs
-                  │
-       ┌──────────┴───────────┐
-       ▼                      ▼
-   tom_md2pdf             tom_md2latex
-   (PDF via               (LaTeX, opt. PDF
-    htmltopdfwidgets)      via XeLaTeX)
-       │                      │
-       ▼                      ▼
-     .pdf                  .tex / .pdf
-  (no TeX needed)         (needs TeX for --pdf)
-```
-
-Reach for `tom_md2pdf` when you want a PDF with **zero system dependencies**;
-reach for `tom_md2latex` when you want **LaTeX output** or LaTeX-grade
-typesetting and have XeLaTeX available.
 
 ---
 
@@ -119,7 +92,7 @@ dart run tom_md2pdf:md2pdf docs/ -o=build/pdf --format=letter
 | Location | What it shows |
 | -------- | ------------- |
 | [`bin/md_pdf_converter.dart`](bin/md_pdf_converter.dart) | The full CLI — argument parsing, page-format/margin/font options, page-number footers, and batch directory conversion. |
-| `../tom_devops_samples/tom_md2pdf_sample/` | A runnable doc-conversion walkthrough covering both `md2pdf` (straight PDF) and `md2latex` (LaTeX/PDF) — see the [samples learning path](../README.md). *(forward reference — added later in this quest.)* |
+| `../tom_devops_samples/tom_md2pdf_sample/` | A runnable doc-conversion walkthrough covering `md2pdf` (straight PDF) — see the [samples learning path](../README.md). *(forward reference — added later in this quest.)* |
 
 ---
 
@@ -263,24 +236,8 @@ print('Success: ${result.isSuccess}');
 
 ## Ecosystem
 
-```
-        Markdown docs
-              │
-   ┌──────────┴───────────┐
-   ▼                      ▼
-tom_md2pdf            tom_md2latex
-(PDF via               (LaTeX, opt. PDF
- htmltopdfwidgets)      via XeLaTeX)
-   │                      │
-   ▼                      ▼
-.pdf                   .tex / .pdf
-(no TeX needed)        (needs TeX)
-```
-
-`tom_md2pdf` and `tom_md2latex` are the two doc-conversion tools in the devops
-toolchain. Reach for `tom_md2pdf` when you want a PDF with no system
-dependencies; reach for `tom_md2latex` when you want LaTeX output or
-LaTeX-quality typesetting and have XeLaTeX.
+`tom_md2pdf` is the doc-conversion tool of the devops toolchain: a PDF with no
+system dependencies.
 
 ---
 
@@ -288,7 +245,6 @@ LaTeX-quality typesetting and have XeLaTeX.
 
 | Package | Relationship |
 | ------- | ------------ |
-| [`tom_md2latex`](../tom_md2latex/) | The LaTeX sibling — Markdown → LaTeX, optional PDF via XeLaTeX. |
 | [Tom DevOps map](../README.md) | The repository-level index for the whole devops toolchain. |
 
 ---

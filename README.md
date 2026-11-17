@@ -51,8 +51,8 @@ toolchain. From there, the
   basics layer beside git in pure Dart ([`tom_git`](../basics/tom_git/)).
 - **Ship to the cloud** — model and execute multi-target deployments
   (`tom_deploy`, `tom_deploy_tools`).
-- **Turn Markdown into documents** — convert Markdown to LaTeX/PDF
-  (`md2latex`) or straight to PDF (`md2pdf`).
+- **Turn Markdown into documents** — convert Markdown straight to PDF
+  (`md2pdf`).
 
 ---
 
@@ -68,8 +68,8 @@ component tables so the inventory makes sense:
   framework; see [`tom_ai/basics/tom_build_kit`](../basics/tom_build_kit/).
 - **Deployment** — the multi-cloud deployment model (`tom_deploy`) and its CLI
   front end (`tom_deploy_tools`).
-- **Doc conversion** — Markdown-to-document converters (`tom_md2latex`,
-  `tom_md2pdf`) used to produce reference PDFs from the workspace's docs.
+- **Doc conversion** — the Markdown-to-PDF converter (`tom_md2pdf`) that
+  produces reference PDFs from the workspace's docs.
 
 The repository also keeps the archived packages of the old build stack
 (`tom_build`, its CLI and `tom_build_common`): code only, skipped by every tool
@@ -88,8 +88,8 @@ and not maintained. What they were is described in the tom_deploy quest's
     ┌────────┴───────┐         ┌──────┴──────┐   ┌──────┴──────┐
     │ CLI kits       │         │ Deployment  │   │ Doc         │
     │ tom_test_kit   │         │ tom_deploy  │   │ conversion  │
-    │ tom_issue_kit  │         │ tom_deploy_ │   │ tom_md2latex│
-    │ tom_fuzz       │         │  tools      │   │ tom_md2pdf  │
+    │ tom_issue_kit  │         │ tom_deploy_ │   │ tom_md2pdf  │
+    │ tom_fuzz       │         │  tools      │   │             │
     └────────────────┘         └─────────────┘   └─────────────┘
 ```
 
@@ -120,7 +120,6 @@ packages show `—`.
 
 | Package | What it is | Binary |
 | ------- | ---------- | ------ |
-| [`tom_md2latex`](tom_md2latex/) | Markdown → LaTeX converter with PDF output (xelatex). | `md_latex_converter` |
 | [`tom_md2pdf`](tom_md2pdf/) | Markdown → PDF converter via htmltopdfwidgets (no system LaTeX needed). | `md_pdf_converter` |
 
 ---
@@ -168,7 +167,7 @@ each. Ordered from first contact to advanced toolchain use:
 | 2 | [`tom_build_kit_sample`](tom_devops_samples/tom_build_kit_sample/) | Authoring a small build tool / pipeline with buildkit against a fixture workspace. |
 | 3 | `tom_test_kit_sample` *(planned)* | The baseline → test → diff tracking workflow on a small fixture project. |
 | 4 | `tom_issue_kit_sample` *(planned)* | The issue create / analyze / verify flow against a mock backend. |
-| 5 | `tom_md2pdf_sample` *(planned)* | Converting Markdown to PDF (md2pdf) and LaTeX/PDF (md2latex). |
+| 5 | `tom_md2pdf_sample` *(planned)* | Converting Markdown to PDF (md2pdf). |
 | 6 | `tom_deploy_sample` *(planned)* | Modelling a deployment with `tom_deploy` / `tom_deploy_tools` against a local target. |
 
 > Sample 1 (`tom_github_api_sample`) is the confirmed flagship; samples 2–6 are
@@ -206,7 +205,6 @@ tom_ai/devops/
 ├── tom_deploy/               # multi-cloud deployment model
 ├── tom_deploy_tools/         # tom_deploy_tools CLI front end
 │
-├── tom_md2latex/             # Markdown → LaTeX → PDF converter
 ├── tom_md2pdf/               # Markdown → PDF converter (htmltopdfwidgets)
 │
 ├── tom_devops_samples/       # runnable, article-grade sample projects
