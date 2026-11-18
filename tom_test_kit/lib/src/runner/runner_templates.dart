@@ -565,27 +565,129 @@ const builtInRunnerTemplates = <RunnerTemplate>[
     source: 'built-in',
   ),
   RunnerTemplate(
-    name: 'maven',
-    command: 'mvn -B test',
+    name: 'junit-console',
+    // A Java project built without Maven or Gradle (javac), with the JUnit
+    // Platform Console Standalone jar in lib/: its sources compiled into
+    // testlog/classes, every test class on that path run.
+    command:
+        '$_javacIntoTestlog && java -jar '
+        'lib/junit-platform-console-standalone-*.jar execute '
+        "--class-path testlog/classes --scan-class-path "
+        '--reports-dir testlog/junit-platform',
     format: ReportFormat.junit,
-    reportPath: 'target/surefire-reports/TEST-*.xml',
+    reportPath: 'testlog/junit-platform/TEST-*.xml',
+    applies: AppliesWhen(
+      natures: {'java'},
+      files: ['lib/junit-platform-console-standalone*.jar'],
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'testng',
+    // A Java project built without Maven or Gradle, with TestNG in lib/ and
+    // a testng.xml suite: TestNG's own testng-results.xml.
+    command:
+        '$_javacIntoTestlog && java -cp "testlog/classes:lib/*" '
+        'org.testng.TestNG -d testlog/testng testng.xml',
+    format: ReportFormat.testng,
+    reportPath: 'testlog/testng/testng-results.xml',
+    applies: AppliesWhen(
+      natures: {'java'},
+      files: ['lib/testng*.jar'],
+      contains: {'testng.xml': r'<suite'},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'maven-verify',
+    // Unit tests (surefire) and integration tests (failsafe) of every module
+    // of a reactor; a failing test does not stop the reactor.
+    command: 'mvn -B verify -Dmaven.test.failure.ignore=true',
+    format: ReportFormat.junit,
+    reportPath: '**/target/{surefire,failsafe}-reports/TEST-*.xml',
+    filter: NameFilter(
+      args: [
+        '-Dtest=$namesPlaceholder',
+        '-Dit.test=$namesPlaceholder',
+        '-Dsurefire.failIfNoSpecifiedTests=false',
+        '-Dfailsafe.failIfNoSpecifiedTests=false',
+      ],
+      join: ',',
+      regex: false,
+      qualify: '#',
+      cut: '(',
+    ),
+    applies: AppliesWhen(
+      natures: {'java'},
+      contains: {'{pom.xml,*/pom.xml}': r'maven-failsafe-plugin'},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'maven',
+    // Every module of a reactor; a failing test does not stop it.
+    command: 'mvn -B test -Dmaven.test.failure.ignore=true',
+    format: ReportFormat.junit,
+    reportPath: '**/target/surefire-reports/TEST-*.xml',
+    // surefire's -Dtest=Class#method,... (a parametrized test by its method).
+    filter: NameFilter(
+      args: [
+        '-Dtest=$namesPlaceholder',
+        '-Dsurefire.failIfNoSpecifiedTests=false',
+      ],
+      join: ',',
+      regex: false,
+      qualify: '#',
+      cut: '(',
+    ),
     applies: AppliesWhen(natures: {'java'}, files: ['pom.xml']),
     source: 'built-in',
   ),
   RunnerTemplate(
-    name: 'gradle-wrapper',
-    command: './gradlew test',
+    name: 'gradle',
+    // Every test task of every project of the build (test, integrationTest,
+    // ...), through testkit's init script; Java, Kotlin (kotest, JUnit 5).
+    command: '{gradle} testkitTests --init-script {script:gradle-testkit}',
     format: ReportFormat.junit,
-    reportPath: 'build/test-results/test/*.xml',
-    applies: AppliesWhen(natures: {'java'}, files: ['gradlew']),
+    reportPath: '**/build/test-results/**/*.xml',
+    // Gradle's --tests patterns, through the init script.
+    filter: NameFilter(
+      args: ['-Ptestkit.tests=$namesPlaceholder'],
+      join: '|',
+      regex: false,
+      qualify: '.',
+      cut: '(',
+    ),
+    applies: AppliesWhen(
+      natures: {'java'},
+      files: [
+        'build.gradle',
+        'build.gradle.kts',
+        'settings.gradle',
+        'settings.gradle.kts',
+      ],
+    ),
     source: 'built-in',
   ),
   RunnerTemplate(
-    name: 'gradle',
-    command: 'gradle test',
+    name: 'sbt2',
+    // sbt 2's test runs only the tests whose code changed (testQuick);
+    // testFull runs them all.
+    command: 'sbt -batch testFull',
     format: ReportFormat.junit,
-    reportPath: 'build/test-results/test/*.xml',
-    applies: AppliesWhen(natures: {'java'}),
+    reportPath: '**/target/**/test-reports/TEST-*.xml',
+    applies: AppliesWhen(
+      natures: {'scala'},
+      contains: {'project/build.properties': r'sbt\.version\s*=\s*2\.'},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'sbt',
+    command: 'sbt -batch test',
+    format: ReportFormat.junit,
+    reportPath: '**/target/**/test-reports/TEST-*.xml',
+    applies: AppliesWhen(natures: {'scala'}),
     source: 'built-in',
   ),
   RunnerTemplate(
@@ -680,6 +782,7 @@ String? natureName(RunFolder nature) => switch (nature) {
   JavaFolder() => 'java',
   GoFolder() => 'go',
   RustFolder() => 'rust',
+  ScalaFolder() => 'scala',
   CppFolder() => 'cpp',
   CFolder() => 'c',
   _ => null,
@@ -692,9 +795,17 @@ const _natureNames = [
   'java',
   'go',
   'rust',
+  'scala',
   'cpp',
   'c',
 ];
+
+/// Compiles a javac project's sources into `testlog/classes`, with the jars
+/// in `lib/` on the class path (the junit-console and testng templates).
+const _javacIntoTestlog =
+    "mkdir -p testlog/classes && javac -d testlog/classes -cp 'lib/*' "
+    r"$(find . -name '*.java' -not -path './testlog/*' "
+    r"-not -path './target/*' -not -path './build/*')";
 
 /// pytest's -k takes a boolean expression of name parts, not a pattern; a
 /// parametrized test (`test_x[1]`) is selected by its function.
@@ -754,6 +865,25 @@ String projectPythonCommand(String projectPath) {
     if (has(python)) return python;
   }
   return Platform.isWindows ? 'python' : 'python3';
+}
+
+/// The command that runs Gradle for the project at [projectPath]: the
+/// nearest wrapper (`gradlew`, `gradlew.bat` on Windows) at or above it, as
+/// a path relative to the project (a subproject of a multi-project build
+/// uses the build's wrapper and runs its own tests), else `gradle`.
+String projectGradleCommand(String projectPath) {
+  final wrapper = Platform.isWindows ? 'gradlew.bat' : 'gradlew';
+  final start = p.normalize(p.absolute(projectPath));
+  var dir = start;
+  while (true) {
+    if (File(p.join(dir, wrapper)).existsSync()) {
+      final rel = p.relative(p.join(dir, wrapper), from: start);
+      return Platform.isWindows || rel.contains(p.separator) ? rel : './$rel';
+    }
+    final parent = p.dirname(dir);
+    if (parent == dir) return 'gradle';
+    dir = parent;
+  }
 }
 
 /// The names in `package.json`'s `dependencies` and `devDependencies`.

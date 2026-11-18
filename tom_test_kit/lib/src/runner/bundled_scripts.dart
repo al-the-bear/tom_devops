@@ -11,6 +11,10 @@ const bundledScripts = <String, BundledScript>{
   // testkit's unittest runner: discovers and runs a project's unittest tests
   // and writes testkit's line protocol (Python 3.7+, standard library only).
   'unittest': (extension: 'py', text: _unittestRunner),
+  // A Gradle init script: every test task records its results without
+  // stopping the build, testkitTests runs every test task, and
+  // -Ptestkit.tests=<a>|<b> selects tests in every one of them.
+  'gradle-testkit': (extension: 'gradle', text: _gradleInit),
   // jasmine's --reporter wants a module exporting a reporter constructor;
   // jasmine-reporters exports an object of them.
   'jasmine-junit': (
@@ -208,4 +212,32 @@ def main(argv):
 
 if __name__ == "__main__":
     sys.exit(main(sys.argv[1:]))
+''';
+
+const _gradleInit =
+    r'''// testkit: every test task records its results without stopping the build,
+// testkitTests runs every test task (test, integrationTest, ...), and
+// -Ptestkit.tests=<a>|<b> runs only those tests (Gradle's --tests patterns;
+// a name with a space selects its class), a project without a match being no
+// error.
+allprojects {
+    def selected = findProperty('testkit.tests')
+    tasks.withType(Test).configureEach {
+        ignoreFailures = true
+        filter.failOnNoMatchingTests = false
+        if (selected) {
+            selected.toString().split('\\|').each { name ->
+                // A name with a space is no method name (a kotest test, a
+                // JUnit @DisplayName), and Gradle's filter cannot match it:
+                // its class runs.
+                def dot = name.lastIndexOf('.')
+                filter.includeTestsMatching(
+                    name.contains(' ') && dot > 0 ? name.substring(0, dot) : name)
+            }
+        }
+    }
+    tasks.register('testkitTests') {
+        dependsOn(tasks.withType(Test))
+    }
+}
 ''';

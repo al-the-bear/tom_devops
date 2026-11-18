@@ -1,3 +1,29 @@
+## 1.16.0
+
+### Added — the common JVM runners
+
+- Multi-module builds record every module's tests: the report paths are
+  globs over the whole tree, and a failing test no longer stops the build.
+- New built-in templates:
+  - `maven-verify`: `mvn verify` for a project that uses the failsafe
+    plugin, reading surefire's and failsafe's reports.
+  - `sbt2` and `sbt`: Scala (sbt 2 runs `testFull`).
+  - `junit-console` and `testng`: a project javac builds, with the JUnit
+    Platform Console Standalone or TestNG in `lib/`.
+- `report: testng` reads TestNG's own `testng-results.xml`.
+- `{gradle}` in a command is the nearest Gradle wrapper, else `gradle`.
+- `{script:gradle-testkit}`: an init script that runs every `Test` task of
+  every subproject (`test`, `integrationTest`, ...).
+- The `scala` nature (tom_build_base 2.42.0): testkit visits sbt projects.
+
+### Changed
+
+- `maven` runs `mvn -B test -Dmaven.test.failure.ignore=true` and selects
+  tests with `-Dtest=Class#method`.
+- `gradle` runs every test task through the init script and selects tests
+  with `-Ptestkit.tests`; it applies to a Java or Kotlin project with a
+  Gradle build or settings file and replaces `gradle-wrapper`.
+
 ## 1.15.0
 
 ### Added — the common Python runners, in the project's environment

@@ -20,7 +20,7 @@ dart test          # full suite (authoritative)
 testkit :test      # tracked run against the latest baseline
 ```
 
-The authoritative total below (**215 passing**) is the count reported by
+The authoritative total below (**317 passing**) is the count reported by
 `dart test`. Per-file counts are the tests executed from each suite; test IDs
 follow the `TK-<AREA>-<n>` convention (e.g. `TK-MDT-1`), which is the stable
 handle for regression tracking.
@@ -65,7 +65,8 @@ handle for regression tracking.
 | 32 | [Runner templates](#32-runner-templates) | 13 | 13✅ | `runner/runner_templates_test.dart` | `TK-RT` |
 | 33 | [`:test --baseline` from the command line](#33-test---baseline-from-the-command-line) | 5 | 5✅ | `v2/test_baseline_flag_test.dart` | `TK-BLF` |
 | 34 | [Python runners](#34-python-runners) | 9 | 9✅ | `runner/python_runners_test.dart` | `TK-PY` |
-| — | **Total** | **311** | **311✅** | | |
+| 35 | [JVM runners](#35-jvm-runners) | 6 | 6✅ | `runner/jvm_runners_test.dart` | `TK-JVM` |
+| — | **Total** | **317** | **317✅** | | |
 
 ---
 
@@ -756,3 +757,20 @@ The Python templates and `{python}`. TK-PY-3..6 run testkit's bundled unittest r
 | TK-PY-7 | pytest, nose2, tox and nox record per-test results from their recorded reports | ✅ | `dart test --name 'TK-PY-7'` |
 | TK-PY-8 | the Python name filters, `qualify` | ✅ | `dart test --name 'TK-PY-8'` |
 | TK-PY-9 | an unknown `{script:...}` stops the run; the jasmine template writes its bundled module | ✅ | `dart test --name 'TK-PY-9'` |
+
+---
+
+## 35. JVM runners
+
+**Test file:** `test/runner/jvm_runners_test.dart` — **ID prefix `TK-JVM`**
+
+The Maven, Gradle, sbt, TestNG and JUnit console templates and `{gradle}`. TK-JVM-3 and TK-JVM-4 read real reports of multi-module builds (`test/fixtures/reports/jvm/`): Maven surefire and failsafe, Gradle `test` and `integrationTest` with JUnit 5 and kotest, sbt with MUnit, the JUnit console, TestNG's `testng-results.xml`.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-JVM-1 | `maven-verify` (failsafe in the pom or a module's), `maven`, `gradle` (any Gradle build or settings file), `sbt2` / `sbt`, `junit-console` and `testng` (the jar in `lib/`) picked from the project's files | ✅ | `dart test --name 'TK-JVM-1'` |
+| TK-JVM-2 | `{gradle}`: the nearest wrapper at or above the project, else `gradle` | ✅ | `dart test --name 'TK-JVM-2'` |
+| TK-JVM-3 | Maven, Gradle, sbt and the JUnit console record per-test results from every module's reports | ✅ | `dart test --name 'TK-JVM-3'` |
+| TK-JVM-4 | `testng` report: configuration methods left out, data-provider runs numbered, a non-TestNG file refused | ✅ | `dart test --name 'TK-JVM-4'` |
+| TK-JVM-5 | the Maven (`-Dtest=Class#method`, `-Dit.test=`) and Gradle (`-Ptestkit.tests=`) name filters | ✅ | `dart test --name 'TK-JVM-5'` |
+| TK-JVM-6 | the gradle template writes its bundled init script | ✅ | `dart test --name 'TK-JVM-6'` |

@@ -192,6 +192,7 @@ void main() {
       'junit',
       'jest-json',
       'mocha-json',
+      'testng',
       'tap',
     ]);
     expect(ReportFormat.byConfigName('junit'), ReportFormat.junit);

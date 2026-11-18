@@ -145,6 +145,7 @@ const testedNatures = <Type>{
   DartProjectFolder,
   GoFolder,
   RustFolder,
+  ScalaFolder,
   PythonFolder,
   JavaFolder,
   JavaScriptFolder,
@@ -490,7 +491,7 @@ Result Format:
 Test Runner (per project):
   1. a testkit: section in buildkit.yaml: runner: <template>, or command:,
      report:, report-path:, filter: (report one of testkit, junit, go-json,
-     libtest, jest-json, mocha-json, tap)
+     libtest, jest-json, mocha-json, testng, tap)
   2. dart test / flutter test (Dart and Flutter projects)
   3. the test: step of buildkit.yaml, writing testkit's line protocol to
      \$TESTKIT_REPORT: one JSON object per line,
@@ -499,7 +500,8 @@ Test Runner (per project):
      workspace's (testkit: runners: in buildkit.yaml / buildkit_master.yaml),
      then the built-ins npm-test-jest, jest, vitest, mocha, ava, jasmine,
      node-test, node-tsx, node-ts-node, pytest, nose2, tox, nox, unittest
-     (testkit's own runner), maven, gradle-wrapper, gradle, go-test,
+     (testkit's own runner), junit-console, testng, maven-verify, maven,
+     gradle (every test task of every subproject), sbt2, sbt, go-test,
      cargo-test; Python ones in the project's environment
 
 Exit Code (:baseline, :test):

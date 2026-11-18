@@ -34,6 +34,9 @@ enum ReportFormat {
   /// mocha's `--reporter json` report (`--reporter-option output=<file>`).
   mochaJson('mocha-json'),
 
+  /// TestNG's own `testng-results.xml`.
+  testng('testng'),
+
   /// TAP (Test Anything Protocol, versions 12 to 14): `node --test
   /// --test-reporter=tap`, bats `--tap`, ava `--tap`, prove, tape, libtap.
   /// Read from the report file when the runner wrote one, else from its
@@ -57,7 +60,11 @@ enum ReportFormat {
   /// A [tap] report may be either: the file when there is one, else the
   /// output.
   bool get isFile =>
-      this == testkit || this == junit || this == jestJson || this == mochaJson;
+      this == testkit ||
+      this == junit ||
+      this == jestJson ||
+      this == mochaJson ||
+      this == testng;
 }
 
 /// Reads testkit's line protocol from [lines].
@@ -352,6 +359,54 @@ void parseMochaJson(String json, ResultCollector collector) {
   }
   for (final t in (report['failures'] as List?) ?? const []) {
     if (t is Map && !seen.contains(key(t))) add(t, TestResult.fail);
+  }
+}
+
+/// Reads TestNG's `testng-results.xml` [xml]: each `<test-method>` that is
+/// not a configuration method (`@BeforeMethod`, ...) is one result, grouped
+/// by its class; `PASS`, `FAIL` (a failure), `SKIP`. A method a data
+/// provider runs several times is named `<method>[<n>]` per invocation.
+///
+/// Throws [FormatException] when [xml] is not well-formed or not TestNG's.
+void parseTestngResults(String xml, ResultCollector collector) {
+  final XmlDocument document;
+  try {
+    document = XmlDocument.parse(xml);
+  } on XmlException catch (e) {
+    throw FormatException('not a TestNG report: ${e.message}');
+  }
+  if (document.rootElement.name.local != 'testng-results') {
+    throw const FormatException('not a TestNG report (no <testng-results>)');
+  }
+  for (final cls in document.findAllElements('class')) {
+    final className = cls.getAttribute('name');
+    final methods = cls
+        .findElements('test-method')
+        .where((m) => m.getAttribute('is-config') != 'true')
+        .toList();
+    final counts = <String, int>{};
+    for (final m in methods) {
+      final name = m.getAttribute('name') ?? '';
+      counts[name] = (counts[name] ?? 0) + 1;
+    }
+    final seen = <String, int>{};
+    for (final m in methods) {
+      final name = m.getAttribute('name');
+      if (name == null || name.isEmpty) continue;
+      final index = seen[name] = (seen[name] ?? -1) + 1;
+      collector.add(
+        ReportedTest(
+          name: counts[name]! > 1 ? '$name[$index]' : name,
+          suite: className,
+          groups: className,
+          result: switch (m.getAttribute('status')) {
+            'PASS' => TestResult.ok,
+            'SKIP' => TestResult.skip,
+            _ => TestResult.fail,
+          },
+        ),
+      );
+    }
   }
 }
 

@@ -72,9 +72,10 @@ void main() {
           projectFile: 'pom.xml',
         ),
       ]);
-      expect(mvn.command, 'mvn -B test');
-      expect(mvn.reportPath, 'target/surefire-reports/TEST-*.xml');
+      expect(mvn.command, 'mvn -B test -Dmaven.test.failure.ignore=true');
+      expect(mvn.reportPath, '**/target/surefire-reports/TEST-*.xml');
       File(p.join(project.path, 'pom.xml')).deleteSync();
+      write('build.gradle', '');
       final gradle = commandRunner([
         JavaFolder(
           folder,
@@ -82,8 +83,12 @@ void main() {
           projectFile: 'build.gradle',
         ),
       ]);
-      expect(gradle.command, 'gradle test');
-      expect(gradle.reportPath, 'build/test-results/test/*.xml');
+      expect(
+        gradle.command,
+        'gradle testkitTests --init-script {script:gradle-testkit}',
+      );
+      expect(gradle.reportPath, '**/build/test-results/**/*.xml');
+      File(p.join(project.path, 'build.gradle')).deleteSync();
       final js = commandRunner([JavaScriptFolder(folder)]);
       expect(js.command, contains('node --test --test-reporter=junit'));
       expect(js.origin, 'runner node-test, built-in');

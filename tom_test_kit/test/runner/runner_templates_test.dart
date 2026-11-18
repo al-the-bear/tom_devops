@@ -46,9 +46,9 @@ void main() {
     return r as CommandRunner;
   }
 
-  test('TK-RT-1: every language default is a named built-in template; '
-      'go, cargo, pytest, jest and node --test select tests by name, Maven '
-      'and Gradle do not [2026-11-18]', () {
+  test('TK-RT-1: every language default is a named built-in template; all '
+      'but jasmine, the javac runners and sbt select tests by name '
+      '[2026-11-18]', () {
     expect(builtInRunnerTemplates.map((t) => t.name), [
       'npm-test-jest',
       'jest',
@@ -66,9 +66,13 @@ void main() {
       'nox',
       'unittest',
       'unittest-doctest',
+      'junit-console',
+      'testng',
+      'maven-verify',
       'maven',
-      'gradle-wrapper',
       'gradle',
+      'sbt2',
+      'sbt',
       'go-test',
       'cargo-test',
     ]);
@@ -78,7 +82,7 @@ void main() {
     };
     expect(
       builtInRunnerTemplates.map((t) => t.name).toSet().difference(filtered),
-      {'jasmine', 'maven', 'gradle-wrapper', 'gradle'},
+      {'jasmine', 'junit-console', 'testng', 'sbt2', 'sbt'},
     );
     // Every built-in is detected, except the doctest variants a project
     // names.
@@ -90,6 +94,7 @@ void main() {
       {'pytest-doctest', 'unittest-doctest'},
     );
     write('pkg/gradlew', '');
+    write('pkg/build.gradle', '');
     final gradle = runner([
       JavaFolder(
         folder,
@@ -97,9 +102,12 @@ void main() {
         projectFile: 'build.gradle',
       ),
     ]);
-    expect(gradle.command, './gradlew test');
-    expect(gradle.origin, 'runner gradle-wrapper, built-in');
-    expect(gradle.selectsTestsByName, isFalse);
+    expect(
+      gradle.command,
+      './gradlew testkitTests --init-script {script:gradle-testkit}',
+    );
+    expect(gradle.origin, 'runner gradle, built-in');
+    expect(gradle.selectsTestsByName, isTrue);
   });
 
   test('TK-RT-2: the name filters of the built-ins [2026-11-18]', () {

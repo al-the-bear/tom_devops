@@ -8,7 +8,7 @@
 ///    testkit:
 ///      runner: pytest              # a template by name, or:
 ///      command: ./run_tests.sh     # shell command, run in the project
-///      report: testkit             # testkit | junit | go-json | libtest | jest-json | mocha-json | tap
+///      report: testkit             # testkit | junit | go-json | libtest | jest-json | mocha-json | testng | tap
 ///      report-path: build/*.xml    # a file report written elsewhere
 ///      filter: {args: [-k, '{names}'], join: ' or ', regex: false}
 ///    ```
@@ -68,6 +68,17 @@ const reportPlaceholder = '{report}';
 /// environment when it has one ([projectPythonCommand]), else `python3`.
 const pythonPlaceholder = '{python}';
 
+/// Written in a runner command, replaced by the project's Gradle: the
+/// nearest wrapper at or above it ([projectGradleCommand]), else `gradle`.
+const gradlePlaceholder = '{gradle}';
+
+/// The command placeholders that depend on the project, with how each is
+/// resolved.
+final _projectCommands = <String, String Function(String)>{
+  pythonPlaceholder: projectPythonCommand,
+  gradlePlaceholder: projectGradleCommand,
+};
+
 /// `{script:<name>}` in a runner command: replaced by the (quoted) path of
 /// the bundled script [bundledScripts] names, written to `testlog/` first.
 final _scriptPlaceholder = RegExp(r'\{script:([\w-]+)\}');
@@ -84,7 +95,7 @@ sealed class ProjectTestRunner {
   static ProjectTestRunner resolve(
     String projectPath,
     List<RunFolder> natures,
-  ) => _withPython(_resolve(projectPath, natures), projectPath);
+  ) => _withProjectCommands(_resolve(projectPath, natures), projectPath);
 
   static ProjectTestRunner _resolve(
     String projectPath,
@@ -275,7 +286,7 @@ class CommandRunner extends ProjectTestRunner {
         projectPath,
         trackingDirName,
         'last_testrun_report.${switch (format) {
-          ReportFormat.junit => 'xml',
+          ReportFormat.junit || ReportFormat.testng => 'xml',
           ReportFormat.jestJson || ReportFormat.mochaJson => 'json',
           ReportFormat.tap => 'tap',
           _ => 'jsonl',
@@ -358,6 +369,10 @@ class CommandRunner extends ProjectTestRunner {
         case ReportFormat.jestJson:
           for (final f in _reportFiles(projectPath, reportFile)) {
             parseJestJson(f.readAsStringSync(), collector);
+          }
+        case ReportFormat.testng:
+          for (final f in _reportFiles(projectPath, reportFile)) {
+            parseTestngResults(f.readAsStringSync(), collector);
           }
         case ReportFormat.mochaJson:
           for (final f in _reportFiles(projectPath, reportFile)) {
@@ -457,17 +472,18 @@ class RunnerUnavailable extends ProjectTestRunner {
   }
 }
 
-/// [runner] with `{python}` replaced by the project's Python, so messages
-/// and a dry run name the command that runs.
-ProjectTestRunner _withPython(ProjectTestRunner runner, String projectPath) {
-  if (runner is! CommandRunner || !runner.command.contains(pythonPlaceholder)) {
+/// [runner] with `{python}` and `{gradle}` replaced by the project's
+/// commands, so messages and a dry run name the command that runs.
+ProjectTestRunner _withProjectCommands(
+  ProjectTestRunner runner,
+  String projectPath,
+) {
+  if (runner is! CommandRunner ||
+      !_projectCommands.keys.any(runner.command.contains)) {
     return runner;
   }
   return CommandRunner(
-    command: runner.command.replaceAll(
-      pythonPlaceholder,
-      projectPythonCommand(projectPath),
-    ),
+    command: _resolveProjectCommands(runner.command, projectPath),
     format: runner.format,
     reportPath: runner.reportPath,
     filter: runner.filter,
@@ -483,13 +499,10 @@ String _expandPlaceholders(
   String projectPath,
   String reportFile,
 ) {
-  var result = command.replaceAll(reportPlaceholder, _shellQuote(reportFile));
-  if (result.contains(pythonPlaceholder)) {
-    result = result.replaceAll(
-      pythonPlaceholder,
-      projectPythonCommand(projectPath),
-    );
-  }
+  final result = _resolveProjectCommands(
+    command.replaceAll(reportPlaceholder, _shellQuote(reportFile)),
+    projectPath,
+  );
   return result.replaceAllMapped(_scriptPlaceholder, (m) {
     final name = m.group(1)!;
     final script = bundledScripts[name];
@@ -504,6 +517,19 @@ String _expandPlaceholders(
     )..writeAsStringSync(script.text);
     return _shellQuote(file.path);
   });
+}
+
+/// [command] with each project placeholder ([_projectCommands]) it holds
+/// replaced.
+String _resolveProjectCommands(String command, String projectPath) {
+  var result = command;
+  for (final MapEntry(key: placeholder, value: resolve)
+      in _projectCommands.entries) {
+    if (result.contains(placeholder)) {
+      result = result.replaceAll(placeholder, resolve(projectPath));
+    }
+  }
+  return result;
 }
 
 /// Quotes [arg] for `sh -c` / `cmd /c` when it holds anything but safe

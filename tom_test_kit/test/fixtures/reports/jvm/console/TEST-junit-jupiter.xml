@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="JUnit Jupiter" tests="3" skipped="1" failures="1" errors="0" time="0.035" hostname="localhost" timestamp="2026-11-18T11:20:19">
+<testcase name="addsWrongly()" classname="demo.CalcTest" time="0.003">
+<failure message="expected: &lt;3&gt; but was: &lt;2&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: expected: <3> but was: <2>
+	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)
+	at org.junit.jupiter.api.AssertionFailureBuilder.buildAndThrow(AssertionFailureBuilder.java:132)
+	at org.junit.jupiter.api.AssertEquals.failNotEqual(AssertEquals.java:197)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:150)
+	at org.junit.jupiter.api.AssertEquals.assertEquals(AssertEquals.java:145)
+	at org.junit.jupiter.api.Assertions.assertEquals(Assertions.java:531)
+	at demo.CalcTest.addsWrongly(CalcTest.java:6)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1596)
+]]></failure>
+<system-out><![CDATA[
+unique-id: [engine:junit-jupiter]/[class:demo.CalcTest]/[method:addsWrongly()]
+display-name: addsWrongly()
+]]></system-out>
+</testcase>
+<testcase name="later()" classname="demo.CalcTest" time="0">
+<skipped><![CDATA[void demo.CalcTest.later() is @Disabled]]></skipped>
+<system-out><![CDATA[
+unique-id: [engine:junit-jupiter]/[class:demo.CalcTest]/[method:later()]
+display-name: later()
+]]></system-out>
+</testcase>
+<testcase name="adds()" classname="demo.CalcTest" time="0.008">
+<system-out><![CDATA[
+unique-id: [engine:junit-jupiter]/[class:demo.CalcTest]/[method:adds()]
+display-name: adds()
+]]></system-out>
+</testcase>
+<system-out><![CDATA[
+unique-id: [engine:junit-jupiter]
+display-name: JUnit Jupiter
+]]></system-out>
+</testsuite>

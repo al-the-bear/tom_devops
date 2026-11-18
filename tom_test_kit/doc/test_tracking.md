@@ -1033,7 +1033,8 @@ testkit version                  # Show version information
 ## Other Languages
 
 testkit tracks the tests of every project it can run, not only Dart and
-Flutter packages: Go, Rust, Python, Java, JavaScript, TypeScript, C and C++.
+Flutter packages: Go, Rust, Python, Java, Kotlin, Scala, JavaScript,
+TypeScript, C and C++.
 The tracking file, the result format, `:lastdiff`, `:status`, `:history`,
 `:flaky`, `:trim` and `:reset` are the same; only how the tests run differs.
 
@@ -1069,9 +1070,13 @@ workspace's own:
 | `nox` | Python whose `noxfile.py` uses `posargs` | `nox -- --continue-on-collection-errors --junitxml={report}` | `junit` | as `pytest` |
 | `unittest` | any other Python project | `{python} {script:unittest} {report}`: testkit's own unittest runner | `testkit` | `-k '*module.Class.method'` per test |
 | `unittest-doctest` | picked by name | `unittest` with the doctests of the project's modules | `testkit` | as `unittest` |
-| `maven` | Java with a `pom.xml` | `mvn -B test` | `junit`, `target/surefire-reports/TEST-*.xml` | no |
-| `gradle-wrapper` | Java with a `gradlew` | `./gradlew test` | `junit`, `build/test-results/test/*.xml` | no |
-| `gradle` | Java | `gradle test` | `junit`, `build/test-results/test/*.xml` | no |
+| `junit-console` | Java with `lib/junit-platform-console-standalone*.jar`: a project javac builds | javac into `testlog/classes`, then the JUnit Platform Console Standalone (`--scan-class-path`, `--reports-dir`) | `junit`, `testlog/junit-platform/TEST-*.xml` | no |
+| `testng` | Java with `lib/testng*.jar` and a `testng.xml` suite | javac into `testlog/classes`, then `org.testng.TestNG testng.xml` | `testng`, `testlog/testng/testng-results.xml` | no |
+| `maven-verify` | Java whose `pom.xml` or a module's names `maven-failsafe-plugin` | `mvn -B verify -Dmaven.test.failure.ignore=true` | `junit`, `**/target/{surefire,failsafe}-reports/TEST-*.xml` | `-Dtest=<Class#method,...>`, `-Dit.test=` the same |
+| `maven` | Java with a `pom.xml` | `mvn -B test -Dmaven.test.failure.ignore=true` | `junit`, `**/target/surefire-reports/TEST-*.xml` | `-Dtest=<Class#method,...>` (a parametrized test by its method) |
+| `gradle` | Java or Kotlin with `build.gradle(.kts)` or `settings.gradle(.kts)` | `{gradle} testkitTests --init-script {script:gradle-testkit}` | `junit`, `**/build/test-results/**/*.xml` | `-Ptestkit.tests=<Class.method\|...>` |
+| `sbt2` | Scala whose `project/build.properties` names sbt 2 | `sbt -batch testFull` | `junit`, `**/target/**/test-reports/TEST-*.xml` | no |
+| `sbt` | Scala (`build.sbt`) | `sbt -batch test` | `junit`, `**/target/**/test-reports/TEST-*.xml` | no |
 | `go-test` | Go | `go test -json ./...` | `go-json` on the output | `-run '^(<names>)$'` (a subtest by its test) |
 | `cargo-test` | Rust | `cargo test --no-fail-fast` | `libtest` text on the output | `-- --exact <name> <name>` |
 
@@ -1099,6 +1104,48 @@ Notes on the JavaScript / TypeScript runners (checked with vitest 5.1, mocha
   own, e.g. `command: npx tsc && node --test --test-reporter=junit
   --test-reporter-destination={report} 'dist/**/*.test.js'`. A `--dry-run` names the runner each project gets, with the
 template and where it is defined:
+
+Notes on the JVM runners (checked with Maven 3.9 (surefire and failsafe 3.5),
+Gradle 9.1, sbt 1.11 and 2.1, JUnit 5, kotest 6, MUnit 1, TestNG 7.10 and the
+JUnit Platform Console Standalone 1.11, on Java 21):
+
+- **Multi-module projects.** The report path is a glob over the whole tree,
+  so every module of a Maven reactor, every subproject of a Gradle build and
+  every sbt subproject is read. A failing test does not stop the build:
+  Maven runs with `-Dmaven.test.failure.ignore=true`, and Gradle's init
+  script sets `ignoreFailures` on every test task.
+- **Every Gradle test task.** `{script:gradle-testkit}` is an init script
+  testkit bundles (written to `testlog/testkit_gradle-testkit.gradle`): it
+  adds a `testkitTests` task that depends on every `Test` task of every
+  project (`test`, `integrationTest`, ...), and reads the names to run from
+  `-Ptestkit.tests`. A name with a space (a kotest test, a JUnit
+  `@DisplayName`) cannot be handed to Gradle's filter, so it selects its
+  whole class. `{gradle}` is the nearest Gradle wrapper at or above the
+  project (`./gradlew`, `../gradlew`, `gradlew.bat` on Windows), else
+  `gradle`.
+- **Integration tests on Maven.** A project that uses the failsafe plugin
+  (in its `pom.xml` or a module's one level down) runs `mvn verify`, which
+  runs surefire's unit tests and failsafe's integration tests; others run
+  `mvn test`.
+- **Kotlin** runs through Gradle like Java (JUnit 5, kotest): kotest's test
+  names are recorded as they are written.
+- **Scala** runs through sbt, which writes JUnit XML under
+  `target/**/test-reports/`. sbt 2's `test` only runs the tests whose inputs
+  changed, so an sbt 2 build runs `testFull`. sbt selects no single tests.
+- **TestNG.** Under Maven or Gradle TestNG tests are in the JUnit XML the
+  build writes. A project that runs TestNG itself is read from TestNG's own
+  `testng-results.xml` (`report: testng`): one entry per test method,
+  configuration methods (`@BeforeMethod`, ...) left out, the runs of a data
+  provider numbered `name[0]`, `name[1]`.
+- **A project without a build tool** (javac only) runs `junit-console` or
+  `testng` when the jar is in its `lib/`: testkit compiles every `.java`
+  file outside `testlog/`, `target/` and `build/` with `lib/*` on the class
+  path into `testlog/classes` and runs the tests from there. testkit visits
+  only projects with a Java nature, which a `pom.xml` or a Gradle build file
+  gives; a project that tests through its own script (the SOM Java runtime)
+  keeps its `test:` step. Neither selects single tests: the console cannot
+  combine a method selection with its class-path scan, and TestNG runs its
+  suite file.
 
 Notes on the Python runners (checked with Python 3.9 and 3.11, pytest 8.4, nose2
 0.16, tox 4.30, nox 2026.4, uv 0.13, Poetry):
@@ -1169,11 +1216,11 @@ testkit:
 
 | Key | Meaning |
 | --- | ------- |
-| `command` | The shell command, run in the project; `{report}` is the report file's path, `{python}` the project's Python (its environment, see above), `{script:<name>}` the path of a script testkit bundles (`unittest`, `jasmine-junit`), written to `testlog/` first. |
-| `report` | `testkit`, `junit`, `go-json`, `libtest`, `jest-json`, `mocha-json` or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
+| `command` | The shell command, run in the project; `{report}` is the report file's path, `{python}` the project's Python (its environment, see above), `{gradle}` the nearest Gradle wrapper, else `gradle`, `{script:<name>}` the path of a script testkit bundles (`unittest`, `jasmine-junit`, `gradle-testkit`), written to `testlog/` first. |
+| `report` | `testkit`, `junit`, `go-json`, `libtest`, `jest-json`, `mocha-json`, `testng` (TestNG's `testng-results.xml`) or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
 | `report-path` | Where the report lands, relative to the project (a glob for several files), when not at `{report}`. |
 | `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`); `tail` keeps what follows the last occurrence of a text (` > `); `each` is a list of arguments repeated once per name, `{name}` replaced (`[--match, "{name}"]`), after `args` (either may be left out); `qualify` hands each name with its group before it, joined by a text (`.`: `tests.test_calc.TestCalc.test_adds`), for a runner that selects by qualified name. Without `filter` every test runs. |
-| `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression; a glob as the file: one of its matches), `dependency` (`package.json` names one of them), `scripts` (each named `package.json` script exists and matches its regular expression, `{test: jest}`), `any` (a list of such condition sets, one of which holds besides the others). Without `applies` a template only runs when a project names it. |
+| `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `scala`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression; a glob as the file: one of its matches), `dependency` (`package.json` names one of them), `scripts` (each named `package.json` script exists and matches its regular expression, `{test: jest}`), `any` (a list of such condition sets, one of which holds besides the others). Without `applies` a template only runs when a project names it. |
 
 **Which template.** A project names one with `runner:`; the section's
 `command:`, `report:`, `report-path:` and `filter:` then change it for that
