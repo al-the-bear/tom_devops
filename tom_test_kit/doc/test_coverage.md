@@ -20,7 +20,7 @@ dart test          # full suite (authoritative)
 testkit :test      # tracked run against the latest baseline
 ```
 
-The authoritative total below (**323 passing**) is the count reported by
+The authoritative total below (**330 passing**) is the count reported by
 `dart test`. Per-file counts are the tests executed from each suite; test IDs
 follow the `TK-<AREA>-<n>` convention (e.g. `TK-MDT-1`), which is the stable
 handle for regression tracking.
@@ -67,7 +67,8 @@ handle for regression tracking.
 | 34 | [Python runners](#34-python-runners) | 9 | 9✅ | `runner/python_runners_test.dart` | `TK-PY` |
 | 35 | [JVM runners](#35-jvm-runners) | 6 | 6✅ | `runner/jvm_runners_test.dart` | `TK-JVM` |
 | 36 | [Go and Rust runners](#36-go-and-rust-runners) | 6 | 6✅ | `runner/go_rust_runners_test.dart` | `TK-GR` |
-| — | **Total** | **323** | **323✅** | | |
+| 37 | [C and C++ runners](#37-c-and-c-runners) | 7 | 7✅ | `runner/c_cpp_runners_test.dart` | `TK-CC` |
+| — | **Total** | **330** | **330✅** | | |
 
 ---
 
@@ -792,3 +793,21 @@ The ginkgo, gotestsum, cargo-nextest and cargo-test-json templates, `{go-tool:<n
 | TK-GR-4 | a single crate keeps the groups cargo prints | ✅ | `dart test --name 'TK-GR-4'` |
 | TK-GR-5 | the name filters (go test / gotestsum `-run`, cargo test / nextest `--exact`, the nightly template after its `--`); build tags and `-race` in a project's go-test command | ✅ | `dart test --name 'TK-GR-5'` |
 | TK-GR-6 | the cargo-nextest template writes its bundled tool config | ✅ | `dart test --name 'TK-GR-6'` |
+
+---
+
+## 37. C and C++ runners
+
+**Test file:** `test/runner/c_cpp_runners_test.dart` — **ID prefix `TK-CC`**
+
+The Bazel, Meson, Ceedling, CTest and per-framework templates, `binaries:` / `build:` / `env:`, `{report-dir}`, and the CppUnit, Check and Unity readers. TK-CC-2 and TK-CC-3 read real reports (`test/fixtures/reports/cc/`).
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-CC-1 | each C / C++ template picked from the project's files (a Bazel workspace, `meson.build` with `project(`, Ceedling's JUnit plugin, CTest, GoogleTest under CTest, a make project including a framework's header); a project's `binaries:` / `build:` / `env:` | ✅ | `dart test --name 'TK-CC-1'` |
+| TK-CC-2 | Bazel, Meson, Ceedling, CTest and CTest with GoogleTest's reports record per-test results | ✅ | `dart test --name 'TK-CC-2'` |
+| TK-CC-3 | GoogleTest, Catch2, doctest, Boost.Test, CppUnit (file and output), CMocka, Check, Unity and libtap test programs record per-test results | ✅ | `dart test --name 'TK-CC-3'` |
+| TK-CC-4 | `binaries:` runs the command per test program (scripts, non-executables and `testlog/` left out) with `{binary}`, `{binary-name}`, its own `{report}` and `env:`; `build:` first, a failing build runs no test; no program is said | ✅ | `dart test --name 'TK-CC-4'` |
+| TK-CC-5 | the CppUnit, Check and Unity readers | ✅ | `dart test --name 'TK-CC-5'` |
+| TK-CC-6 | the name filters of CTest, GoogleTest, Catch2 and doctest; none for the others | ✅ | `dart test --name 'TK-CC-6'` |
+| TK-CC-7 | `{report-dir}` is emptied before a run | ✅ | `dart test --name 'TK-CC-7'` |

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="catch_test" errors="0" failures="1" skipped="0" tests="4" hostname="host" time="0.000" timestamp="2026-11-18T16:26:21Z">
+    <testcase classname="catch_test.global" name="adds" time="0.000" status="run"/>
+    <testcase classname="catch_test.global" name="subtracts wrongly" time="0.000" status="run">
+      <failure message="add(2, -1) == 0" type="REQUIRE">
+FAILED:
+  REQUIRE( add(2, -1) == 0 )
+with expansion:
+  1 == 0
+at tests/catch_test.cpp:4
+      </failure>
+    </testcase>
+    <testcase classname="catch_test.global" name="sections" time="0.000" status="run"/>
+    <testcase classname="catch_test.global" name="sections/first" time="0.000" status="run"/>
+    <testcase classname="catch_test.global" name="sections/second" time="0.000" status="run"/>
+    <system-out/>
+    <system-err/>
+  </testsuite>
+</testsuites>

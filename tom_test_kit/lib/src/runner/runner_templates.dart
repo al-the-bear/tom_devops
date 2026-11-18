@@ -298,6 +298,19 @@ class RunnerTemplate {
   /// `buildkit.yaml`.
   final String source;
 
+  /// Test programs (globs, relative to the project): when set, [command]
+  /// runs once for each executable they match, `{binary}` its path,
+  /// `{report}` a report file of its own.
+  final List<String> binaries;
+
+  /// A command run once before the tests, which builds them (`make`); a
+  /// failing build stops the run.
+  final String? build;
+
+  /// Environment variables for [command]; the placeholders of a command
+  /// are replaced in the values.
+  final Map<String, String> env;
+
   const RunnerTemplate({
     required this.name,
     required this.command,
@@ -306,6 +319,9 @@ class RunnerTemplate {
     this.reportPath,
     this.filter,
     this.applies,
+    this.binaries = const [],
+    this.build,
+    this.env = const {},
   });
 
   /// Reads a template from [yaml]; the fields it leaves out are taken from
@@ -340,7 +356,23 @@ class RunnerTemplate {
       final reportPath = yaml.containsKey('report-path')
           ? yaml['report-path']
           : base?.reportPath;
+      final binaries = yaml.containsKey('binaries')
+          ? (_strings(yaml['binaries'], 'binaries', prefix: '') ?? const [])
+          : base?.binaries ?? const [];
+      final build = yaml.containsKey('build') ? yaml['build'] : base?.build;
+      if (build != null && build is! String) {
+        throw const FormatException('build: must be a command');
+      }
+      final env = yaml['env'];
+      if (env != null && env is! Map) {
+        throw const FormatException('env: must map names to values');
+      }
       return RunnerTemplate(
+        binaries: binaries,
+        build: build as String?,
+        env: env is Map
+            ? {for (final e in env.entries) '${e.key}': '${e.value}'}
+            : base?.env ?? const {},
         name: name,
         command: command,
         format: format,
@@ -775,7 +807,269 @@ const builtInRunnerTemplates = <RunnerTemplate>[
     applies: AppliesWhen(natures: {'rust'}),
     source: 'built-in',
   ),
+  // C and C++: the build systems that run the tests themselves first, then
+  // the test programs of a make project, by framework.
+  RunnerTemplate(
+    name: 'bazel',
+    // Every test target; Bazel writes a JUnit report per target (a gtest
+    // target's per test case).
+    command: 'bazel test //... --keep_going',
+    format: ReportFormat.junit,
+    reportPath: 'bazel-testlogs/**/test.xml',
+    applies: AppliesWhen(
+      natures: {'c', 'cpp'},
+      files: ['MODULE.bazel', 'WORKSPACE.bazel', 'WORKSPACE'],
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'meson',
+    // --reconfigure sets up a new build folder too (Meson 1.1+); meson test
+    // builds what it runs. gtest and TAP tests are reported per test case.
+    command: 'meson setup --reconfigure build && meson test -C build',
+    format: ReportFormat.junit,
+    reportPath: 'build/meson-logs/testlog.junit.xml',
+    applies: AppliesWhen(
+      natures: {'c', 'cpp'},
+      contains: {'meson.build': r'^\s*project\s*\('},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'ceedling',
+    // Ceedling's JUnit report, when project.yml enables it: the
+    // junit_tests_report plugin (Ceedling 0.31) writes report.xml, the
+    // report_tests_log_factory plugin (1.0) junit_tests_report.xml.
+    command: 'ceedling test:all',
+    format: ReportFormat.junit,
+    reportPath: 'build/artifacts/test/{report,junit_tests_report}.xml',
+    applies: AppliesWhen(
+      natures: {'c', 'cpp'},
+      contains: {
+        'project.yml': r'\bjunit_tests_report\b|\breport_tests_log_factory\b',
+      },
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'ctest-gtest',
+    // GoogleTest programs under CTest: each writes its own report into the
+    // report folder (also when CTest runs every test case on its own), so a
+    // program CTest runs as one test is recorded per test case.
+    command:
+        'cmake -S . -B build && cmake --build build && cmake -E env '
+        'GTEST_OUTPUT=xml:{report-dir}/ ctest --test-dir build '
+        '--output-on-failure',
+    format: ReportFormat.junit,
+    reportPath: 'testlog/reports/*.xml',
+    applies: AppliesWhen(
+      natures: {'c', 'cpp'},
+      contains: {
+        'CMakeLists.txt': _ctestEnabled,
+        '{CMakeLists.txt,*/CMakeLists.txt}': r'\bGTest\b|\bgtest(_main)?\b',
+      },
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'ctest',
+    // One result per CTest test: per test case for gtest_discover_tests,
+    // catch_discover_tests and doctest_discover_tests.
+    command:
+        'cmake -S . -B build && cmake --build build && ctest --test-dir '
+        'build --output-junit {report}',
+    format: ReportFormat.junit,
+    filter: NameFilter(args: ['-R', '^($namesPlaceholder)\$']),
+    applies: AppliesWhen(
+      natures: {'c', 'cpp'},
+      contains: {'CMakeLists.txt': _ctestEnabled},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'gtest',
+    command: '{binary} --gtest_output=xml:{report}',
+    format: ReportFormat.junit,
+    // Suite.Test, the parametrized ones Instance/Suite.Test/0.
+    filter: NameFilter(
+      args: ['--gtest_filter=$namesPlaceholder'],
+      join: ':',
+      regex: false,
+      qualify: '.',
+    ),
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _gtestProject,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'catch2',
+    command: '{binary} --reporter junit --out {report}',
+    format: ReportFormat.junit,
+    // Test-case names, exactly; a section (`case/section`) runs its case.
+    filter: NameFilter(
+      args: [namesPlaceholder],
+      join: ',',
+      regex: false,
+      cut: '/',
+    ),
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _catch2Project,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'doctest',
+    command: '{binary} --reporters=junit --out={report}',
+    format: ReportFormat.junit,
+    filter: NameFilter(
+      args: ['--test-case=$namesPlaceholder'],
+      join: ',',
+      regex: false,
+    ),
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _doctestProject,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'boost-test',
+    command:
+        '{binary} --log_format=JUNIT --log_level=all --log_sink={report} '
+        '--report_level=no',
+    format: ReportFormat.junit,
+    // No name filter: Boost.Test reports the cases --run_test leaves out
+    // as skipped, so a filtered run would record tests that did not run.
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _boostTestProject,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'cppunit',
+    // The test program writes CppUnit's XmlOutputter report to the file
+    // $TESTKIT_REPORT names, or to its output.
+    command: '{binary}',
+    format: ReportFormat.cppunit,
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _cppunitProject,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'cmocka',
+    command: '{binary}',
+    format: ReportFormat.junit,
+    // A report per group (%g).
+    env: {
+      'CMOCKA_MESSAGE_OUTPUT': 'xml',
+      'CMOCKA_XML_FILE': '{report-dir}/{binary-name}-%g.xml',
+    },
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _cmockaProject,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'check',
+    command: '{binary}',
+    format: ReportFormat.check,
+    env: {'CK_XML_LOG_FILE_NAME': '{report}'},
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _checkProject,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'unity',
+    command: '{binary}',
+    format: ReportFormat.unity,
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _unityProject,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'libtap',
+    command: '{binary}',
+    format: ReportFormat.tap,
+    binaries: _testPrograms,
+    build: 'make',
+    applies: _libtapProject,
+    source: 'built-in',
+  ),
 ];
+
+/// A `CMakeLists.txt` that enables CTest.
+const _ctestEnabled = r'^\s*(enable_testing\s*\(|include\s*\(\s*CTest\b)';
+
+/// The test programs of a make project: executables whose name holds
+/// `test` (`build/math_test`, `tests/TestRunner`).
+const _testPrograms = ['**/*[Tt]est*'];
+
+/// A make project: its `Makefile`.
+const _makeFiles = ['Makefile', 'makefile', 'GNUmakefile'];
+
+/// The C and C++ sources and headers of a project.
+const _cSources = '**.{c,cc,cpp,cxx,h,hpp}';
+
+/// The start of an `#include` of a test framework's header.
+const _include = r'#\s*include\s*[<"]';
+
+/// A make project whose sources include the framework's header.
+const _gtestProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(gtest/gtest\\.h)'},
+);
+
+const _catch2Project = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(catch2/catch|catch\\.hpp)'},
+);
+
+const _doctestProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(doctest(/doctest)?\\.h)'},
+);
+
+const _boostTestProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(boost/test/)'},
+);
+
+const _cppunitProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(cppunit/)'},
+);
+
+const _cmockaProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(cmocka\\.h)'},
+);
+
+const _checkProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(check\\.h)'},
+);
+
+const _unityProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(unity\\.h)'},
+);
+
+const _libtapProject = AppliesWhen(
+  natures: {'c', 'cpp'},
+  files: _makeFiles,
+  contains: {_cSources: '$_include(tap\\.h)'},
+);
 
 /// `go test -run`: it splits a pattern at `/` into one per subtest level, so
 /// a subtest is selected by the test it belongs to.
@@ -1054,11 +1348,15 @@ bool _globMatches(String projectPath, String pattern) {
 }
 
 /// A string or a list of strings under [key]; null when absent.
-List<String>? _strings(Object? value, String key) {
+List<String>? _strings(
+  Object? value,
+  String key, {
+  String prefix = 'applies: ',
+}) {
   if (value == null) return null;
   if (value is String) return [value];
   if (value is List && value.every((v) => v is String)) {
     return value.cast<String>();
   }
-  throw FormatException('applies: $key: must be a string or a list of them');
+  throw FormatException('$prefix$key: must be a string or a list of them');
 }

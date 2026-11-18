@@ -1083,10 +1083,25 @@ workspace's own:
 | `cargo-nextest` | Rust with `.config/nextest.toml` | `cargo nextest run {cargo-workspace} --no-fail-fast` with the JUnit profile of a bundled tool config | `junit`, `target/nextest/testkit/junit.xml` | `-- --exact <name> <name>` |
 | `cargo-test-json` | Rust on a nightly toolchain (`rust-toolchain` / `rust-toolchain.toml` names `nightly`) | `cargo test {cargo-workspace} --no-fail-fast -- -Z unstable-options --format json` | `libtest-json` on the output | `--exact <name> <name>` |
 | `cargo-test` | Rust | `cargo test {cargo-workspace} --no-fail-fast` | `libtest` text on the output | `-- --exact <name> <name>` |
+| `bazel` | C / C++ with `MODULE.bazel`, `WORKSPACE.bazel` or `WORKSPACE` | `bazel test //... --keep_going` | `junit`, `bazel-testlogs/**/test.xml` | no |
+| `meson` | C / C++ with a `meson.build` that declares the `project(...)` | `meson setup --reconfigure build && meson test -C build` | `junit`, `build/meson-logs/testlog.junit.xml` | no |
+| `ceedling` | C / C++ whose `project.yml` enables Ceedling's JUnit report (`junit_tests_report`, `report_tests_log_factory`) | `ceedling test:all` | `junit`, `build/artifacts/test/{report,junit_tests_report}.xml` | no |
+| `ctest-gtest` | C / C++ with CTest (`enable_testing()` / `include(CTest)` in `CMakeLists.txt`) and GoogleTest in a `CMakeLists.txt` | build with CMake, then `ctest --test-dir build` with `GTEST_OUTPUT=xml:{report-dir}/` | `junit`, a report per GoogleTest program | no |
+| `ctest` | C / C++ with CTest | `cmake -S . -B build && cmake --build build && ctest --test-dir build --output-junit {report}` | `junit` | `-R '^(<names>)$'` |
+| `gtest` | a make project (`Makefile`) whose sources include `gtest/gtest.h` | `make`, then `{binary} --gtest_output=xml:{report}` for each test program | `junit` | `--gtest_filter=<Suite.Test>:...` |
+| `catch2` | a make project including Catch2 (`catch2/...`, `catch.hpp`) | `make`, then `{binary} --reporter junit --out {report}` | `junit` | the test cases, comma-separated |
+| `doctest` | a make project including `doctest.h` | `make`, then `{binary} --reporters=junit --out={report}` | `junit` | `--test-case=<a>,<b>` |
+| `boost-test` | a make project including `boost/test/...` | `make`, then `{binary} --log_format=JUNIT --log_level=all --log_sink={report} --report_level=no` | `junit` | no (see below) |
+| `cppunit` | a make project including `cppunit/...` | `make`, then `{binary}` | `cppunit`, from `$TESTKIT_REPORT` or the output | no |
+| `cmocka` | a make project including `cmocka.h` | `make`, then `{binary}` with `CMOCKA_MESSAGE_OUTPUT=xml`, `CMOCKA_XML_FILE={report-dir}/{binary-name}-%g.xml` | `junit` | no |
+| `check` | a make project including `check.h` | `make`, then `{binary}` with `CK_XML_LOG_FILE_NAME={report}` | `check` | no |
+| `unity` | a make project including `unity.h` | `make`, then `{binary}` | `unity` on the output | no |
+| `libtap` | a make project including `tap.h` | `make`, then `{binary}` | `tap` on the output | no |
 
-C, C++ and a TypeScript project with none of these runners have no built-in
-template: such a project needs a `test:` step, a `testkit:` section or a
-template of its own, and testkit says so.
+A TypeScript project with none of these runners, and a C or C++ project
+built otherwise (a make project with none of these frameworks, CMake without
+CTest), has no built-in template: such a project needs a `test:` step, a
+`testkit:` section or a template of its own, and testkit says so.
 
 Notes on the JavaScript / TypeScript runners (checked with vitest 5.1, mocha
 12.0, ava 8.4, jasmine 7.0 with jasmine-reporters 2.5, jest 30.5, node 22):
@@ -1151,6 +1166,52 @@ ginkgo 2.34, cargo 1.96 and cargo-nextest 0.9):
 - **libtest's JSON** (`cargo-test-json`) needs a nightly toolchain:
   `-Z unstable-options` is refused on stable. Its filter goes after the
   command's own `--`.
+
+Notes on the C and C++ runners (checked with CMake 4.2, Meson 1.12, Bazel
+8.4, Ceedling 0.31, GoogleTest 1.17, Catch2 3.8, doctest 2.4, Boost.Test
+1.92, CppUnit 1.15, CMocka 1.1, Check 0.15, Unity 2.6 and libtap):
+
+- **A project, not a script.** testkit visits a C or C++ project marked by a
+  `Makefile`, `CMakeLists.txt`, a `meson.build` with `project(...)` or a
+  Bazel workspace file beside its sources. A Ceedling project needs one of
+  those too.
+- **Build systems that run the tests.** Bazel, Meson, Ceedling and CTest
+  build what they test and write a JUnit report. Bazel's and Meson's are per
+  test case for GoogleTest programs (Meson's `protocol: 'gtest'`) and TAP
+  ones (`protocol: 'tap'`, named `1 - adds`), else per test. CTest's is per
+  CTest test: per test case when the project registers its cases
+  (`gtest_discover_tests`, `catch_discover_tests`, `doctest_discover_tests`),
+  else per program. With GoogleTest in the project, `ctest-gtest` has every
+  GoogleTest program write its own report into `{report-dir}`, so a program
+  CTest runs as one test is recorded per test case.
+- **Test programs of a make project.** The framework templates run `make`
+  (`build:`), then every test program: an executable whose name holds
+  `test` (`binaries: ['**/*[Tt]est*']`), no script, outside `testlog/`. A
+  project whose tests are built or named otherwise names the template and
+  sets `binaries:` and `build:` (also for a CMake build without CTest):
+
+  ```yaml
+  testkit:
+    runner: gtest
+    build: cmake -S . -B build && cmake --build build --target unit_tests
+    binaries: build/unit_tests
+  ```
+
+- **One report per program.** Each program writes its own report
+  (`testlog/reports/<path>.<ext>`); a report on the output is read per
+  program, its tests grouped by the program when the framework does not
+  group them (libtap).
+- **Through the environment.** CMocka, Check and GoogleTest under CTest take
+  their report file from environment variables (`env:` and `cmake -E env`),
+  which work on Windows too.
+- **CppUnit** has no runner of its own: the project's test program writes
+  `XmlOutputter`'s report, to the file `$TESTKIT_REPORT` names or to its
+  output.
+- **Selecting tests.** `--failed` / `--mismatched` hand CTest its test names
+  (`-R`), GoogleTest `Suite.Test` names, Catch2 its test cases (a failed
+  section runs its case) and doctest its test cases. Boost.Test reports the
+  cases `--run_test` leaves out as skipped, so a filtered run would record
+  tests that did not run: it selects none, nor do the others.
 
 Notes on the JVM runners (checked with Maven 3.8 (surefire and failsafe 3.5),
 Gradle 9.9, sbt 2.1, JUnit 5.11, kotest 5.9, ScalaTest 3.2, TestNG 7.10 and
@@ -1228,10 +1289,10 @@ it is defined:
 ```
 
 ```yaml
-# buildkit.yaml — a CMake project with CTest
+# buildkit.yaml — CTest in another build folder
 testkit:
-  command: ctest --test-dir build --output-junit {report}
-  report: junit
+  runner: ctest
+  command: ctest --test-dir out --output-junit {report}
 ```
 
 `{report}` is replaced by the (quoted) path of the report file testkit hands
@@ -1256,25 +1317,28 @@ testkit:
       report: junit
       filter: {args: [-k, "{names}"], join: " or ", regex: false, cut: "["}
       applies: {nature: python, files: [uv.lock]}
-    ctest:
-      command: ctest --test-dir build --output-junit {report}
+    ctest-presets:
+      command: cmake --workflow --preset ci && ctest --preset ci --output-junit {report}
       report: junit
-      applies: {nature: [c, cpp], contains: {CMakeLists.txt: enable_testing}}
+      applies: {nature: [c, cpp], files: [CMakePresets.json]}
     go-test:                           # changes the built-in
       command: go test -json -race ./...
 ```
 
 | Key | Meaning |
 | --- | ------- |
-| `command` | The shell command, run in the project; `{report}` is the report file's path, `{python}` the project's Python (its environment, see above), `{gradle}` the nearest Gradle wrapper, else `gradle`, `{go-tool:<name>}` the module's Go tool (`go tool <name>`) when `go.mod` declares it, else `<name>`, `{cargo-workspace}` `--workspace` for a Cargo workspace, else nothing, `{script:<name>}` the path of a script testkit bundles (`unittest`, `jasmine-junit`, `gradle-testkit`, `nextest-testkit`), written to `testlog/` first. |
-| `report` | `testkit`, `junit`, `go-json`, `libtest`, `libtest-json` (libtest's JSON events on the output), `jest-json`, `mocha-json`, `testng` (TestNG's `testng-results.xml`) or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
+| `command` | The shell command, run in the project; `{report}` is the report file's path, `{python}` the project's Python (its environment, see above), `{gradle}` the nearest Gradle wrapper, else `gradle`, `{go-tool:<name>}` the module's Go tool (`go tool <name>`) when `go.mod` declares it, else `<name>`, `{cargo-workspace}` `--workspace` for a Cargo workspace, else nothing, `{report-dir}` an empty folder for report files (`testlog/reports/`), `{binary}` / `{binary-name}` the test program's path and name (with `binaries:`), `{script:<name>}` the path of a script testkit bundles (`unittest`, `jasmine-junit`, `gradle-testkit`, `nextest-testkit`), written to `testlog/` first. |
+| `report` | `testkit`, `junit`, `go-json`, `libtest`, `libtest-json` (libtest's JSON events on the output), `jest-json`, `mocha-json`, `testng` (TestNG's `testng-results.xml`), `cppunit` (CppUnit's `XmlOutputter` report, from the file or the output), `check` (Check's XML log), `unity` (Unity's output) or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
 | `report-path` | Where the report lands, relative to the project (a glob for several files), when not at `{report}`. |
+| `binaries` | Test programs, a glob or a list of them: the command runs once for each executable file they match (no script, outside `testlog/`), with `{binary}` its path, `{binary-name}` its name and `{report}` a report file of its own in `testlog/reports/`; without `report-path:` every file there is read. |
+| `build` | A command run once before the tests, which builds them; a failing build stops the run with its output. |
+| `env` | Environment variables for the command (a map); `{report}`, `{report-dir}`, `{binary}` and `{binary-name}` are replaced in the values. |
 | `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`); `tail` keeps what follows the last occurrence of a text (` > `); `each` is a list of arguments repeated once per name, `{name}` replaced (`[--match, "{name}"]`), after `args` (either may be left out); `qualify` hands each name with its group before it, joined by a text (`.`: `tests.test_calc.TestCalc.test_adds`), for a runner that selects by qualified name. Without `filter` every test runs. |
 | `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `scala`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression; a glob as the file: one of its matches), `dependency` (`package.json` names one of them), `scripts` (each named `package.json` script exists and matches its regular expression, `{test: jest}`), `any` (a list of such condition sets, one of which holds besides the others). Without `applies` a template only runs when a project names it. |
 
 **Which template.** A project names one with `runner:`; the section's
-`command:`, `report:`, `report-path:` and `filter:` then change it for that
-project:
+`command:`, `report:`, `report-path:`, `filter:`, `binaries:`, `build:` and
+`env:` then change it for that project:
 
 ```yaml
 # buildkit.yaml

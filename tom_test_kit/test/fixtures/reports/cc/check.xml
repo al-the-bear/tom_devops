@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="http://check.sourceforge.net/xml/check_unittest.xslt"?>
+<testsuites xmlns="http://check.sourceforge.net/ns">
+  <datetime>2026-11-18 17:26:31</datetime>
+  <suite>
+    <title>math</title>
+    <test result="success">
+      <path>tests</path>
+      <fn>check_test.c:3</fn>
+      <id>adds</id>
+      <iteration>0</iteration>
+      <duration>0.000015</duration>
+      <description>core</description>
+      <message>Passed</message>
+    </test>
+    <test result="failure">
+      <path>tests</path>
+      <fn>check_test.c:4</fn>
+      <id>subtracts_wrongly</id>
+      <iteration>0</iteration>
+      <duration>-1.000000</duration>
+      <description>core</description>
+      <message>Assertion &apos;2 - 1 == 0&apos; failed: 2 - 1 == 1, 0 == 0</message>
+    </test>
+    <test result="error">
+      <path>tests</path>
+      <fn>check_test.c:5</fn>
+      <id>crashes</id>
+      <iteration>0</iteration>
+      <duration>-1.000000</duration>
+      <description>core</description>
+      <message>Received signal 11 (Segmentation fault: 11)</message>
+    </test>
+  </suite>
+  <duration>0.013801</duration>
+</testsuites>

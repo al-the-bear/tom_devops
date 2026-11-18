@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding='ISO-8859-1' standalone='yes' ?>
+<TestRun>
+  <FailedTests>
+    <FailedTest id="2">
+      <Name>MathTest::subtractsWrongly</Name>
+      <FailureType>Assertion</FailureType>
+      <Location>
+        <File>tests/cppunit_test.cpp</File>
+        <Line>19</Line>
+      </Location>
+      <Message>equality assertion failed
+- Expected: 0
+- Actual  : 1
+</Message>
+    </FailedTest>
+    <FailedTest id="3">
+      <Name>MathTest::throws</Name>
+      <FailureType>Error</FailureType>
+      <Message>uncaught exception of type std::exception (or derived).
+- boom
+</Message>
+    </FailedTest>
+  </FailedTests>
+  <SuccessfulTests>
+    <Test id="1">
+      <Name>MathTest::adds</Name>
+    </Test>
+  </SuccessfulTests>
+  <Statistics>
+    <Tests>3</Tests>
+    <FailuresTotal>2</FailuresTotal>
+    <Errors>1</Errors>
+    <Failures>1</Failures>
+  </Statistics>
+</TestRun>

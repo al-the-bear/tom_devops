@@ -1,0 +1,7 @@
+tests/test_math.c:9:test_adds:PASS
+tests/test_math.c:5:test_subtracts_wrongly:FAIL: Expected 0 Was 1
+tests/test_math.c:6:test_later:IGNORE: not ready
+
+-----------------------
+3 Tests 1 Failures 1 Ignored 
+FAIL

@@ -90,6 +90,22 @@ final _projectCommands = <String, String Function(String)>{
 /// ([projectGoToolCommand]).
 final _goToolPlaceholder = RegExp(r'\{go-tool:([\w.-]+)\}');
 
+/// Written in a runner command, replaced by the (quoted) path of an empty
+/// folder for report files, `testlog/reports/`, for a runner that writes
+/// one report per test program (`GTEST_OUTPUT=xml:{report-dir}/`).
+const reportDirPlaceholder = '{report-dir}';
+
+/// In the command of a template with `binaries:`: the test program's path
+/// (`./build/math_test`).
+const binaryPlaceholder = '{binary}';
+
+/// In the command of a template with `binaries:`: the test program's file
+/// name without its extension (`math_test`).
+const binaryNamePlaceholder = '{binary-name}';
+
+/// The folder of [reportDirPlaceholder] in `testlog/`.
+const reportDirName = 'reports';
+
 /// `{script:<name>}` in a runner command: replaced by the (quoted) path of
 /// the bundled script [bundledScripts] names, written to `testlog/` first.
 final _scriptPlaceholder = RegExp(r'\{script:([\w-]+)\}');
@@ -242,12 +258,25 @@ class CommandRunner extends ProjectTestRunner {
   /// How it selects tests by name; null: every test runs.
   final NameFilter? filter;
 
+  /// Test programs (globs): [command] runs once for each executable they
+  /// match ([RunnerTemplate.binaries]).
+  final List<String> binaries;
+
+  /// The command that builds the tests first ([RunnerTemplate.build]).
+  final String? build;
+
+  /// Environment variables for [command] ([RunnerTemplate.env]).
+  final Map<String, String> env;
+
   const CommandRunner({
     required this.command,
     required this.format,
     required this.origin,
     this.reportPath,
     this.filter,
+    this.binaries = const [],
+    this.build,
+    this.env = const {},
   });
 
   /// The runner of [template]; [pickedIn] says where a project named it.
@@ -259,13 +288,18 @@ class CommandRunner extends ProjectTestRunner {
     format: template.format,
     reportPath: template.reportPath,
     filter: template.filter,
+    binaries: template.binaries,
+    build: template.build,
+    env: template.env,
     origin:
         'runner ${template.name}, ${template.source}'
         '${pickedIn == null ? '' : ', picked in $pickedIn'}',
   );
 
   @override
-  String get label => '`$command` [$origin]';
+  String get label => binaries.isEmpty
+      ? '`$command` [$origin]'
+      : '`$command` for each of ${binaries.join(', ')} [$origin]';
 
   @override
   bool get selectsTestsByName => filter != null;
@@ -323,18 +357,225 @@ class CommandRunner extends ProjectTestRunner {
     final reportFile = p.normalize(
       p.absolute(reportFileFor(projectPath, format)),
     );
+    final reportDir = p.join(p.dirname(reportFile), reportDirName);
     Directory(p.dirname(reportFile)).createSync(recursive: true);
     // A report left by an earlier run must not be read as this run's.
     _deleteReports(projectPath, reportFile);
+    final dir = Directory(reportDir);
+    if (dir.existsSync()) dir.deleteSync(recursive: true);
+    dir.createSync(recursive: true);
 
+    if (build != null) {
+      final built = await _shell(
+        _resolveProjectCommands(build!, projectPath),
+        projectPath,
+        const {},
+        verbose,
+      );
+      if (built == null) return null;
+      if (built.exitCode != 0) {
+        stderr.writeln(
+          '[$projectPath] The build `$build` failed (exit code '
+          '${built.exitCode}); no test ran. Its last output:\n'
+          '${_tail(built.output).map((l) => '    $l').join('\n')}',
+        );
+        return null;
+      }
+    }
+
+    // One run of the command, or one per test program.
+    final runs = <({String? binary, List<String> output, int exitCode})>[];
+    String? noBinaries;
+    if (binaries.isEmpty) {
+      final run = await _runOnce(
+        projectPath,
+        testArgs,
+        verbose,
+        reportFile: reportFile,
+        reportDir: reportDir,
+      );
+      if (run == null) return null;
+      runs.add((binary: null, output: run.output, exitCode: run.exitCode));
+    } else {
+      final programs = _testPrograms(projectPath);
+      if (programs.isEmpty) {
+        noBinaries =
+            '  no test program matches ${binaries.join(', ')} (executable '
+            'files; set binaries: and build: in the testkit: section)';
+      }
+      for (final program in programs) {
+        final name = p.basenameWithoutExtension(program);
+        final run = await _runOnce(
+          projectPath,
+          testArgs,
+          verbose,
+          reportFile: p.join(
+            reportDir,
+            '${program.replaceAll(RegExp(r'[/\\]'), '_')}.'
+            '${p.extension(reportFile).substring(1)}',
+          ),
+          reportDir: reportDir,
+          binary: program,
+          binaryName: name,
+        );
+        if (run == null) return null;
+        runs.add((binary: name, output: run.output, exitCode: run.exitCode));
+      }
+    }
+    final output = [
+      for (final run in runs) ...[
+        if (run.binary != null) '=== ${run.binary}',
+        ...run.output,
+      ],
+    ];
+    final exitCode = runs
+        .map((r) => r.exitCode)
+        .firstWhere((c) => c != 0, orElse: () => 0);
+    final full = binaries.isEmpty
+        ? [command, ...testArgs].join(' ')
+        : '$command (each of ${binaries.join(', ')})';
+
+    final collector = ResultCollector();
+    // A report on the output is read per run, its tests grouped by the test
+    // program when the report does not group them.
+    void eachOutput(void Function(List<String>, ResultCollector) parse) {
+      for (final run in runs) {
+        final own = ResultCollector();
+        parse(run.output, own);
+        collector.addAllFrom(own, group: run.binary);
+      }
+    }
+
+    final files = _reportFiles(projectPath, reportFile);
+    try {
+      switch (format) {
+        case ReportFormat.goJson:
+          eachOutput(parseGoTestJson);
+        case ReportFormat.libtest:
+          eachOutput(parseLibtestOutput);
+        case ReportFormat.libtestJson:
+          eachOutput(parseLibtestJson);
+        case ReportFormat.unity:
+          eachOutput(parseUnityOutput);
+        case ReportFormat.testkit:
+          for (final f in files) {
+            parseTestkitLines(f.readAsLinesSync(), collector);
+          }
+        case ReportFormat.junit:
+          for (final f in files) {
+            parseJunitXml(f.readAsStringSync(), collector);
+          }
+        case ReportFormat.jestJson:
+          for (final f in files) {
+            parseJestJson(f.readAsStringSync(), collector);
+          }
+        case ReportFormat.testng:
+          for (final f in files) {
+            parseTestngResults(f.readAsStringSync(), collector);
+          }
+        case ReportFormat.check:
+          for (final f in files) {
+            parseCheckXml(f.readAsStringSync(), collector);
+          }
+        case ReportFormat.mochaJson:
+          for (final f in files) {
+            parseMochaJson(f.readAsStringSync(), collector);
+          }
+        // The report file when the runner wrote one ({report},
+        // report-path:), else its output.
+        case ReportFormat.tap:
+          if (files.isEmpty) {
+            eachOutput(parseTapOutput);
+          } else {
+            for (final f in files) {
+              parseTapOutput(f.readAsLinesSync(), collector);
+            }
+          }
+        case ReportFormat.cppunit:
+          if (files.isEmpty) {
+            eachOutput((lines, c) => parseCppunitXml(lines.join('\n'), c));
+          } else {
+            for (final f in files) {
+              parseCppunitXml(f.readAsStringSync(), collector);
+            }
+          }
+      }
+    } on FormatException catch (e) {
+      stderr.writeln(
+        '[$projectPath] The ${format.configName} report of '
+        '`$full` could not be read: ${e.message}',
+      );
+      return null;
+    }
+
+    String? diagnostic;
+    if (collector.length == 0) {
+      final reportNote = noBinaries != null
+          ? '$noBinaries\n'
+          : format.isFile
+          ? '  (no ${format.configName} report found at '
+                '${reportPath ?? p.relative(reportFile, from: projectPath)})\n'
+          : '';
+      diagnostic =
+          '$reportNote  `$full` exited with code $exitCode; its last '
+          'output:\n${_tail(output).map((l) => '    $l').join('\n')}';
+    }
+    return collector.build(
+      rawOutput: output,
+      rawOutputName: lastTestRunTextName,
+      exitCode: exitCode,
+      diagnostic: diagnostic,
+    );
+  }
+
+  /// Runs [command] once (for [binary] when given) and returns its output;
+  /// null when the shell could not start or a placeholder is unknown (the
+  /// reason is on stderr).
+  Future<({List<String> output, int exitCode})?> _runOnce(
+    String projectPath,
+    List<String> testArgs,
+    bool verbose, {
+    required String reportFile,
+    required String reportDir,
+    String? binary,
+    String? binaryName,
+  }) async {
+    final Map<String, String> environment;
     final String expanded;
     try {
-      expanded = _expandPlaceholders(command, projectPath, reportFile);
+      expanded = _expandPlaceholders(
+        _expandBinary(command, binary, binaryName, quote: true),
+        projectPath,
+        reportFile,
+        reportDir,
+      );
+      environment = {
+        testkitReportVariable: reportFile,
+        for (final MapEntry(:key, :value) in env.entries)
+          key: _resolveProjectCommands(
+            _expandBinary(value, binary, binaryName, quote: false)
+                .replaceAll(reportPlaceholder, reportFile)
+                .replaceAll(reportDirPlaceholder, reportDir),
+            projectPath,
+          ),
+      };
     } on StateError catch (e) {
       stderr.writeln('[$projectPath] ${e.message}');
       return null;
     }
     final full = [expanded, ...testArgs.map(_shellQuote)].join(' ');
+    return _shell(full, projectPath, environment, verbose);
+  }
+
+  /// Runs [full] in a shell in [projectPath] with its output and errors on
+  /// one stream; null when the shell could not start (the reason is on
+  /// stderr).
+  static Future<({List<String> output, int exitCode})?> _shell(
+    String full,
+    String projectPath,
+    Map<String, String> environment,
+    bool verbose,
+  ) async {
     if (verbose) {
       print('  Running: $full');
       print('  In: $projectPath');
@@ -349,7 +590,7 @@ class CommandRunner extends ProjectTestRunner {
       result = await ProcessRunner.runShell(
         Platform.isWindows ? '($full) 2>&1' : '{ $full\n} 2>&1',
         workingDirectory: projectPath,
-        environment: {testkitReportVariable: reportFile},
+        environment: environment,
       );
     } on ProcessException catch (e) {
       stderr.writeln('Error: could not start the shell to run `$full`: $e');
@@ -361,91 +602,42 @@ class CommandRunner extends ProjectTestRunner {
         print('  | $line');
       }
     }
-
-    final collector = ResultCollector();
-    try {
-      switch (format) {
-        case ReportFormat.goJson:
-          parseGoTestJson(output, collector);
-        case ReportFormat.libtest:
-          parseLibtestOutput(output, collector);
-        case ReportFormat.libtestJson:
-          parseLibtestJson(output, collector);
-        case ReportFormat.testkit:
-          for (final f in _reportFiles(projectPath, reportFile)) {
-            parseTestkitLines(f.readAsLinesSync(), collector);
-          }
-        case ReportFormat.junit:
-          for (final f in _reportFiles(projectPath, reportFile)) {
-            parseJunitXml(f.readAsStringSync(), collector);
-          }
-        case ReportFormat.jestJson:
-          for (final f in _reportFiles(projectPath, reportFile)) {
-            parseJestJson(f.readAsStringSync(), collector);
-          }
-        case ReportFormat.testng:
-          for (final f in _reportFiles(projectPath, reportFile)) {
-            parseTestngResults(f.readAsStringSync(), collector);
-          }
-        case ReportFormat.mochaJson:
-          for (final f in _reportFiles(projectPath, reportFile)) {
-            parseMochaJson(f.readAsStringSync(), collector);
-          }
-        case ReportFormat.tap:
-          // The report file when the runner wrote one ({report},
-          // report-path:), else its output.
-          final files = _reportFiles(projectPath, reportFile);
-          if (files.isEmpty) {
-            parseTapOutput(output, collector);
-          } else {
-            for (final f in files) {
-              parseTapOutput(f.readAsLinesSync(), collector);
-            }
-          }
-      }
-    } on FormatException catch (e) {
-      stderr.writeln(
-        '[$projectPath] The ${format.configName} report of '
-        '`$full` could not be read: ${e.message}',
-      );
-      return null;
-    }
-
-    String? diagnostic;
-    if (collector.length == 0) {
-      final tail = output
-          .where((l) => l.trim().isNotEmpty)
-          .toList()
-          .reversed
-          .take(_diagnosticLines)
-          .toList()
-          .reversed;
-      final reportNote = format.isFile
-          ? '  (no ${format.configName} report found at '
-                '${reportPath ?? p.relative(reportFile, from: projectPath)})\n'
-          : '';
-      diagnostic =
-          '$reportNote  `$full` exited with code ${result.exitCode}; its last '
-          'output:\n${tail.map((l) => '    $l').join('\n')}';
-    }
-    return collector.build(
-      rawOutput: output,
-      rawOutputName: lastTestRunTextName,
-      exitCode: result.exitCode,
-      diagnostic: diagnostic,
-    );
+    return (output: output, exitCode: result.exitCode);
   }
 
-  /// The report files of this run: [reportPath]'s matches, else the file
-  /// handed over in `$TESTKIT_REPORT` when the command wrote it.
+  /// The test programs [binaries] match: executable files (`.exe` on
+  /// Windows) that are no scripts, outside `testlog/`, relative to the
+  /// project, sorted.
+  List<String> _testPrograms(String projectPath) {
+    final found = <String>{};
+    for (final pattern in binaries) {
+      for (final entity in Glob(
+        pattern,
+        recursive: true,
+      ).listSync(root: projectPath, followLinks: false)) {
+        if (entity is! File) continue;
+        final rel = p.relative(entity.path, from: projectPath);
+        if (p.split(rel).first == trackingDirName) continue;
+        if (_isTestProgram(File(entity.path))) found.add(rel);
+      }
+    }
+    return found.toList()..sort();
+  }
+
+  /// The report files of this run: [reportPath]'s matches, else the files
+  /// a run per test program wrote, else the file handed over in
+  /// `$TESTKIT_REPORT` when the command wrote it.
   List<File> _reportFiles(String projectPath, String reportFile) {
-    if (reportPath == null) {
+    final pattern =
+        reportPath ??
+        (binaries.isEmpty ? null : '$trackingDirName/$reportDirName/**');
+    if (pattern == null) {
       final f = File(reportFile);
       return f.existsSync() ? [f] : const [];
     }
     final files =
         Glob(
-            reportPath!,
+            pattern,
             recursive: true,
           ).listSync(root: projectPath).whereType<File>().toList()
           ..sort((a, b) => a.path.compareTo(b.path));
@@ -501,20 +693,86 @@ ProjectTestRunner _withProjectCommands(
     format: runner.format,
     reportPath: runner.reportPath,
     filter: runner.filter,
+    binaries: runner.binaries,
+    build: runner.build == null
+        ? null
+        : _resolveProjectCommands(runner.build!, projectPath),
+    env: runner.env,
     origin: runner.origin,
   );
 }
 
-/// [command] with `{report}`, the project placeholders and `{script:<name>}` replaced;
+/// [text] with `{binary}` and `{binary-name}` replaced (the path quoted for
+/// the shell when [quote]); throws [StateError] when [text] names them
+/// without a test program.
+String _expandBinary(
+  String text,
+  String? binary,
+  String? binaryName, {
+  required bool quote,
+}) {
+  if (!text.contains(binaryPlaceholder) &&
+      !text.contains(binaryNamePlaceholder)) {
+    return text;
+  }
+  if (binary == null || binaryName == null) {
+    throw StateError(
+      '$binaryPlaceholder in `$text` needs binaries: (the test programs)',
+    );
+  }
+  // A path without a folder would run from the PATH in sh; ./ runs it from
+  // the project.
+  final runnable = Platform.isWindows || binary.contains('/')
+      ? binary
+      : './$binary';
+  return text
+      .replaceAll(binaryPlaceholder, quote ? _shellQuote(runnable) : runnable)
+      .replaceAll(binaryNamePlaceholder, binaryName);
+}
+
+/// Whether [file] is a test program: an executable (`.exe` on Windows) that
+/// is no script (`#!`).
+bool _isTestProgram(File file) {
+  if (Platform.isWindows) return p.extension(file.path).toLowerCase() == '.exe';
+  final FileStat stat;
+  try {
+    stat = file.statSync();
+  } on FileSystemException {
+    return false;
+  }
+  if (stat.mode & 0x49 == 0) return false;
+  try {
+    final head = file.openSync()..setPositionSync(0);
+    final bytes = head.readSync(2);
+    head.closeSync();
+    return !(bytes.length == 2 && bytes[0] == 0x23 && bytes[1] == 0x21);
+  } on FileSystemException {
+    return false;
+  }
+}
+
+/// The last non-empty lines of [output], for a message.
+Iterable<String> _tail(List<String> output) => output
+    .where((l) => l.trim().isNotEmpty)
+    .toList()
+    .reversed
+    .take(_diagnosticLines)
+    .toList()
+    .reversed;
+
+/// [command] with `{report}`, `{report-dir}`, the project placeholders and `{script:<name>}` replaced;
 /// a bundled script is written to `testlog/` beside the report file. Throws
 /// [StateError] for a script testkit does not bundle.
 String _expandPlaceholders(
   String command,
   String projectPath,
   String reportFile,
+  String reportDir,
 ) {
   final result = _resolveProjectCommands(
-    command.replaceAll(reportPlaceholder, _shellQuote(reportFile)),
+    command
+        .replaceAll(reportPlaceholder, _shellQuote(reportFile))
+        .replaceAll(reportDirPlaceholder, _shellQuote(reportDir)),
     projectPath,
   );
   return result.replaceAllMapped(_scriptPlaceholder, (m) {
@@ -574,21 +832,25 @@ YamlMap? _readBuildkitYaml(String projectPath) {
 
 /// Whether a `testkit:` section names a runner (rather than only adding
 /// templates with `runners:`).
-bool _namesRunner(Map section) => section.keys.any(
-  (k) => const {
-    'runner',
-    'command',
-    'report',
-    'report-path',
-    'filter',
-  }.contains(k),
-);
+bool _namesRunner(Map section) =>
+    section.keys.any((k) => k == 'runner' || _runnerKeys.contains(k));
+
+/// The keys of a `testkit:` section that change the runner it names.
+const _runnerKeys = [
+  'command',
+  'report',
+  'report-path',
+  'filter',
+  'binaries',
+  'build',
+  'env',
+];
 
 ProjectTestRunner _fromSection(Map section, RunnerTemplates templates) {
   const where = 'the testkit: section of buildkit.yaml';
   final picked = section['runner'];
   final overrides = {
-    for (final key in ['command', 'report', 'report-path', 'filter'])
+    for (final key in _runnerKeys)
       if (section.containsKey(key)) key: section[key],
   };
   try {
@@ -624,6 +886,9 @@ ProjectTestRunner _fromSection(Map section, RunnerTemplates templates) {
       format: own.format,
       reportPath: own.reportPath,
       filter: own.filter,
+      binaries: own.binaries,
+      build: own.build,
+      env: own.env,
       origin: 'buildkit.yaml testkit:',
     );
   } on FormatException catch (e) {

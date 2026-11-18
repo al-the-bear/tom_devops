@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite tests="3" skipped="1" errors="0" failures="1" id="0" name="calc" time="0.0001">
+<testcase assertions="1" classname="math" name="adds" time="2.9e-05">
+<system-out><![CDATA[INFO:
+- file   : boost_test.cpp
+- line   : 5
+- message: check 1 + 1 == 2 has passed
+
+]]></system-out>
+</testcase>
+<testcase assertions="1" classname="math" name="subtracts_wrongly" time="2.4e-05">
+<failure message="failure" type="assertion error"><![CDATA[
+ASSERTION FAILURE:
+- file   : boost_test.cpp
+- line   : 6
+- message: check 2 - 1 == 0 has failed [2 - 1 != 0]
+
+]]></failure><system-err><![CDATA[Failures detected in:
+- test case: math/subtracts_wrongly
+- file: boost_test.cpp
+- line: 6
+]]></system-err>
+</testcase>
+<testcase assertions="0" classname="math" name="later" time="0">
+<skipped/>
+<system-out><![CDATA[Test case disabled because of the following chain of decision:
+- disabled test unit: 'math/later'
+- reason: 'disabled']]></system-out>
+</testcase>
+<testcase assertions="1" classname="words" name="adds" time="2e-05">
+<system-out><![CDATA[INFO:
+- file   : boost_test.cpp
+- line   : 10
+- message: check true has passed
+
+]]></system-out>
+</testcase>
+</testsuite>

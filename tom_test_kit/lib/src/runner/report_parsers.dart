@@ -42,6 +42,16 @@ enum ReportFormat {
   /// TestNG's own `testng-results.xml`.
   testng('testng'),
 
+  /// CppUnit's `XmlOutputter` report (`<TestRun>`): read from the report
+  /// file when the test program wrote one, else from its output.
+  cppunit('cppunit'),
+
+  /// Check's XML log (`CK_XML_LOG_FILE_NAME`).
+  check('check'),
+
+  /// Unity's text output: `file:line:test:PASS` / `FAIL: ...` / `IGNORE`.
+  unity('unity'),
+
   /// TAP (Test Anything Protocol, versions 12 to 14): `node --test
   /// --test-reporter=tap`, bats `--tap`, ava `--tap`, prove, tape, libtap.
   /// Read from the report file when the runner wrote one, else from its
@@ -69,7 +79,8 @@ enum ReportFormat {
       this == junit ||
       this == jestJson ||
       this == mochaJson ||
-      this == testng;
+      this == testng ||
+      this == check;
 }
 
 /// Reads testkit's line protocol from [lines].
@@ -324,15 +335,20 @@ void parseJunitXml(String xml, ResultCollector collector) {
         .where((e) => e.name.local == 'testsuite')
         .map((e) => e.getAttribute('name'))
         .whereType<String>()
-        .where((n) => n.isNotEmpty)
+        // CTest's suite of a project without a name.
+        .where((n) => n.isNotEmpty && n != '(empty)')
         .toList()
         .reversed
         .toList();
     // `node --test`'s reporter writes the constant classname `test` and puts
-    // describe blocks into nested <testsuite>s.
+    // describe blocks into nested <testsuite>s; CTest repeats the test's name
+    // as its classname.
     final classname = testcase.getAttribute('classname');
     final group =
-        (classname != null && classname.isNotEmpty && classname != 'test')
+        (classname != null &&
+            classname.isNotEmpty &&
+            classname != 'test' &&
+            classname != name)
         ? classname
         : suites.isEmpty
         ? null
@@ -350,6 +366,124 @@ void parseJunitXml(String xml, ResultCollector collector) {
             : children.contains('skipped')
             ? TestResult.skip
             : TestResult.ok,
+      ),
+    );
+  }
+}
+
+/// Reads CppUnit's `XmlOutputter` report [xml] (`<TestRun>`): each
+/// `<FailedTest>` fails (an assertion or an error), each `<Test>` under
+/// `<SuccessfulTests>` passes; `Fixture::method` is grouped by its fixture.
+/// A report on the test program's output may have other lines around it:
+/// the XML is read from its declaration to `</TestRun>`.
+///
+/// Throws [FormatException] when there is no CppUnit report in [xml].
+void parseCppunitXml(String xml, ResultCollector collector) {
+  final start = xml.indexOf('<?xml');
+  final endTag = xml.lastIndexOf('</TestRun>');
+  if (endTag < 0) {
+    throw const FormatException('no CppUnit report (<TestRun>)');
+  }
+  final XmlDocument document;
+  try {
+    document = XmlDocument.parse(
+      xml.substring(start < 0 || start > endTag ? 0 : start, endTag + 10),
+    );
+  } on XmlException catch (e) {
+    throw FormatException('not a CppUnit report: ${e.message}');
+  }
+  void add(XmlElement test, TestResult result) {
+    final full = test.getElement('Name')?.innerText.trim() ?? '';
+    if (full.isEmpty) return;
+    final split = full.lastIndexOf('::');
+    final group = split > 0 ? full.substring(0, split) : null;
+    collector.add(
+      ReportedTest(
+        name: split > 0 ? full.substring(split + 2) : full,
+        suite: group,
+        groups: group,
+        result: result,
+      ),
+    );
+  }
+
+  for (final test in document.findAllElements('FailedTest')) {
+    add(test, TestResult.fail);
+  }
+  for (final test in document.findAllElements('Test')) {
+    add(test, TestResult.ok);
+  }
+}
+
+/// Reads Check's XML log [xml] (`CK_XML_LOG_FILE_NAME`): each `<test>` is
+/// one result, `success` passing and `failure` / `error` failing, grouped by
+/// its suite and test case (`math/core`).
+///
+/// Throws [FormatException] when [xml] is not a Check log.
+void parseCheckXml(String xml, ResultCollector collector) {
+  final XmlDocument document;
+  try {
+    document = XmlDocument.parse(xml);
+  } on XmlException catch (e) {
+    throw FormatException('not a Check XML log: ${e.message}');
+  }
+  if (document.rootElement.name.local != 'testsuites') {
+    throw const FormatException('not a Check XML log (<testsuites>)');
+  }
+  String? text(XmlElement e, String name) {
+    final value = e.childElements
+        .where((c) => c.name.local == name)
+        .firstOrNull
+        ?.innerText
+        .trim();
+    return value == null || value.isEmpty ? null : value;
+  }
+
+  for (final suite in document.rootElement.childElements.where(
+    (e) => e.name.local == 'suite',
+  )) {
+    final title = text(suite, 'title');
+    for (final test in suite.childElements.where(
+      (e) => e.name.local == 'test',
+    )) {
+      final id = text(test, 'id');
+      if (id == null) continue;
+      final tcase = text(test, 'description');
+      final group = [?title, ?tcase].join('/');
+      collector.add(
+        ReportedTest(
+          name: id,
+          suite: group.isEmpty ? null : group,
+          groups: group.isEmpty ? null : group,
+          result: test.getAttribute('result') == 'success'
+              ? TestResult.ok
+              : TestResult.fail,
+        ),
+      );
+    }
+  }
+}
+
+/// `file:line:test:PASS` / `:FAIL[: message]` / `:IGNORE[: message]` in
+/// Unity's output.
+final _unityLine = RegExp(r'^(.+?):(\d+):([^:]+):(PASS|FAIL|IGNORE)\b');
+
+/// Reads Unity's text output from [lines]: one result per test, grouped by
+/// its source file.
+void parseUnityOutput(Iterable<String> lines, ResultCollector collector) {
+  for (final line in lines) {
+    final m = _unityLine.firstMatch(line.trim());
+    if (m == null) continue;
+    collector.add(
+      ReportedTest(
+        name: m.group(3)!,
+        suite: m.group(1),
+        groups: m.group(1),
+        result: switch (m.group(4)) {
+          'PASS' => TestResult.ok,
+          'IGNORE' => TestResult.skip,
+          _ => TestResult.fail,
+        },
       ),
     );
   }

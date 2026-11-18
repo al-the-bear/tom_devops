@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="build/doc_test" errors="0" failures="1" tests="2" time="0" timestamp="2026-11-18T16:26:21Z" doctest_version="2.4.12">
+    <testcase classname="tests/doc_test.cpp" name="adds" time="0" status="run"/>
+    <testcase classname="tests/doc_test.cpp" name="fails on purpose" time="0" status="run">
+      <failure message="1 == 2" type="CHECK">
+tests/doc_test.cpp:5:
+CHECK( 1 == 2 ) is NOT correct!
+  values: CHECK( 1 == 2 )
+
+      </failure>
+    </testcase>
+  </testsuite>
+</testsuites>

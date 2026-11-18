@@ -46,9 +46,8 @@ void main() {
     return r as CommandRunner;
   }
 
-  test('TK-RT-1: every language default is a named built-in template; all '
-      'but jasmine, the javac runners and sbt select tests by name '
-      '[2026-11-18]', () {
+  test('TK-RT-1: every language default is a named built-in template; the '
+      'ones with a name filter [2026-11-18]', () {
     expect(builtInRunnerTemplates.map((t) => t.name), [
       'npm-test-jest',
       'jest',
@@ -79,6 +78,20 @@ void main() {
       'cargo-nextest',
       'cargo-test-json',
       'cargo-test',
+      'bazel',
+      'meson',
+      'ceedling',
+      'ctest-gtest',
+      'ctest',
+      'gtest',
+      'catch2',
+      'doctest',
+      'boost-test',
+      'cppunit',
+      'cmocka',
+      'check',
+      'unity',
+      'libtap',
     ]);
     final filtered = {
       for (final t in builtInRunnerTemplates)
@@ -86,7 +99,24 @@ void main() {
     };
     expect(
       builtInRunnerTemplates.map((t) => t.name).toSet().difference(filtered),
-      {'jasmine', 'junit-console', 'testng', 'sbt2', 'sbt', 'ginkgo'},
+      {
+        'jasmine',
+        'junit-console',
+        'testng',
+        'sbt2',
+        'sbt',
+        'ginkgo',
+        'bazel',
+        'meson',
+        'ceedling',
+        'ctest-gtest',
+        'boost-test',
+        'cppunit',
+        'cmocka',
+        'check',
+        'unity',
+        'libtap',
+      },
     );
     // Every built-in is detected, except the doctest variants a project
     // names.

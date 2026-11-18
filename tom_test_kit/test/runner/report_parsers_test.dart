@@ -194,6 +194,9 @@ void main() {
       'jest-json',
       'mocha-json',
       'testng',
+      'cppunit',
+      'check',
+      'unity',
       'tap',
     ]);
     expect(ReportFormat.byConfigName('junit'), ReportFormat.junit);

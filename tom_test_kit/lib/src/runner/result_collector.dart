@@ -52,6 +52,24 @@ class ResultCollector {
   /// The number of tests added so far.
   int get length => _tests.length;
 
+  /// Adds the tests and load failures of [other], each test without a
+  /// group of its own put in [group] (the test program it ran in).
+  void addAllFrom(ResultCollector other, {String? group}) {
+    for (final t in other._tests) {
+      _tests.add(
+        t.groups != null || group == null
+            ? t
+            : ReportedTest(
+                name: t.name,
+                suite: t.suite ?? group,
+                groups: group,
+                result: t.result,
+              ),
+      );
+    }
+    loadFailures.addAll(other.loadFailures);
+  }
+
   /// The run's results. [rawOutput] is kept as `testlog/<rawOutputName>`;
   /// [diagnostic] is added to the run problem when no test was reported.
   TestRunResults build({

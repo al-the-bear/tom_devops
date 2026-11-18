@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="5" failures="1" disabled="0" errors="0" time="0." timestamp="2026-11-18T16:31:27.844" name="AllTests">
+  <testsuite name="Math" tests="3" failures="1" disabled="0" skipped="1" errors="0" time="0." timestamp="2026-11-18T16:31:27.844">
+    <testcase name="Adds" file="tests/math_test.cpp" line="3" status="run" result="completed" time="0." timestamp="2026-11-18T16:31:27.844" classname="Math" />
+    <testcase name="SubtractsWrongly" file="tests/math_test.cpp" line="4" status="run" result="completed" time="0." timestamp="2026-11-18T16:31:27.844" classname="Math">
+      <failure message="tests/math_test.cpp:4&#x0A;Expected equality of these values:&#x0A;  add(2, -1)&#x0A;    Which is: 1&#x0A;  0&#x0A;" type=""><![CDATA[tests/math_test.cpp:4
+Expected equality of these values:
+  add(2, -1)
+    Which is: 1
+  0
+]]></failure>
+    </testcase>
+    <testcase name="Later" file="tests/math_test.cpp" line="5" status="run" result="skipped" time="0." timestamp="2026-11-18T16:31:27.844" classname="Math">
+      <skipped message="tests/math_test.cpp:5&#x0A;not ready&#x0A;"><![CDATA[tests/math_test.cpp:5
+not ready
+]]></skipped>
+    </testcase>
+  </testsuite>
+  <testsuite name="Small/Param" tests="2" failures="0" disabled="0" skipped="0" errors="0" time="0." timestamp="2026-11-18T16:31:27.844">
+    <testcase name="Positive/0" value_param="1" file="tests/math_test.cpp" line="7" status="run" result="completed" time="0." timestamp="2026-11-18T16:31:27.844" classname="Small/Param" />
+    <testcase name="Positive/1" value_param="2" file="tests/math_test.cpp" line="7" status="run" result="completed" time="0." timestamp="2026-11-18T16:31:27.844" classname="Small/Param" />
+  </testsuite>
+</testsuites>

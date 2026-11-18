@@ -1,3 +1,29 @@
+## 1.18.0
+
+### Added — the common C and C++ test runners
+
+- Build systems that run the tests: `bazel` (`bazel-testlogs/**/test.xml`),
+  `meson` (`testlog.junit.xml`), `ceedling` (its JUnit plugin), `ctest`
+  (`--output-junit`, `-R` filter) and `ctest-gtest` (every GoogleTest
+  program under CTest writes its own report).
+- The test programs of a make project, by framework: `gtest`
+  (`--gtest_filter`), `catch2`, `doctest` (both selecting test cases),
+  `boost-test`, `cppunit`, `cmocka`, `check`, `unity` and `libtap`.
+- Template keys `binaries:` (the command runs once per test program, with
+  `{binary}`, `{binary-name}` and a report of its own), `build:` (run first;
+  a failing build runs no test) and `env:`; the `testkit:` section takes
+  them too.
+- `{report-dir}`: an empty folder for the run's reports.
+- Reports `cppunit` (CppUnit's `XmlOutputter`, from the file or the output),
+  `check` (Check's XML log) and `unity` (Unity's output).
+- Takes tom_build_base 2.43.0: Meson and Bazel projects are C / C++
+  projects.
+
+### Changed
+
+- A JUnit test case whose classname repeats its name (CTest) is not grouped
+  by it.
+
 ## 1.17.0
 
 ### Added — the other Go and Rust runners
