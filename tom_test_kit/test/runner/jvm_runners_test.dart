@@ -4,10 +4,10 @@
 /// Platform Console Standalone for a project javac builds without a build
 /// tool; `{gradle}` is the nearest Gradle wrapper, else `gradle`.
 ///
-/// TK-JVM-3 reads the reports Maven 3.9 (surefire / failsafe 3.5, JUnit 5,
-/// two modules), Gradle 9.1 (JUnit 5 and kotest, two subprojects with `test`
-/// and `integrationTest`), sbt 2.1 (Scala 3, MUnit) and the JUnit console 1.11
-/// wrote (`test/fixtures/reports/jvm/`, paths and properties removed); TK-JVM-4
+/// TK-JVM-3 reads the reports Maven 3.8 (surefire / failsafe 3.5, JUnit 5,
+/// two modules), Gradle 9.9 (JUnit 5 and kotest, two subprojects with `test`
+/// and `integrationTest`), sbt 2.1 (Scala 3, ScalaTest; also in sbt 1's
+/// `target/test-reports/`) and the JUnit console 1.11 wrote (`test/fixtures/reports/jvm/`, paths and properties removed); TK-JVM-4
 /// the `testng-results.xml` TestNG 7.10 wrote under Maven and run plain.
 ///
 /// Test IDs: TK-JVM-1..6.
@@ -195,6 +195,24 @@ void main() {
         'subtracts wrongly': TestResult.fail,
         'not ready': TestResult.skip,
       });
+      // sbt 1 writes to target/test-reports/ directly.
+      Directory(project).deleteSync(recursive: true);
+      Directory(project).createSync();
+      final sbt1 = File(
+        fixture(
+          'sbt/target/out/jvm/scala-3.3.6/scl/test-reports/'
+          'TEST-demo.MathSpec.xml',
+        ),
+      ).absolute.path;
+      final sbt = template('sbt');
+      final sbt1Results = (await CommandRunner(
+        command:
+            'mkdir -p target/test-reports && cp "$sbt1" target/test-reports/',
+        format: sbt.format,
+        reportPath: sbt.reportPath,
+        origin: 'test',
+      ).run(projectPath: project))!;
+      expect(sbt1Results.run.results, hasLength(3));
       expect(
         await recorded(
           'junit-console',

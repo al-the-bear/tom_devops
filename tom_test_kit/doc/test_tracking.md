@@ -1105,9 +1105,9 @@ Notes on the JavaScript / TypeScript runners (checked with vitest 5.1, mocha
   --test-reporter-destination={report} 'dist/**/*.test.js'`. A `--dry-run` names the runner each project gets, with the
 template and where it is defined:
 
-Notes on the JVM runners (checked with Maven 3.9 (surefire and failsafe 3.5),
-Gradle 9.1, sbt 1.11 and 2.1, JUnit 5, kotest 6, MUnit 1, TestNG 7.10 and the
-JUnit Platform Console Standalone 1.11, on Java 21):
+Notes on the JVM runners (checked with Maven 3.8 (surefire and failsafe 3.5),
+Gradle 9.9, sbt 2.1, JUnit 5.11, kotest 5.9, ScalaTest 3.2, TestNG 7.10 and
+the JUnit Platform Console Standalone 1.11, on Java 17):
 
 - **Multi-module projects.** The report path is a glob over the whole tree,
   so every module of a Maven reactor, every subproject of a Gradle build and

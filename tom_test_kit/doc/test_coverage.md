@@ -764,7 +764,7 @@ The Python templates and `{python}`. TK-PY-3..6 run testkit's bundled unittest r
 
 **Test file:** `test/runner/jvm_runners_test.dart` — **ID prefix `TK-JVM`**
 
-The Maven, Gradle, sbt, TestNG and JUnit console templates and `{gradle}`. TK-JVM-3 and TK-JVM-4 read real reports of multi-module builds (`test/fixtures/reports/jvm/`): Maven surefire and failsafe, Gradle `test` and `integrationTest` with JUnit 5 and kotest, sbt with MUnit, the JUnit console, TestNG's `testng-results.xml`.
+The Maven, Gradle, sbt, TestNG and JUnit console templates and `{gradle}`. TK-JVM-3 and TK-JVM-4 read real reports of multi-module builds (`test/fixtures/reports/jvm/`): Maven surefire and failsafe, Gradle `test` and `integrationTest` with JUnit 5 and kotest, sbt with ScalaTest (also in sbt 1's `target/test-reports/`), the JUnit console, TestNG's `testng-results.xml`.
 
 | ID | Feature | Status | How to Test |
 |----|---------|--------|-------------|
