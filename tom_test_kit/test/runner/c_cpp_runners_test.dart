@@ -105,11 +105,19 @@ void main() {
     expect(origin(cpp(NativeBuildSystem.meson)), 'runner meson, built-in');
     File(p.join(project, 'meson.build')).deleteSync();
 
+    // A project built by Ceedling alone (project.yml, src/, test/) is a C /
+    // C++ project of its own.
     write(
       'project.yml',
-      ':plugins:\n  :enabled:\n    - report_tests_log_factory\n',
+      ':project:\n  :build_root: build\n'
+          ':plugins:\n  :enabled:\n    - report_tests_log_factory\n',
     );
-    expect(origin(cpp()), 'runner ceedling, built-in');
+    final detected = NatureDetector().detectNatures(folder);
+    expect(
+      detected.whereType<NativeProjectFolder>().single.buildSystem,
+      NativeBuildSystem.ceedling,
+    );
+    expect(origin(detected), 'runner ceedling, built-in');
     File(p.join(project, 'project.yml')).deleteSync();
 
     write('CMakeLists.txt', 'project(x)\nenable_testing()\n');

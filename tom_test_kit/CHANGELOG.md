@@ -1,3 +1,11 @@
+## 1.19.0
+
+### Changed
+
+- Takes tom_build_base 2.44.0: a project built by Ceedling alone
+  (`project.yml`, `src/`, `test/`) is a C project, so the `ceedling`
+  template runs it without a make or CMake file beside it.
+
 ## 1.18.0
 
 ### Added — the common C and C++ test runners

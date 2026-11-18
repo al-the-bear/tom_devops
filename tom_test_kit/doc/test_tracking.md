@@ -1172,9 +1172,9 @@ Notes on the C and C++ runners (checked with CMake 4.2, Meson 1.12, Bazel
 1.92, CppUnit 1.15, CMocka 1.1, Check 0.15, Unity 2.6 and libtap):
 
 - **A project, not a script.** testkit visits a C or C++ project marked by a
-  `Makefile`, `CMakeLists.txt`, a `meson.build` with `project(...)` or a
-  Bazel workspace file beside its sources. A Ceedling project needs one of
-  those too.
+  `Makefile`, `CMakeLists.txt`, a `meson.build` with `project(...)`, a Bazel
+  workspace file or a Ceedling `project.yml` (with its `:project:` section)
+  beside its sources.
 - **Build systems that run the tests.** Bazel, Meson, Ceedling and CTest
   build what they test and write a JUnit report. Bazel's and Meson's are per
   test case for GoogleTest programs (Meson's `protocol: 'gtest'`) and TAP
