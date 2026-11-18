@@ -1062,7 +1062,13 @@ workspace's own:
 | `node-test` | JavaScript | `node --test --test-reporter=junit --test-reporter-destination={report}` | `junit` | `--test-name-pattern '(<names>)$'` |
 | `node-tsx` | TypeScript with tsx | `node --import tsx --test ... '**/*.{test,spec}.ts'` | `junit` | `--test-name-pattern '(<names>)$'` |
 | `node-ts-node` | TypeScript with ts-node | `node --require ts-node/register --test ... '**/*.{test,spec}.ts'` | `junit` | `--test-name-pattern '(<names>)$'` |
-| `pytest` | Python | `python3 -m pytest -q --junitxml={report}` | `junit` | `-k '<a> or <b>'` (a parametrized test by its function) |
+| `pytest` | Python marked by pytest: `pytest.ini`, a `conftest.py` (top, `tests/`, `test/`), pytest in `pyproject.toml` / `Pipfile` / a `requirements*.txt`, `[tool:pytest]` in `setup.cfg`, `[pytest]` in `tox.ini` | `{python} -m pytest -q --continue-on-collection-errors --junitxml={report}` | `junit` | `-k '<a> or <b>'` (a parametrized test by its function) |
+| `pytest-doctest` | picked by name | `pytest` with `--doctest-modules` | `junit` | as `pytest` |
+| `nose2` | Python with `nose2.cfg` / `unittest.cfg`, or nose2 in `pyproject.toml` / `setup.cfg` / a `requirements*.txt` | `{python} -m nose2 --plugin nose2.plugins.junitxml --junit-xml --junit-xml-path {report}` | `junit` | the dotted names (`module.Class.method`) |
+| `tox` | Python whose `tox.ini` hands `{posargs}` on | `tox -q -- --continue-on-collection-errors --junitxml={report}` | `junit` | as `pytest` |
+| `nox` | Python whose `noxfile.py` uses `posargs` | `nox -- --continue-on-collection-errors --junitxml={report}` | `junit` | as `pytest` |
+| `unittest` | any other Python project | `{python} {script:unittest} {report}`: testkit's own unittest runner | `testkit` | `-k '*module.Class.method'` per test |
+| `unittest-doctest` | picked by name | `unittest` with the doctests of the project's modules | `testkit` | as `unittest` |
 | `maven` | Java with a `pom.xml` | `mvn -B test` | `junit`, `target/surefire-reports/TEST-*.xml` | no |
 | `gradle-wrapper` | Java with a `gradlew` | `./gradlew test` | `junit`, `build/test-results/test/*.xml` | no |
 | `gradle` | Java | `gradle test` | `junit`, `build/test-results/test/*.xml` | no |
@@ -1082,8 +1088,8 @@ Notes on the JavaScript / TypeScript runners (checked with vitest 5.1, mocha
 - **vitest** names a test `math > adds`; testkit records that name, and the
   filter selects by the title after the last ` > `.
 - **jasmine** needs `jasmine-reporters` in `devDependencies`: the template
-  writes a one-line module to `testlog/` that hands jasmine's `--reporter` the
-  JUnit reporter, which writes `junitresults.xml` (no helper file needed). It
+  hands jasmine's `--reporter` a one-line bundled module
+  (`{script:jasmine-junit}`) that gives it jasmine-reporters' JUnit reporter, which writes `junitresults.xml` (no helper file needed). It
   selects no single tests: jasmine-reporters writes the specs `--filter`
   excludes as passing testcases, so a filtered run would record tests that did
   not run as passed.
@@ -1093,6 +1099,31 @@ Notes on the JavaScript / TypeScript runners (checked with vitest 5.1, mocha
   own, e.g. `command: npx tsc && node --test --test-reporter=junit
   --test-reporter-destination={report} 'dist/**/*.test.js'`. A `--dry-run` names the runner each project gets, with the
 template and where it is defined:
+
+Notes on the Python runners (checked with Python 3.9 and 3.11, pytest 8.4, nose2
+0.16, tox 4.30, nox 2026.4, uv 0.13, Poetry):
+
+- **The project's own environment.** `{python}` in a command is the
+  project's Python: `uv run python` with a `uv.lock`, `poetry run python`
+  with a `poetry.lock`, `pipenv run python` with a `Pipfile.lock`, the
+  interpreter of a virtual environment in `.venv`, `venv` or `env`, else
+  `python3`. A `--dry-run` shows the command with it filled in.
+- **Without pytest.** A Python project pytest does not mark runs `unittest`:
+  testkit's own runner (standard library only, Python 3.7+), handed to the
+  command as `{script:unittest}`, discovers the `test*.py` modules and writes
+  one line per test case. An error fails a test, an expected failure passes,
+  an unexpected success fails, and a test module that does not import is
+  recorded as `<module> (failed to load)`.
+- **Doctests** run with `runner: pytest-doctest` (pytest's
+  `--doctest-modules`) or `runner: unittest-doctest`, which adds the doctests
+  of every module of the project (folders with `__init__.py`, outside hidden
+  folders and virtual environments; test modules are left to discovery).
+- **A test module that does not import** stops a pytest session; the pytest,
+  tox and nox templates pass `--continue-on-collection-errors`, so it is
+  recorded as a failure and the other tests run.
+- **tox and nox** hand what follows `--` to the session's pytest only when
+  `tox.ini` passes `{posargs}` / the `noxfile.py` passes `session.posargs`;
+  the templates apply only then.
 
 ```text
 >>> py
@@ -1138,11 +1169,11 @@ testkit:
 
 | Key | Meaning |
 | --- | ------- |
-| `command` | The shell command, run in the project; `{report}` is the report file's path. |
+| `command` | The shell command, run in the project; `{report}` is the report file's path, `{python}` the project's Python (its environment, see above), `{script:<name>}` the path of a script testkit bundles (`unittest`, `jasmine-junit`), written to `testlog/` first. |
 | `report` | `testkit`, `junit`, `go-json`, `libtest`, `jest-json`, `mocha-json` or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
 | `report-path` | Where the report lands, relative to the project (a glob for several files), when not at `{report}`. |
-| `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`); `tail` keeps what follows the last occurrence of a text (` > `); `each` is a list of arguments repeated once per name, `{name}` replaced (`[--match, "{name}"]`), after `args` (either may be left out). Without `filter` every test runs. |
-| `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression), `dependency` (`package.json` names one of them), `scripts` (each named `package.json` script exists and matches its regular expression, `{test: jest}`). Without `applies` a template only runs when a project names it. |
+| `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`); `tail` keeps what follows the last occurrence of a text (` > `); `each` is a list of arguments repeated once per name, `{name}` replaced (`[--match, "{name}"]`), after `args` (either may be left out); `qualify` hands each name with its group before it, joined by a text (`.`: `tests.test_calc.TestCalc.test_adds`), for a runner that selects by qualified name. Without `filter` every test runs. |
+| `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression; a glob as the file: one of its matches), `dependency` (`package.json` names one of them), `scripts` (each named `package.json` script exists and matches its regular expression, `{test: jest}`), `any` (a list of such condition sets, one of which holds besides the others). Without `applies` a template only runs when a project names it. |
 
 **Which template.** A project names one with `runner:`; the section's
 `command:`, `report:`, `report-path:` and `filter:` then change it for that

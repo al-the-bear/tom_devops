@@ -498,8 +498,9 @@ Test Runner (per project):
   4. the first runner template whose applies: holds: the project's and the
      workspace's (testkit: runners: in buildkit.yaml / buildkit_master.yaml),
      then the built-ins npm-test-jest, jest, vitest, mocha, ava, jasmine,
-     node-test, node-tsx, node-ts-node, pytest, maven, gradle-wrapper,
-     gradle, go-test, cargo-test
+     node-test, node-tsx, node-ts-node, pytest, nose2, tox, nox, unittest
+     (testkit's own runner), maven, gradle-wrapper, gradle, go-test,
+     cargo-test; Python ones in the project's environment
 
 Exit Code (:baseline, :test):
   0  every test passed

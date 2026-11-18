@@ -230,8 +230,10 @@ A non-Dart project's tests run with the first runner that applies:
    runners:` in `buildkit_master.yaml`), then the built-ins: `npm test`
    when its script is jest, jest, vitest, mocha, ava, jasmine (with
    jasmine-reporters), `node --test` (JavaScript, and TypeScript through tsx
-   or ts-node), pytest, Maven, Gradle, `go test -json`, `cargo test
-   --no-fail-fast`. C, C++ and TypeScript without one of these runners have
+   or ts-node), pytest, nose2, tox, nox, unittest (testkit's own runner, for a
+   Python project without pytest), Maven, Gradle, `go test -json`, `cargo
+   test --no-fail-fast`. Python templates run in the project's own
+   environment (uv, Poetry, pipenv, a venv) when it has one. C, C++ and TypeScript without one of these runners have
    no built-in template.
 
    ```yaml

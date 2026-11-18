@@ -1,0 +1,50 @@
+<testsuite name="nose2-junit" errors="2" failures="1" skipped="2" tests="7" time="0.002">
+  <testcase timestamp="2026-11-18T09:34:10.025194" time="0.000468" classname="nose2.loader.ModuleImportFailure.tests" name="test_broken">
+    <error message="test failure">ImportError: Failed to import test module: tests.test_broken
+Traceback (most recent call last):
+  File "/project/tools/lib/python3.9/site-packages/nose2/plugins/loader/discovery.py", line 195, in _find_tests_in_file
+    module = util.module_from_name(module_name)
+  File "/project/tools/lib/python3.9/site-packages/nose2/util.py", line 73, in module_from_name
+    __import__(name)
+  File "/project/tests/test_broken.py", line 1, in &lt;module&gt;
+    import does_not_exist
+ModuleNotFoundError: No module named 'does_not_exist'
+
+</error>
+    <system-out />
+    </testcase>
+  <testcase timestamp="2026-11-18T09:34:10.025769" time="0.000095" classname="tests.test_calc.TestCalc" name="test_adds">
+    <system-out />
+    </testcase>
+  <testcase timestamp="2026-11-18T09:34:10.025877" time="0.000033" classname="tests.test_calc.TestCalc" name="test_errors">
+    <error message="test failure">Traceback (most recent call last):
+  File "/project/tests/test_calc.py", line 6, in test_errors
+    def test_errors(self): raise RuntimeError("boom")
+RuntimeError: boom
+</error>
+    <system-out />
+    </testcase>
+  <testcase timestamp="2026-11-18T09:34:10.026615" time="0.000062" classname="tests.test_calc.TestCalc" name="test_known_bug">
+    <skipped message="expected test failure">Traceback (most recent call last):
+  File "/project/tests/test_calc.py", line 10, in test_known_bug
+    def test_known_bug(self): self.assertEqual(1, 2)
+AssertionError: 1 != 2
+</skipped>
+    <system-out />
+    </testcase>
+  <testcase timestamp="2026-11-18T09:34:10.026737" time="0.000023" classname="tests.test_calc.TestCalc" name="test_skipped">
+    <skipped message="test skipped: not ready">not ready</skipped>
+    <system-out />
+    </testcase>
+  <testcase timestamp="2026-11-18T09:34:10.026770" time="0.000035" classname="tests.test_calc.TestCalc" name="test_subtracts_wrongly">
+    <failure message="test failure">Traceback (most recent call last):
+  File "/project/tests/test_calc.py", line 5, in test_subtracts_wrongly
+    def test_subtracts_wrongly(self): self.assertEqual(2 - 1, 0)
+AssertionError: 1 != 0
+</failure>
+    <system-out />
+    </testcase>
+  <testcase timestamp="2026-11-18T09:34:10.026852" time="0.000028" classname="tests.test_calc.TestOther" name="test_adds">
+    <system-out />
+    </testcase>
+  </testsuite>

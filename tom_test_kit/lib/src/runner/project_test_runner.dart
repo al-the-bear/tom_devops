@@ -49,6 +49,7 @@ import '../model/test_entry.dart';
 import '../model/test_run_results.dart';
 import '../parser/dart_test_parser.dart';
 import '../util/file_helpers.dart';
+import 'bundled_scripts.dart';
 import 'report_parsers.dart';
 import 'result_collector.dart';
 import 'runner_templates.dart';
@@ -63,6 +64,14 @@ const lastTestRunTextName = 'last_testrun.txt';
 /// file — the same path `$TESTKIT_REPORT` holds, in a form every shell reads.
 const reportPlaceholder = '{report}';
 
+/// Written in a runner command, replaced by the project's Python: its own
+/// environment when it has one ([projectPythonCommand]), else `python3`.
+const pythonPlaceholder = '{python}';
+
+/// `{script:<name>}` in a runner command: replaced by the (quoted) path of
+/// the bundled script [bundledScripts] names, written to `testlog/` first.
+final _scriptPlaceholder = RegExp(r'\{script:([\w-]+)\}');
+
 /// How many lines of a runner's output a "no test ran" message quotes.
 const _diagnosticLines = 15;
 
@@ -73,6 +82,11 @@ sealed class ProjectTestRunner {
   /// The runner for the project at [projectPath] with [natures], or a
   /// [RunnerUnavailable] saying why there is none.
   static ProjectTestRunner resolve(
+    String projectPath,
+    List<RunFolder> natures,
+  ) => _withPython(_resolve(projectPath, natures), projectPath);
+
+  static ProjectTestRunner _resolve(
     String projectPath,
     List<RunFolder> natures,
   ) {
@@ -236,13 +250,18 @@ class CommandRunner extends ProjectTestRunner {
 
   @override
   String selectionName(TestEntry entry) {
-    final key = entry.fullDescription;
+    var name = entry.fullDescription;
     for (final qualifier in [entry.groups, entry.suite]) {
-      if (qualifier != null && key.startsWith('$qualifier > ')) {
-        return key.substring(qualifier.length + 3);
+      if (qualifier != null && name.startsWith('$qualifier > ')) {
+        name = name.substring(qualifier.length + 3);
+        break;
       }
     }
-    return key;
+    final qualify = filter?.qualify;
+    final group = entry.groups;
+    return qualify != null && group != null && group.isNotEmpty
+        ? '$group$qualify$name'
+        : name;
   }
 
   @override
@@ -286,10 +305,14 @@ class CommandRunner extends ProjectTestRunner {
     // A report left by an earlier run must not be read as this run's.
     _deleteReports(projectPath, reportFile);
 
-    final full = [
-      command.replaceAll(reportPlaceholder, _shellQuote(reportFile)),
-      ...testArgs.map(_shellQuote),
-    ].join(' ');
+    final String expanded;
+    try {
+      expanded = _expandPlaceholders(command, projectPath, reportFile);
+    } on StateError catch (e) {
+      stderr.writeln('[$projectPath] ${e.message}');
+      return null;
+    }
+    final full = [expanded, ...testArgs.map(_shellQuote)].join(' ');
     if (verbose) {
       print('  Running: $full');
       print('  In: $projectPath');
@@ -432,6 +455,55 @@ class RunnerUnavailable extends ProjectTestRunner {
     stderr.writeln('[$projectPath] $reason');
     return null;
   }
+}
+
+/// [runner] with `{python}` replaced by the project's Python, so messages
+/// and a dry run name the command that runs.
+ProjectTestRunner _withPython(ProjectTestRunner runner, String projectPath) {
+  if (runner is! CommandRunner || !runner.command.contains(pythonPlaceholder)) {
+    return runner;
+  }
+  return CommandRunner(
+    command: runner.command.replaceAll(
+      pythonPlaceholder,
+      projectPythonCommand(projectPath),
+    ),
+    format: runner.format,
+    reportPath: runner.reportPath,
+    filter: runner.filter,
+    origin: runner.origin,
+  );
+}
+
+/// [command] with `{report}`, `{python}` and `{script:<name>}` replaced;
+/// a bundled script is written to `testlog/` beside the report file. Throws
+/// [StateError] for a script testkit does not bundle.
+String _expandPlaceholders(
+  String command,
+  String projectPath,
+  String reportFile,
+) {
+  var result = command.replaceAll(reportPlaceholder, _shellQuote(reportFile));
+  if (result.contains(pythonPlaceholder)) {
+    result = result.replaceAll(
+      pythonPlaceholder,
+      projectPythonCommand(projectPath),
+    );
+  }
+  return result.replaceAllMapped(_scriptPlaceholder, (m) {
+    final name = m.group(1)!;
+    final script = bundledScripts[name];
+    if (script == null) {
+      throw StateError(
+        'unknown script {script:$name} in `$command` (one of '
+        '${bundledScripts.keys.join(', ')})',
+      );
+    }
+    final file = File(
+      p.join(p.dirname(reportFile), 'testkit_$name.${script.extension}'),
+    )..writeAsStringSync(script.text);
+    return _shellQuote(file.path);
+  });
 }
 
 /// Quotes [arg] for `sh -c` / `cmd /c` when it holds anything but safe

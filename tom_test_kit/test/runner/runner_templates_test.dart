@@ -60,6 +60,12 @@ void main() {
       'node-tsx',
       'node-ts-node',
       'pytest',
+      'pytest-doctest',
+      'nose2',
+      'tox',
+      'nox',
+      'unittest',
+      'unittest-doctest',
       'maven',
       'gradle-wrapper',
       'gradle',
@@ -74,7 +80,15 @@ void main() {
       builtInRunnerTemplates.map((t) => t.name).toSet().difference(filtered),
       {'jasmine', 'maven', 'gradle-wrapper', 'gradle'},
     );
-    expect(builtInRunnerTemplates.every((t) => t.applies != null), isTrue);
+    // Every built-in is detected, except the doctest variants a project
+    // names.
+    expect(
+      {
+        for (final t in builtInRunnerTemplates)
+          if (t.applies == null) t.name,
+      },
+      {'pytest-doctest', 'unittest-doctest'},
+    );
     write('pkg/gradlew', '');
     final gradle = runner([
       JavaFolder(
@@ -112,7 +126,12 @@ void main() {
       '[2026-11-18]', () {
     write('pkg/buildkit.yaml', 'testkit:\n  runner: pytest\n');
     final picked = runner(const []);
-    expect(picked.command, 'python3 -m pytest -q --junitxml={report}');
+    expect(
+      picked.command,
+      '${projectPythonCommand(project)} -m pytest -q '
+      '--continue-on-collection-errors '
+      '--junitxml={report}',
+    );
     expect(picked.origin, 'runner pytest, built-in, picked in buildkit.yaml');
     expect(picked.selectsTestsByName, isTrue);
 
@@ -148,7 +167,7 @@ testkit:
       command: gotestsum --jsonfile {report}
 ''');
     final python = [PythonFolder(folder, projectFile: 'pyproject.toml')];
-    expect(runner(python).origin, 'runner pytest, built-in');
+    expect(runner(python).origin, 'runner unittest, built-in');
     write('pkg/uv.lock', '');
     final uv = runner(python);
     expect(uv.origin, 'runner pytest-uv, buildkit_master.yaml');

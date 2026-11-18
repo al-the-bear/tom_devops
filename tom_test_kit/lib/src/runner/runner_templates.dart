@@ -63,6 +63,11 @@ class NameFilter {
   /// replaced: `[--match, '{name}']` gives `--match a --match b`.
   final List<String> each;
 
+  /// When set, a name is handed over with its group before it, joined by
+  /// this text (`.`: `tests.test_calc.TestCalc.test_adds`), for a runner
+  /// that selects by qualified name; a name without a group stays as it is.
+  final String? qualify;
+
   const NameFilter({
     this.args = const [],
     this.join = '|',
@@ -70,6 +75,7 @@ class NameFilter {
     this.cut,
     this.tail,
     this.each = const [],
+    this.qualify,
   });
 
   /// The arguments that select [names]; empty when [names] is.
@@ -123,7 +129,9 @@ class NameFilter {
     final regex = yaml['regex'];
     final cut = yaml['cut'];
     final tail = yaml['tail'];
+    final qualify = yaml['qualify'];
     return NameFilter(
+      qualify: qualify is String && qualify.isNotEmpty ? qualify : null,
       args: list,
       each: each,
       join: join is String ? join : '|',
@@ -144,7 +152,8 @@ class AppliesWhen {
   final List<String> files;
 
   /// Each named file exists and matches its regular expression
-  /// (`CMakeLists.txt: enable_testing`).
+  /// (`CMakeLists.txt: enable_testing`); a glob as the name: one of the
+  /// files it matches (`requirements*.txt: pytest`).
   final Map<String, String> contains;
 
   /// `package.json` names one of these in `dependencies` or
@@ -155,12 +164,18 @@ class AppliesWhen {
   /// expression (`test: \bjest\b`).
   final Map<String, String> scripts;
 
+  /// One of these holds (each a set of conditions of its own), besides the
+  /// conditions above: a pytest project is marked by a `conftest.py` or by
+  /// pytest in its `pyproject.toml`.
+  final List<AppliesWhen> any;
+
   const AppliesWhen({
     this.natures = const {},
     this.files = const [],
     this.contains = const {},
     this.dependencies = const {},
     this.scripts = const {},
+    this.any = const [],
   });
 
   /// Whether the project at [projectPath] with [projectNatures] meets every
@@ -174,15 +189,16 @@ class AppliesWhen {
       return false;
     }
     for (final entry in contains.entries) {
-      final file = File(p.join(projectPath, entry.key));
-      if (!file.existsSync()) return false;
-      final String text;
-      try {
-        text = file.readAsStringSync();
-      } on FileSystemException {
+      final pattern = RegExp(entry.value, multiLine: true);
+      if (!_files(projectPath, entry.key).any((file) {
+        try {
+          return pattern.hasMatch(file.readAsStringSync());
+        } on FileSystemException {
+          return false;
+        }
+      })) {
         return false;
       }
-      if (!RegExp(entry.value, multiLine: true).hasMatch(text)) return false;
     }
     if (dependencies.isNotEmpty &&
         !packageJsonDependencies(projectPath).any(dependencies.contains)) {
@@ -196,6 +212,10 @@ class AppliesWhen {
           return false;
         }
       }
+    }
+    if (any.isNotEmpty &&
+        !any.any((a) => a.holds(projectPath, projectNatures))) {
+      return false;
     }
     return true;
   }
@@ -221,20 +241,30 @@ class AppliesWhen {
       return {for (final e in value.entries) '${e.key}': '${e.value}'};
     }
 
+    final any = yaml['any'];
+    if (any != null && (any is! List || any.isEmpty)) {
+      throw const FormatException('applies: any: must be a list of conditions');
+    }
     final applies = AppliesWhen(
       natures: natures,
       files: [...?_strings(yaml['files'], 'files')],
       contains: patterns('contains', 'a file'),
       dependencies: names('dependency'),
       scripts: patterns('scripts', 'a package.json script'),
+      any: [
+        if (any is List)
+          for (final a in any) AppliesWhen.fromYaml(a),
+      ],
     );
     if (applies.natures.isEmpty &&
         applies.files.isEmpty &&
         applies.contains.isEmpty &&
         applies.dependencies.isEmpty &&
-        applies.scripts.isEmpty) {
+        applies.scripts.isEmpty &&
+        applies.any.isEmpty) {
       throw const FormatException(
-        'applies: needs nature:, files:, contains:, dependency: or scripts:',
+        'applies: needs nature:, files:, contains:, dependency:, scripts: or '
+        'any:',
       );
     }
     return applies;
@@ -403,13 +433,9 @@ const builtInRunnerTemplates = <RunnerTemplate>[
   RunnerTemplate(
     name: 'jasmine',
     // jasmine-reporters' JUnit reporter through --reporter, which wants a
-    // module exporting the reporter's constructor: a one-line module in
-    // testlog/. It writes junitresults.xml in the project.
-    command:
-        'mkdir -p testlog && printf %s '
-        '\'module.exports = require("jasmine-reporters").JUnitXmlReporter;\' '
-        '> testlog/testkit_jasmine_junit.cjs && '
-        'npx jasmine --reporter=./testlog/testkit_jasmine_junit.cjs',
+    // module exporting the reporter's constructor: a one-line bundled
+    // module. It writes junitresults.xml in the project.
+    command: 'npx jasmine --reporter={script:jasmine-junit}',
     format: ReportFormat.junit,
     reportPath: 'junitresults.xml',
     // No name filter: jasmine-reporters (2.5.2) writes the specs jasmine's
@@ -455,17 +481,87 @@ const builtInRunnerTemplates = <RunnerTemplate>[
   ),
   RunnerTemplate(
     name: 'pytest',
-    command: 'python3 -m pytest -q --junitxml={report}',
+    // In the project's environment ({python}). A test module that does not
+    // import stops a pytest session; --continue-on-collection-errors records
+    // it as a failure and runs the rest.
+    command:
+        '{python} -m pytest -q --continue-on-collection-errors '
+        '--junitxml={report}',
     format: ReportFormat.junit,
-    // -k takes a boolean expression of name parts, not a pattern; a
-    // parametrized test (`test_x[1]`) is selected by its function.
-    filter: NameFilter(
-      args: ['-k', namesPlaceholder],
-      join: ' or ',
-      regex: false,
-      cut: '[',
+    filter: _pytestFilter,
+    applies: AppliesWhen(natures: {'python'}, any: _usesPytest),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'pytest-doctest',
+    // pytest with the doctests of every module; picked by name.
+    command:
+        '{python} -m pytest -q --continue-on-collection-errors '
+        '--doctest-modules --junitxml={report}',
+    format: ReportFormat.junit,
+    filter: _pytestFilter,
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'nose2',
+    command:
+        '{python} -m nose2 --plugin nose2.plugins.junitxml --junit-xml '
+        '--junit-xml-path {report}',
+    format: ReportFormat.junit,
+    // nose2 selects by dotted name (module.Class.method).
+    filter: NameFilter(args: [namePlaceholder], regex: false, qualify: '.'),
+    applies: AppliesWhen(
+      natures: {'python'},
+      any: [
+        AppliesWhen(files: ['nose2.cfg', 'unittest.cfg']),
+        AppliesWhen(contains: {'pyproject.toml': r'nose2'}),
+        AppliesWhen(contains: {'setup.cfg': r'nose2'}),
+        AppliesWhen(contains: {'requirements*.txt': r'^\s*nose2\b'}),
+      ],
     ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'tox',
+    // tox passes what follows -- to its test command, when tox.ini hands
+    // {posargs} to pytest.
+    command: 'tox -q -- --continue-on-collection-errors --junitxml={report}',
+    format: ReportFormat.junit,
+    filter: _pytestFilter,
+    applies: AppliesWhen(
+      natures: {'python'},
+      contains: {'tox.ini': r'\{posargs'},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'nox',
+    // nox hands what follows -- to its sessions as session.posargs.
+    command: 'nox -- --continue-on-collection-errors --junitxml={report}',
+    format: ReportFormat.junit,
+    filter: _pytestFilter,
+    applies: AppliesWhen(
+      natures: {'python'},
+      contains: {'noxfile.py': r'posargs'},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'unittest',
+    // The standard library: testkit's bundled runner discovers the tests
+    // (test*.py) and writes its line protocol.
+    command: '{python} {script:unittest} {report}',
+    format: ReportFormat.testkit,
+    filter: _unittestFilter,
     applies: AppliesWhen(natures: {'python'}),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'unittest-doctest',
+    // The unittest runner with the doctests of every module; picked by name.
+    command: '{python} {script:unittest} {report} --doctest',
+    format: ReportFormat.testkit,
+    filter: _unittestFilter,
     source: 'built-in',
   ),
   RunnerTemplate(
@@ -600,6 +696,66 @@ const _natureNames = [
   'c',
 ];
 
+/// pytest's -k takes a boolean expression of name parts, not a pattern; a
+/// parametrized test (`test_x[1]`) is selected by its function.
+const _pytestFilter = NameFilter(
+  args: ['-k', namesPlaceholder],
+  join: ' or ',
+  regex: false,
+  cut: '[',
+);
+
+/// The bundled unittest runner's -k: an fnmatch pattern against the test's
+/// id (`*tests.test_calc.TestCalc.test_adds`), so the qualified name selects
+/// exactly one test.
+const _unittestFilter = NameFilter(
+  each: ['-k', '*$namePlaceholder'],
+  regex: false,
+  qualify: '.',
+);
+
+/// What marks a pytest project: its configuration or pytest named among its
+/// requirements.
+const _usesPytest = [
+  AppliesWhen(
+    files: [
+      'pytest.ini',
+      'conftest.py',
+      'tests/conftest.py',
+      'test/conftest.py',
+    ],
+  ),
+  AppliesWhen(contains: {'pyproject.toml': r'pytest'}),
+  AppliesWhen(contains: {'setup.cfg': r'\[tool:pytest\]'}),
+  AppliesWhen(contains: {'tox.ini': r'\[pytest\]'}),
+  AppliesWhen(contains: {'requirements*.txt': r'^\s*pytest\b'}),
+  AppliesWhen(contains: {'Pipfile': r'pytest'}),
+];
+
+/// The command that runs the Python of the project at [projectPath]: its
+/// own environment when it has one, in this order:
+///
+/// 1. `uv run python` when it has a `uv.lock`;
+/// 2. `poetry run python` when it has a `poetry.lock`;
+/// 3. `pipenv run python` when it has a `Pipfile.lock`;
+/// 4. the interpreter of a virtual environment in `.venv`, `venv` or `env`
+///    (a folder holding `pyvenv.cfg`);
+/// 5. `python3` (`python` on Windows).
+String projectPythonCommand(String projectPath) {
+  bool has(String name) => File(p.join(projectPath, name)).existsSync();
+  if (has('uv.lock')) return 'uv run python';
+  if (has('poetry.lock')) return 'poetry run python';
+  if (has('Pipfile.lock')) return 'pipenv run python';
+  for (final dir in ['.venv', 'venv', 'env']) {
+    if (!has(p.join(dir, 'pyvenv.cfg'))) continue;
+    final python = Platform.isWindows
+        ? p.join(dir, 'Scripts', 'python.exe')
+        : p.join(dir, 'bin', 'python');
+    if (has(python)) return python;
+  }
+  return Platform.isWindows ? 'python' : 'python3';
+}
+
 /// The names in `package.json`'s `dependencies` and `devDependencies`.
 Set<String> packageJsonDependencies(String projectPath) {
   final file = File(p.join(projectPath, 'package.json'));
@@ -630,6 +786,16 @@ Map<String, String> packageJsonScripts(String projectPath) {
   } on FormatException {
     return const {};
   }
+}
+
+/// The files [pattern] names in the project: the file itself, or the
+/// matches of a glob.
+Iterable<File> _files(String projectPath, String pattern) {
+  if (!pattern.contains(RegExp(r'[*?\[{]'))) {
+    final file = File(p.join(projectPath, pattern));
+    return file.existsSync() ? [file] : const [];
+  }
+  return Glob(pattern).listSync(root: projectPath).whereType<File>();
 }
 
 bool _globMatches(String projectPath, String pattern) {

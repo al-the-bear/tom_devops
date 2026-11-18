@@ -47,11 +47,23 @@ void main() {
         (rust.command, rust.format),
         ('cargo test --no-fail-fast', ReportFormat.libtest),
       );
-      final py = commandRunner([
-        PythonFolder(folder, projectFile: 'pyproject.toml'),
-      ]);
-      expect(py.command, 'python3 -m pytest -q --junitxml={report}');
+      // Python: the standard library's unittest unless pytest marks the
+      // project.
+      final python = [PythonFolder(folder, projectFile: 'pyproject.toml')];
+      final unittest = commandRunner(python);
+      expect(
+        unittest.command,
+        '${projectPythonCommand(project.path)} {script:unittest} {report}',
+      );
+      expect(unittest.format, ReportFormat.testkit);
+      write('conftest.py', '');
+      final py = commandRunner(python);
+      expect(
+        py.command,
+        contains('${projectPythonCommand(project.path)} -m pytest -q'),
+      );
       expect(py.format, ReportFormat.junit);
+      File(p.join(project.path, 'conftest.py')).deleteSync();
       write('pom.xml', '<project/>');
       final mvn = commandRunner([
         JavaFolder(

@@ -64,7 +64,8 @@ handle for regression tracking.
 | 31 | [Result collector](#31-result-collector) | 4 | 4✅ | `runner/result_collector_test.dart` | `TK-RCL` |
 | 32 | [Runner templates](#32-runner-templates) | 13 | 13✅ | `runner/runner_templates_test.dart` | `TK-RT` |
 | 33 | [`:test --baseline` from the command line](#33-test---baseline-from-the-command-line) | 5 | 5✅ | `v2/test_baseline_flag_test.dart` | `TK-BLF` |
-| — | **Total** | **302** | **302✅** | | |
+| 34 | [Python runners](#34-python-runners) | 9 | 9✅ | `runner/python_runners_test.dart` | `TK-PY` |
+| — | **Total** | **311** | **311✅** | | |
 
 ---
 
@@ -735,3 +736,23 @@ A real command line parsed with the tool's own definition and handed to the exec
 | TK-BLF-2 | without the flag, no baseline is asked for | ✅ | `dart test --name 'TK-BLF-2'` |
 | TK-BLF-3 | `:test --baseline` in a project without a tracking file creates one | ✅ | `dart test --name 'TK-BLF-3'` |
 | TK-BLF-4 | `:test` alone still refuses, as its message says | ✅ | `dart test --name 'TK-BLF-4'` |
+
+---
+
+## 34. Python runners
+
+**Test file:** `test/runner/python_runners_test.dart` — **ID prefix `TK-PY`**
+
+The Python templates and `{python}`. TK-PY-3..6 run testkit's bundled unittest runner with the machine's Python (skipped without `python3`); TK-PY-7 reads real pytest, nose2, tox and nox reports (`test/fixtures/reports/python/`).
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-PY-1 | `{python}`: uv, Poetry, pipenv, a venv in `.venv` / `venv` / `env`, else `python3` | ✅ | `dart test --name 'TK-PY-1'` |
+| TK-PY-2 | pytest, nose2, tox and nox picked from the project's files; anything else runs `unittest` | ✅ | `dart test --name 'TK-PY-2'` |
+| TK-PY-3 | a project without pytest records every test case (errors, skips, expected failures, a module that does not import) | ✅ | `dart test --name 'TK-PY-3'` |
+| TK-PY-4 | `--failed` re-runs only the failed tests, by qualified name | ✅ | `dart test --name 'TK-PY-4'` |
+| TK-PY-5 | `unittest-doctest`: the doctests of the project's modules | ✅ | `dart test --name 'TK-PY-5'` |
+| TK-PY-6 | a project's virtual environment runs the tests | ✅ | `dart test --name 'TK-PY-6'` |
+| TK-PY-7 | pytest, nose2, tox and nox record per-test results from their recorded reports | ✅ | `dart test --name 'TK-PY-7'` |
+| TK-PY-8 | the Python name filters, `qualify` | ✅ | `dart test --name 'TK-PY-8'` |
+| TK-PY-9 | an unknown `{script:...}` stops the run; the jasmine template writes its bundled module | ✅ | `dart test --name 'TK-PY-9'` |

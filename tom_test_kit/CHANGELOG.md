@@ -1,3 +1,35 @@
+## 1.15.0
+
+### Added — the common Python runners, in the project's environment
+
+- `{python}` in a runner command is the project's own Python: `uv run python`
+  (`uv.lock`), `poetry run python` (`poetry.lock`), `pipenv run python`
+  (`Pipfile.lock`), a virtual environment in `.venv` / `venv` / `env`, else
+  `python3`. A dry run shows it filled in.
+- New built-in templates:
+  - `unittest`: a Python project without pytest records every test case
+    through testkit's own unittest runner (standard library only), with
+    `-k` per test.
+  - `nose2`: its JUnit plugin, selecting tests by dotted name.
+  - `tox` and `nox`: they hand `--junitxml` to the inner pytest.
+  - `pytest-doctest` and `unittest-doctest`: picked by name.
+- `{script:<name>}` hands a command a script testkit bundles: `unittest`, and
+  `jasmine-junit` (the jasmine template no longer writes its module with
+  `printf`).
+- Template keys:
+  - `applies: any:` (one of several condition sets);
+  - `contains:` takes a glob as the file;
+  - `filter: qualify:` (the name with its group, for runners that select by
+    qualified name).
+
+### Changed
+
+- `pytest` runs `{python} -m pytest -q --continue-on-collection-errors` and
+  applies only to a project pytest marks (`conftest.py`, `pytest.ini`,
+  pytest in `pyproject.toml` / `Pipfile` / `requirements*.txt`, ...). Any
+  other Python project runs `unittest`. A test module that does not import
+  no longer stops the session.
+
 ## 1.14.0
 
 ### Added — the common JavaScript / TypeScript runners
