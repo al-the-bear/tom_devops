@@ -6,25 +6,32 @@
 ///
 ///    ```yaml
 ///    testkit:
+///      runner: pytest              # a template by name, or:
 ///      command: ./run_tests.sh     # shell command, run in the project
 ///      report: testkit             # testkit | junit | go-json | libtest | jest-json
 ///      report-path: build/*.xml    # junit / jest-json written elsewhere
+///      filter: {args: [-k, '{names}'], join: ' or ', regex: false}
 ///    ```
 ///
-///    `report` defaults to `testkit`; without `report-path` a file report is
-///    written to the path `$TESTKIT_REPORT` names (`{report}` in the command
-///    is replaced by the same path);
+///    With `runner:` the named template ([RunnerTemplate]) runs, and the
+///    section's `command:`, `report:`, `report-path:` and `filter:` change
+///    it. Without it `command:` is the runner; `report` defaults to
+///    `testkit`, and without `report-path` a file report is written to the
+///    path `$TESTKIT_REPORT` names (`{report}` in the command is replaced by
+///    the same path). `runners:` adds or changes templates for this
+///    project; a section holding only `runners:` names no runner;
 /// 2. a Dart or Flutter project: `dart test` / `flutter test`;
 /// 3. the `test:` step of its `buildkit.yaml` (the step `buildkit :test`
 ///    runs): a script that writes testkit's line protocol to
 ///    `$TESTKIT_REPORT`;
-/// 4. the default of its language: `go test -json ./...`, `cargo test
-///    --no-fail-fast`,
-///    pytest with `--junitxml`, Maven / Gradle surefire reports, jest
-///    `--json` or `node --test` with the JUnit reporter.
+/// 4. the first template whose `applies:` holds: the project's own
+///    (`testkit: runners:` in `buildkit.yaml`), the workspace's
+///    (`testkit: runners:` in `buildkit_master.yaml`), then testkit's
+///    built-ins ([builtInRunnerTemplates]: jest, node --test, pytest, Maven,
+///    Gradle, go test, cargo test).
 ///
 /// A C or C++ project, and a TypeScript project without jest, has no
-/// default: it needs 1 or 3.
+/// built-in template: it needs 1, 3 or a template of its own.
 library;
 
 import 'dart:convert';
@@ -38,11 +45,13 @@ import 'package:tom_build_base/tom_build_base.dart'
 import 'package:tom_build_base/tom_build_base_v2.dart';
 import 'package:yaml/yaml.dart';
 
+import '../model/test_entry.dart';
 import '../model/test_run_results.dart';
 import '../parser/dart_test_parser.dart';
 import '../util/file_helpers.dart';
 import 'report_parsers.dart';
 import 'result_collector.dart';
+import 'runner_templates.dart';
 
 /// The environment variable that names the file a run writes its report to.
 const testkitReportVariable = 'TESTKIT_REPORT';
@@ -74,7 +83,24 @@ sealed class ProjectTestRunner {
       dir: projectPath,
       toolKey: 'testkit',
     );
-    if (section != null) return _fromSection(section, projectPath);
+    if (section != null && section is! Map) {
+      return const RunnerUnavailable(
+        'the testkit: section of buildkit.yaml must be a map with runner: or '
+        'command:',
+      );
+    }
+    final RunnerTemplates templates;
+    try {
+      templates = RunnerTemplates.layered(
+        workspace: _workspaceRunners(projectPath),
+        project: (section as Map?)?['runners'],
+      );
+    } on FormatException catch (e) {
+      return RunnerUnavailable(e.message);
+    }
+    if (section != null && _namesRunner(section)) {
+      return _fromSection(section, templates);
+    }
     if (natures.any((n) => n is DartProjectFolder)) {
       return const DartRunner();
     }
@@ -93,15 +119,27 @@ sealed class ProjectTestRunner {
         origin: 'buildkit.yaml test:',
       );
     }
-    return _languageDefault(projectPath, natures);
+    final template = templates.detect(projectPath, natures);
+    if (template != null) return CommandRunner.fromTemplate(template);
+    return _noTemplate(natures);
   }
 
   /// A short description for messages: the command and where it came from.
   String get label;
 
-  /// Whether `--failed` / `--mismatched` can select single tests (only
-  /// `dart test --name` can; the other runners run every test).
+  /// Whether `--failed` / `--mismatched` can select single tests: `dart test
+  /// --name`, and a template that declares a `filter:`. The other runners
+  /// run every test.
   bool get selectsTestsByName => false;
+
+  /// The name [entry] of a tracking file has for this runner's selection:
+  /// the tracking key, without the `<group> > ` a collected run puts before a
+  /// name it reported twice.
+  String selectionName(TestEntry entry) => entry.fullDescription;
+
+  /// The arguments that run only the tests named [names] (each a
+  /// [selectionName]); empty when the runner cannot select by name.
+  List<String> selectArgs(List<String> names) => const [];
 
   /// Runs the tests in [projectPath] with [testArgs] appended to the command
   /// and reads the results; null when the run could not happen (the reason
@@ -126,6 +164,11 @@ class DartRunner extends ProjectTestRunner {
 
   @override
   bool get selectsTestsByName => true;
+
+  @override
+  List<String> selectArgs(List<String> names) => [
+    for (final name in names) ...['--name', '^${_escapeRegex(name)}\$'],
+  ];
 
   @override
   Future<TestRunResults?> run({
@@ -155,19 +198,56 @@ class CommandRunner extends ProjectTestRunner {
   /// several files); null: the file `$TESTKIT_REPORT` names.
   final String? reportPath;
 
-  /// Where the runner came from: `buildkit.yaml testkit:`, `buildkit.yaml
-  /// test:` or `default (language)`.
+  /// Where the runner came from: `buildkit.yaml testkit:`,
+  /// `buildkit.yaml test:`, or `runner <name>, <source>` for a template
+  /// (its name and where it is defined).
   final String origin;
+
+  /// How it selects tests by name; null: every test runs.
+  final NameFilter? filter;
 
   const CommandRunner({
     required this.command,
     required this.format,
     required this.origin,
     this.reportPath,
+    this.filter,
   });
+
+  /// The runner of [template]; [pickedIn] says where a project named it.
+  factory CommandRunner.fromTemplate(
+    RunnerTemplate template, {
+    String? pickedIn,
+  }) => CommandRunner(
+    command: template.command,
+    format: template.format,
+    reportPath: template.reportPath,
+    filter: template.filter,
+    origin:
+        'runner ${template.name}, ${template.source}'
+        '${pickedIn == null ? '' : ', picked in $pickedIn'}',
+  );
 
   @override
   String get label => '`$command` [$origin]';
+
+  @override
+  bool get selectsTestsByName => filter != null;
+
+  @override
+  String selectionName(TestEntry entry) {
+    final key = entry.fullDescription;
+    for (final qualifier in [entry.groups, entry.suite]) {
+      if (qualifier != null && key.startsWith('$qualifier > ')) {
+        return key.substring(qualifier.length + 3);
+      }
+    }
+    return key;
+  }
+
+  @override
+  List<String> selectArgs(List<String> names) =>
+      filter?.argsFor(names) ?? const [];
 
   /// The report file testkit hands the command in `$TESTKIT_REPORT`, kept in
   /// `testlog/` for inspection.
@@ -358,103 +438,103 @@ YamlMap? _readBuildkitYaml(String projectPath) {
   return yaml is YamlMap ? yaml : null;
 }
 
-ProjectTestRunner _fromSection(Object section, String projectPath) {
+/// Whether a `testkit:` section names a runner (rather than only adding
+/// templates with `runners:`).
+bool _namesRunner(Map section) => section.keys.any(
+  (k) => const {
+    'runner',
+    'command',
+    'report',
+    'report-path',
+    'filter',
+  }.contains(k),
+);
+
+ProjectTestRunner _fromSection(Map section, RunnerTemplates templates) {
   const where = 'the testkit: section of buildkit.yaml';
-  if (section is! Map) {
-    return const RunnerUnavailable('$where must be a map with command:');
-  }
-  final command = section['command'];
-  if (command is! String || command.trim().isEmpty) {
-    return const RunnerUnavailable('$where needs a command:');
-  }
-  final reportName = section['report'] as Object? ?? 'testkit';
-  final format = ReportFormat.byConfigName('$reportName');
-  if (format == null) {
-    return RunnerUnavailable(
-      '$where: unknown report "$reportName" (one of '
-      '${ReportFormat.values.map((f) => f.configName).join(', ')})',
+  final picked = section['runner'];
+  final overrides = {
+    for (final key in ['command', 'report', 'report-path', 'filter'])
+      if (section.containsKey(key)) key: section[key],
+  };
+  try {
+    if (picked != null) {
+      final base = templates.byName('$picked');
+      if (base == null) {
+        return RunnerUnavailable(
+          '$where: unknown runner "$picked" (one of '
+          '${templates.templates.map((t) => t.name).join(', ')})',
+        );
+      }
+      final template = overrides.isEmpty
+          ? base
+          : RunnerTemplate.fromYaml(
+              base.name,
+              overrides,
+              source: base.source,
+              base: base,
+            );
+      return CommandRunner.fromTemplate(template, pickedIn: 'buildkit.yaml');
+    }
+    final command = section['command'];
+    if (command is! String || command.trim().isEmpty) {
+      return const RunnerUnavailable('$where needs a command: or a runner:');
+    }
+    final own = RunnerTemplate.fromYaml(
+      'testkit',
+      overrides,
+      source: 'buildkit.yaml',
     );
+    return CommandRunner(
+      command: own.command,
+      format: own.format,
+      reportPath: own.reportPath,
+      filter: own.filter,
+      origin: 'buildkit.yaml testkit:',
+    );
+  } on FormatException catch (e) {
+    return RunnerUnavailable('$where: ${e.message}');
   }
-  final reportPath = section['report-path'];
-  return CommandRunner(
-    command: command,
-    format: format,
-    reportPath: reportPath is String ? reportPath : null,
-    origin: 'buildkit.yaml testkit:',
-  );
 }
 
-ProjectTestRunner _languageDefault(
-  String projectPath,
-  List<RunFolder> natures,
-) {
-  CommandRunner def(
-    String command,
-    ReportFormat format,
-    String language, [
-    String? reportPath,
-  ]) => CommandRunner(
-    command: command,
-    format: format,
-    reportPath: reportPath,
-    origin: 'default ($language)',
-  );
+/// The `runners:` of the workspace's `testkit:` section in
+/// `buildkit_master.yaml`, or null.
+Object? _workspaceRunners(String projectPath) {
+  final root = findWorkspaceRootOrNull(projectPath);
+  if (root == null) return null;
+  final file = File(p.join(root, TomBuildConfig.masterFilename));
+  final Object? doc;
+  try {
+    doc = loadYaml(file.readAsStringSync());
+  } on YamlException {
+    return null;
+  } on FileSystemException {
+    return null;
+  }
+  if (doc is! Map) return null;
+  final section = doc['testkit'];
+  return section is Map ? section['runners'] : null;
+}
 
-  // The same precedence as buildkit's `:test` and tom_build_base's project
-  // listing: TypeScript and JavaScript before Python, Java, Go, Rust, C++, C.
-  for (final nature in _ordered(natures)) {
+/// Why a project no template applies to has no runner.
+ProjectTestRunner _noTemplate(List<RunFolder> natures) {
+  const add =
+      'Add a testkit: section to buildkit.yaml (runner: <template>, or '
+      'command: and report:), a test: step that writes testkit\'s line '
+      'protocol to \$$testkitReportVariable, or a template of your own '
+      'under testkit: runners:.';
+  for (final nature in natures) {
     switch (nature) {
       case TypeScriptFolder():
-        if (_usesJest(projectPath)) return _jest(def, 'typescript');
         return const RunnerUnavailable(
-          'testkit has no default test runner for a TypeScript project '
-          'without jest. Add a testkit: section to buildkit.yaml (command: '
-          'and report:), or a test: step that writes testkit\'s line '
-          'protocol to \$$testkitReportVariable.',
+          'testkit has no runner template for a TypeScript project without '
+          'jest. $add',
         );
-      case JavaScriptFolder():
-        if (_usesJest(projectPath)) return _jest(def, 'javascript');
-        return def(
-          'node --test --test-reporter=junit '
-              '--test-reporter-destination={report}',
-          ReportFormat.junit,
-          'javascript',
-        );
-      case PythonFolder():
-        return def(
-          'python3 -m pytest -q --junitxml={report}',
-          ReportFormat.junit,
-          'python',
-        );
-      case JavaFolder(:final buildTool):
-        return buildTool == JavaBuildTool.maven
-            ? def(
-                'mvn -B test',
-                ReportFormat.junit,
-                'java, maven',
-                'target/surefire-reports/TEST-*.xml',
-              )
-            : def(
-                File(p.join(projectPath, 'gradlew')).existsSync()
-                    ? './gradlew test'
-                    : 'gradle test',
-                ReportFormat.junit,
-                'java, gradle',
-                'build/test-results/test/*.xml',
-              );
-      case GoFolder():
-        return def('go test -json ./...', ReportFormat.goJson, 'go');
-      case RustFolder():
-        // Without --no-fail-fast cargo stops at the first test binary with a
-        // failing test, and the later binaries' tests go missing.
-        return def('cargo test --no-fail-fast', ReportFormat.libtest, 'rust');
       case CppFolder() || CFolder():
         return RunnerUnavailable(
-          'testkit has no default test runner for a '
-          '${nature is CppFolder ? 'C++' : 'C'} project. Add a test: step to '
-          'buildkit.yaml that writes testkit\'s line protocol to '
-          '\$$testkitReportVariable, or a testkit: section (command: and '
-          'report:, e.g. ctest --output-junit with report: junit).',
+          'testkit has no runner template for a '
+          '${nature is CppFolder ? 'C++' : 'C'} project (e.g. ctest '
+          '--output-junit {report} with report: junit). $add',
         );
       default:
         break;
@@ -465,43 +545,8 @@ ProjectTestRunner _languageDefault(
   );
 }
 
-CommandRunner _jest(
-  CommandRunner Function(String, ReportFormat, String) def,
-  String language,
-) => def(
-  'npx jest --json --outputFile={report}',
-  ReportFormat.jestJson,
-  '$language, jest',
+/// Escapes the regular-expression characters in a `dart test --name` value.
+String _escapeRegex(String input) => input.replaceAllMapped(
+  RegExp(r'[.*+?^${}()|[\]\\]'),
+  (match) => '\\${match.group(0)}',
 );
-
-List<RunFolder> _ordered(List<RunFolder> natures) {
-  int rank(RunFolder n) => switch (n) {
-    TypeScriptFolder() => 0,
-    JavaScriptFolder() => 1,
-    PythonFolder() => 2,
-    JavaFolder() => 3,
-    GoFolder() => 4,
-    RustFolder() => 5,
-    CppFolder() => 6,
-    CFolder() => 7,
-    _ => 8,
-  };
-  return [...natures]..sort((a, b) => rank(a).compareTo(rank(b)));
-}
-
-/// Whether the project's package.json names jest as a dependency.
-bool _usesJest(String projectPath) {
-  final file = File(p.join(projectPath, 'package.json'));
-  if (!file.existsSync()) return false;
-  try {
-    final json = jsonDecode(file.readAsStringSync());
-    if (json is! Map) return false;
-    for (final key in ['dependencies', 'devDependencies']) {
-      final deps = json[key];
-      if (deps is Map && deps.containsKey('jest')) return true;
-    }
-  } on FormatException {
-    return false;
-  }
-  return false;
-}

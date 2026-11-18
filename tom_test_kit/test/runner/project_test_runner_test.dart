@@ -52,6 +52,7 @@ void main() {
       ]);
       expect(py.command, 'python3 -m pytest -q --junitxml={report}');
       expect(py.format, ReportFormat.junit);
+      write('pom.xml', '<project/>');
       final mvn = commandRunner([
         JavaFolder(
           folder,
@@ -61,6 +62,7 @@ void main() {
       ]);
       expect(mvn.command, 'mvn -B test');
       expect(mvn.reportPath, 'target/surefire-reports/TEST-*.xml');
+      File(p.join(project.path, 'pom.xml')).deleteSync();
       final gradle = commandRunner([
         JavaFolder(
           folder,
@@ -72,7 +74,7 @@ void main() {
       expect(gradle.reportPath, 'build/test-results/test/*.xml');
       final js = commandRunner([JavaScriptFolder(folder)]);
       expect(js.command, contains('node --test --test-reporter=junit'));
-      expect(js.origin, 'default (javascript)');
+      expect(js.origin, 'runner node-test, built-in');
     });
   });
 

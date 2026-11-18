@@ -839,7 +839,7 @@ testkit -s . -r :test --coverage        # every project of the workspace
 - **Flutter packages** run `flutter test --coverage
   --coverage-path=coverage/lcov.info`.
 - A project with another runner (a `testkit:` section, a `test:` step, a
-  language default) runs without coverage, with a note.
+  runner template) runs without coverage, with a note.
 
 The lcov report is written to `coverage/lcov.info` in the project (a report
 left by an earlier run is deleted first); add `coverage/` to the project's
@@ -1043,20 +1043,34 @@ The runner of a project is the first that applies:
 
 | # | Source | Runner | Report |
 | - | ------ | ------ | ------ |
-| 1 | `testkit:` section of `buildkit.yaml` | its `command:` | its `report:` (default `testkit`), at `report-path:` or `{report}` |
+| 1 | `testkit:` section of `buildkit.yaml` | its `runner:` (a template, changed by the section's other keys), else its `command:` | the template's, or its `report:` (default `testkit`), at `report-path:` or `{report}` |
 | 2 | Dart or Flutter project | `dart test` / `flutter test` | package:test JSON |
 | 3 | `test:` step of `buildkit.yaml` | the step's command(s) | testkit line protocol in `$TESTKIT_REPORT` |
-| 4 | Go | `go test -json ./...` | `go-json` on the output |
-| 4 | Rust | `cargo test --no-fail-fast` | `libtest` text on the output |
-| 4 | Python | `python3 -m pytest -q --junitxml={report}` | `junit` |
-| 4 | Java, Maven | `mvn -B test` | `junit`, `target/surefire-reports/TEST-*.xml` |
-| 4 | Java, Gradle | `./gradlew test` (or `gradle test`) | `junit`, `build/test-results/test/*.xml` |
-| 4 | JavaScript / TypeScript with jest | `npx jest --json --outputFile={report}` | `jest-json` |
-| 4 | JavaScript | `node --test --test-reporter=junit --test-reporter-destination={report}` | `junit` |
+| 4 | a [runner template](#runner-templates) whose `applies:` holds | the template's `command:` | the template's `report:` |
 
-C, C++ and TypeScript without jest have no default: such a project needs a
-`test:` step or a `testkit:` section, and testkit says so. A `--dry-run` names
-the runner each project gets.
+testkit's built-in templates, tried in this order after the project's and the
+workspace's own:
+
+| Template | Applies to | Command | Report | Selects by name |
+| -------- | ---------- | ------- | ------ | --------------- |
+| `jest` | TypeScript or JavaScript with jest in `package.json` | `npx jest --json --outputFile={report}` | `jest-json` | `-t '(<names>)$'` |
+| `node-test` | JavaScript | `node --test --test-reporter=junit --test-reporter-destination={report}` | `junit` | `--test-name-pattern '(<names>)$'` |
+| `pytest` | Python | `python3 -m pytest -q --junitxml={report}` | `junit` | `-k '<a> or <b>'` (a parametrized test by its function) |
+| `maven` | Java with a `pom.xml` | `mvn -B test` | `junit`, `target/surefire-reports/TEST-*.xml` | no |
+| `gradle-wrapper` | Java with a `gradlew` | `./gradlew test` | `junit`, `build/test-results/test/*.xml` | no |
+| `gradle` | Java | `gradle test` | `junit`, `build/test-results/test/*.xml` | no |
+| `go-test` | Go | `go test -json ./...` | `go-json` on the output | `-run '^(<names>)$'` (a subtest by its test) |
+| `cargo-test` | Rust | `cargo test --no-fail-fast` | `libtest` text on the output | `-- --exact <name> <name>` |
+
+C, C++ and TypeScript without jest have no built-in template: such a project
+needs a `test:` step, a `testkit:` section or a template of its own, and
+testkit says so. A `--dry-run` names the runner each project gets, with the
+template and where it is defined:
+
+```text
+>>> py
+  -> :baseline [DRY RUN] Would run uv run pytest -q --junitxml={report} [runner pytest-uv, buildkit_master.yaml] ...
+```
 
 ```yaml
 # buildkit.yaml — a CMake project with CTest
@@ -1070,6 +1084,58 @@ the command, `testlog/last_testrun_report.<xml|json|jsonl>`; the same path is
 in the environment as `TESTKIT_REPORT`. A report file left by an earlier run is
 deleted first, so a run that writes none records nothing. `--test-args` are
 appended to the command.
+
+### Runner templates
+
+A template describes a runner by configuration: its command, its report, how
+it selects tests by name and when it applies. Besides the built-ins above, the
+workspace has its own under `testkit: runners:` in `buildkit_master.yaml`, and
+a project under `testkit: runners:` in its `buildkit.yaml`:
+
+```yaml
+# buildkit_master.yaml
+testkit:
+  runners:
+    pytest-uv:                         # a new template
+      command: uv run pytest -q --junitxml={report}
+      report: junit
+      filter: {args: [-k, "{names}"], join: " or ", regex: false, cut: "["}
+      applies: {nature: python, files: [uv.lock]}
+    ctest:
+      command: ctest --test-dir build --output-junit {report}
+      report: junit
+      applies: {nature: [c, cpp], contains: {CMakeLists.txt: enable_testing}}
+    go-test:                           # changes the built-in
+      command: gotestsum --jsonfile {report} -- ./...
+```
+
+| Key | Meaning |
+| --- | ------- |
+| `command` | The shell command, run in the project; `{report}` is the report file's path. |
+| `report` | `testkit`, `junit`, `go-json`, `libtest` or `jest-json` (default `testkit`). |
+| `report-path` | Where the report lands, relative to the project (a glob for several files), when not at `{report}`. |
+| `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`). Without `filter` every test runs. |
+| `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression), `dependency` (`package.json` names one of them). Without `applies` a template only runs when a project names it. |
+
+**Which template.** A project names one with `runner:`; the section's
+`command:`, `report:`, `report-path:` and `filter:` then change it for that
+project:
+
+```yaml
+# buildkit.yaml
+testkit:
+  runner: pytest
+  command: uv run pytest -q --junitxml={report}   # filter and report stay pytest's
+```
+
+Without `runner:` (and without `command:`), testkit tries the templates in
+this order and takes the first whose `applies:` holds: the project's own
+`runners:`, the workspace's, then the built-ins in the order of the table
+above. A template named like one further down replaces it in its place and
+takes every key it leaves out from it, so the workspace's `go-test` above
+keeps the built-in's report and filter. A template that is not well-formed (an
+unknown report or nature, a filter without `{names}` / `{name}`, an
+`applies:` without a condition) stops the project's run with the reason.
 
 ### The line protocol
 
@@ -1121,6 +1187,8 @@ python3 tests/parser_test.py; tk_result tests/parser_test.py $?
   incomplete in the same way.
 - **No test.** A run that reports no test records nothing; the message quotes
   the last lines of the runner's output.
-- **Selection.** Only `dart test` selects single tests by name: `--failed` and
-  `--mismatched` run every test of another runner (and say so), and all their
-  results are recorded.
+- **Selection.** `--failed` and `--mismatched` select single tests by name
+  with `dart test` and with every template that declares a `filter:`; the
+  name handed over is the test's name without the `<group> > ` a name
+  reported twice is written with. A runner without a filter runs every test
+  (and says so), and all its results are recorded.

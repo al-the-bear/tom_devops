@@ -1,3 +1,37 @@
+## 1.12.0
+
+### Added — test-runner templates
+
+A runner is a named template: its command (with `{report}`), its report
+format and path, how it selects tests by name (`filter:`) and when it applies
+(`applies:` by nature, files, file contents or a `package.json` dependency).
+
+- The language defaults are built-in templates: `jest`, `node-test`,
+  `pytest`, `maven`, `gradle-wrapper`, `gradle`, `go-test`, `cargo-test`,
+  tried in that order.
+- The workspace adds or changes templates under `testkit: runners:` in
+  `buildkit_master.yaml`, a project under `testkit: runners:` in its
+  `buildkit.yaml`; they are tried before the built-ins, and a template named
+  like one further down replaces it in its place and keeps the keys it leaves
+  out.
+- A project picks one with `testkit: runner: <name>`; the section's
+  `command:`, `report:`, `report-path:` and `filter:` change it.
+- `--failed` / `--mismatched` select tests by name with every template that
+  declares a `filter:` (the built-ins jest, node-test, pytest, go-test and
+  cargo-test do), no longer only with `dart test`.
+- `--dry-run` names the template and where it is defined
+  (`[runner pytest-uv, buildkit_master.yaml]`).
+- New API: `RunnerTemplate`, `NameFilter`, `AppliesWhen`, `RunnerTemplates`,
+  `builtInRunnerTemplates`; `ProjectTestRunner.selectionName` /
+  `selectArgs`.
+
+### Changed
+
+- Maven is detected by a `pom.xml` in the project (the `maven` template),
+  Gradle with a wrapper by a `gradlew`, as the nature detector itself does.
+- A TypeScript project without jest that also has another language now gets
+  that language's template instead of the TypeScript message.
+
 ## 1.11.6
 
 ### Fixed — a `testkit:` section of only defines

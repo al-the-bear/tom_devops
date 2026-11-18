@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:path/path.dart' as p;
 
+import '../model/test_entry.dart';
 import '../model/test_run.dart';
 import '../model/tracking_file.dart';
 import '../model/test_run_results.dart';
@@ -24,7 +25,8 @@ class TestCommand {
   /// [createBaseline] if true, creates a baseline when no tracking file exists.
   /// [failedOnly] if true, only re-run failed tests (X/OK, X/X).
   /// [mismatchedOnly] if true, only re-run tests that don't match expectation
-  ///   (X/OK, OK/X). Only `dart test` selects tests by name; another runner
+  ///   (X/OK, OK/X). `dart test` and a runner template with a `filter:`
+  ///   select tests by name ([ProjectTestRunner.selectArgs]); another runner
   ///   runs every test, and all of them are recorded.
   /// [noUpdate] if true, runs tests and prints summary without updating
   ///   baseline.
@@ -105,7 +107,7 @@ class TestCommand {
         tracking,
         failedOnly: failedOnly,
         mismatchedOnly: mismatchedOnly,
-      );
+      ).map(runner.selectionName).toList();
 
       if (filterNames.isEmpty) {
         print('  No tests match the filter criteria.');
@@ -116,12 +118,9 @@ class TestCommand {
         print('  Filtering to ${filterNames.length} test(s)');
       }
 
-      // Add --name patterns to filter tests
-      for (final name in filterNames) {
-        // Escape regex special characters in test name
-        final escaped = _escapeRegex(name);
-        effectiveTestArgs.addAll(['--name', '^$escaped\$']);
-      }
+      // The runner's own way of selecting tests by name: `--name` patterns
+      // for dart test, a template's filter: arguments for the others.
+      effectiveTestArgs.addAll(runner.selectArgs(filterNames));
     }
 
     final results = await runner.run(
@@ -235,11 +234,11 @@ class TestCommand {
     return problem == null && failedTests == 0;
   }
 
-  /// Returns test names that should be re-run based on filter criteria.
+  /// Returns the tests that should be re-run based on filter criteria.
   ///
   /// [failedOnly] selects tests with X/OK or X/X results (failed tests).
   /// [mismatchedOnly] selects tests with X/OK or OK/X results (mismatched).
-  static List<String> _getFilteredTestNames(
+  static List<TestEntry> _getFilteredTestNames(
     TrackingFile tracking, {
     required bool failedOnly,
     required bool mismatchedOnly,
@@ -247,7 +246,7 @@ class TestCommand {
     if (tracking.runs.isEmpty) return [];
 
     final latestRun = tracking.runs.last;
-    final names = <String>[];
+    final names = <TestEntry>[];
 
     for (final entry in tracking.entries.entries) {
       final fullDescription = entry.key;
@@ -268,19 +267,11 @@ class TestCommand {
 
       if ((failedOnly && isFailedTest) ||
           (mismatchedOnly && isMismatchedTest)) {
-        names.add(fullDescription);
+        names.add(testEntry);
       }
     }
 
     return names;
-  }
-
-  /// Escapes regex special characters in a string.
-  static String _escapeRegex(String input) {
-    return input.replaceAllMapped(
-      RegExp(r'[.*+?^${}()|[\]\\]'),
-      (match) => '\\${match.group(0)}',
-    );
   }
 
   /// Computes summary statistics comparing results against expectations.

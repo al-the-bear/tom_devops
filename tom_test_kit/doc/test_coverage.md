@@ -59,7 +59,12 @@ handle for regression tracking.
 | 26 | [`:mutations` command](#26-mutations-command) | 10 | 10✅ | `tracking/mutations_command_test.dart` | `TK-MUT` |
 | 27 | [Line coverage](#27-line-coverage) | 6 | 6✅ | `tracking/coverage_test.dart` | `TK-COV` |
 | 28 | [Workspace report](#28-workspace-report) | 6 | 6✅ | `tracking/report_test.dart` | `TK-REP` |
-| — | **Total** | **252** | **252✅** | | |
+| 29 | [Project test runner](#29-project-test-runner) | 14 | 14✅ | `runner/project_test_runner_test.dart` | `TK-PTR` |
+| 30 | [Report readers](#30-report-readers) | 9 | 9✅ | `runner/report_parsers_test.dart` | `TK-RPT` |
+| 31 | [Result collector](#31-result-collector) | 4 | 4✅ | `runner/result_collector_test.dart` | `TK-RCL` |
+| 32 | [Runner templates](#32-runner-templates) | 9 | 9✅ | `runner/runner_templates_test.dart` | `TK-RT` |
+| 33 | [`:test --baseline` from the command line](#33-test---baseline-from-the-command-line) | 5 | 5✅ | `v2/test_baseline_flag_test.dart` | `TK-BLF` |
+| — | **Total** | **293** | **293✅** | | |
 
 ---
 
@@ -634,3 +639,90 @@ A fixture package whose tests pin some behaviours and not others, swept for real
 | TK-REP-4 | `--output` takes `.md` / `.json` or `md:` / `json:`, never a file inside `doc/` | ✅ | `dart test --name 'TK-REP-4'` |
 | TK-REP-5 | one table over every project, the untracked one not measured; nothing written into the projects | ✅ | `dart test --name 'TK-REP-5'` |
 | TK-REP-6 | `--output` writes the file; a `doc/` target fails the run | ✅ | `dart test --name 'TK-REP-6'` |
+
+---
+
+## 29. Project test runner
+
+**Test file:** `test/runner/project_test_runner_test.dart` — **ID prefix `TK-PTR`**
+
+Which runner a project gets (`ProjectTestRunner.resolve`) and how a command runner reads its report.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-PTR-1 | the built-in templates per language: go, rust, python, Maven (with a `pom.xml`), Gradle, `node --test` | ✅ | `dart test --name 'TK-PTR-1'` |
+| TK-PTR-2 | jest in `package.json` picks `jest --json`, for JavaScript and TypeScript | ✅ | `dart test --name 'TK-PTR-2'` |
+| TK-PTR-3 | C, C++ and TypeScript without jest have no runner and say what to configure | ✅ | `dart test --name 'TK-PTR-3'` |
+| TK-PTR-4 | a Dart project runs `dart test`, even with a `test:` step | ✅ | `dart test --name 'TK-PTR-4'` |
+| TK-PTR-5 | the `test:` step (one command or a list) writes the line protocol | ✅ | `dart test --name 'TK-PTR-5'` |
+| TK-PTR-6 | a `testkit:` section wins over everything, Dart included | ✅ | `dart test --name 'TK-PTR-6'` |
+| TK-PTR-7 | a section without a command, or with an unknown report, is refused with the reason | ✅ | `dart test --name 'TK-PTR-7'` |
+| TK-PTR-8..10 | a whole cycle through a test script: `:baseline`, `:test`, `--failed` without a filter | ✅ | `dart test --name 'TK-PTR-(8\|9\|10)'` |
+| TK-PTR-11 | a script that writes no report records nothing and quotes its output | ✅ | `dart test --name 'TK-PTR-11'` |
+| TK-PTR-12 | a JUnit report at `report-path` is read; an earlier report is deleted first | ✅ | `dart test --name 'TK-PTR-12'` |
+| TK-PTR-13 | a relative project path and a script that changes directory meet at the report file | ✅ | `dart test --name 'TK-PTR-13'` |
+| TK-PTR-14 | the section's defines are not testkit's | ✅ | `dart test --name 'TK-PTR-14'` |
+
+---
+
+## 30. Report readers
+
+**Test file:** `test/runner/report_parsers_test.dart` — **ID prefix `TK-RPT`**
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-RPT-1 | `go test -json`: every test and subtest, grouped by package; a failed build is a load failure | ✅ | `dart test --name 'TK-RPT-1'` |
+| TK-RPT-2 | `cargo test` libtest text: unit, integration and doc tests by test binary | ✅ | `dart test --name 'TK-RPT-2'` |
+| TK-RPT-3..5 | JUnit XML: pytest, surefire (one file per class), `node --test` (constant classname) | ✅ | `dart test --name 'TK-RPT-[345]'` |
+| TK-RPT-6 | a report that is not XML is a `FormatException` | ✅ | `dart test --name 'TK-RPT-6'` |
+| TK-RPT-7 | jest `--json`: grouped by describe blocks; a file that did not load | ✅ | `dart test --name 'TK-RPT-7'` |
+| TK-RPT-8 | testkit's line protocol | ✅ | `dart test --name 'TK-RPT-8'` |
+| TK-RPT-9 | `ReportFormat` names | ✅ | `dart test --name 'TK-RPT-9'` |
+
+---
+
+## 31. Result collector
+
+**Test file:** `test/runner/result_collector_test.dart` — **ID prefix `TK-RCL`**
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-RCL-1 | counts per result; the raw output and its name are kept | ✅ | `dart test --name 'TK-RCL-1'` |
+| TK-RCL-2 | a name reported in two groups is qualified by its group | ✅ | `dart test --name 'TK-RCL-2'` |
+| TK-RCL-3 | a test reported twice in one group (a retry) is one entry | ✅ | `dart test --name 'TK-RCL-3'` |
+| TK-RCL-4 | an exit code other than 0 with no failing test is a run problem | ✅ | `dart test --name 'TK-RCL-4'` |
+
+---
+
+## 32. Runner templates
+
+**Test file:** `test/runner/runner_templates_test.dart` — **ID prefix `TK-RT`**
+
+Runner templates: the built-ins, the workspace's and a project's `testkit: runners:`, `runner:`, detection by `applies:`, and `filter:` for `--failed`. Every test runs on a scratch workspace with its own `buildkit_master.yaml`.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-RT-1 | every language default is a named built-in; which built-ins select by name; Gradle with a wrapper | ✅ | `dart test --name 'TK-RT-1'` |
+| TK-RT-2 | the name filters of the built-ins (`{names}`, `{name}`, regex escaping, `cut`) | ✅ | `dart test --name 'TK-RT-2'` |
+| TK-RT-3 | `runner:` picks a template; the section changes it; an unknown name is refused | ✅ | `dart test --name 'TK-RT-3'` |
+| TK-RT-4 | the workspace adds a template (detected first) and changes a built-in in its place | ✅ | `dart test --name 'TK-RT-4'` |
+| TK-RT-5 | a project's own templates come first and change the workspace's; `contains:` | ✅ | `dart test --name 'TK-RT-5'` |
+| TK-RT-6 | `dependency:` in `package.json`; TypeScript without jest | ✅ | `dart test --name 'TK-RT-6'` |
+| TK-RT-7 | a template that is not well-formed is refused with the reason | ✅ | `dart test --name 'TK-RT-7'` |
+| TK-RT-8 | `--failed` hands the template's filter the failed test's name, without the suite the tracking file put before it | ✅ | `dart test --name 'TK-RT-8'` |
+| TK-RT-9 | nothing to re-run runs nothing; a template without a filter runs every test | ✅ | `dart test --name 'TK-RT-9'` |
+
+---
+
+## 33. `:test --baseline` from the command line
+
+**Test file:** `test/v2/test_baseline_flag_test.dart` — **ID prefix `TK-BLF`**
+
+A real command line parsed with the tool's own definition and handed to the executor.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-BLF-1 | `--baseline` before or after the command asks for a baseline | ✅ | `dart test --name 'TK-BLF-1'` |
+| TK-BLF-2 | without the flag, no baseline is asked for | ✅ | `dart test --name 'TK-BLF-2'` |
+| TK-BLF-3 | `:test --baseline` in a project without a tracking file creates one | ✅ | `dart test --name 'TK-BLF-3'` |
+| TK-BLF-4 | `:test` alone still refuses, as its message says | ✅ | `dart test --name 'TK-BLF-4'` |

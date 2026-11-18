@@ -14,6 +14,7 @@ export 'src/parser/dart_test_parser.dart';
 export 'src/parser/test_description_parser.dart';
 export 'src/runner/project_test_runner.dart';
 export 'src/runner/report_parsers.dart';
+export 'src/runner/runner_templates.dart';
 export 'src/runner/result_collector.dart';
 export 'src/tracking/baseline_command.dart';
 export 'src/tracking/basediff_command.dart';

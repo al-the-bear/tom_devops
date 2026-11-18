@@ -206,7 +206,8 @@ testkit :test -r          # recurse into every project under the cwd
 
 A non-Dart project's tests run with the first runner that applies:
 
-1. a `testkit:` section in its `buildkit.yaml`:
+1. a `testkit:` section in its `buildkit.yaml`: a runner template by name
+   (`runner: pytest`, its other keys change it), or a command of its own:
 
    ```yaml
    testkit:
@@ -224,19 +225,34 @@ A non-Dart project's tests run with the first runner that applies:
    ```
 
    `result` is `ok`, `fail` or `skip`; `suite` and `group` are optional;
-3. its language's runner: `go test -json ./...`, `cargo test --no-fail-fast`,
-   `python3 -m pytest --junitxml`, Maven / Gradle surefire reports, jest
-   `--json` (when package.json names jest), `node --test` with the JUnit
-   reporter. C, C++ and TypeScript without jest have no default.
+3. the first runner template whose `applies:` holds: the project's own
+   (`testkit: runners:` in `buildkit.yaml`), the workspace's (`testkit:
+   runners:` in `buildkit_master.yaml`), then the built-ins: jest (when
+   package.json names it), `node --test`, pytest, Maven, Gradle, `go test
+   -json`, `cargo test --no-fail-fast`. C, C++ and TypeScript without jest
+   have no built-in template.
+
+   ```yaml
+   # buildkit_master.yaml
+   testkit:
+     runners:
+       ctest:
+         command: ctest --test-dir build --output-junit {report}
+         report: junit
+         applies: {nature: [c, cpp], contains: {CMakeLists.txt: enable_testing}}
+   ```
 
 `{report}` in a command is the report file testkit hands over (also in
 `$TESTKIT_REPORT`), kept as `testlog/last_testrun_report.*`; the runner's
 output is kept as `testlog/last_testrun.txt`. Baselines, `:lastdiff`,
 `:status`, `:history` and `:flaky` read the result columns the same way for
-every language. Only `dart test` selects single tests, so `--failed` /
-`--mismatched` run every test of another runner. A run that exits with an
+every language. `--failed` / `--mismatched` select single tests by name with
+`dart test` and with every template that declares a `filter:` (the built-ins
+jest, node-test, pytest, go-test and cargo-test do); another runner runs every
+test. A run that exits with an
 error although every reported test passed is reported as incomplete. Details:
-[doc/test_tracking.md](doc/test_tracking.md#other-languages).
+[doc/test_tracking.md](doc/test_tracking.md#other-languages) and
+[Runner templates](doc/test_tracking.md#runner-templates).
 
 ### Flutter packages
 
