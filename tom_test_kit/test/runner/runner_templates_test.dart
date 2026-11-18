@@ -5,7 +5,7 @@
 /// project's, the workspace's, then the built-in templates in order; and a
 /// template's `filter:` lets `--failed` / `--mismatched` select tests by name.
 ///
-/// Test IDs: TK-RT-1..9.
+/// Test IDs: TK-RT-1..10.
 library;
 
 import 'dart:io';
@@ -213,7 +213,7 @@ testkit:
       ('x: {command: y, applies: {nature: cobol}}', 'unknown nature cobol'),
       ('x: {command: y, filter: {args: [-k]}}', 'must hold {names}'),
       ('x: {report: junit}', 'needs a command'),
-      ('x: {command: y, report: tap}', 'unknown report "tap"'),
+      ('x: {command: y, report: xunit}', 'unknown report "xunit"'),
       ('x: {command: y, applies: {}}', 'applies: needs'),
     ]) {
       write('pkg/buildkit.yaml', 'testkit:\n  runners:\n    $yaml\n');
@@ -312,5 +312,51 @@ tk t2 pkg_a ok
       );
       expect(args(), '', reason: 'every test runs, no arguments');
     });
+  });
+
+  test('TK-RT-10: a template naming report: tap records per-test results, '
+      'from the output or from the report file [2026-11-18]', () async {
+    final bats = File(
+      p.join('test', 'fixtures', 'reports', 'bats_tap.txt'),
+    ).absolute.path;
+    write('buildkit_master.yaml', '''
+testkit:
+  runners:
+    bats:
+      command: cat "$bats"
+      report: tap
+      filter: {args: [--filter, "^({names})\$"]}
+      applies: {nature: c, files: [test/*.bats]}
+    bats-file:
+      command: cp "$bats" {report}
+      report: tap
+''');
+    write('pkg/test/math.bats', '');
+    final natures = [
+      CFolder(
+        folder,
+        buildSystem: NativeBuildSystem.make,
+        projectFile: 'Makefile',
+      ),
+    ];
+    final fromOutput = runner(natures);
+    expect(fromOutput.origin, 'runner bats, buildkit_master.yaml');
+    expect(fromOutput.format, ReportFormat.tap);
+    final expected = {
+      'addition works': TestResult.ok,
+      'subtraction is wrong': TestResult.fail,
+      'not ready yet': TestResult.skip,
+      'plain skip': TestResult.skip,
+    };
+    expect((await fromOutput.run(projectPath: project))!.run.results, expected);
+
+    write('pkg/buildkit.yaml', 'testkit:\n  runner: bats-file\n');
+    final fromFile = runner(natures);
+    final results = (await fromFile.run(projectPath: project))!;
+    expect(results.run.results, expected);
+    expect(
+      File(p.join(project, 'testlog', 'last_testrun_report.tap')).existsSync(),
+      isTrue,
+    );
   });
 }

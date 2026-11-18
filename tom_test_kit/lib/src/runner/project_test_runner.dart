@@ -8,8 +8,8 @@
 ///    testkit:
 ///      runner: pytest              # a template by name, or:
 ///      command: ./run_tests.sh     # shell command, run in the project
-///      report: testkit             # testkit | junit | go-json | libtest | jest-json
-///      report-path: build/*.xml    # junit / jest-json written elsewhere
+///      report: testkit             # testkit | junit | go-json | libtest | jest-json | tap
+///      report-path: build/*.xml    # a file report written elsewhere
 ///      filter: {args: [-k, '{names}'], join: ' or ', regex: false}
 ///    ```
 ///
@@ -258,6 +258,7 @@ class CommandRunner extends ProjectTestRunner {
         'last_testrun_report.${switch (format) {
           ReportFormat.junit => 'xml',
           ReportFormat.jestJson => 'json',
+          ReportFormat.tap => 'tap',
           _ => 'jsonl',
         }}',
       );
@@ -334,6 +335,17 @@ class CommandRunner extends ProjectTestRunner {
         case ReportFormat.jestJson:
           for (final f in _reportFiles(projectPath, reportFile)) {
             parseJestJson(f.readAsStringSync(), collector);
+          }
+        case ReportFormat.tap:
+          // The report file when the runner wrote one ({report},
+          // report-path:), else its output.
+          final files = _reportFiles(projectPath, reportFile);
+          if (files.isEmpty) {
+            parseTapOutput(output, collector);
+          } else {
+            for (final f in files) {
+              parseTapOutput(f.readAsLinesSync(), collector);
+            }
           }
       }
     } on FormatException catch (e) {

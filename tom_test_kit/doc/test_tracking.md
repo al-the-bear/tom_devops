@@ -1112,7 +1112,7 @@ testkit:
 | Key | Meaning |
 | --- | ------- |
 | `command` | The shell command, run in the project; `{report}` is the report file's path. |
-| `report` | `testkit`, `junit`, `go-json`, `libtest` or `jest-json` (default `testkit`). |
+| `report` | `testkit`, `junit`, `go-json`, `libtest`, `jest-json` or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
 | `report-path` | Where the report lands, relative to the project (a glob for several files), when not at `{report}`. |
 | `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`). Without `filter` every test runs. |
 | `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression), `dependency` (`package.json` names one of them). Without `applies` a template only runs when a project names it. |
@@ -1166,6 +1166,38 @@ tk_result() { # <test name> <exit code>
 }
 python3 tests/parser_test.py; tk_result tests/parser_test.py $?
 ```
+
+### TAP
+
+`report: tap` reads TAP (the Test Anything Protocol, versions 12 to 14), which
+`node --test --test-reporter=tap`, bats (`--tap`, `--formatter tap13`), ava
+`--tap`, prove, tape and C TAP harnesses (libtap) write:
+
+```yaml
+# buildkit_master.yaml
+testkit:
+  runners:
+    bats:
+      command: bats --tap test/
+      report: tap
+      filter: {args: [--filter, "^({names})$"]}
+      applies: {files: [test/*.bats]}
+```
+
+- Each test point (`ok` / `not ok` and its description) is one result; a point
+  without a description is named by its number (`test 3`). `\#` in a
+  description is a `#`.
+- `# SKIP` (any case) skips the test, also on a `not ok` line (bats' TAP 13).
+  `# TODO`: a failing test is an expected failure and recorded as skipped, a
+  passing one as passed.
+- Subtests (indented, often after `# Subtest: <name>`) are grouped by the test
+  point that closes them, `math > nested` for a nested suite; that point is a
+  group, not a test, and is recorded only when it failed although none of its
+  subtests did (a failing hook).
+- YAML diagnostic blocks (`---` ... `...`) and other comments are skipped.
+- `Bail out!` and a plan (`1..N`) that does not match the number of test
+  points at its level make the run incomplete, as a test file that does not
+  load does.
 
 ### What is recorded
 

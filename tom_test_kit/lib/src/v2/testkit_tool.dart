@@ -488,14 +488,17 @@ Result Format:
   OK/X (progress), -/OK (skip), --/OK (absent)
 
 Test Runner (per project):
-  1. a testkit: section in buildkit.yaml (command:, report:, report-path:;
-     report one of testkit, junit, go-json, libtest, jest-json)
+  1. a testkit: section in buildkit.yaml: runner: <template>, or command:,
+     report:, report-path:, filter: (report one of testkit, junit, go-json,
+     libtest, jest-json, tap)
   2. dart test / flutter test (Dart and Flutter projects)
   3. the test: step of buildkit.yaml, writing testkit's line protocol to
      \$TESTKIT_REPORT: one JSON object per line,
      {"test": "<name>", "result": "ok|fail|skip"}
-  4. the language's runner: go test -json, cargo test, pytest --junitxml,
-     Maven / Gradle surefire XML, jest --json, node --test (JUnit)
+  4. the first runner template whose applies: holds: the project's and the
+     workspace's (testkit: runners: in buildkit.yaml / buildkit_master.yaml),
+     then the built-ins jest, node-test, pytest, maven, gradle-wrapper,
+     gradle, go-test, cargo-test
 
 Exit Code (:baseline, :test):
   0  every test passed

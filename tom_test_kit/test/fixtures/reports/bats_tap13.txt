@@ -1,0 +1,11 @@
+TAP version 13
+1..4
+ok 1 addition works
+not ok 2 subtraction is wrong
+  ---
+  message: |
+    (in test file math.bats, line 8)
+      `[ $((2 - 1)) -eq 0 ]' failed
+  ...
+not ok 3 not ready yet # SKIP waiting for the parser
+not ok 4 plain skip # SKIP 

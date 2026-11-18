@@ -158,10 +158,10 @@ testkit:
       (resolve(const []) as RunnerUnavailable).reason,
       contains('needs a command'),
     );
-    write('buildkit.yaml', 'testkit:\n  command: x\n  report: tap\n');
+    write('buildkit.yaml', 'testkit:\n  command: x\n  report: xunit\n');
     expect(
       (resolve(const []) as RunnerUnavailable).reason,
-      contains('unknown report "tap"'),
+      contains('unknown report "xunit"'),
     );
   });
 

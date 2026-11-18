@@ -1,0 +1,7 @@
+1..4
+ok 1 addition works
+not ok 2 subtraction is wrong
+# (in test file math.bats, line 8)
+#   `[ $((2 - 1)) -eq 0 ]' failed
+ok 3 not ready yet # skip waiting for the parser
+ok 4 plain skip # skip

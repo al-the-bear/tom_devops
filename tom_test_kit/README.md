@@ -212,7 +212,7 @@ A non-Dart project's tests run with the first runner that applies:
    ```yaml
    testkit:
      command: ctest --test-dir build --output-junit {report}
-     report: junit            # testkit | junit | go-json | libtest | jest-json
+     report: junit            # testkit | junit | go-json | libtest | jest-json | tap
      report-path: build/*.xml # when the report is not written to {report}
    ```
 

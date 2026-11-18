@@ -1,3 +1,25 @@
+## 1.13.0
+
+### Added — TAP reports
+
+`report: tap` reads TAP (Test Anything Protocol, versions 12 to 14):
+`node --test --test-reporter=tap`, bats, ava, prove, tape, libtap.
+
+- Read from the report file when the command wrote one, else from its output.
+- Each test point is one result.
+- `# SKIP` skips, also on `not ok`; a failing `# TODO` is an expected failure,
+  recorded as skipped.
+- Subtests are grouped by the suite that closes them.
+- YAML blocks are skipped.
+- `Bail out!` and a plan that does not match its test points make the run
+  incomplete.
+- New API: `ReportFormat.tap`, `parseTapOutput`.
+
+### Fixed
+
+- `testkit --help` described the runners as language defaults; it names the
+  runner templates (1.12.0) and the `tap` report.
+
 ## 1.12.0
 
 ### Added — test-runner templates

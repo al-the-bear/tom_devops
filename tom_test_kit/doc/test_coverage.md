@@ -60,11 +60,11 @@ handle for regression tracking.
 | 27 | [Line coverage](#27-line-coverage) | 6 | 6✅ | `tracking/coverage_test.dart` | `TK-COV` |
 | 28 | [Workspace report](#28-workspace-report) | 6 | 6✅ | `tracking/report_test.dart` | `TK-REP` |
 | 29 | [Project test runner](#29-project-test-runner) | 14 | 14✅ | `runner/project_test_runner_test.dart` | `TK-PTR` |
-| 30 | [Report readers](#30-report-readers) | 9 | 9✅ | `runner/report_parsers_test.dart` | `TK-RPT` |
+| 30 | [Report readers](#30-report-readers) | 13 | 13✅ | `runner/report_parsers_test.dart` | `TK-RPT` |
 | 31 | [Result collector](#31-result-collector) | 4 | 4✅ | `runner/result_collector_test.dart` | `TK-RCL` |
-| 32 | [Runner templates](#32-runner-templates) | 9 | 9✅ | `runner/runner_templates_test.dart` | `TK-RT` |
+| 32 | [Runner templates](#32-runner-templates) | 10 | 10✅ | `runner/runner_templates_test.dart` | `TK-RT` |
 | 33 | [`:test --baseline` from the command line](#33-test---baseline-from-the-command-line) | 5 | 5✅ | `v2/test_baseline_flag_test.dart` | `TK-BLF` |
-| — | **Total** | **293** | **293✅** | | |
+| — | **Total** | **298** | **298✅** | | |
 
 ---
 
@@ -678,6 +678,10 @@ Which runner a project gets (`ProjectTestRunner.resolve`) and how a command runn
 | TK-RPT-7 | jest `--json`: grouped by describe blocks; a file that did not load | ✅ | `dart test --name 'TK-RPT-7'` |
 | TK-RPT-8 | testkit's line protocol | ✅ | `dart test --name 'TK-RPT-8'` |
 | TK-RPT-9 | `ReportFormat` names | ✅ | `dart test --name 'TK-RPT-9'` |
+| TK-RPT-10 | TAP from `node --test` (real): subtests grouped by their suites, SKIP, TODO, YAML blocks | ✅ | `dart test --name 'TK-RPT-10'` |
+| TK-RPT-11 | TAP from bats `--tap` and `--formatter tap13` (real) | ✅ | `dart test --name 'TK-RPT-11'` |
+| TK-RPT-12 | TAP: `Bail out!` and a plan that does not match are load failures | ✅ | `dart test --name 'TK-RPT-12'` |
+| TK-RPT-13 | TAP 14 subtests without a comment, a failing group, unnamed points, an escaped `#` | ✅ | `dart test --name 'TK-RPT-13'` |
 
 ---
 
@@ -711,6 +715,7 @@ Runner templates: the built-ins, the workspace's and a project's `testkit: runne
 | TK-RT-7 | a template that is not well-formed is refused with the reason | ✅ | `dart test --name 'TK-RT-7'` |
 | TK-RT-8 | `--failed` hands the template's filter the failed test's name, without the suite the tracking file put before it | ✅ | `dart test --name 'TK-RT-8'` |
 | TK-RT-9 | nothing to re-run runs nothing; a template without a filter runs every test | ✅ | `dart test --name 'TK-RT-9'` |
+| TK-RT-10 | a template naming `report: tap` records per-test results, from the output or the report file | ✅ | `dart test --name 'TK-RT-10'` |
 
 ---
 
