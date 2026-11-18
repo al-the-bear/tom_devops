@@ -1,3 +1,28 @@
+## 1.17.0
+
+### Added — the other Go and Rust runners
+
+- New built-in templates:
+  - `ginkgo`: every suite into one JUnit report (`--keep-going`); it selects
+    no single specs, as ginkgo reports the specs `--focus` leaves out as
+    skipped.
+  - `gotestsum`: its JUnit report, with go test's `-run` filter.
+  - `cargo-nextest`: a JUnit report through the `testkit` profile of a
+    bundled tool config (`{script:nextest-testkit}`), `-- --exact` filter.
+  - `cargo-test-json`: libtest's JSON events on a nightly toolchain.
+- `report: libtest-json` reads libtest's JSON events, also nextest's
+  `--message-format libtest-json`.
+- `{go-tool:<name>}`: `go tool <name>` when `go.mod` declares the tool, else
+  `<name>`. `{cargo-workspace}`: `--workspace` for a Cargo workspace.
+
+### Changed
+
+- `cargo-test` runs every member of a Cargo workspace whose root is a
+  package (`--workspace`).
+- In a Cargo workspace, binaries of several crates that cargo names alike
+  (`unittests src/lib.rs`) are grouped apart: `unittests src/lib.rs
+  (alpha)`. A single crate keeps its groups.
+
 ## 1.16.0
 
 ### Added — the common JVM runners

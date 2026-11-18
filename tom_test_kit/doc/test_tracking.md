@@ -1077,8 +1077,12 @@ workspace's own:
 | `gradle` | Java or Kotlin with `build.gradle(.kts)` or `settings.gradle(.kts)` | `{gradle} testkitTests --init-script {script:gradle-testkit}` | `junit`, `**/build/test-results/**/*.xml` | `-Ptestkit.tests=<Class.method\|...>` |
 | `sbt2` | Scala whose `project/build.properties` names sbt 2 | `sbt -batch testFull` | `junit`, `**/target/**/test-reports/TEST-*.xml` | no |
 | `sbt` | Scala (`build.sbt`) | `sbt -batch test` | `junit`, `**/target/**/test-reports/TEST-*.xml` | no |
+| `ginkgo` | Go whose `go.mod` requires `github.com/onsi/ginkgo/v2` | `{go-tool:ginkgo} -r --keep-going --junit-report={report}` | `junit` | no (see below) |
+| `gotestsum` | Go with gotestsum as a module tool (`tool` in `go.mod`), or named in a `Makefile`, `Taskfile.yml` or `justfile` | `{go-tool:gotestsum} --junitfile {report} -- ./...` | `junit` | as `go-test` |
 | `go-test` | Go | `go test -json ./...` | `go-json` on the output | `-run '^(<names>)$'` (a subtest by its test) |
-| `cargo-test` | Rust | `cargo test --no-fail-fast` | `libtest` text on the output | `-- --exact <name> <name>` |
+| `cargo-nextest` | Rust with `.config/nextest.toml` | `cargo nextest run {cargo-workspace} --no-fail-fast` with the JUnit profile of a bundled tool config | `junit`, `target/nextest/testkit/junit.xml` | `-- --exact <name> <name>` |
+| `cargo-test-json` | Rust on a nightly toolchain (`rust-toolchain` / `rust-toolchain.toml` names `nightly`) | `cargo test {cargo-workspace} --no-fail-fast -- -Z unstable-options --format json` | `libtest-json` on the output | `--exact <name> <name>` |
+| `cargo-test` | Rust | `cargo test {cargo-workspace} --no-fail-fast` | `libtest` text on the output | `-- --exact <name> <name>` |
 
 C, C++ and a TypeScript project with none of these runners have no built-in
 template: such a project needs a `test:` step, a `testkit:` section or a
@@ -1102,8 +1106,51 @@ Notes on the JavaScript / TypeScript runners (checked with vitest 5.1, mocha
   `node_modules`. ts-node 10 needs TypeScript 5 (not the native TypeScript 7).
   For tests compiled to JavaScript first, a project names a template of its
   own, e.g. `command: npx tsc && node --test --test-reporter=junit
-  --test-reporter-destination={report} 'dist/**/*.test.js'`. A `--dry-run` names the runner each project gets, with the
-template and where it is defined:
+  --test-reporter-destination={report} 'dist/**/*.test.js'`.
+
+Notes on the Go and Rust runners (checked with Go 1.26, gotestsum 1.13,
+ginkgo 2.34, cargo 1.96 and cargo-nextest 0.9):
+
+- **Module tools.** `{go-tool:<name>}` runs `go tool <name>` when the
+  project's `go.mod` declares the tool (Go 1.24+: `tool <path>`, or the path
+  in a `tool ( ... )` block), else `<name>` from the PATH. A gotestsum or
+  ginkgo that is only required is not run with `go tool`.
+- **gotestsum** writes a JUnit report: one entry per test and subtest,
+  grouped by package. A package that does not build is a failing `TestMain`
+  in its package (`go test -json` reports it as a file that failed to load).
+- **ginkgo** runs every suite under the project (`-r`) into one JUnit
+  report; a spec is named as ginkgo names it, `[It] Book with pages counts
+  them`, grouped by its suite. Pending and skipped specs are skipped. It
+  selects no single specs: ginkgo writes the specs `--focus` leaves out as
+  skipped, so a filtered run would record specs that did not run.
+- **Build tags and the race detector** go into the command of the template
+  a project names; its report and filter stay:
+
+  ```yaml
+  testkit:
+    runner: go-test
+    command: go test -json -race -tags integration ./...
+  ```
+
+- **A Cargo workspace.** `{cargo-workspace}` is `--workspace` when the
+  project's `Cargo.toml` declares a workspace (`[workspace]` or a
+  `[workspace.<key>]` table), so every member runs, also when the root is a
+  package of its own; a single crate or a member runs only itself. When
+  binaries of several crates have the same name in cargo's output
+  (`unittests src/lib.rs`), each group gets the binary's name after it:
+  `unittests src/lib.rs (alpha)`.
+- **cargo-nextest** writes its JUnit report with the `testkit` profile of
+  the tool config testkit bundles (`{script:nextest-testkit}`, written to
+  `testlog/`); the profile is based on the project's `default` profile, so
+  the project's own settings hold. Its JUnit report leaves ignored tests out
+  and nextest runs no doc tests. The report is under the project's
+  `target/`: a project that sets another target directory names
+  `report-path:`. nextest's `--message-format libtest-json` (with
+  `NEXTEST_EXPERIMENTAL_LIBTEST_JSON=1`) is read by `report: libtest-json`
+  too, each test grouped by its binary (`alpha::api`).
+- **libtest's JSON** (`cargo-test-json`) needs a nightly toolchain:
+  `-Z unstable-options` is refused on stable. Its filter goes after the
+  command's own `--`.
 
 Notes on the JVM runners (checked with Maven 3.8 (surefire and failsafe 3.5),
 Gradle 9.9, sbt 2.1, JUnit 5.11, kotest 5.9, ScalaTest 3.2, TestNG 7.10 and
@@ -1172,6 +1219,9 @@ Notes on the Python runners (checked with Python 3.9 and 3.11, pytest 8.4, nose2
   `tox.ini` passes `{posargs}` / the `noxfile.py` passes `session.posargs`;
   the templates apply only then.
 
+A `--dry-run` names the runner each project gets, with the template and where
+it is defined:
+
 ```text
 >>> py
   -> :baseline [DRY RUN] Would run uv run pytest -q --junitxml={report} [runner pytest-uv, buildkit_master.yaml] ...
@@ -1211,13 +1261,13 @@ testkit:
       report: junit
       applies: {nature: [c, cpp], contains: {CMakeLists.txt: enable_testing}}
     go-test:                           # changes the built-in
-      command: gotestsum --jsonfile {report} -- ./...
+      command: go test -json -race ./...
 ```
 
 | Key | Meaning |
 | --- | ------- |
-| `command` | The shell command, run in the project; `{report}` is the report file's path, `{python}` the project's Python (its environment, see above), `{gradle}` the nearest Gradle wrapper, else `gradle`, `{script:<name>}` the path of a script testkit bundles (`unittest`, `jasmine-junit`, `gradle-testkit`), written to `testlog/` first. |
-| `report` | `testkit`, `junit`, `go-json`, `libtest`, `jest-json`, `mocha-json`, `testng` (TestNG's `testng-results.xml`) or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
+| `command` | The shell command, run in the project; `{report}` is the report file's path, `{python}` the project's Python (its environment, see above), `{gradle}` the nearest Gradle wrapper, else `gradle`, `{go-tool:<name>}` the module's Go tool (`go tool <name>`) when `go.mod` declares it, else `<name>`, `{cargo-workspace}` `--workspace` for a Cargo workspace, else nothing, `{script:<name>}` the path of a script testkit bundles (`unittest`, `jasmine-junit`, `gradle-testkit`, `nextest-testkit`), written to `testlog/` first. |
+| `report` | `testkit`, `junit`, `go-json`, `libtest`, `libtest-json` (libtest's JSON events on the output), `jest-json`, `mocha-json`, `testng` (TestNG's `testng-results.xml`) or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
 | `report-path` | Where the report lands, relative to the project (a glob for several files), when not at `{report}`. |
 | `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`); `tail` keeps what follows the last occurrence of a text (` > `); `each` is a list of arguments repeated once per name, `{name}` replaced (`[--match, "{name}"]`), after `args` (either may be left out); `qualify` hands each name with its group before it, joined by a text (`.`: `tests.test_calc.TestCalc.test_adds`), for a runner that selects by qualified name. Without `filter` every test runs. |
 | `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `scala`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression; a glob as the file: one of its matches), `dependency` (`package.json` names one of them), `scripts` (each named `package.json` script exists and matches its regular expression, `{test: jest}`), `any` (a list of such condition sets, one of which holds besides the others). Without `applies` a template only runs when a project names it. |

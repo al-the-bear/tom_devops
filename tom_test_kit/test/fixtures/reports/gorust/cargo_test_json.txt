@@ -1,0 +1,39 @@
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.00s
+     Running unittests src/lib.rs (target/debug/deps/alpha-eaad13c2a049b676)
+{ "type": "suite", "event": "started", "test_count": 3 }
+{ "type": "test", "event": "started", "name": "tests::adds" }
+{ "type": "test", "event": "started", "name": "tests::later" }
+{ "type": "test", "event": "started", "name": "tests::subtracts_wrongly" }
+{ "type": "test", "name": "tests::later", "event": "ignored" }
+{ "type": "test", "name": "tests::adds", "event": "ok", "exec_time": 0.000001042 }
+{ "type": "test", "name": "tests::subtracts_wrongly", "event": "failed", "exec_time": 0.000209417, "stdout": "\nthread 'tests::subtracts_wrongly' (78062977) panicked at alpha/src/lib.rs:13:30:\nassertion `left == right` failed\n  left: 1\n right: 0\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n" }
+{ "type": "suite", "event": "failed", "passed": 1, "failed": 1, "ignored": 1, "measured": 0, "filtered_out": 0, "exec_time": 0.001404583 }
+error: test failed, to rerun pass `-p alpha --lib`
+     Running tests/api.rs (target/debug/deps/api-d0fa4d9ad86e3d09)
+{ "type": "suite", "event": "started", "test_count": 1 }
+{ "type": "test", "event": "started", "name": "api_adds" }
+{ "type": "test", "name": "api_adds", "event": "ok", "exec_time": 0.000001 }
+{ "type": "suite", "event": "ok", "passed": 1, "failed": 0, "ignored": 0, "measured": 0, "filtered_out": 0, "exec_time": 0.000289083 }
+     Running unittests src/lib.rs (target/debug/deps/beta-9058f028a0da308e)
+{ "type": "suite", "event": "started", "test_count": 1 }
+{ "type": "test", "event": "started", "name": "tests::adds" }
+{ "type": "test", "name": "tests::adds", "event": "ok", "exec_time": 0.000000458 }
+{ "type": "suite", "event": "ok", "passed": 1, "failed": 0, "ignored": 0, "measured": 0, "filtered_out": 0, "exec_time": 0.000658291 }
+     Running unittests src/lib.rs (target/debug/deps/rws-f9ab3a2c74edb075)
+{ "type": "suite", "event": "started", "test_count": 1 }
+{ "type": "test", "event": "started", "name": "tests::root_is_one" }
+{ "type": "test", "name": "tests::root_is_one", "event": "ok", "exec_time": 0.0000005 }
+{ "type": "suite", "event": "ok", "passed": 1, "failed": 0, "ignored": 0, "measured": 0, "filtered_out": 0, "exec_time": 0.000207459 }
+   Doc-tests alpha
+{ "type": "suite", "event": "started", "test_count": 1 }
+{ "type": "test", "event": "started", "name": "alpha/src/lib.rs - add (line 3)" }
+{ "type": "test", "name": "alpha/src/lib.rs - add (line 3)", "event": "ok", "exec_time": 0.342530208 }
+{ "type": "suite", "event": "ok", "passed": 1, "failed": 0, "ignored": 0, "measured": 0, "filtered_out": 0, "exec_time": 0.34303575 }
+   Doc-tests beta
+{ "type": "suite", "event": "started", "test_count": 0 }
+{ "type": "suite", "event": "ok", "passed": 0, "failed": 0, "ignored": 0, "measured": 0, "filtered_out": 0, "exec_time": 0.00003725 }
+   Doc-tests rws
+{ "type": "suite", "event": "started", "test_count": 0 }
+{ "type": "suite", "event": "ok", "passed": 0, "failed": 0, "ignored": 0, "measured": 0, "filtered_out": 0, "exec_time": 0.000047125 }
+error: 1 target failed:
+    `-p alpha --lib`

@@ -189,6 +189,7 @@ void main() {
       'testkit',
       'go-json',
       'libtest',
+      'libtest-json',
       'junit',
       'jest-json',
       'mocha-json',

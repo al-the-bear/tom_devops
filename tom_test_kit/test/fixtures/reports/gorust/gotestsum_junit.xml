@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites tests="7" failures="4" errors="1" time="0.268002">
+	<testsuite tests="0" failures="0" time="0.000000" name="" timestamp="0001-01-01T00:00:00Z">
+	</testsuite>
+	<testsuite tests="0" failures="0" time="0.000000" name="example.com/gop/broken" timestamp="2026-11-18T12:26:40+01:00">
+		<testcase classname="" name="TestMain" time="0.000000">
+			<failure message="Failed" type="">FAIL&#x9;example.com/gop/broken [build failed]&#xA;</failure>
+		</testcase>
+	</testsuite>
+	<testsuite tests="6" failures="3" skipped="1" time="0.173000" name="example.com/gop/calc" timestamp="2026-11-18T12:26:40+01:00">
+		<testcase classname="example.com/gop/calc" name="TestSubtractWrongly" time="0.000000">
+			<failure message="Failed" type="">=== RUN   TestSubtractWrongly&#xA;    calc_test.go:13: 2 - 1 is not 0&#xA;--- FAIL: TestSubtractWrongly (0.00s)&#xA;</failure>
+		</testcase>
+		<testcase classname="example.com/gop/calc" name="TestTable/wrong" time="0.000000">
+			<failure message="Failed" type="">=== RUN   TestTable/wrong&#xA;    calc_test.go:21: 4&#xA;--- FAIL: TestTable/wrong (0.00s)&#xA;</failure>
+		</testcase>
+		<testcase classname="example.com/gop/calc" name="TestTable" time="0.000000">
+			<failure message="Failed" type="">=== RUN   TestTable&#xA;--- FAIL: TestTable (0.00s)&#xA;</failure>
+		</testcase>
+		<testcase classname="example.com/gop/calc" name="TestLater" time="0.000000">
+			<skipped message="=== RUN   TestLater&#xA;    calc_test.go:27: not ready&#xA;--- SKIP: TestLater (0.00s)&#xA;"></skipped>
+		</testcase>
+		<testcase classname="example.com/gop/calc" name="TestAdd" time="0.000000"></testcase>
+		<testcase classname="example.com/gop/calc" name="TestTable/small" time="0.000000"></testcase>
+	</testsuite>
+	<testsuite tests="1" failures="0" time="0.000000" name="example.com/gop/strs" timestamp="2026-11-18T12:26:40+01:00">
+		<testcase classname="example.com/gop/strs" name="TestAdd" time="0.000000"></testcase>
+	</testsuite>
+</testsuites>

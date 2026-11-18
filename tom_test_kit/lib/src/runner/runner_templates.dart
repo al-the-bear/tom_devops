@@ -691,26 +691,98 @@ const builtInRunnerTemplates = <RunnerTemplate>[
     source: 'built-in',
   ),
   RunnerTemplate(
+    name: 'ginkgo',
+    // Every suite under the project into one JUnit report; a failing suite
+    // does not stop the others. No name filter: ginkgo writes the specs
+    // --focus leaves out as skipped, so a filtered run would record tests
+    // that did not run.
+    command: '{go-tool:ginkgo} -r --keep-going --junit-report={report}',
+    format: ReportFormat.junit,
+    applies: AppliesWhen(
+      natures: {'go'},
+      contains: {'go.mod': r'github\.com/onsi/ginkgo/v2\b'},
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'gotestsum',
+    command: '{go-tool:gotestsum} --junitfile {report} -- ./...',
+    format: ReportFormat.junit,
+    filter: _goRunFilter,
+    applies: AppliesWhen(
+      natures: {'go'},
+      any: [
+        // A tool of the module (Go 1.24+: `tool gotest.tools/gotestsum`, or
+        // the path in a `tool ( ... )` block).
+        AppliesWhen(
+          contains: {'go.mod': r'^\s*(tool\s+)?gotest\.tools/gotestsum\s*$'},
+        ),
+        AppliesWhen(
+          contains: {
+            '{Makefile,makefile,GNUmakefile,Taskfile.yml,Taskfile.yaml,justfile,Justfile}':
+                r'\bgotestsum\b',
+          },
+        ),
+      ],
+    ),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
     name: 'go-test',
     command: 'go test -json ./...',
     format: ReportFormat.goJson,
     // -run splits a pattern at `/` into one per subtest level: a subtest is
     // selected by the test it belongs to.
-    filter: NameFilter(args: ['-run', '^($namesPlaceholder)\$'], cut: '/'),
+    filter: _goRunFilter,
     applies: AppliesWhen(natures: {'go'}),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'cargo-nextest',
+    // The testkit profile of the bundled tool config writes the JUnit report;
+    // the project's own profiles stay as they are.
+    command:
+        'cargo nextest run {cargo-workspace} --no-fail-fast '
+        '--tool-config-file testkit:{script:nextest-testkit} --profile testkit',
+    format: ReportFormat.junit,
+    reportPath: 'target/nextest/testkit/junit.xml',
+    filter: NameFilter(args: ['--', '--exact', namePlaceholder], regex: false),
+    applies: AppliesWhen(natures: {'rust'}, files: ['.config/nextest.toml']),
+    source: 'built-in',
+  ),
+  RunnerTemplate(
+    name: 'cargo-test-json',
+    // libtest's JSON events, which need a nightly toolchain.
+    command:
+        'cargo test {cargo-workspace} --no-fail-fast -- '
+        '-Z unstable-options --format json',
+    format: ReportFormat.libtestJson,
+    // After the command's own `--`.
+    filter: NameFilter(args: ['--exact', namePlaceholder], regex: false),
+    applies: AppliesWhen(
+      natures: {'rust'},
+      contains: {'{rust-toolchain,rust-toolchain.toml}': r'\bnightly\b'},
+    ),
     source: 'built-in',
   ),
   RunnerTemplate(
     name: 'cargo-test',
     // Without --no-fail-fast cargo stops at the first test binary with a
     // failing test, and the later binaries' tests go missing.
-    command: 'cargo test --no-fail-fast',
+    command: 'cargo test {cargo-workspace} --no-fail-fast',
     format: ReportFormat.libtest,
     filter: NameFilter(args: ['--', '--exact', namePlaceholder], regex: false),
     applies: AppliesWhen(natures: {'rust'}),
     source: 'built-in',
   ),
 ];
+
+/// `go test -run`: it splits a pattern at `/` into one per subtest level, so
+/// a subtest is selected by the test it belongs to.
+const _goRunFilter = NameFilter(
+  args: ['-run', '^($namesPlaceholder)\$'],
+  cut: '/',
+);
 
 /// The templates a project sees, in the order detection tries them: its own
 /// (`buildkit.yaml`), then the workspace's (`buildkit_master.yaml`), then the
@@ -884,6 +956,51 @@ String projectGradleCommand(String projectPath) {
     if (parent == dir) return 'gradle';
     dir = parent;
   }
+}
+
+/// The command that runs the Go tool [name] for the project at
+/// [projectPath]: `go tool <name>` when its `go.mod` declares a tool whose
+/// path ends in `/<name>` (Go 1.24+, `tool <path>` or a `tool ( ... )`
+/// block), else `<name>` from the PATH.
+String projectGoToolCommand(String projectPath, String name) {
+  final goMod = File(p.join(projectPath, 'go.mod'));
+  if (goMod.existsSync()) {
+    var inBlock = false;
+    for (final raw in goMod.readAsLinesSync()) {
+      final line = raw.split('//').first.trim();
+      String? path;
+      if (inBlock) {
+        if (line == ')') {
+          inBlock = false;
+        } else {
+          path = line;
+        }
+      } else if (RegExp(r'^tool\s*\($').hasMatch(line)) {
+        inBlock = true;
+      } else if (line.startsWith('tool ')) {
+        path = line.substring(5).trim();
+      }
+      if (path != null && (path == name || path.endsWith('/$name'))) {
+        return 'go tool $name';
+      }
+    }
+  }
+  return name;
+}
+
+/// `--workspace` when the project's `Cargo.toml` declares a workspace (a
+/// `[workspace]` or `[workspace.<key>]` table):
+/// its members' tests run with its own (a workspace whose root is a package
+/// runs only the root without it). Empty for a single package or a member.
+String projectCargoWorkspaceFlag(String projectPath) {
+  final cargo = File(p.join(projectPath, 'Cargo.toml'));
+  if (!cargo.existsSync()) return '';
+  return RegExp(
+        r'^\s*\[workspace(\.[\w-]+)*\]\s*(#.*)?$',
+        multiLine: true,
+      ).hasMatch(cargo.readAsStringSync())
+      ? '--workspace'
+      : '';
 }
 
 /// The names in `package.json`'s `dependencies` and `devDependencies`.

@@ -73,7 +73,11 @@ void main() {
       'gradle',
       'sbt2',
       'sbt',
+      'ginkgo',
+      'gotestsum',
       'go-test',
+      'cargo-nextest',
+      'cargo-test-json',
       'cargo-test',
     ]);
     final filtered = {
@@ -82,7 +86,7 @@ void main() {
     };
     expect(
       builtInRunnerTemplates.map((t) => t.name).toSet().difference(filtered),
-      {'jasmine', 'junit-console', 'testng', 'sbt2', 'sbt'},
+      {'jasmine', 'junit-console', 'testng', 'sbt2', 'sbt', 'ginkgo'},
     );
     // Every built-in is detected, except the doctest variants a project
     // names.

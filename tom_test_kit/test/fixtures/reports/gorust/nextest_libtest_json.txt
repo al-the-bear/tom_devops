@@ -1,0 +1,22 @@
+{"type":"suite","event":"started","test_count":3,"nextest":{"crate":"alpha","test_binary":"alpha","kind":"lib"}}
+{"type":"test","event":"started","name":"alpha::alpha$tests::later"}
+{"type":"suite","event":"started","test_count":1,"nextest":{"crate":"beta","test_binary":"beta","kind":"lib"}}
+{"type":"test","event":"started","name":"beta::beta$tests::adds"}
+{"type":"test","event":"started","name":"alpha::alpha$tests::adds"}
+{"type":"test","event":"started","name":"alpha::alpha$tests::subtracts_wrongly"}
+{"type":"suite","event":"started","test_count":1,"nextest":{"crate":"alpha","test_binary":"api","kind":"test"}}
+{"type":"test","event":"started","name":"alpha::api$api_adds"}
+{"type":"suite","event":"started","test_count":1,"nextest":{"crate":"rws","test_binary":"rws","kind":"lib"}}
+{"type":"test","event":"started","name":"rws::rws$tests::root_is_one"}
+{"type":"test","event":"ok","name":"rws::rws$tests::root_is_one","exec_time":0.019344792}
+{"type":"suite","event":"ok","passed":1,"failed":0,"ignored":0,"measured":0,"filtered_out":0,"exec_time":0.019344792,"nextest":{"crate":"rws","test_binary":"rws","kind":"lib"}}
+{"type":"test","event":"ignored","name":"alpha::alpha$tests::later"}
+{"type":"test","event":"failed","name":"alpha::alpha$tests::subtracts_wrongly","exec_time":0.03029625,"stdout":"\nthread 'tests::subtracts_wrongly' (78064803) panicked at alpha/src/lib.rs:13:30:\nassertion `left == right` failed\n  left: 1\n right: 0\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n"}
+{"type":"suite","event":"failed","passed":0,"failed":1,"ignored":1,"measured":0,"filtered_out":0,"exec_time":0.03029625,"nextest":{"crate":"alpha","test_binary":"alpha","kind":"lib"}}
+{"type":"suite","event":"started","test_count":3,"nextest":{"crate":"alpha","test_binary":"alpha","kind":"lib"}}
+{"type":"test","event":"ok","name":"alpha::alpha$tests::adds","exec_time":0.0342615}
+{"type":"test","event":"ok","name":"alpha::api$api_adds","exec_time":0.041625833}
+{"type":"suite","event":"ok","passed":1,"failed":0,"ignored":0,"measured":0,"filtered_out":0,"exec_time":0.041625833,"nextest":{"crate":"alpha","test_binary":"api","kind":"test"}}
+{"type":"test","event":"ok","name":"beta::beta$tests::adds","exec_time":0.041954625}
+{"type":"suite","event":"ok","passed":1,"failed":0,"ignored":0,"measured":0,"filtered_out":0,"exec_time":0.041954625,"nextest":{"crate":"beta","test_binary":"beta","kind":"lib"}}
+{"type":"suite","event":"ok","passed":1,"failed":0,"ignored":1,"measured":0,"filtered_out":1,"exec_time":0.0342615,"nextest":{"crate":"alpha","test_binary":"alpha","kind":"lib"}}

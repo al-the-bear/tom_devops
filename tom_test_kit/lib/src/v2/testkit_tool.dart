@@ -491,7 +491,7 @@ Result Format:
 Test Runner (per project):
   1. a testkit: section in buildkit.yaml: runner: <template>, or command:,
      report:, report-path:, filter: (report one of testkit, junit, go-json,
-     libtest, jest-json, mocha-json, testng, tap)
+     libtest, libtest-json, jest-json, mocha-json, testng, tap)
   2. dart test / flutter test (Dart and Flutter projects)
   3. the test: step of buildkit.yaml, writing testkit's line protocol to
      \$TESTKIT_REPORT: one JSON object per line,
@@ -501,8 +501,10 @@ Test Runner (per project):
      then the built-ins npm-test-jest, jest, vitest, mocha, ava, jasmine,
      node-test, node-tsx, node-ts-node, pytest, nose2, tox, nox, unittest
      (testkit's own runner), junit-console, testng, maven-verify, maven,
-     gradle (every test task of every subproject), sbt2, sbt, go-test,
-     cargo-test; Python ones in the project's environment
+     gradle (every test task of every subproject), sbt2, sbt, ginkgo,
+     gotestsum, go-test, cargo-nextest, cargo-test-json (nightly),
+     cargo-test (every member of a Cargo workspace); Python ones in the
+     project's environment
 
 Exit Code (:baseline, :test):
   0  every test passed

@@ -15,6 +15,10 @@ const bundledScripts = <String, BundledScript>{
   // stopping the build, testkitTests runs every test task, and
   // -Ptestkit.tests=<a>|<b> selects tests in every one of them.
   'gradle-testkit': (extension: 'gradle', text: _gradleInit),
+  // A cargo-nextest tool config: the `testkit` profile (based on the
+  // project's default profile) writes a JUnit report to
+  // target/nextest/testkit/junit.xml.
+  'nextest-testkit': (extension: 'toml', text: _nextestToolConfig),
   // jasmine's --reporter wants a module exporting a reporter constructor;
   // jasmine-reporters exports an object of them.
   'jasmine-junit': (
@@ -240,4 +244,12 @@ allprojects {
         dependsOn(tasks.withType(Test))
     }
 }
+''';
+
+const _nextestToolConfig = '''
+[profile.testkit]
+fail-fast = false
+
+[profile.testkit.junit]
+path = "junit.xml"
 ''';

@@ -212,7 +212,7 @@ A non-Dart project's tests run with the first runner that applies:
    ```yaml
    testkit:
      command: ctest --test-dir build --output-junit {report}
-     report: junit            # testkit | junit | go-json | libtest | jest-json | mocha-json | testng | tap
+     report: junit            # testkit | junit | go-json | libtest | libtest-json | jest-json | mocha-json | testng | tap
      report-path: build/*.xml # when the report is not written to {report}
    ```
 
@@ -234,7 +234,9 @@ A non-Dart project's tests run with the first runner that applies:
    Python project without pytest), the JUnit console and TestNG for a project
    javac builds, Maven (`mvn verify` with failsafe; every module of a
    reactor), Gradle (every test task of every subproject; Java and Kotlin),
-   sbt (Scala), `go test -json`, `cargo test --no-fail-fast`. Python templates run in the project's own
+   sbt (Scala), ginkgo, gotestsum, `go test -json`, cargo-nextest, libtest's
+   JSON on nightly, `cargo test --no-fail-fast` (every member of a Cargo
+   workspace). Python templates run in the project's own
    environment (uv, Poetry, pipenv, a venv) when it has one. C, C++ and TypeScript without one of these runners have
    no built-in template.
 
@@ -254,7 +256,7 @@ output is kept as `testlog/last_testrun.txt`. Baselines, `:lastdiff`,
 `:status`, `:history` and `:flaky` read the result columns the same way for
 every language. `--failed` / `--mismatched` select single tests by name with
 `dart test` and with every template that declares a `filter:` (every
-built-in but jasmine, the JUnit console, TestNG and sbt does); another runner runs every
+built-in but jasmine, the JUnit console, TestNG, sbt and ginkgo does); another runner runs every
 test. A run that exits with an
 error although every reported test passed is reported as incomplete. Details:
 [doc/test_tracking.md](doc/test_tracking.md#other-languages) and

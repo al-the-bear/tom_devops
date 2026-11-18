@@ -24,6 +24,11 @@ enum ReportFormat {
   /// libtest's text output (`cargo test`): `test <name> ... ok`.
   libtest('libtest'),
 
+  /// libtest's JSON events on the runner's output: `cargo test -- -Z
+  /// unstable-options --format json` (nightly), and cargo-nextest's
+  /// `--message-format libtest-json`.
+  libtestJson('libtest-json'),
+
   /// JUnit XML (pytest `--junitxml`, Maven / Gradle surefire, `node --test
   /// --test-reporter=junit`, jest-junit, `ctest --output-junit`).
   junit('junit'),
@@ -168,44 +173,134 @@ void parseGoTestJson(Iterable<String> lines, ResultCollector collector) {
 /// `test <name> ... <outcome>` in libtest's text output.
 final _libtestLine = RegExp(r'^test (.+?) \.\.\. (ok|FAILED|ignored)\b');
 
-/// The test binary cargo starts: `Running unittests src/lib.rs (target/...)`,
-/// `Running tests/api.rs (target/...)`.
-final _cargoRunning = RegExp(r'^\s*Running (.+?)(?: \(.*\))?\s*$');
+/// The test binary cargo starts: `Running unittests src/lib.rs
+/// (target/debug/deps/alpha-1a2b...)`, `Running tests/api.rs (...)`.
+final _cargoRunning = RegExp(r'^\s*Running (.+?)(?: \((.*)\))?\s*$');
 
 /// cargo's doc-test run: `Doc-tests <crate>`.
 final _cargoDocTests = RegExp(r'^\s*Doc-tests (\S+)\s*$');
 
-/// Reads libtest's text output (`cargo test`) from [lines], with cargo's
-/// progress lines on the same stream so each test is grouped by the test
-/// binary it ran in.
-void parseLibtestOutput(Iterable<String> lines, ResultCollector collector) {
-  String? suite;
-  for (final line in lines) {
+/// The hash cargo appends to a test binary's name, and the extension on
+/// Windows.
+final _cargoBinarySuffix = RegExp(r'-[0-9a-f]{16}(\.exe)?$');
+
+/// Follows cargo's progress lines (`Running ...`, `Doc-tests ...`) on the
+/// runner's output and groups the tests that follow by the binary they ran
+/// in. The group is what cargo prints (`unittests src/lib.rs`,
+/// `tests/api.rs`, `doc-tests alpha`); when binaries of several crates print
+/// the same (a Cargo workspace), each is followed by its binary's name
+/// (`unittests src/lib.rs (alpha)`; a prefix `alpha: ` would read as a test
+/// id).
+class _CargoTests {
+  final _tests = <(String?, String?, ReportedTest)>[];
+  String? _suite;
+  String? _binary;
+
+  /// Takes [line] when it is one of cargo's progress lines.
+  bool progress(String line) {
     final running = _cargoRunning.firstMatch(line);
     if (running != null) {
-      suite = running.group(1);
-      continue;
+      _suite = running.group(1);
+      _binary = running
+          .group(2)
+          ?.split(RegExp(r'[/\\]'))
+          .last
+          .replaceFirst(_cargoBinarySuffix, '');
+      return true;
     }
     final doc = _cargoDocTests.firstMatch(line);
     if (doc != null) {
-      suite = 'doc-tests ${doc.group(1)}';
-      continue;
+      _suite = 'doc-tests ${doc.group(1)}';
+      _binary = null;
+      return true;
     }
+    return false;
+  }
+
+  void add(String name, TestResult result) =>
+      _tests.add((_suite, _binary, ReportedTest(name: name, result: result)));
+
+  void addTo(ResultCollector collector) {
+    final binaries = <String, Set<String?>>{};
+    for (final (suite, binary, _) in _tests) {
+      if (suite != null) (binaries[suite] ??= {}).add(binary);
+    }
+    for (final (suite, binary, test) in _tests) {
+      final group =
+          suite != null && binary != null && binaries[suite]!.length > 1
+          ? '$suite ($binary)'
+          : suite;
+      collector.add(
+        ReportedTest(
+          name: test.name,
+          suite: group,
+          groups: group,
+          result: test.result,
+        ),
+      );
+    }
+  }
+}
+
+/// Reads libtest's text output (`cargo test`) from [lines], with cargo's
+/// progress lines on the same stream so each test is grouped by the test
+/// binary it ran in (see [_CargoTests]).
+void parseLibtestOutput(Iterable<String> lines, ResultCollector collector) {
+  final tests = _CargoTests();
+  for (final line in lines) {
+    if (tests.progress(line)) continue;
     final m = _libtestLine.firstMatch(line);
     if (m == null) continue;
-    collector.add(
-      ReportedTest(
-        name: m.group(1)!,
-        suite: suite,
-        groups: suite,
-        result: switch (m.group(2)) {
-          'ok' => TestResult.ok,
-          'ignored' => TestResult.skip,
-          _ => TestResult.fail,
-        },
-      ),
-    );
+    tests.add(m.group(1)!, switch (m.group(2)) {
+      'ok' => TestResult.ok,
+      'ignored' => TestResult.skip,
+      _ => TestResult.fail,
+    });
   }
+  tests.addTo(collector);
+}
+
+/// Reads libtest's JSON events from [lines]: one `{"type": "test", "event":
+/// "ok" | "failed" | "ignored" | "timeout", "name": ...}` object per finished
+/// test, with cargo's progress lines on the same stream grouping them by
+/// test binary as for [parseLibtestOutput]. cargo-nextest writes the binary
+/// into the name (`alpha::api\$api_adds`): the part before `\$` is the group.
+void parseLibtestJson(Iterable<String> lines, ResultCollector collector) {
+  final tests = _CargoTests();
+  for (final line in lines) {
+    if (tests.progress(line)) continue;
+    final trimmed = line.trim();
+    if (!trimmed.startsWith('{')) continue;
+    final Object? json;
+    try {
+      json = jsonDecode(trimmed);
+    } on FormatException {
+      continue;
+    }
+    if (json is! Map || json['type'] != 'test') continue;
+    final name = json['name'];
+    final result = switch (json['event']) {
+      'ok' => TestResult.ok,
+      'ignored' => TestResult.skip,
+      'failed' || 'timeout' => TestResult.fail,
+      _ => null,
+    };
+    if (name is! String || result == null) continue;
+    final binaryEnd = name.indexOf(r'$');
+    if (binaryEnd > 0) {
+      collector.add(
+        ReportedTest(
+          name: name.substring(binaryEnd + 1),
+          suite: name.substring(0, binaryEnd),
+          groups: name.substring(0, binaryEnd),
+          result: result,
+        ),
+      );
+    } else {
+      tests.add(name, result);
+    }
+  }
+  tests.addTo(collector);
 }
 
 /// Reads one JUnit XML document [xml] (a `<testsuites>` or `<testsuite>`

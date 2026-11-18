@@ -20,7 +20,7 @@ dart test          # full suite (authoritative)
 testkit :test      # tracked run against the latest baseline
 ```
 
-The authoritative total below (**317 passing**) is the count reported by
+The authoritative total below (**323 passing**) is the count reported by
 `dart test`. Per-file counts are the tests executed from each suite; test IDs
 follow the `TK-<AREA>-<n>` convention (e.g. `TK-MDT-1`), which is the stable
 handle for regression tracking.
@@ -66,7 +66,8 @@ handle for regression tracking.
 | 33 | [`:test --baseline` from the command line](#33-test---baseline-from-the-command-line) | 5 | 5✅ | `v2/test_baseline_flag_test.dart` | `TK-BLF` |
 | 34 | [Python runners](#34-python-runners) | 9 | 9✅ | `runner/python_runners_test.dart` | `TK-PY` |
 | 35 | [JVM runners](#35-jvm-runners) | 6 | 6✅ | `runner/jvm_runners_test.dart` | `TK-JVM` |
-| — | **Total** | **317** | **317✅** | | |
+| 36 | [Go and Rust runners](#36-go-and-rust-runners) | 6 | 6✅ | `runner/go_rust_runners_test.dart` | `TK-GR` |
+| — | **Total** | **323** | **323✅** | | |
 
 ---
 
@@ -774,3 +775,20 @@ The Maven, Gradle, sbt, TestNG and JUnit console templates and `{gradle}`. TK-JV
 | TK-JVM-4 | `testng` report: configuration methods left out, data-provider runs numbered, a non-TestNG file refused | ✅ | `dart test --name 'TK-JVM-4'` |
 | TK-JVM-5 | the Maven (`-Dtest=Class#method`, `-Dit.test=`) and Gradle (`-Ptestkit.tests=`) name filters | ✅ | `dart test --name 'TK-JVM-5'` |
 | TK-JVM-6 | the gradle template writes its bundled init script | ✅ | `dart test --name 'TK-JVM-6'` |
+
+---
+
+## 36. Go and Rust runners
+
+**Test file:** `test/runner/go_rust_runners_test.dart` — **ID prefix `TK-GR`**
+
+The ginkgo, gotestsum, cargo-nextest and cargo-test-json templates, `{go-tool:<name>}` and `{cargo-workspace}`. TK-GR-3 reads real reports (`test/fixtures/reports/gorust/`): gotestsum and ginkgo JUnit, `cargo test --workspace` text and libtest JSON, nextest JUnit and libtest-json.
+
+| ID | Feature | Status | How to Test |
+|----|---------|--------|-------------|
+| TK-GR-1 | ginkgo (go.mod requires ginkgo v2), gotestsum (a module tool, or named in a Makefile / Taskfile / justfile), cargo-nextest (`.config/nextest.toml`), cargo-test-json (a nightly toolchain file) picked from the project's files | ✅ | `dart test --name 'TK-GR-1'` |
+| TK-GR-2 | `{go-tool:<name>}`: `go tool <name>` for a declared tool, else `<name>`; `{cargo-workspace}`: `--workspace` for a workspace, else left out | ✅ | `dart test --name 'TK-GR-2'` |
+| TK-GR-3 | per-test results from every recorded report; a Cargo workspace's binaries of the same name stay apart | ✅ | `dart test --name 'TK-GR-3'` |
+| TK-GR-4 | a single crate keeps the groups cargo prints | ✅ | `dart test --name 'TK-GR-4'` |
+| TK-GR-5 | the name filters (go test / gotestsum `-run`, cargo test / nextest `--exact`, the nightly template after its `--`); build tags and `-race` in a project's go-test command | ✅ | `dart test --name 'TK-GR-5'` |
+| TK-GR-6 | the cargo-nextest template writes its bundled tool config | ✅ | `dart test --name 'TK-GR-6'` |

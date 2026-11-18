@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="nextest-run" tests="5" skipped="0" failures="1" errors="0" uuid="33751c1d-d91b-4d25-a530-a55c23a121c4" timestamp="2026-11-18T13:00:01.218+01:00" time="0.025">
+    <testsuite name="beta" tests="1" skipped="0" errors="0" failures="0">
+        <testcase name="tests::adds" classname="beta" timestamp="2026-11-18T13:00:01.223+01:00" time="0.016"/>
+    </testsuite>
+    <testsuite name="rws" tests="1" skipped="0" errors="0" failures="0">
+        <testcase name="tests::root_is_one" classname="rws" timestamp="2026-11-18T13:00:01.223+01:00" time="0.016"/>
+    </testsuite>
+    <testsuite name="alpha::api" tests="1" skipped="0" errors="0" failures="0">
+        <testcase name="api_adds" classname="alpha::api" timestamp="2026-11-18T13:00:01.223+01:00" time="0.018"/>
+    </testsuite>
+    <testsuite name="alpha" tests="2" skipped="0" errors="0" failures="1">
+        <testcase name="tests::adds" classname="alpha" timestamp="2026-11-18T13:00:01.223+01:00" time="0.019"/>
+        <testcase name="tests::subtracts_wrongly" classname="alpha" timestamp="2026-11-18T13:00:01.223+01:00" time="0.018">
+            <failure message="thread &apos;tests::subtracts_wrongly&apos; (78354525) panicked at alpha/src/lib.rs:13:30" type="test failure with exit code 101">thread &apos;tests::subtracts_wrongly&apos; (78354525) panicked at alpha/src/lib.rs:13:30:
+assertion `left == right` failed
+  left: 1
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace</failure>
+            <system-out>
+running 1 test
+test tests::subtracts_wrongly ... FAILED
+
+failures:
+
+failures:
+    tests::subtracts_wrongly
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 2 filtered out; finished in 0.00s
+
+</system-out>
+            <system-err>
+thread &apos;tests::subtracts_wrongly&apos; (78354525) panicked at alpha/src/lib.rs:13:30:
+assertion `left == right` failed
+  left: 1
+ right: 0
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+</system-err>
+        </testcase>
+    </testsuite>
+</testsuites>

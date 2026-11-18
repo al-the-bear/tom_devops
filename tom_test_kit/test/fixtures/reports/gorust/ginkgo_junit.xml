@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <testsuites tests="4" disabled="2" errors="0" failures="1" time="0.0017555">
+      <testsuite name="Books Suite" package="/work/gko/books" tests="4" disabled="1" skipped="1" errors="0" failures="1" time="0.0017555" timestamp="2026-11-18T12:24:13">
+          <testcase name="[It] Book with pages counts them" classname="Books Suite" status="passed" time="0.000181292">
+              <system-err>&gt; Enter [It] counts them - /work/gko/books/books_test.go:10 @ 11/18/26 12:24:13.717&#xA;&lt; Exit [It] counts them - /work/gko/books/books_test.go:10 @ 11/18/26 12:24:13.717 (0s)&#xA;</system-err>
+          </testcase>
+          <testcase name="[It] Book with pages fails on purpose" classname="Books Suite" status="failed" time="0.000301917">
+              <failure message="Expected&#xA;    &lt;int&gt;: 1&#xA;to equal&#xA;    &lt;int&gt;: 2" type="failed">[FAILED] Expected&#xA;    &lt;int&gt;: 1&#xA;to equal&#xA;    &lt;int&gt;: 2&#xA;In [It] at: /work/gko/books/books_test.go:11 @ 11/18/26 12:24:13.718&#xA;</failure>
+              <system-err>&gt; Enter [It] fails on purpose - /work/gko/books/books_test.go:11 @ 11/18/26 12:24:13.717&#xA;[FAILED] Expected&#xA;    &lt;int&gt;: 1&#xA;to equal&#xA;    &lt;int&gt;: 2&#xA;In [It] at: /work/gko/books/books_test.go:11 @ 11/18/26 12:24:13.718&#xA;&lt; Exit [It] fails on purpose - /work/gko/books/books_test.go:11 @ 11/18/26 12:24:13.718 (0s)&#xA;</system-err>
+          </testcase>
+          <testcase name="[It] Book is not ready" classname="Books Suite" status="skipped" time="0.000321166">
+              <skipped message="skipped - later"></skipped>
+              <system-err>&gt; Enter [It] is not ready - /work/gko/books/books_test.go:13 @ 11/18/26 12:24:13.718&#xA;[SKIPPED] later&#xA;In [It] at: /work/gko/books/books_test.go:13 @ 11/18/26 12:24:13.718&#xA;&lt; Exit [It] is not ready - /work/gko/books/books_test.go:13 @ 11/18/26 12:24:13.718 (0s)&#xA;</system-err>
+          </testcase>
+          <testcase name="[It] Book is pending" classname="Books Suite" status="pending" time="0">
+              <skipped message="pending"></skipped>
+          </testcase>
+      </testsuite>
+  </testsuites>

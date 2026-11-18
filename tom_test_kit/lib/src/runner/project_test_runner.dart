@@ -8,7 +8,7 @@
 ///    testkit:
 ///      runner: pytest              # a template by name, or:
 ///      command: ./run_tests.sh     # shell command, run in the project
-///      report: testkit             # testkit | junit | go-json | libtest | jest-json | mocha-json | testng | tap
+///      report: testkit             # testkit | junit | go-json | libtest | libtest-json | jest-json | mocha-json | testng | tap
 ///      report-path: build/*.xml    # a file report written elsewhere
 ///      filter: {args: [-k, '{names}'], join: ' or ', regex: false}
 ///    ```
@@ -72,12 +72,23 @@ const pythonPlaceholder = '{python}';
 /// nearest wrapper at or above it ([projectGradleCommand]), else `gradle`.
 const gradlePlaceholder = '{gradle}';
 
+/// Written in a runner command, replaced by `--workspace` when the project's
+/// `Cargo.toml` declares a workspace ([projectCargoWorkspaceFlag]), else
+/// left out.
+const cargoWorkspacePlaceholder = '{cargo-workspace}';
+
 /// The command placeholders that depend on the project, with how each is
-/// resolved.
+/// resolved. An empty value takes the space before the placeholder with it.
 final _projectCommands = <String, String Function(String)>{
   pythonPlaceholder: projectPythonCommand,
   gradlePlaceholder: projectGradleCommand,
+  cargoWorkspacePlaceholder: projectCargoWorkspaceFlag,
 };
+
+/// `{go-tool:<name>}` in a runner command: the module's Go tool when its
+/// `go.mod` declares it (`go tool <name>`), else `<name>`
+/// ([projectGoToolCommand]).
+final _goToolPlaceholder = RegExp(r'\{go-tool:([\w.-]+)\}');
 
 /// `{script:<name>}` in a runner command: replaced by the (quoted) path of
 /// the bundled script [bundledScripts] names, written to `testlog/` first.
@@ -358,6 +369,8 @@ class CommandRunner extends ProjectTestRunner {
           parseGoTestJson(output, collector);
         case ReportFormat.libtest:
           parseLibtestOutput(output, collector);
+        case ReportFormat.libtestJson:
+          parseLibtestJson(output, collector);
         case ReportFormat.testkit:
           for (final f in _reportFiles(projectPath, reportFile)) {
             parseTestkitLines(f.readAsLinesSync(), collector);
@@ -472,14 +485,15 @@ class RunnerUnavailable extends ProjectTestRunner {
   }
 }
 
-/// [runner] with `{python}` and `{gradle}` replaced by the project's
-/// commands, so messages and a dry run name the command that runs.
+/// [runner] with `{python}`, `{gradle}`, `{cargo-workspace}` and
+/// `{go-tool:<name>}` replaced by the project's commands, so messages and a dry run name the command that runs.
 ProjectTestRunner _withProjectCommands(
   ProjectTestRunner runner,
   String projectPath,
 ) {
   if (runner is! CommandRunner ||
-      !_projectCommands.keys.any(runner.command.contains)) {
+      !(_projectCommands.keys.any(runner.command.contains) ||
+          _goToolPlaceholder.hasMatch(runner.command))) {
     return runner;
   }
   return CommandRunner(
@@ -491,7 +505,7 @@ ProjectTestRunner _withProjectCommands(
   );
 }
 
-/// [command] with `{report}`, `{python}` and `{script:<name>}` replaced;
+/// [command] with `{report}`, the project placeholders and `{script:<name>}` replaced;
 /// a bundled script is written to `testlog/` beside the report file. Throws
 /// [StateError] for a script testkit does not bundle.
 String _expandPlaceholders(
@@ -526,10 +540,16 @@ String _resolveProjectCommands(String command, String projectPath) {
   for (final MapEntry(key: placeholder, value: resolve)
       in _projectCommands.entries) {
     if (result.contains(placeholder)) {
-      result = result.replaceAll(placeholder, resolve(projectPath));
+      final value = resolve(projectPath);
+      result = value.isEmpty
+          ? result.replaceAll(' $placeholder', '').replaceAll(placeholder, '')
+          : result.replaceAll(placeholder, value);
     }
   }
-  return result;
+  return result.replaceAllMapped(
+    _goToolPlaceholder,
+    (m) => projectGoToolCommand(projectPath, m.group(1)!),
+  );
 }
 
 /// Quotes [arg] for `sh -c` / `cmd /c` when it holds anything but safe
