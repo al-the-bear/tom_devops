@@ -1053,8 +1053,15 @@ workspace's own:
 
 | Template | Applies to | Command | Report | Selects by name |
 | -------- | ---------- | ------- | ------ | --------------- |
-| `jest` | TypeScript or JavaScript with jest in `package.json` | `npx jest --json --outputFile={report}` | `jest-json` | `-t '(<names>)$'` |
+| `npm-test-jest` | TypeScript or JavaScript whose `test` script runs jest | `npm test -- --json --outputFile={report}` | `jest-json` | `-t '(<names>)$'` |
+| `jest` | TypeScript (ts-jest, babel) or JavaScript with jest in `package.json` | `npx jest --json --outputFile={report}` | `jest-json` | `-t '(<names>)$'` |
+| `vitest` | TypeScript or JavaScript with vitest | `npx vitest run --reporter=junit --outputFile={report}` | `junit` | `-t '(<titles>)$'` |
+| `mocha` | TypeScript or JavaScript with mocha | `npx mocha --reporter json --reporter-option output={report}` | `mocha-json` | `--grep '(<names>)$'` |
+| `ava` | TypeScript or JavaScript with ava | `npx ava --tap` | `tap` on the output | `--match '<name>'` per test |
+| `jasmine` | TypeScript or JavaScript with jasmine-reporters | `npx jasmine` with jasmine-reporters' JUnit reporter (`--reporter`) | `junit`, `junitresults.xml` | no (see below) |
 | `node-test` | JavaScript | `node --test --test-reporter=junit --test-reporter-destination={report}` | `junit` | `--test-name-pattern '(<names>)$'` |
+| `node-tsx` | TypeScript with tsx | `node --import tsx --test ... '**/*.{test,spec}.ts'` | `junit` | `--test-name-pattern '(<names>)$'` |
+| `node-ts-node` | TypeScript with ts-node | `node --require ts-node/register --test ... '**/*.{test,spec}.ts'` | `junit` | `--test-name-pattern '(<names>)$'` |
 | `pytest` | Python | `python3 -m pytest -q --junitxml={report}` | `junit` | `-k '<a> or <b>'` (a parametrized test by its function) |
 | `maven` | Java with a `pom.xml` | `mvn -B test` | `junit`, `target/surefire-reports/TEST-*.xml` | no |
 | `gradle-wrapper` | Java with a `gradlew` | `./gradlew test` | `junit`, `build/test-results/test/*.xml` | no |
@@ -1062,9 +1069,29 @@ workspace's own:
 | `go-test` | Go | `go test -json ./...` | `go-json` on the output | `-run '^(<names>)$'` (a subtest by its test) |
 | `cargo-test` | Rust | `cargo test --no-fail-fast` | `libtest` text on the output | `-- --exact <name> <name>` |
 
-C, C++ and TypeScript without jest have no built-in template: such a project
-needs a `test:` step, a `testkit:` section or a template of its own, and
-testkit says so. A `--dry-run` names the runner each project gets, with the
+C, C++ and a TypeScript project with none of these runners have no built-in
+template: such a project needs a `test:` step, a `testkit:` section or a
+template of its own, and testkit says so.
+
+Notes on the JavaScript / TypeScript runners (checked with vitest 5.1, mocha
+12.0, ava 8.4, jasmine 7.0 with jasmine-reporters 2.5, jest 30.5, node 22):
+
+- **jest** reads its configuration itself, so TypeScript through ts-jest or
+  babel needs nothing more. When the `test` script runs jest, `npm test`
+  runs it, with the project's own flags and configuration.
+- **vitest** names a test `math > adds`; testkit records that name, and the
+  filter selects by the title after the last ` > `.
+- **jasmine** needs `jasmine-reporters` in `devDependencies`: the template
+  writes a one-line module to `testlog/` that hands jasmine's `--reporter` the
+  JUnit reporter, which writes `junitresults.xml` (no helper file needed). It
+  selects no single tests: jasmine-reporters writes the specs `--filter`
+  excludes as passing testcases, so a filtered run would record tests that did
+  not run as passed.
+- **node-tsx / node-ts-node** run every `*.test.ts` / `*.spec.ts` outside
+  `node_modules`. ts-node 10 needs TypeScript 5 (not the native TypeScript 7).
+  For tests compiled to JavaScript first, a project names a template of its
+  own, e.g. `command: npx tsc && node --test --test-reporter=junit
+  --test-reporter-destination={report} 'dist/**/*.test.js'`. A `--dry-run` names the runner each project gets, with the
 template and where it is defined:
 
 ```text
@@ -1112,10 +1139,10 @@ testkit:
 | Key | Meaning |
 | --- | ------- |
 | `command` | The shell command, run in the project; `{report}` is the report file's path. |
-| `report` | `testkit`, `junit`, `go-json`, `libtest`, `jest-json` or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
+| `report` | `testkit`, `junit`, `go-json`, `libtest`, `jest-json`, `mocha-json` or `tap` (default `testkit`). A `tap` report is read from the report file when the command wrote one (`{report}` or `report-path:`), else from its output. |
 | `report-path` | Where the report lands, relative to the project (a glob for several files), when not at `{report}`. |
-| `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`). Without `filter` every test runs. |
-| `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression), `dependency` (`package.json` names one of them). Without `applies` a template only runs when a project names it. |
+| `filter` | How it selects tests by name, for `--failed` / `--mismatched`: `args` appended to the command, where `{names}` in an argument is every selected name joined with `join` (default `\|`) and an argument that is exactly `{name}` becomes one argument per name; `regex` (default true) escapes each name as a regular expression; `cut` cuts each name at the first occurrence of a text (`/`, `[`); `tail` keeps what follows the last occurrence of a text (` > `); `each` is a list of arguments repeated once per name, `{name}` replaced (`[--match, "{name}"]`), after `args` (either may be left out). Without `filter` every test runs. |
+| `applies` | When it is detected: every condition given holds. `nature` (one or a list of `typescript`, `javascript`, `python`, `java`, `go`, `rust`, `cpp`, `c`), `files` (one of these files or globs exists), `contains` (each file exists and matches its regular expression), `dependency` (`package.json` names one of them), `scripts` (each named `package.json` script exists and matches its regular expression, `{test: jest}`). Without `applies` a template only runs when a project names it. |
 
 **Which template.** A project names one with `runner:`; the section's
 `command:`, `report:`, `report-path:` and `filter:` then change it for that

@@ -212,7 +212,7 @@ A non-Dart project's tests run with the first runner that applies:
    ```yaml
    testkit:
      command: ctest --test-dir build --output-junit {report}
-     report: junit            # testkit | junit | go-json | libtest | jest-json | tap
+     report: junit            # testkit | junit | go-json | libtest | jest-json | mocha-json | tap
      report-path: build/*.xml # when the report is not written to {report}
    ```
 
@@ -227,10 +227,12 @@ A non-Dart project's tests run with the first runner that applies:
    `result` is `ok`, `fail` or `skip`; `suite` and `group` are optional;
 3. the first runner template whose `applies:` holds: the project's own
    (`testkit: runners:` in `buildkit.yaml`), the workspace's (`testkit:
-   runners:` in `buildkit_master.yaml`), then the built-ins: jest (when
-   package.json names it), `node --test`, pytest, Maven, Gradle, `go test
-   -json`, `cargo test --no-fail-fast`. C, C++ and TypeScript without jest
-   have no built-in template.
+   runners:` in `buildkit_master.yaml`), then the built-ins: `npm test`
+   when its script is jest, jest, vitest, mocha, ava, jasmine (with
+   jasmine-reporters), `node --test` (JavaScript, and TypeScript through tsx
+   or ts-node), pytest, Maven, Gradle, `go test -json`, `cargo test
+   --no-fail-fast`. C, C++ and TypeScript without one of these runners have
+   no built-in template.
 
    ```yaml
    # buildkit_master.yaml
@@ -247,8 +249,8 @@ A non-Dart project's tests run with the first runner that applies:
 output is kept as `testlog/last_testrun.txt`. Baselines, `:lastdiff`,
 `:status`, `:history` and `:flaky` read the result columns the same way for
 every language. `--failed` / `--mismatched` select single tests by name with
-`dart test` and with every template that declares a `filter:` (the built-ins
-jest, node-test, pytest, go-test and cargo-test do); another runner runs every
+`dart test` and with every template that declares a `filter:` (every
+built-in but jasmine, Maven and Gradle does); another runner runs every
 test. A run that exits with an
 error although every reported test passed is reported as incomplete. Details:
 [doc/test_tracking.md](doc/test_tracking.md#other-languages) and

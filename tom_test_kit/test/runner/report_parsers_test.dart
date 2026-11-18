@@ -7,7 +7,12 @@
 /// `pytest_junit.xml`, `surefire/` and `jest.json` follow those tools'
 /// formats.
 ///
-/// Test IDs: TK-RPT-1..13.
+/// `js/` holds real reports of the JavaScript / TypeScript runners (vitest
+/// 5.1, mocha 12.0, ava 8.4, jasmine 7.0 with jasmine-reporters 2.5, jest 30.5
+/// through `npm test` and through ts-jest, node 22 `--test` through tsx and
+/// ts-node), each from the same small suite.
+///
+/// Test IDs: TK-RPT-1..14.
 library;
 
 import 'dart:io';
@@ -186,6 +191,7 @@ void main() {
       'libtest',
       'junit',
       'jest-json',
+      'mocha-json',
       'tap',
     ]);
     expect(ReportFormat.byConfigName('junit'), ReportFormat.junit);
@@ -283,5 +289,38 @@ void main() {
       'outer',
     );
     expect(r.loadFailures, isEmpty);
+  });
+
+  test('TK-RPT-14: mocha --reporter json (real): titles grouped by their '
+      'describe blocks, pending skipped; a failing hook is a failed result; '
+      'a report that is not mocha\'s is a FormatException [2026-11-18]', () {
+    final c = ResultCollector();
+    parseMochaJson(_fixture(p.join('js', 'mocha.json')), c);
+    final r = _build(c);
+    expect(_byName(r), {
+      'adds': TestResult.ok,
+      'subtracts wrongly': TestResult.fail,
+      'skipped one': TestResult.skip,
+      'multiplies': TestResult.ok,
+    });
+    final groups = {for (final e in r.entries) e.fullDescription: e.groups};
+    expect(groups['multiplies'], 'math nested');
+    expect(groups['adds'], 'math');
+
+    final hook = ResultCollector();
+    parseMochaJson(r'''
+{"stats": {}, "tests": [{"title": "t", "fullTitle": "s t", "file": "a.js"}],
+ "passes": [{"title": "t", "fullTitle": "s t", "file": "a.js"}],
+ "pending": [],
+ "failures": [{"title": "\"before all\" hook", "fullTitle": "s \"before all\" hook", "file": "a.js"}]}
+''', hook);
+    expect(_byName(_build(hook)), {
+      't': TestResult.ok,
+      '"before all" hook': TestResult.fail,
+    });
+    expect(
+      () => parseMochaJson('{"testResults": []}', ResultCollector()),
+      throwsFormatException,
+    );
   });
 }

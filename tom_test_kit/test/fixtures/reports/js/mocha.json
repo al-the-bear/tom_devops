@@ -1,0 +1,106 @@
+{
+  "stats": {
+    "suites": 2,
+    "tests": 4,
+    "passes": 2,
+    "pending": 1,
+    "failures": 1,
+    "start": "2026-11-18T09:07:35.900Z",
+    "end": "2026-11-18T09:07:35.985Z",
+    "duration": 85
+  },
+  "tests": [
+    {
+      "title": "adds",
+      "fullTitle": "math adds",
+      "file": "/project/test/math.test.js",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "subtracts wrongly",
+      "fullTitle": "math subtracts wrongly",
+      "file": "/project/test/math.test.js",
+      "duration": 5,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 0\n\n    at Context.<anonymous> (test/math.test.js:4:40)\n    at process.processImmediate (node:internal/timers:484:21)",
+        "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+        "generatedMessage": true,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "strictEqual",
+        "diff": "simple"
+      }
+    },
+    {
+      "title": "skipped one",
+      "fullTitle": "math skipped one",
+      "file": "/project/test/math.test.js",
+      "currentRetry": 0,
+      "err": {}
+    },
+    {
+      "title": "multiplies",
+      "fullTitle": "math nested multiplies",
+      "file": "/project/test/math.test.js",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ],
+  "pending": [
+    {
+      "title": "skipped one",
+      "fullTitle": "math skipped one",
+      "file": "/project/test/math.test.js",
+      "currentRetry": 0,
+      "err": {}
+    }
+  ],
+  "failures": [
+    {
+      "title": "subtracts wrongly",
+      "fullTitle": "math subtracts wrongly",
+      "file": "/project/test/math.test.js",
+      "duration": 5,
+      "currentRetry": 0,
+      "err": {
+        "stack": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 0\n\n    at Context.<anonymous> (test/math.test.js:4:40)\n    at process.processImmediate (node:internal/timers:484:21)",
+        "message": "Expected values to be strictly equal:\n\n1 !== 0\n",
+        "generatedMessage": true,
+        "name": "AssertionError",
+        "code": "ERR_ASSERTION",
+        "actual": "1",
+        "expected": "0",
+        "operator": "strictEqual",
+        "diff": "simple"
+      }
+    }
+  ],
+  "passes": [
+    {
+      "title": "adds",
+      "fullTitle": "math adds",
+      "file": "/project/test/math.test.js",
+      "duration": 0,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    },
+    {
+      "title": "multiplies",
+      "fullTitle": "math nested multiplies",
+      "file": "/project/test/math.test.js",
+      "duration": 1,
+      "currentRetry": 0,
+      "speed": "fast",
+      "err": {}
+    }
+  ]
+}

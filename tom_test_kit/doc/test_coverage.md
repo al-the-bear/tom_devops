@@ -60,11 +60,11 @@ handle for regression tracking.
 | 27 | [Line coverage](#27-line-coverage) | 6 | 6✅ | `tracking/coverage_test.dart` | `TK-COV` |
 | 28 | [Workspace report](#28-workspace-report) | 6 | 6✅ | `tracking/report_test.dart` | `TK-REP` |
 | 29 | [Project test runner](#29-project-test-runner) | 14 | 14✅ | `runner/project_test_runner_test.dart` | `TK-PTR` |
-| 30 | [Report readers](#30-report-readers) | 13 | 13✅ | `runner/report_parsers_test.dart` | `TK-RPT` |
+| 30 | [Report readers](#30-report-readers) | 14 | 14✅ | `runner/report_parsers_test.dart` | `TK-RPT` |
 | 31 | [Result collector](#31-result-collector) | 4 | 4✅ | `runner/result_collector_test.dart` | `TK-RCL` |
-| 32 | [Runner templates](#32-runner-templates) | 10 | 10✅ | `runner/runner_templates_test.dart` | `TK-RT` |
+| 32 | [Runner templates](#32-runner-templates) | 13 | 13✅ | `runner/runner_templates_test.dart` | `TK-RT` |
 | 33 | [`:test --baseline` from the command line](#33-test---baseline-from-the-command-line) | 5 | 5✅ | `v2/test_baseline_flag_test.dart` | `TK-BLF` |
-| — | **Total** | **298** | **298✅** | | |
+| — | **Total** | **302** | **302✅** | | |
 
 ---
 
@@ -682,6 +682,7 @@ Which runner a project gets (`ProjectTestRunner.resolve`) and how a command runn
 | TK-RPT-11 | TAP from bats `--tap` and `--formatter tap13` (real) | ✅ | `dart test --name 'TK-RPT-11'` |
 | TK-RPT-12 | TAP: `Bail out!` and a plan that does not match are load failures | ✅ | `dart test --name 'TK-RPT-12'` |
 | TK-RPT-13 | TAP 14 subtests without a comment, a failing group, unnamed points, an escaped `#` | ✅ | `dart test --name 'TK-RPT-13'` |
+| TK-RPT-14 | mocha `--reporter json` (real): grouped by describe blocks, pending skipped, a failing hook | ✅ | `dart test --name 'TK-RPT-14'` |
 
 ---
 
@@ -716,6 +717,9 @@ Runner templates: the built-ins, the workspace's and a project's `testkit: runne
 | TK-RT-8 | `--failed` hands the template's filter the failed test's name, without the suite the tracking file put before it | ✅ | `dart test --name 'TK-RT-8'` |
 | TK-RT-9 | nothing to re-run runs nothing; a template without a filter runs every test | ✅ | `dart test --name 'TK-RT-9'` |
 | TK-RT-10 | a template naming `report: tap` records per-test results, from the output or the report file | ✅ | `dart test --name 'TK-RT-10'` |
+| TK-RT-11 | each JavaScript / TypeScript runner is picked from `package.json` (scripts, dependencies, nature) | ✅ | `dart test --name 'TK-RT-11'` |
+| TK-RT-12 | each of them records per-test results from its recorded report (`test/fixtures/reports/js/`) | ✅ | `dart test --name 'TK-RT-12'` |
+| TK-RT-13 | their name filters (`tail`, `each`) | ✅ | `dart test --name 'TK-RT-13'` |
 
 ---
 

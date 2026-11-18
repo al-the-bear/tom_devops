@@ -490,14 +490,15 @@ Result Format:
 Test Runner (per project):
   1. a testkit: section in buildkit.yaml: runner: <template>, or command:,
      report:, report-path:, filter: (report one of testkit, junit, go-json,
-     libtest, jest-json, tap)
+     libtest, jest-json, mocha-json, tap)
   2. dart test / flutter test (Dart and Flutter projects)
   3. the test: step of buildkit.yaml, writing testkit's line protocol to
      \$TESTKIT_REPORT: one JSON object per line,
      {"test": "<name>", "result": "ok|fail|skip"}
   4. the first runner template whose applies: holds: the project's and the
      workspace's (testkit: runners: in buildkit.yaml / buildkit_master.yaml),
-     then the built-ins jest, node-test, pytest, maven, gradle-wrapper,
+     then the built-ins npm-test-jest, jest, vitest, mocha, ava, jasmine,
+     node-test, node-tsx, node-ts-node, pytest, maven, gradle-wrapper,
      gradle, go-test, cargo-test
 
 Exit Code (:baseline, :test):

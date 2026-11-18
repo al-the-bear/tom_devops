@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites disabled="0" errors="0" failures="1" tests="4" time="0.005">
+ <testsuite name="math" timestamp="2026-11-18T10:08:43" hostname="localhost" time="0.003" errors="0" tests="3" skipped="1" disabled="0" failures="1">
+  <testcase classname="math" name="skipped one" time="0">
+   <skipped message="Temporarily disabled with xit" />
+  </testcase>
+  <testcase classname="math" name="subtracts wrongly" time="0.001">
+   <failure type="toBe" message="Expected 1 to be 0."><![CDATA[at <Jasmine>
+    at UserContext.<anonymous> (/project/spec/math.spec.js:3:47)
+    at <Jasmine>]]>
+   </failure>
+  </testcase>
+  <testcase classname="math" name="adds" time="0" />
+ </testsuite>
+ <testsuite name="math.nested" timestamp="2026-11-18T10:08:43" hostname="localhost" time="0.002" errors="0" tests="1" skipped="0" disabled="0" failures="0">
+  <testcase classname="math.nested" name="multiplies" time="0.001" />
+ </testsuite>
+</testsuites>

@@ -1,0 +1,23 @@
+TAP version 13
+ok 1 - skipped one # SKIP
+not ok 2 - later # TODO
+ok 3 - math adds
+not ok 4 - math subtracts wrongly
+  ---
+    name: AssertionError
+    assertion: t.is()
+    details:
+      'Difference (- actual, + expected):': |-
+        - 1
+        + 0
+    message: ''
+    at: >-
+      file:///project/math.test.mjs:3
+  ...
+
+1..4
+# tests 3
+# pass 1
+# skip 1
+# fail 2
+

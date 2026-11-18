@@ -31,6 +31,9 @@ enum ReportFormat {
   /// jest's `--json` report.
   jestJson('jest-json'),
 
+  /// mocha's `--reporter json` report (`--reporter-option output=<file>`).
+  mochaJson('mocha-json'),
+
   /// TAP (Test Anything Protocol, versions 12 to 14): `node --test
   /// --test-reporter=tap`, bats `--tap`, ava `--tap`, prove, tape, libtap.
   /// Read from the report file when the runner wrote one, else from its
@@ -53,7 +56,8 @@ enum ReportFormat {
   /// Whether the runner writes the report to a file (rather than its output).
   /// A [tap] report may be either: the file when there is one, else the
   /// output.
-  bool get isFile => this == testkit || this == junit || this == jestJson;
+  bool get isFile =>
+      this == testkit || this == junit || this == jestJson || this == mochaJson;
 }
 
 /// Reads testkit's line protocol from [lines].
@@ -290,6 +294,64 @@ void parseJestJson(String json, ResultCollector collector) {
         ),
       );
     }
+  }
+}
+
+/// Reads mocha's `--reporter json` report [json]: each entry of `tests` is
+/// one result, failed when it is in `failures`, skipped when it is in
+/// `pending`, grouped by its describe blocks (its `fullTitle` before its
+/// `title`). A failure that is no test (a `before all` hook) is a failed
+/// result of its own, so the run fails.
+///
+/// Throws [FormatException] when [json] is not a mocha report.
+void parseMochaJson(String json, ResultCollector collector) {
+  final Object? report = jsonDecode(json);
+  if (report is! Map || report['tests'] is! List) {
+    throw const FormatException(
+      'not a mocha --reporter json report (no tests)',
+    );
+  }
+  String key(Map t) => '${t['file']}\u0000${t['fullTitle']}';
+  Set<String> keys(String list) => {
+    for (final t in (report[list] as List?) ?? const [])
+      if (t is Map) key(t),
+  };
+  final failed = keys('failures');
+  final pending = keys('pending');
+  final seen = <String>{};
+  void add(Map t, TestResult result) {
+    final title = t['title'] as String?;
+    if (title == null || title.isEmpty) return;
+    final full = (t['fullTitle'] as String?) ?? title;
+    final group = full.endsWith(title)
+        ? full.substring(0, full.length - title.length).trim()
+        : '';
+    final file = t['file'] as String?;
+    collector.add(
+      ReportedTest(
+        name: title,
+        suite: file,
+        groups: group.isEmpty ? null : group,
+        result: result,
+      ),
+    );
+  }
+
+  for (final t in report['tests'] as List) {
+    if (t is! Map) continue;
+    final k = key(t);
+    seen.add(k);
+    add(
+      t,
+      failed.contains(k)
+          ? TestResult.fail
+          : pending.contains(k)
+          ? TestResult.skip
+          : TestResult.ok,
+    );
+  }
+  for (final t in (report['failures'] as List?) ?? const []) {
+    if (t is Map && !seen.contains(key(t))) add(t, TestResult.fail);
   }
 }
 

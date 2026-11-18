@@ -8,7 +8,7 @@
 ///    testkit:
 ///      runner: pytest              # a template by name, or:
 ///      command: ./run_tests.sh     # shell command, run in the project
-///      report: testkit             # testkit | junit | go-json | libtest | jest-json | tap
+///      report: testkit             # testkit | junit | go-json | libtest | jest-json | mocha-json | tap
 ///      report-path: build/*.xml    # a file report written elsewhere
 ///      filter: {args: [-k, '{names}'], join: ' or ', regex: false}
 ///    ```
@@ -257,7 +257,7 @@ class CommandRunner extends ProjectTestRunner {
         trackingDirName,
         'last_testrun_report.${switch (format) {
           ReportFormat.junit => 'xml',
-          ReportFormat.jestJson => 'json',
+          ReportFormat.jestJson || ReportFormat.mochaJson => 'json',
           ReportFormat.tap => 'tap',
           _ => 'jsonl',
         }}',
@@ -335,6 +335,10 @@ class CommandRunner extends ProjectTestRunner {
         case ReportFormat.jestJson:
           for (final f in _reportFiles(projectPath, reportFile)) {
             parseJestJson(f.readAsStringSync(), collector);
+          }
+        case ReportFormat.mochaJson:
+          for (final f in _reportFiles(projectPath, reportFile)) {
+            parseMochaJson(f.readAsStringSync(), collector);
           }
         case ReportFormat.tap:
           // The report file when the runner wrote one ({report},

@@ -5,9 +5,10 @@
 /// project's, the workspace's, then the built-in templates in order; and a
 /// template's `filter:` lets `--failed` / `--mismatched` select tests by name.
 ///
-/// Test IDs: TK-RT-1..10.
+/// Test IDs: TK-RT-1..13.
 library;
 
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
@@ -49,8 +50,15 @@ void main() {
       'go, cargo, pytest, jest and node --test select tests by name, Maven '
       'and Gradle do not [2026-11-18]', () {
     expect(builtInRunnerTemplates.map((t) => t.name), [
+      'npm-test-jest',
       'jest',
+      'vitest',
+      'mocha',
+      'ava',
+      'jasmine',
       'node-test',
+      'node-tsx',
+      'node-ts-node',
       'pytest',
       'maven',
       'gradle-wrapper',
@@ -62,7 +70,10 @@ void main() {
       for (final t in builtInRunnerTemplates)
         if (t.filter != null) t.name,
     };
-    expect(filtered, {'jest', 'node-test', 'pytest', 'go-test', 'cargo-test'});
+    expect(
+      builtInRunnerTemplates.map((t) => t.name).toSet().difference(filtered),
+      {'jasmine', 'maven', 'gradle-wrapper', 'gradle'},
+    );
     expect(builtInRunnerTemplates.every((t) => t.applies != null), isTrue);
     write('pkg/gradlew', '');
     final gradle = runner([
@@ -358,5 +369,188 @@ testkit:
       File(p.join(project, 'testlog', 'last_testrun_report.tap')).existsSync(),
       isTrue,
     );
+  });
+
+  group('the JavaScript / TypeScript runners', () {
+    final js = <RunFolder>[];
+    final ts = <RunFolder>[];
+    setUp(() {
+      js
+        ..clear()
+        ..add(JavaScriptFolder(folder));
+      ts
+        ..clear()
+        ..add(TypeScriptFolder(folder));
+    });
+
+    void packageJson(Map<String, String> devDependencies, {String? test}) =>
+        write(
+          'pkg/package.json',
+          jsonEncode({
+            'name': 'p',
+            if (test != null) 'scripts': {'test': test},
+            'devDependencies': devDependencies,
+          }),
+        );
+
+    test('TK-RT-11: each runner is picked from package.json [2026-11-18]', () {
+      for (final (deps, testScript, natures, expected) in [
+        ({'jest': '*'}, 'jest --ci', js, 'npm-test-jest'),
+        ({'jest': '*', 'ts-jest': '*'}, 'npx jest', ts, 'npm-test-jest'),
+        ({'jest': '*', 'ts-jest': '*'}, 'tsc && node x.js', ts, 'jest'),
+        ({'jest': '*'}, null, js, 'jest'),
+        ({'vitest': '*'}, 'vitest', ts, 'vitest'),
+        ({'mocha': '*'}, 'mocha', js, 'mocha'),
+        ({'ava': '*'}, 'ava', js, 'ava'),
+        ({'jasmine': '*', 'jasmine-reporters': '*'}, 'jasmine', js, 'jasmine'),
+        ({'tsx': '*', 'typescript': '*'}, null, ts, 'node-tsx'),
+        ({'ts-node': '*', 'typescript': '*'}, null, ts, 'node-ts-node'),
+        (<String, String>{}, null, js, 'node-test'),
+      ]) {
+        packageJson(deps, test: testScript);
+        expect(
+          runner(natures).origin,
+          'runner $expected, built-in',
+          reason: '$deps, test: $testScript',
+        );
+      }
+      // jasmine without jasmine-reporters writes no report testkit reads.
+      packageJson({'jasmine': '*'});
+      expect(runner(js).origin, 'runner node-test, built-in');
+      packageJson({'typescript': '*'});
+      expect(ProjectTestRunner.resolve(project, ts), isA<RunnerUnavailable>());
+    });
+
+    test('TK-RT-12: each runner records per-test results from its recorded '
+        'report [2026-11-18]', () async {
+      String fixture(String name) =>
+          File(p.join('test', 'fixtures', 'reports', 'js', name)).absolute.path;
+      // The template's own format and report place; its command replaced by
+      // one that puts the recorded report where the runner writes it.
+      for (final (template, report, copyTo, expected) in [
+        (
+          'npm-test-jest',
+          'npm_jest.json',
+          '{report}',
+          {
+            'adds': TestResult.ok,
+            'subtracts wrongly': TestResult.fail,
+            'skipped one': TestResult.skip,
+            'multiplies': TestResult.ok,
+          },
+        ),
+        (
+          'jest',
+          'ts_jest.json',
+          '{report}',
+          {
+            'adds': TestResult.ok,
+            'subtracts wrongly': TestResult.fail,
+            'skipped one': TestResult.skip,
+            'multiplies': TestResult.ok,
+          },
+        ),
+        (
+          'vitest',
+          'vitest_junit.xml',
+          '{report}',
+          {
+            'math > adds': TestResult.ok,
+            'math > subtracts wrongly': TestResult.fail,
+            'math > skipped one': TestResult.skip,
+            'math > nested > multiplies': TestResult.ok,
+          },
+        ),
+        (
+          'mocha',
+          'mocha.json',
+          '{report}',
+          {
+            'adds': TestResult.ok,
+            'subtracts wrongly': TestResult.fail,
+            'skipped one': TestResult.skip,
+            'multiplies': TestResult.ok,
+          },
+        ),
+        (
+          'ava',
+          'ava_tap.txt',
+          null,
+          {
+            'skipped one': TestResult.skip,
+            'later': TestResult.skip,
+            'math adds': TestResult.ok,
+            'math subtracts wrongly': TestResult.fail,
+          },
+        ),
+        (
+          'jasmine',
+          'jasmine_junit.xml',
+          'junitresults.xml',
+          {
+            'adds': TestResult.ok,
+            'subtracts wrongly': TestResult.fail,
+            'skipped one': TestResult.skip,
+            'multiplies': TestResult.ok,
+          },
+        ),
+        (
+          'node-tsx',
+          'tsx_junit.xml',
+          '{report}',
+          {
+            'adds': TestResult.ok,
+            'subtracts wrongly': TestResult.fail,
+            'skipped one': TestResult.skip,
+            'multiplies': TestResult.ok,
+          },
+        ),
+        (
+          'node-ts-node',
+          'tsnode_junit.xml',
+          '{report}',
+          {
+            'adds': TestResult.ok,
+            'subtracts wrongly': TestResult.fail,
+            'skipped one': TestResult.skip,
+            'multiplies': TestResult.ok,
+          },
+        ),
+      ]) {
+        final t = builtInRunnerTemplates.firstWhere((t) => t.name == template);
+        final runner = CommandRunner(
+          command: copyTo == null
+              ? 'cat "${fixture(report)}"'
+              : 'cp "${fixture(report)}" $copyTo',
+          format: t.format,
+          reportPath: t.reportPath,
+          origin: 'test',
+        );
+        final results = (await runner.run(projectPath: project))!;
+        expect(results.run.results, expected, reason: template);
+      }
+    });
+
+    test('TK-RT-13: the name filters of the JavaScript runners '
+        '[2026-11-18]', () {
+      List<String> args(String name, List<String> names) =>
+          builtInRunnerTemplates
+              .firstWhere((t) => t.name == name)
+              .filter!
+              .argsFor(names);
+      expect(args('vitest', ['math > adds', 'math > nested > multiplies']), [
+        '-t',
+        r'(adds|multiplies)$',
+      ]);
+      expect(args('mocha', ['adds']), ['--grep', r'(adds)$']);
+      expect(args('ava', ['math adds', 'later']), [
+        '--match',
+        'math adds',
+        '--match',
+        'later',
+      ]);
+      expect(args('npm-test-jest', ['adds']), ['-t', r'(adds)$']);
+      expect(args('node-tsx', ['adds']), ['--test-name-pattern', r'(adds)$']);
+    });
   });
 }

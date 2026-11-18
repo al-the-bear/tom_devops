@@ -1,3 +1,31 @@
+## 1.14.0
+
+### Added — the common JavaScript / TypeScript runners
+
+Built-in runner templates, each picked from the project's `package.json`, in
+this order:
+
+| Template | Picked by | Selects by name |
+| --- | --- | --- |
+| `npm-test-jest` | the `test` script runs jest | `-t` |
+| `jest` | jest, for TypeScript through ts-jest or babel too | `-t` |
+| `vitest` | vitest; JUnit report | `-t`, by the title after `math > ` |
+| `mocha` | mocha; read with the new `mocha-json` report | `--grep` |
+| `ava` | ava; TAP on its output | `--match` per test |
+| `jasmine` | jasmine-reporters; JUnit through jasmine's `--reporter`, no helper file needed | no |
+| `node-tsx` | a TypeScript project with tsx; node's runner | `--test-name-pattern` |
+| `node-ts-node` | a TypeScript project with ts-node; node's runner | `--test-name-pattern` |
+
+- **jasmine selects no single tests:** jasmine-reporters writes the specs
+  `--filter` excludes as passing testcases.
+- **Template keys:** a `filter:` takes `each:` (arguments repeated per name)
+  and `tail:` (keep the part after a separator); `applies:` takes `scripts:`
+  (a `package.json` script matching a pattern).
+- **New API:** `ReportFormat.mochaJson`, `parseMochaJson`,
+  `packageJsonScripts`.
+- **Checked live:** every template ran on mbp against the runner's current
+  release, `:baseline` and `:test --failed`.
+
 ## 1.13.0
 
 ### Added — TAP reports
