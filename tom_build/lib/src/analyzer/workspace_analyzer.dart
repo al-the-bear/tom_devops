@@ -9,6 +9,7 @@ import 'package:path/path.dart' as path;
 import 'package:yaml/yaml.dart';
 
 import '../scan_exclusions.dart';
+import 'guidelines_folder.dart';
 
 /// Configuration options for the workspace analyzer.
 class AnalyzerOptions {
@@ -367,10 +368,12 @@ class WorkspaceAnalyzer {
     for (final project in projects) {
       await _analyzeProject(project);
       
-      // Collect folder listings for project metadata
-      project.copilotGuidelines = await _listFolderContents(
-        path.join(project.path, '_copilot_guidelines'),
-      );
+      // Collect folder listings for project metadata; the guidelines from
+      // `_agent_guidelines/`, else the old `_copilot_guidelines/`.
+      final guidelines = guidelinesFolderOf(project.path);
+      project.copilotGuidelines = guidelines == null
+          ? []
+          : await _listFolderContents(guidelines.path);
       project.docs = await _listFolderContents(
         path.join(project.path, 'docs'),
       );
@@ -1869,9 +1872,10 @@ class WorkspaceAnalyzer {
     // the list in the metadata is always the project set as scanned.
     _writeDerivedGroups(buffer, projects, workspaceSettings['groups']);
 
-    // Write workspace-level copilot guidelines
-    final workspaceCopilotGuidelinesDir = Directory(path.join(workspaceRoot, '_copilot_guidelines'));
-    if (await workspaceCopilotGuidelinesDir.exists()) {
+    // Write the workspace-level guidelines (`_agent_guidelines/`, else the
+    // old `_copilot_guidelines/`) under the metadata's `copilot-guidelines:`.
+    final workspaceCopilotGuidelinesDir = guidelinesFolderOf(workspaceRoot);
+    if (workspaceCopilotGuidelinesDir != null) {
       final copilotGuidelinesEntries = <String>[];
       await for (final entity in workspaceCopilotGuidelinesDir.list(followLinks: false)) {
         final name = path.basename(entity.path);

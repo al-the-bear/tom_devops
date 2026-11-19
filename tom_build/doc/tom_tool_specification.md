@@ -2170,7 +2170,7 @@ class TomProject {
   final List<String>? tests;              // Test files/directories
   final List<String>? examples;           // Example files/directories
   final List<String>? docs;               // Documentation files
-  final List<String>? copilotGuidelines;  // Copilot guideline files
+  final List<String>? copilotGuidelines;  // _agent_guidelines/ (else _copilot_guidelines/) files
   final List<String>? binaryFiles;        // Binary source files in bin/
   
   // Package metadata

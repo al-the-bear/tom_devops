@@ -1,3 +1,10 @@
+## 1.0.10
+
+- The workspace analyzer lists a project's and the workspace's guidelines
+  from `_agent_guidelines/`, else from the old `_copilot_guidelines/`
+  (`guidelinesFolderOf()`); the metadata key stays `copilot-guidelines:`.
+  Tests in `test/analyzer/guidelines_folder_test.dart`.
+
 ## 1.0.9
 
 - **`WorkspaceAnalyzer.findWorkspaceRoot(start)`**: the nearest directory at or

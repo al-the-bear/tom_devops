@@ -145,7 +145,7 @@ The file is optional: a project without one is auto-detected (type, name, metada
 | `tests` | `List<String>` | Auto-detected | Test folders |
 | `examples` | `List<String>` | Auto-detected | Example folders |
 | `docs` | `List<String>` | Auto-detected | Documentation folders |
-| `copilot-guidelines` | `List<String>` | Auto-detected | Guideline files |
+| `copilot-guidelines` | `List<String>` | Auto-detected | The files of the project's `_agent_guidelines/` (the old name `_copilot_guidelines/` is still read when there is none); the key keeps its name |
 | `binary-files` | `List<String>` | — | Prebuilt binaries the project ships |
 | `action-mode-definitions` | [ActionModeMap](#44-action-mode-maps) | Workspace's | Mode selection per action for this project's tomplate processing; entries deep-merge with `default` |
 | `<mode-type>-mode-definitions` | [ModeDefinitions](#42-mode-definitions) | Workspace's | Deep-merged over the workspace's definitions |

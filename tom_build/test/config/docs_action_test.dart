@@ -3,7 +3,7 @@
 //
 // `doc/` is hand-authored (CLAUDE.md, Documentation Placement), and
 // `doc/api/` holds the hand-written API summaries
-// (_copilot_guidelines/dart/api_summary_creation.md). dartdoc's default
+// (_agent_guidelines/dart/api_summary_creation.md). dartdoc's default
 // output folder is that same `doc/api/`, so the action writes the generated
 // HTML to `build/api_doc/` instead: gitignored, and outside every folder a
 // person writes in. Dart and Flutter packages only; no other type has an API
