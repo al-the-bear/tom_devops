@@ -1,3 +1,10 @@
+## 1.20.0
+
+### Changed
+
+- Takes tom_build_base 2.45.0 (`-w` with direct commands; testkit declares
+  no `-w`, so nothing changes in its runs).
+
 ## 1.19.0
 
 ### Changed
