@@ -8,7 +8,7 @@
 > emits — `lib/tom_deploy_tools.dart` is a three-line `calculate()` stub and
 > `bin/tom_deploy_tools.dart` prints `Hello world`. No `deploykit` command is
 > built from it, and it has been removed from the workspace tool table
-> (`_copilot_guidelines/tool_dependencies.md`, "Retired tools"). The description
+> (`_agent_guidelines/tool_dependencies.md`, "Retired tools"). The description
 > below is the intent, not the state.
 
 Command-line front end that drives Tom framework multi-cloud deployments.
@@ -88,13 +88,13 @@ by the real command surface when the model lands.
 ## Where deployment lives today
 
 Until the CLI and its model are implemented, the framework's deployment knowledge
-lives in the workspace-root **cloud guidelines** under `_copilot_guidelines/cloud/`:
+lives in the workspace-root **cloud guidelines** under `_agent_guidelines/cloud/`:
 
 | Concern | Current home |
 | ------- | ------------ |
-| Cloud deployment patterns (AWS / Azure / GCP / Firebase) | `_copilot_guidelines/cloud/cloud_deployment.md` |
-| Production & dev Docker images | `_copilot_guidelines/cloud/docker_image_creation.md` |
-| Running server apps locally with Docker | `_copilot_guidelines/cloud/docker_local.md` |
+| Cloud deployment patterns (AWS / Azure / GCP / Firebase) | `_agent_guidelines/cloud/cloud_deployment.md` |
+| Production & dev Docker images | `_agent_guidelines/cloud/docker_image_creation.md` |
+| Running server apps locally with Docker | `_agent_guidelines/cloud/docker_local.md` |
 | Deployment model objectives & scope | `_ai/quests/tom_deploy/overview.tom_deploy.md` |
 
 ---
