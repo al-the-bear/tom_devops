@@ -62,13 +62,13 @@ This list records the design target, not shipped behaviour.
 ## Where deployment lives today
 
 Until the model is implemented here, the framework's deployment knowledge lives
-in the workspace-root **cloud guidelines** under `_copilot_guidelines/cloud/`:
+in the workspace-root **cloud guidelines** under `_agent_guidelines/cloud/`:
 
 | Concern | Current home |
 | ------- | ------------ |
-| Cloud deployment patterns (AWS / Azure / GCP / Firebase) | `_copilot_guidelines/cloud/cloud_deployment.md` |
-| Production & dev Docker images | `_copilot_guidelines/cloud/docker_image_creation.md` |
-| Running server apps locally with Docker | `_copilot_guidelines/cloud/docker_local.md` |
+| Cloud deployment patterns (AWS / Azure / GCP / Firebase) | `_agent_guidelines/cloud/cloud_deployment.md` |
+| Production & dev Docker images | `_agent_guidelines/cloud/docker_image_creation.md` |
+| Running server apps locally with Docker | `_agent_guidelines/cloud/docker_local.md` |
 | Deployment model objectives & scope | `_ai/quests/tom_deploy/overview.tom_deploy.md` |
 
 When a deployment concept currently captured only as a guideline becomes a

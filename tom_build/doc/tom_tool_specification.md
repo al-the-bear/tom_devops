@@ -1860,7 +1860,7 @@ Generates D4rt `BridgedClass` implementations from Dart source files, enabling c
 
 - `tom_core_dartscript/lib/src/d4rt_helpers.dart` - Helper functions for type-safe argument handling
 - `tom_core_dartscript/lib/src/tom_core/tombase/*_bridge.dart` - Sample bridge implementations
-- `_copilot_guidelines/d4rt/d4rt_bridgedclass_guidelines.md` - Detailed bridging guidelines
+- `_agent_guidelines/d4rt/d4rt_bridgedclass_guidelines.md` - Detailed bridging guidelines
 
 **Parameters:**
 

@@ -130,5 +130,5 @@ void main() {
 
 ## Related Documentation
 
-- [Global Unit Test Guidelines](../../../../_copilot_guidelines/dart/unit_tests.md) — Unit test structure and patterns
+- [Global Unit Test Guidelines](../../../../_agent_guidelines/dart/unit_tests.md) — Unit test structure and patterns
 - [Test Tracking Concept](../doc/test_tracking.md) — The tracking workflow this tool implements
