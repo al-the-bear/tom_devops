@@ -1,3 +1,11 @@
+## 1.21.0
+
+### Changed
+
+- Takes tom_build_base 2.46.0: a folder holding `tom_skip.yaml` is left out
+  even when it holds a `buildkit_master.yaml`, so a traversal from above no
+  longer reaches the build tools' workspace clone.
+
 ## 1.20.0
 
 ### Changed
