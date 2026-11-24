@@ -957,7 +957,7 @@ packages:
       path: "../../core/tom_core_server"
       relative: true
     source: path
-    version: "1.5.0"
+    version: "1.5.1"
   tom_crypto:
     dependency: transitive
     description:
