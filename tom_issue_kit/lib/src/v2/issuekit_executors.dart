@@ -2105,7 +2105,8 @@ class RunTestsExecutor extends CommandExecutor {
     } on ProcessException catch (e) {
       return ToolResult.failure(
         'testkit could not be started (${e.message}); it is looked up on '
-        'PATH, from the binaries layer (\$TOM_BINARY_PATH/<platform>)',
+        'PATH only, where the binaries layer\'s folder '
+        '(\$TOM_BINARY_PATH/<platform>) normally is',
       );
     }
     if (exitCode != 0) {
