@@ -11,6 +11,9 @@ license: BSD-3-Clause
 # Compiler tool configuration: md2pdf in the binaries layer, where
 # `buildkit :apireference` runs it from PATH.
 compiler:
+  # The release executables (tom_binaries/tom/<platform>/; buildkit :skill-build-binaries --list).
+  executables:
+    md2pdf: {release: true}
   compiles:
     # macOS ARM64 - compile for self; with --all-platforms also linux-x64
     - pipeline:
